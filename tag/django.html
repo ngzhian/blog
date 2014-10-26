@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>Zhi An Blog - django</title>
+        <link rel="stylesheet" href="http://blog.ngzhian.com/theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+<a href="http://github.com/ngzhian">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+        <header id="banner" class="body">
+                <h1><a href="http://blog.ngzhian.com/">Zhi An Blog </a></h1>
+                <nav><ul>
+                    <li><a href="http://blog.ngzhian.com/category/equityzen.html">equityzen</a></li>
+                    <li><a href="http://blog.ngzhian.com/category/misc.html">misc</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="http://blog.ngzhian.com/django-compress.html">Django compressor</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2014-10-18T10:20:00">
+                Published: Sat 18 October 2014
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://blog.ngzhian.com/author/ng-zhi-an.html">ng zhi an</a>
+        </address>
+<p>In <a href="http://blog.ngzhian.com/category/equityzen.html">equityzen</a>. </p>
+<p>tags: <a href="http://blog.ngzhian.com/tag/python.html">python</a> <a href="http://blog.ngzhian.com/tag/django.html">django</a> <a href="http://blog.ngzhian.com/tag/web.html">web</a> </p>
+</footer><!-- /.post-info --><p>in an ideal world, websites would load instantaenously.
+my latest task was to move my company's website close to this ideal.</p>
+<p>we ran a django shop, and there is a wonderful package called django-compressor that helps us compress our static files easily.
+it works as a template processor, finding the <code>{% compress %}</code> tags in your templates, and squeezes all the css or js files into a single file,
+identified by a unique string.</p>
+<h1>goal: a website that loads lightning quick</h1>
+<p>our goal is simple: improve page load speed. there are two ways that django-compressor can help us with this:
+1) reduce the number of http calls, <em>x</em> css/js file is now <em>1</em> file
+2) reduce size of the file</p>
+<p>2 is achieved by the various filters that django-compressor can call, which includes minifiers and uglifiers.</p>
+<p>we also want this to be easy to scale, so that when we add new template, the additional css and/or js files that come with it will be
+automatically compressed together with the previous ones.
+this consideration led to the following tactic:</p>
+<h1>single compress tag</h1>
+<p>all vital scripts are in the base template, and template specific scripts go into the <code>{% block scripts %}</code> tag.</p>
+<p>the compress {% compess js %} tag then wraps everything:</p>
+<div class="highlight"><pre><span class="cp">{%</span> <span class="k">compress</span> <span class="nv">js</span> <span class="cp">%}</span>
+<span class="nt">&lt;script</span> <span class="na">src=</span><span class="s">&quot;/essential/scripts.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">scripts</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span>
+<span class="cp">{%</span> <span class="k">endcompress</span> <span class="cp">%}</span>
+</pre></div>
+
+
+<p>in this case, any child templates can just dump their js into the <code>scripts</code> block and they will be compressed.</p>
+<h1>brick wall #1</h1>
+<p>the first obstacle we faced was a runtime js error, which happened we we loaded our pages.
+compression was fine, but the compressed js files were not behaving the same way as the uncompressed js, which was strange.
+however it was easy to track down what the problem was (it was missing semicolons), and helped make our js a little more robust</p>
+<h1>brick wall #2</h1>
+<p>while testing on local environment, we would set offline comrepssion to false.
+this meant that compression would occur for a single page only when it was loaded (traverse templates, find all files and compress into a single file).
+our homepage worked fine, but as we started to click through to other pages, error started popping up about ill-formed js.
+digging into those files led to a discovery -- when the compressor runs through the js code, it would check that the js is valid.
+this meant that using template variables {{ x }} in js code would result in an error, because that isn't valid js.
+this probably has to do with the order of template rendering which i'm not familiar with, but the way this was fixed was to move those particular js
+out of the compress block.</p>
+<p>how offelin compession work is that it traverses all the templates and generates all required js and css files, name them using an identifier and
+for each page generate the js and css file so that the next time they are generated, the files will already be there</p>
+<p>beware</p>
+<p>offline key not found error: template variables in compress tags
+compress invalid javascript syntax checking</p>                </article>
+            </aside><!-- /#featured -->
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="#">You can modify those links in your config file</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="http://github.com/ngzhian">github</a></li>
+                            <li><a href="#">Another social link</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

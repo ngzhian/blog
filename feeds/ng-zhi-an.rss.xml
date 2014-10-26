@@ -1,0 +1,1626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Zhi An Blog</title><link>http://blog.ngzhian.com/</link><description></description><atom:link href="http://blog.ngzhian.com/feeds/ng-zhi-an.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 18 Oct 2014 10:20:00 -0400</lastBuildDate><item><title>Django compressor</title><link>http://blog.ngzhian.com/django-compress.html</link><description>&lt;p&gt;in an ideal world, websites would load instantaenously.
+my latest task was to move my company's website close to this ideal.&lt;/p&gt;
+&lt;p&gt;we ran a django shop, and there is a wonderful package called django-compressor that helps us compress our static files easily.
+it works as a template processor, finding the &lt;code&gt;{% compress %}&lt;/code&gt; tags in your templates, and squeezes all the css or js files into a single file,
+identified by a unique string.&lt;/p&gt;
+&lt;h1&gt;goal: a website that loads lightning quick&lt;/h1&gt;
+&lt;p&gt;our goal is simple: improve page load speed. there are two ways that django-compressor can help us with this:
+1) reduce the number of http calls, &lt;em&gt;x&lt;/em&gt; css/js file is now &lt;em&gt;1&lt;/em&gt; file
+2) reduce size of the file&lt;/p&gt;
+&lt;p&gt;2 is achieved by the various filters that django-compressor can call, which includes minifiers and uglifiers.&lt;/p&gt;
+&lt;p&gt;we also want this to be easy to scale, so that when we add new template, the additional css and/or js files that come with it will be
+automatically compressed together with the previous ones.
+this consideration led to the following tactic:&lt;/p&gt;
+&lt;h1&gt;single compress tag&lt;/h1&gt;
+&lt;p&gt;all vital scripts are in the base template, and template specific scripts go into the &lt;code&gt;{% block scripts %}&lt;/code&gt; tag.&lt;/p&gt;
+&lt;p&gt;the compress {% compess js %} tag then wraps everything:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;compress&lt;/span&gt; &lt;span class="nv"&gt;js&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;script&lt;/span&gt; &lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;/essential/scripts.js&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;block&lt;/span&gt; &lt;span class="nv"&gt;scripts&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;endblock&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;
+&lt;span class="cp"&gt;{%&lt;/span&gt; &lt;span class="k"&gt;endcompress&lt;/span&gt; &lt;span class="cp"&gt;%}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;in this case, any child templates can just dump their js into the &lt;code&gt;scripts&lt;/code&gt; block and they will be compressed.&lt;/p&gt;
+&lt;h1&gt;brick wall #1&lt;/h1&gt;
+&lt;p&gt;the first obstacle we faced was a runtime js error, which happened we we loaded our pages.
+compression was fine, but the compressed js files were not behaving the same way as the uncompressed js, which was strange.
+however it was easy to track down what the problem was (it was missing semicolons), and helped make our js a little more robust&lt;/p&gt;
+&lt;h1&gt;brick wall #2&lt;/h1&gt;
+&lt;p&gt;while testing on local environment, we would set offline comrepssion to false.
+this meant that compression would occur for a single page only when it was loaded (traverse templates, find all files and compress into a single file).
+our homepage worked fine, but as we started to click through to other pages, error started popping up about ill-formed js.
+digging into those files led to a discovery -- when the compressor runs through the js code, it would check that the js is valid.
+this meant that using template variables {{ x }} in js code would result in an error, because that isn't valid js.
+this probably has to do with the order of template rendering which i'm not familiar with, but the way this was fixed was to move those particular js
+out of the compress block.&lt;/p&gt;
+&lt;p&gt;how offelin compession work is that it traverses all the templates and generates all required js and css files, name them using an identifier and
+for each page generate the js and css file so that the next time they are generated, the files will already be there&lt;/p&gt;
+&lt;p&gt;beware&lt;/p&gt;
+&lt;p&gt;offline key not found error: template variables in compress tags
+compress invalid javascript syntax checking&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">ng zhi an</dc:creator><pubDate>Sat, 18 Oct 2014 10:20:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-10-18:django-compress.html</guid><category>python</category><category>django</category><category>web</category></item><item><title>Ng Zhi An - I will never be able to log in to Flickr again</title><link>http://blog.ngzhian.com/ng-zhi-an-i-will-never-be-able-to-log-in-to-flickr-again.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;I will never be able to log in to Flickr again&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May 24, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;I’m not a big user of Flickr, but some time last year I heard that they were offering 1TB of free storage and was amazed. So I decided to use their service to archive some photos.&lt;/p&gt;
+&lt;p&gt;This afternoon, I wanted to show a friend this Flickr account. I was surprised to find out that Flickr now requires a Yahoo account to log in. I’m not sure when this was implemented, because previously I have been signing in using a Gmail account, and it has been a while since I logged on.&lt;/p&gt;
+&lt;p&gt;I thought it wasn’t a big deal to sign up for Yahoo account, sure it’s one more account to maintain, but we don’t use this often so it wouldn’t be a hassle. But nope, I was wrong. The Yahoo account registration process was extremely painful.&lt;/p&gt;
+&lt;p&gt;Besides the requirement on the user name, which must begin with a letter and be 8 to 32 characters long, there were passwords requirements as well.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;edit&lt;/em&gt; They seem to accept usernames that are shorter than 8 characters, as long as it is unique. That just makes it even more confusing. Thanks EJ for pointing that out!&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/yahoo-wat-1.png" alt="The various conditions" /&gt;&lt;p class="caption"&gt;The various conditions&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;First, the password field has 3 conditions.&lt;/p&gt;
+&lt;ol style="list-style-type: decimal"&gt;
+&lt;li&gt;8-24 characters&lt;/li&gt;
+&lt;li&gt;upper and lower case&lt;/li&gt;
+&lt;li&gt;at least a number&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Sure, the green arrows that appear beside these conditions serves as a pretty guide to the user as to when these conditions have been satisfied, but these conditions are unnecessary in my opinion. If my password of choice does not satisfy these criteria, I am forced to think of and remember something new. Maybe Yahoo is trying to push people to use a password manager, but I really don’t think so. The net effect of this is frustration to the user - or me at least - resulting in me just randomly smashing the laptop to find out if &lt;em&gt;that&lt;/em&gt; was acceptable.&lt;/p&gt;
+&lt;p&gt;Finally I’ve managed to get a good pass phrase that I wanted to use, more on pass phrase http://blog.codinghorror.com/passwords-vs-pass-phrases/ - but no, there was 1 more hidden criteria, or rather, restriction&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/yahoo-wat-2.png" alt="I can’t use spaces?" /&gt;&lt;p class="caption"&gt;I can’t use spaces?&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Okay. I’m so close to giving up at this point, if not for the hundres of pictures I have lying in Flickr. Why am I not allowed to use spaces in my password? I honestly cannot think of any reason. This just spoils the whole plan of using pass phrases.&lt;/p&gt;
+&lt;p&gt;This is a pretty easy problem to solve, but wait for it. The next screen is a funky looking animated CAPTCHA. But seriously, after that painful process of registering, I think even bots will give up signing up for Yahoo accounts.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/yahoo-wat-3.png" alt="Animated CAPTCHA" /&gt;&lt;p class="caption"&gt;Animated CAPTCHA&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Oh wait there’s more, the next screen asks for a phone number to send a verification code to. And it’s been 30 mins, and my verification code has not arrive. Yahoo!&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Update&lt;/em&gt; Even signing to Yahoo is broken, clicking on “Sign In” just clears the password fields and indicates an error, askign me to “Please enter your password”. At this point I’m pretty tired of whining already, so that’s all.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sat, 24 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-24:ng-zhi-an-i-will-never-be-able-to-log-in-to-flickr-again.html</guid></item><item><title>Ng Zhi An - MBeanScanner a utility class to generate sample configuration file for JMXetric</title><link>http://blog.ngzhian.com/ng-zhi-an-mbeanscanner-a-utility-class-to-generate-sample-configuration-file-for-jmxetric.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;MBeanScanner a utility class to generate sample configuration file for JMXetric&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May 19, 2014
+    
+&lt;/div&gt;
+
+&lt;h1 id="mbeanscanner-generates-a-xml-configuration-file-for-jmxetric"&gt;MBeanScanner generates a XML configuration file for JMXetric&lt;/h1&gt;
+&lt;p&gt;MBeanScanner is a utility that scans the platform MBean server for information about registered MBeans and generates a XML file that can be used by JMXetric.&lt;/p&gt;
+&lt;p&gt;It is motivated by &lt;a href="https://github.com/ganglia/jmxetric/issues/10"&gt;this issue on GitHub&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Code is available here:&lt;/p&gt;
+&lt;h1 id="how-it-works"&gt;How it works&lt;/h1&gt;
+&lt;p&gt;This utility can be divided into two parts, the &lt;em&gt;scanning MBeans&lt;/em&gt; role, and the &lt;em&gt;writting configuration&lt;/em&gt; role. It queries the MBean server for MBeans, and constructs a representation of the configuration available for each MBean using private classes - these will be described below. These configurations are then written to a &lt;code&gt;PrintStream&lt;/code&gt;, &lt;code&gt;System.out&lt;/code&gt; for testing, or any specified file.&lt;/p&gt;
+&lt;h1 id="scanning-mbeans-and-constructing-a-configuration-for-each-mbean"&gt;Scanning MBeans and constructing a configuration for each MBean&lt;/h1&gt;
+&lt;p&gt;Scanning the MBeans result in a list of &lt;code&gt;Config&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;List&amp;lt;Config&amp;gt; configs = mBeanScanner.&lt;span class="fu"&gt;scan&lt;/span&gt;();&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;Config&lt;/code&gt; is a super class that represents a configuration item for each MBean. This is tied to the XML specification that JMXetric expects. This mapping is described more below.&lt;/p&gt;
+&lt;h3 id="config-and-its-subclasses-mbeanconfig-mbeanattributeconfig-mbeancompositeconfig"&gt;&lt;code&gt;Config&lt;/code&gt; and its subclasses: &lt;code&gt;MBeanConfig&lt;/code&gt;, &lt;code&gt;MBeanAttributeConfig&lt;/code&gt;, &lt;code&gt;MBeanCompositeConfig&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;A sample XML configuration file that JMXetric reads in is:&lt;/p&gt;
+&lt;pre class="sourceCode xml"&gt;&lt;code class="sourceCode xml"&gt;&lt;span class="kw"&gt;&amp;lt;jmxetric-config&amp;gt;&lt;/span&gt;
+ &lt;span class="kw"&gt;&amp;lt;jvm&lt;/span&gt;&lt;span class="ot"&gt; process=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;ProcessName&amp;quot;&lt;/span&gt;&lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+ &lt;span class="kw"&gt;&amp;lt;sample&lt;/span&gt;&lt;span class="ot"&gt; delay=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;3&amp;quot;&lt;/span&gt;&lt;span class="kw"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="kw"&gt;&amp;lt;mbean&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;java.lang:type=Memory&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;Memory&amp;quot;&lt;/span&gt;&lt;span class="kw"&gt;&amp;gt;&lt;/span&gt;
+   &lt;span class="kw"&gt;&amp;lt;attribute&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;HeapMemoryUsage&amp;quot;&lt;/span&gt;&lt;span class="kw"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;init&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;Heap_init&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt;&lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;committed&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;Heap_committed&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt;&lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;used&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;Heap_used&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; &lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;max&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;Heap_max&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; &lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+   &lt;span class="kw"&gt;&amp;lt;/attribute&amp;gt;&lt;/span&gt;
+   &lt;span class="kw"&gt;&amp;lt;attribute&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;NonHeapMemoryUsage&amp;quot;&lt;/span&gt; &lt;span class="kw"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;init&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;NonHeap_init&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt;  units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; &lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;committed&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;NonHeap_committed&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; &lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;used&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;NonHeap_used&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; &lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="kw"&gt;&amp;lt;composite&lt;/span&gt;&lt;span class="ot"&gt; name=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;max&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; pname=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;NonHeap_max&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; type=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt;&lt;span class="ot"&gt; units=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; &lt;span class="kw"&gt;/&amp;gt;&lt;/span&gt;
+   &lt;span class="kw"&gt;&amp;lt;/attribute&amp;gt;&lt;/span&gt;
+  &lt;span class="kw"&gt;&amp;lt;/mbean&amp;gt;&lt;/span&gt;
+ &lt;span class="kw"&gt;&amp;lt;/sample&amp;gt;&lt;/span&gt;
+&lt;span class="kw"&gt;&amp;lt;/jmxetric-config&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+Each tag corresponds to a &lt;code&gt;Config&lt;/code&gt; subclass:
+&lt;table&gt;
+&lt;tr&gt; &lt;td&gt;
+XML Tag
+&lt;/td&gt; &lt;td&gt;
+Config sublass
+&lt;/td&gt; &lt;/tr&gt;
+&lt;tr&gt; &lt;td&gt;
+&lt;code&gt;&amp;lt;mbean&amp;gt;&lt;/code&gt;
+&lt;/td&gt; &lt;td&gt;
+&lt;code&gt;MBeanConfig&lt;/code&gt;
+&lt;/td&gt; &lt;/tr&gt;
+&lt;tr&gt; &lt;td&gt;
+&lt;code&gt;&amp;lt;attribute&amp;gt;&lt;/code&gt;
+&lt;/td&gt; &lt;td&gt;
+&lt;code&gt;MBeanAttributeConfig&lt;/code&gt;
+&lt;/td&gt; &lt;/tr&gt;
+&lt;tr&gt; &lt;td&gt;
+&lt;code&gt;&amp;lt;composite&amp;gt;&lt;/code&gt;
+&lt;/td&gt; &lt;td&gt;
+&lt;code&gt;MBeanCompositeConfig&lt;/code&gt;
+&lt;/td&gt; &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Each &lt;code&gt;Config&lt;/code&gt; object has a name, which is the name of the tag, a list of &lt;code&gt;KeyValue&lt;/code&gt; which are the attributes in each tag, and a list of &lt;code&gt;Config&lt;/code&gt;, which are the inner configurations.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;Map&amp;lt;String, String&amp;gt; fields = &lt;span class="kw"&gt;new&lt;/span&gt; HashMap&amp;lt;&amp;gt;();
+List&amp;lt;Config&amp;gt; children = &lt;span class="kw"&gt;new&lt;/span&gt; Vector&amp;lt;Config&amp;gt;();&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The name &lt;code&gt;fields&lt;/code&gt; was chosen to represent the attributes in the XML tag because of the potential confusion between attributes of the XML tags and the attribute XML tags.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;Config&lt;/code&gt; class allows us to extract a lot of common methods&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="dt"&gt;void&lt;/span&gt; &lt;span class="fu"&gt;addField&lt;/span&gt;(String key, String val)
+&lt;span class="dt"&gt;void&lt;/span&gt; &lt;span class="fu"&gt;addChild&lt;/span&gt;(Config config)
+&lt;span class="kw"&gt;public&lt;/span&gt; String &lt;span class="fu"&gt;fieldsToString&lt;/span&gt;()&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="scanning-for-mbeans-information"&gt;Scanning for MBeans information&lt;/h3&gt;
+&lt;p&gt;First, the platform MBean server is queried, using &lt;code&gt;null&lt;/code&gt; parameters. This will return &lt;code&gt;ObjectInstance&lt;/code&gt;s for all the MBeans in a &lt;code&gt;Set&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;Set&amp;lt;ObjectInstance&amp;gt; mBeanObjects = mBeanServer.&lt;span class="fu"&gt;queryMBeans&lt;/span&gt;(&lt;span class="kw"&gt;null&lt;/span&gt;, &lt;span class="kw"&gt;null&lt;/span&gt;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each &lt;code&gt;ObjectInstance&lt;/code&gt; in the &lt;code&gt;Set&lt;/code&gt; is then used to construct a &lt;code&gt;MBeanConfig&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="kw"&gt;private&lt;/span&gt; Config &lt;span class="fu"&gt;scanOneMBeanObject&lt;/span&gt;(ObjectInstance objectInstance) {
+  MBeanConfig mBeanConfig = &lt;span class="kw"&gt;new&lt;/span&gt; &lt;span class="fu"&gt;MBeanConfig&lt;/span&gt;();
+  ObjectName objectName = objectInstance.&lt;span class="fu"&gt;getObjectName&lt;/span&gt;();
+  mBeanConfig.&lt;span class="fu"&gt;addField&lt;/span&gt;(&lt;span class="st"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;, objectName.&lt;span class="fu"&gt;getCanonicalName&lt;/span&gt;());
+  &lt;span class="fu"&gt;scanMBeanAttributes&lt;/span&gt;(mBeanConfig, objectName);
+  &lt;span class="kw"&gt;return&lt;/span&gt; mBeanConfig;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As each &lt;code&gt;MBean&lt;/code&gt; can have multiple attributes, the &lt;code&gt;scanMBeanAttributes&lt;/code&gt; method retrieves information on all the attributes for 1 MBean, and populates the &lt;code&gt;mBeanConfig&lt;/code&gt; object associated with that MBean with the scanned attributes.&lt;/p&gt;
+&lt;p&gt;The information regarding the attributes of one MBean is retrieved using:&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;mBeanInfo = mBeanServer.&lt;span class="fu"&gt;getMBeanInfo&lt;/span&gt;(mBeanName);
+MBeanAttributeInfo[] infos = mBeanInfo.&lt;span class="fu"&gt;getAttributes&lt;/span&gt;();&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As each MBean can have multiple attributes, the &lt;code&gt;mBeanConfig&lt;/code&gt; is populated in a &lt;code&gt;for&lt;/code&gt; loop. The construction of a &lt;code&gt;MBeanAttributeConfig&lt;/code&gt;, which represents the configuration of a &lt;code&gt;&amp;lt;attribute&amp;gt;&lt;/code&gt; is delgated to the method &lt;code&gt;makeConfigMBeanAttribute&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The body of &lt;code&gt;makeConfigMBeanAttribute&lt;/code&gt; is long because it has to take care of 2 different kinds of attributes: 1. attributes of the simple type such as &lt;code&gt;&amp;lt;attribute name=&amp;quot;MemoryManagerNames&amp;quot; type=&amp;quot;string&amp;quot;/&amp;gt;&lt;/code&gt;, and 2. attributes of the composite type, as shown in the sample XMl above. Also, many kinds of exceptions can be thrown when retrieving the attributes of an MBean.&lt;/p&gt;
+&lt;p&gt;In short,if the attribute is a simple type, &lt;code&gt;makeConfigMBeanAttribute&lt;/code&gt; constructs the &lt;code&gt;MBeanAttributeConfig&lt;/code&gt;. If the attribute is a &lt;code&gt;CompositeData&lt;/code&gt;, it delegates the construction to &lt;code&gt;addComposites&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="kw"&gt;if&lt;/span&gt; (attr == &lt;span class="kw"&gt;null&lt;/span&gt;) {
+  &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="kw"&gt;null&lt;/span&gt;;
+} &lt;span class="kw"&gt;else&lt;/span&gt; &lt;span class="kw"&gt;if&lt;/span&gt; (attr &lt;span class="kw"&gt;instanceof&lt;/span&gt; CompositeData) {
+  &lt;span class="fu"&gt;addComposites&lt;/span&gt;(config, (CompositeData) attr);
+} &lt;span class="kw"&gt;else&lt;/span&gt; {
+  config.&lt;span class="fu"&gt;addField&lt;/span&gt;(&lt;span class="st"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;, &lt;span class="fu"&gt;translateDataType&lt;/span&gt;(attributeInfo.&lt;span class="fu"&gt;getType&lt;/span&gt;()));
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;addComposites&lt;/code&gt; delegates the construction of a &lt;code&gt;MBeanCompositeConfig&lt;/code&gt; for each data in the composite, to &lt;code&gt;makeComposite&lt;/code&gt;, and adds each &lt;code&gt;MBeanCompositeConfig&lt;/code&gt; into the &lt;code&gt;MBeanAttributeConfig&lt;/code&gt;&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;CompositeType compositeType = compositeData.&lt;span class="fu"&gt;getCompositeType&lt;/span&gt;();
+&lt;span class="kw"&gt;for&lt;/span&gt; (String key : compositeType.&lt;span class="fu"&gt;keySet&lt;/span&gt;()) {
+    config.&lt;span class="fu"&gt;addChild&lt;/span&gt;(&lt;span class="fu"&gt;makeComposite&lt;/span&gt;(compositeType, key));
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The type of each data in the composite can be discovered using &lt;code&gt;compositeType.getType(name).toString()&lt;/code&gt;. However this is not the same as the type that is recognized by JMXetric and Ganglia. Hence the translation is provied by &lt;code&gt;translateDataType&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="kw"&gt;if&lt;/span&gt; (possibleData.&lt;span class="fu"&gt;contains&lt;/span&gt;(&lt;span class="st"&gt;&amp;quot;java.lang.Long&amp;quot;&lt;/span&gt;)) {
+    &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;int8&amp;quot;&lt;/span&gt;;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This method is currently incomplete and should be updated so the translation is accurate.&lt;/p&gt;
+&lt;h1 id="writing-the-configurations-out"&gt;Writing the configurations out&lt;/h1&gt;
+&lt;p&gt;The writing of &lt;code&gt;Config&lt;/code&gt;s is handled by the &lt;code&gt;ConfigWriter&lt;/code&gt; class. The constant strings defined by &lt;code&gt;ConfigWriter&lt;/code&gt; are the declarations and doctype that a XML configuration file for JMXetric requires.&lt;/p&gt;
+&lt;p&gt;A public method &lt;code&gt;write()&lt;/code&gt; writes the declaration and doctype, as well as wrapping the configurations in the &lt;code&gt;&amp;lt;jmxetric-config&amp;gt;&lt;/code&gt; tags. It builds up a &lt;code&gt;StringBuilder&lt;/code&gt; representing the contents of the file to be written, and writes everying in a single &lt;code&gt;print&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;sb.&lt;span class="fu"&gt;append&lt;/span&gt;(XML_DECL + NL);
+sb.&lt;span class="fu"&gt;append&lt;/span&gt;(XML_DOCTYPE + NL);
+sb.&lt;span class="fu"&gt;append&lt;/span&gt;(&lt;span class="st"&gt;&amp;quot;&amp;lt;jmxetric-config&amp;gt;&amp;quot;&lt;/span&gt; + NL);
+
+out.&lt;span class="fu"&gt;print&lt;/span&gt;(sb.&lt;span class="fu"&gt;toString&lt;/span&gt;());&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mutually recursive methods &lt;code&gt;buildXmlTagsFromList&lt;/code&gt; and &lt;code&gt;buildXmlTag&lt;/code&gt; does the actual building of the tags to be written. The method &lt;code&gt;buildXmlTagsFromList&lt;/code&gt; writes a list of configuration to the &lt;code&gt;PrintStream&lt;/code&gt;. &lt;code&gt;buildXmlTag&lt;/code&gt; then does the actual writing of the XML. &lt;code&gt;buildXmlTag&lt;/code&gt; can take care of self-closing XML tags by checking if the &lt;code&gt;Config&lt;/code&gt; has any children. If it doesn’t, a self-closing tag is written.&lt;/p&gt;
+&lt;h1 id="improvements"&gt;Improvements&lt;/h1&gt;
+&lt;p&gt;I feel that &lt;code&gt;ConfigWriter&lt;/code&gt; isn’t written in a good manner. Since the configuration file is an XML, I can probably use an XML writer instead of constructing the tags manually. However this works very well now - the code is pretty simple and is easy to read, so I will stick to this and submit a pull request based on the current code.&lt;/p&gt;
+&lt;p&gt;The only kinds of datatype that we are taking care of are the simple type and &lt;code&gt;CompositeData&lt;/code&gt;. There are other kinds of complex MXBeans type, such as the tabular. The support for these tyeps will be added as needed.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Mon, 19 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-19:ng-zhi-an-mbeanscanner-a-utility-class-to-generate-sample-configuration-file-for-jmxetric.html</guid></item><item><title>Ng Zhi An - Default value of ATTLIST, attributes of an XML Element, XML Doctype</title><link>http://blog.ngzhian.com/ng-zhi-an-default-value-of-attlist-attributes-of-an-xml-element-xml-doctype.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Default value of ATTLIST, attributes of an XML Element, XML Doctype&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May 10, 2014
+    
+&lt;/div&gt;
+
+&lt;h2 id="the-problem"&gt;The problem&lt;/h2&gt;
+&lt;p&gt;It started with a failing test that complained about &lt;code&gt;NumberFormatException&lt;/code&gt; because an empty string was passed in to &lt;code&gt;Integer.parseInt&lt;/code&gt;. I decided to file &lt;a href="https://github.com/ganglia/jmxetric/issues/22"&gt;an issue&lt;/a&gt; and went on to investigate.&lt;/p&gt;
+&lt;h2 id="investigation"&gt;Investigation&lt;/h2&gt;
+&lt;p&gt;I started by adding breakpoint on the &lt;a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L103"&gt;method which returned the string&lt;/a&gt; to be passed into &lt;code&gt;Integer.parseInt&lt;/code&gt;. But this was problematic because the method was called multiple times, within nested loops. So I decided to tackle this in another way.&lt;/p&gt;
+&lt;p&gt;I called the method on a bogus attribute that I knew for sure would not exist:&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;String testNonValidAttri = &lt;span class="fu"&gt;selectParameterFromNode&lt;/span&gt;(sample, &lt;span class="st"&gt;&amp;quot;asdfasdf&amp;quot;&lt;/span&gt;, &lt;span class="st"&gt;&amp;quot;1&amp;quot;&lt;/span&gt;);
+System.&lt;span class="fu"&gt;out&lt;/span&gt;.&lt;span class="fu"&gt;println&lt;/span&gt;(&lt;span class="st"&gt;&amp;quot;testnonvalid: &amp;quot;&lt;/span&gt; + testNonValidAttri);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and sure enough the string returned was &lt;code&gt;1&lt;/code&gt;. This meant that the method &lt;code&gt;selectParameterFromNode&lt;/code&gt; was working fine, and so I shifted my focus somewhere else.&lt;/p&gt;
+&lt;p&gt;Next I wanted to check out exactly what attributes the &lt;code&gt;sample&lt;/code&gt; node contained. The &lt;a href="https://github.com/ganglia/jmxetric/blob/master/src/test/resources/jmxetric_test.xml#L35"&gt;configuration file&lt;/a&gt; showed that there is only 1: &lt;code&gt;delay&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode xml"&gt;&lt;code class="sourceCode xml"&gt;&lt;span class="kw"&gt;&amp;lt;sample&lt;/span&gt;&lt;span class="ot"&gt; delay=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;3&amp;quot;&lt;/span&gt;&lt;span class="kw"&gt;&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So if I print out all the names of the attributes, I should only have 1 name appear. I consulted the &lt;a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/xpath/package-summary.html"&gt;xpath docs&lt;/a&gt; to find out how to get the list of attributes and print them, this is the code:&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;NamedNodeMap samplemap = sample.&lt;span class="fu"&gt;getAttributes&lt;/span&gt;();
+System.&lt;span class="fu"&gt;out&lt;/span&gt;.&lt;span class="fu"&gt;println&lt;/span&gt;(samplemap.&lt;span class="fu"&gt;getLength&lt;/span&gt;());
+&lt;span class="kw"&gt;for&lt;/span&gt; (&lt;span class="dt"&gt;int&lt;/span&gt; j = &lt;span class="dv"&gt;0&lt;/span&gt;; i &amp;lt; samplemap.&lt;span class="fu"&gt;getLength&lt;/span&gt;(); j++) {
+  System.&lt;span class="fu"&gt;out&lt;/span&gt;.&lt;span class="fu"&gt;println&lt;/span&gt;(samplemap.&lt;span class="fu"&gt;item&lt;/span&gt;(j).&lt;span class="fu"&gt;getNodeName&lt;/span&gt;());
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I was surprised to see the output:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;delay
+dmax&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What was the &lt;code&gt;dmax&lt;/code&gt; attribute doing there? I could see the &lt;code&gt;delay&lt;/code&gt; attribute defined, but I didn’t know where &lt;code&gt;dmax&lt;/code&gt; came from. My intuition was there &lt;code&gt;dmax&lt;/code&gt; seems to be a default attribute that is specified somewhere.&lt;/p&gt;
+&lt;p&gt;Right at the top of the configuration file is the XML doctype, and even though I didn’t know anything about that, I could identify the culprit&lt;/p&gt;
+&lt;pre class="sourceCode xml"&gt;&lt;code class="sourceCode xml"&gt;&lt;span class="er"&gt;&amp;lt;&lt;/span&gt;!ELEMENT sample (mbean)*&amp;gt;
+  &lt;span class="er"&gt;&amp;lt;&lt;/span&gt;!ATTLIST sample delay CDATA #REQUIRED&amp;gt;
+  &lt;span class="er"&gt;&amp;lt;&lt;/span&gt;!ATTLIST sample dmax CDATA &amp;quot;&amp;quot; &amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So I noticed that &lt;code&gt;delay&lt;/code&gt; and &lt;code&gt;dmax&lt;/code&gt; are defined there, so I went to research a bit about &lt;a href="http://xmlwriter.net/xml_guide/attlist_declaration.shtml"&gt;XML doctypes and ATTLIST&lt;/a&gt;. I learned that the definition &lt;code&gt;&amp;lt;!ATTLIST sample dmax CDATA &amp;quot;&amp;quot; &amp;gt;&lt;/code&gt; meant that &lt;code&gt;dmax&lt;/code&gt; was not a &lt;em&gt;required&lt;/em&gt; attribute, the XML does not have to specify this attribute. And if &lt;code&gt;dmax&lt;/code&gt; is not specified, it will have the value of &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;, the empty string!&lt;/p&gt;
+&lt;p&gt;So basically the empty string came from the doctype! &lt;a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L207"&gt;All&lt;/a&gt; &lt;a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L227"&gt;the&lt;/a&gt; &lt;a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L242"&gt;checks&lt;/a&gt; trying to make the default value of &lt;code&gt;dmax&lt;/code&gt; &lt;code&gt;&amp;quot;0&amp;quot;&lt;/code&gt; wasn’t working because of the doctype, resulting in the &lt;code&gt;NumberFormatException&lt;/code&gt; when &lt;a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L249"&gt;trying to parse&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="resolution"&gt;Resolution&lt;/h2&gt;
+&lt;p&gt;I have &lt;a href="https://github.com/ganglia/jmxetric/issues/22"&gt;suggested two ways&lt;/a&gt; to fix this,&lt;/p&gt;
+&lt;ol style="list-style-type: decimal"&gt;
+&lt;li&gt;Remove this attribute from the doctype. I’m not sure what impact this would have, because I don’t know if the &lt;code&gt;sample&lt;/code&gt; requires a &lt;code&gt;dmax&lt;/code&gt; to be declared at that level. The &lt;code&gt;mbean&lt;/code&gt;, &lt;code&gt;attribute&lt;/code&gt;, and &lt;code&gt;composite&lt;/code&gt; nodes all have the &lt;code&gt;dmax&lt;/code&gt; attribute as well&lt;/li&gt;
+&lt;li&gt;Add the default value of &lt;code&gt;&amp;quot;0&amp;quot;&lt;/code&gt; to the doctype. This seems to be a better way, referring to the &lt;a href="http://github.com/ganglia/jmxetric/blob/master/etc/jmxetric.xml#L6"&gt;default configuration file&lt;/a&gt;, the attribute &lt;code&gt;initialdelay&lt;/code&gt; is given the default value of &lt;code&gt;&amp;quot;0&amp;quot;&lt;/code&gt; simplifying the processing.&lt;/li&gt;
+&lt;/ol&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sat, 10 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-10:ng-zhi-an-default-value-of-attlist-attributes-of-an-xml-element-xml-doctype.html</guid></item><item><title>Ng Zhi An - Exploring Apache Karaf MBeans using JConsole</title><link>http://blog.ngzhian.com/ng-zhi-an-exploring-apache-karaf-mbeans-using-jconsole.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Exploring Apache Karaf MBeans using JConsole&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May 10, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;This post will be about using JConsole to explore the MBeans exposed by Apache Karaf. &lt;a href="http://karaf.apache.org/manual/latest-2.3.x/users-guide/jmx.html"&gt;Here’s&lt;/a&gt; a list of MBeans that Karaf provides.&lt;/p&gt;
+&lt;h2 id="getting-karaf-up-and-running"&gt;Getting Karaf up and running&lt;/h2&gt;
+&lt;p&gt;Karaf provides an extremely clear an concise &lt;a href="http://karaf.apache.org/manual/latest-2.3.x/quick-start.html"&gt;quick start guide&lt;/a&gt; and I was able to up everything up and running by following the instructions.&lt;/p&gt;
+&lt;h2 id="monitoring-using-jconsole"&gt;Monitoring using JConsole&lt;/h2&gt;
+&lt;ol style="list-style-type: decimal"&gt;
+&lt;li&gt;Fire up Karaf using &lt;code&gt;$KARAF_INSTALL_LOCATION\bin\start&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Fire up JConsole&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-karaf.png" alt="JConsole can detect the Karaf process" /&gt;&lt;p class="caption"&gt;JConsole can detect the Karaf process&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Under the new connection window, JConsole should be able to detect the Karaf process. We can connect to it, and head straight to the MBeans tab. We can immediately see the list of MBeans available. The &lt;code&gt;java.lang.Memory&lt;/code&gt; and &lt;code&gt;java.lang.Threading&lt;/code&gt; MBeans are there, and we explored it in a previous blog post.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-karaf-mbeans.png" alt="MBeans tab of the Karaf process" /&gt;&lt;p class="caption"&gt;MBeans tab of the Karaf process&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id="the-karaf-mbeans"&gt;The Karaf MBeans&lt;/h2&gt;
+&lt;p&gt;Karaf actually provides quite a number of MBeans, and are categorized by &lt;code&gt;type&lt;/code&gt;. For example the mbeans have the domain &lt;code&gt;org.apache.karaf&lt;/code&gt;, and some of the types are &lt;code&gt;admin&lt;/code&gt;, &lt;code&gt;bundles&lt;/code&gt;, &lt;code&gt;config&lt;/code&gt;, etc. All of them have the same &lt;code&gt;name&lt;/code&gt;, which is &lt;code&gt;root&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-karaf-mbeans-all.png" alt="Karaf provides MBeans of many kinds" /&gt;&lt;p class="caption"&gt;Karaf provides MBeans of many kinds&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id="camel-mbeans"&gt;Camel MBeans&lt;/h2&gt;
+&lt;p&gt;While exploring MBeans using JConsole, and following the Karaf quickstart, I chanced upon MBeans with the domain &lt;code&gt;org.apache.camel&lt;/code&gt;, so it seems like &lt;code&gt;Camel&lt;/code&gt; provides quite a number of mbeans as well! What’s interesting to me is that I am able to see &lt;code&gt;Camel&lt;/code&gt; MBeans when my connection is to &lt;code&gt;Karaf&lt;/code&gt;. I think this is because &lt;code&gt;Camel&lt;/code&gt; was started by &lt;code&gt;Karaf&lt;/code&gt;, so they are attached to the same process.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-karaf-camel.png" alt="Camel provides MBeans as well" /&gt;&lt;p class="caption"&gt;Camel provides MBeans as well&lt;/p&gt;
+&lt;/div&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sat, 10 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-10:ng-zhi-an-exploring-apache-karaf-mbeans-using-jconsole.html</guid></item><item><title>Ng Zhi An - Using JConsole to look at MBeans</title><link>http://blog.ngzhian.com/ng-zhi-an-using-jconsole-to-look-at-mbeans.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Using JConsole to look at MBeans&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May  8, 2014
+    
+&lt;/div&gt;
+
+&lt;h2 id="what-is-jconsole"&gt;What is JConsole&lt;/h2&gt;
+&lt;p&gt;JConsole is a GUI tool that monitors and display information about performance, usage, and other statistics of applications running on the JVM. It is useful in this case because it lets you monitor and manage all MBeans registered with the platform MBean server.&lt;/p&gt;
+&lt;h2 id="running-jconsole"&gt;Running JConsole&lt;/h2&gt;
+&lt;p&gt;To start JConsole, simply run the executable, for me it was at &lt;code&gt;C:\Program Files\Java\jdk1.7.0_45\bin\jconsole.exe&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;You will then be presented with a dialog to set up a new connection. With JConsole is run with no arguments, this dialog will pop up, and it will detect any Java applications that is running currently. We will just select the JConsole process itself, to just get a feel of how JConsole looks like.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-new-dialog.png" alt="New connection dialog when you first start jconsole" /&gt;&lt;p class="caption"&gt;New connection dialog when you first start jconsole&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The first tab is the &lt;em&gt;Overview&lt;/em&gt;, which shows the heap memory usage, thread count, classes loaded and CPU usage for the monitored process. The other threads provides more details in these particular fields, but what I am interested in here is the MBeans tab.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-overview-tab.png" alt="Overview tab after you connect to a process to monitor" /&gt;&lt;p class="caption"&gt;Overview tab after you connect to a process to monitor&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id="poking-at-mbeans"&gt;Poking at MBeans&lt;/h2&gt;
+&lt;p&gt;The MBeans tab displays all MBeans registered with the platform MBeans server. And all Java applications have a number of MBeans that will be registered by default. Of particular interest to me are the MBeans that are read by jmxetric currently, and these can be found in the configuration file &lt;a href="https://github.com/ganglia/jmxetric/blob/master/etc/jmxetric.xml"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-mbeans-tab.png" alt="MBeans tab in JConsole shows you all registered MBeans" /&gt;&lt;p class="caption"&gt;MBeans tab in JConsole shows you all registered MBeans&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Those MBeans include &lt;code&gt;java.lang:type=Memory&lt;/code&gt;, &lt;code&gt;java.lang:type=Threading&lt;/code&gt;, and &lt;code&gt;java.lang:type=OperatingSystem&lt;/code&gt;. If we look at the configuration file, we can notice 2 different kinds of MBeans.&lt;/p&gt;
+&lt;ol style="list-style-type: decimal"&gt;
+&lt;li&gt;&lt;p&gt;MBeans with &lt;code&gt;attribute&lt;/code&gt; with &lt;code&gt;composite&lt;/code&gt;s:&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&amp;lt;mbean name=&lt;span class="st"&gt;&amp;quot;java.lang:type=Memory&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;Memory&amp;quot;&lt;/span&gt;&amp;gt;
+	&amp;lt;attribute name=&lt;span class="st"&gt;&amp;quot;HeapMemoryUsage&amp;quot;&lt;/span&gt;&amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;init&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;Heap_init&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt;/&amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;committed&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;Heap_committed&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt;/&amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;used&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;Heap_used&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; /&amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;max&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;Heap_max&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; /&amp;gt;
+	&amp;lt;/attribute&amp;gt;
+	&amp;lt;attribute name=&lt;span class="st"&gt;&amp;quot;NonHeapMemoryUsage&amp;quot;&lt;/span&gt; &amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;init&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;NonHeap_init&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; /&amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;committed&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;NonHeap_committed&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; /&amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;used&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;NonHeap_used&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; /&amp;gt;
+		&amp;lt;composite name=&lt;span class="st"&gt;&amp;quot;max&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;NonHeap_max&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int32&amp;quot;&lt;/span&gt; units=&lt;span class="st"&gt;&amp;quot;bytes&amp;quot;&lt;/span&gt; /&amp;gt;
+	&amp;lt;/attribute&amp;gt;
+&amp;lt;/mbean&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;MBeans with &lt;code&gt;attributes&lt;/code&gt;&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&amp;lt;mbean name=&lt;span class="st"&gt;&amp;quot;java.lang:type=Threading&amp;quot;&lt;/span&gt; pname=&lt;span class="st"&gt;&amp;quot;Threading&amp;quot;&lt;/span&gt; &amp;gt;
+	&amp;lt;attribute name=&lt;span class="st"&gt;&amp;quot;ThreadCount&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int16&amp;quot;&lt;/span&gt; /&amp;gt;
+	&amp;lt;attribute name=&lt;span class="st"&gt;&amp;quot;DaemonThreadCount&amp;quot;&lt;/span&gt; type=&lt;span class="st"&gt;&amp;quot;int16&amp;quot;&lt;/span&gt; /&amp;gt;
+&amp;lt;/mbean&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This is because these 2 MBeans are different. The first, &lt;code&gt;Memory&lt;/code&gt; is a MXBean, which allows for composite attributes, the second &lt;code&gt;Threading&lt;/code&gt; is a simple MBean. The difference are explained briefly in an &lt;a href="http://docs.oracle.com/javase/tutorial/jmx/mbeans/mxbeans.html"&gt;Oracle tutorial&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We can take a look at the mapping between the configuration in jmxetric and the data shown in JConsole.&lt;/p&gt;
+&lt;p&gt;Each of the &lt;em&gt;folder&lt;/em&gt; on the left in JConsole is a collection of MBeans, grouped by the package name. If we click on &lt;code&gt;java.lang&lt;/code&gt;, it is expanded to show the MBeans we see in the jmxetric configuration. Clicking on each of them, &lt;code&gt;Memory&lt;/code&gt;, &lt;code&gt;OperatingSystem&lt;/code&gt;, and &lt;code&gt;Threading&lt;/code&gt; will bring up the MBean information and descriptor on the right.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-mbeans-info.png" alt="MBeans tab in JConsole shows you all registered MBeans" /&gt;&lt;p class="caption"&gt;MBeans tab in JConsole shows you all registered MBeans&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id="the-threading-mbean"&gt;The &lt;code&gt;Threading&lt;/code&gt; MBean&lt;/h2&gt;
+&lt;p&gt;We can see that the &lt;code&gt;ObjectName&lt;/code&gt; under the &lt;code&gt;MBeanInfo&lt;/code&gt; pane maps directly to the &lt;code&gt;name&lt;/code&gt; attribute of the &lt;code&gt;mbean&lt;/code&gt; tag in the xml. For example, &lt;code&gt;java.lang:type=Threading&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;If we expand the &lt;code&gt;Threading&lt;/code&gt; MBean on the left pane, we can view it’s attributes and operations. As discussed in a previous blog post, MBeans can expose attributes that are readable and/or writable, and also a set of operations that can be invoked.&lt;/p&gt;
+&lt;p&gt;For &lt;code&gt;Threading&lt;/code&gt;, if we select the &lt;code&gt;ThreadAllocatedMemoryEnabled&lt;/code&gt; attribute, we can see that its &lt;code&gt;Writable&lt;/code&gt; field is set to true. Hence we can actually double click and edit the value of this attribute!&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-threading-mbean-writable.png" alt="Writable attribute of the Threading MBean" /&gt;&lt;p class="caption"&gt;Writable attribute of the Threading MBean&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;However if we select &lt;code&gt;ThreadAllocatedMemorySupported&lt;/code&gt;, its &lt;code&gt;Writable&lt;/code&gt; field is set to false, hence double clicking on the value doesn’t let us change anything.&lt;/p&gt;
+&lt;p&gt;If we look further down, we can see the attributes specified by jxmetric, &lt;code&gt;ThreadCount&lt;/code&gt; and &lt;code&gt;DaemonThreadCount&lt;/code&gt;, both of which are &lt;strong&gt;not&lt;/strong&gt; &lt;code&gt;Writable&lt;/code&gt; and are &lt;code&gt;int&lt;/code&gt;s.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-threading-mbean-threadcount.png" alt="ThreadCount attribute of the Threading MBean" /&gt;&lt;p class="caption"&gt;ThreadCount attribute of the Threading MBean&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-threading-mbean-daemonthreadcount.png" alt="DaemonThreadCount attribute of the Threading MBean" /&gt;&lt;p class="caption"&gt;DaemonThreadCount attribute of the Threading MBean&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id="the-memory-mbean"&gt;The &lt;code&gt;Memory&lt;/code&gt; MBean&lt;/h2&gt;
+&lt;p&gt;Let’s take a look at the more complicated &lt;code&gt;Memory&lt;/code&gt; MBean. First, we check out the attribute &lt;code&gt;NonHeapMemoryUsage&lt;/code&gt;. The jmxetric configuration file tells us that this attribute is made up of a few &lt;em&gt;sub-attributes&lt;/em&gt;, or composite. And under the attribute value we can see that the value of this MBean is &lt;code&gt;javax.management.openmbean.CompositeDataSupport&lt;/code&gt; and it has a type &lt;code&gt;javax.management.composite.CompositeData&lt;/code&gt;. What this means is that Java helps us to manage this composite data, taking care of the translation process on its own. Again this can be contrasted to the &lt;code&gt;ThreadCount&lt;/code&gt; attribute of the &lt;code&gt;Threading&lt;/code&gt; MBean, which in my case had a value of &lt;code&gt;38&lt;/code&gt; and a type of &lt;code&gt;int&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-memory-mbean-nonheapmemoryusage.png" alt="NonHeapMemoryUsage attribute of Memory MBean" /&gt;&lt;p class="caption"&gt;NonHeapMemoryUsage attribute of Memory MBean&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;So where are the composites &lt;code&gt;init&lt;/code&gt;, &lt;code&gt;committed&lt;/code&gt;, &lt;code&gt;used&lt;/code&gt;, and &lt;code&gt;max&lt;/code&gt;? We have to look at the &lt;em&gt;Descriptor&lt;/em&gt; pane at the bottom, and check out the attribute &lt;code&gt;openType&lt;/code&gt;, which has the value &lt;code&gt;javax.management.openmbean.CompositeType(name=java.lang.management.MemoryUsage,items=((itemName=committed,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long)),(itemName=init,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long)),(itemName=max,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long)),(itemName=used,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long))))&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This really long type basically describes the whole composite data. Each of its component has an &lt;code&gt;itemName&lt;/code&gt; - which matches the &lt;code&gt;name&lt;/code&gt; field of the &lt;code&gt;composite&lt;/code&gt; tag in jmxetric), &lt;code&gt;itemType&lt;/code&gt; - which in this case are all &lt;code&gt;javax.management.openmbean.SimpleType(name=java.lang.Long)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;And the same can be said for the &lt;code&gt;NonHeapMemoryUsage&lt;/code&gt; attribute, which is again a composite data type having the same composites as &lt;code&gt;HeapMemoryUsage&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/jconsole-memory-mbean-heapmemoryusage.png" alt="HeapMemoryUsage attribute of Memory MBean" /&gt;&lt;p class="caption"&gt;HeapMemoryUsage attribute of Memory MBean&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;In my next few blog posts, I will be using JConsole to look at other Java applications, namely HornetQ, Karaf, Wildfly, and Tomcat, as suggested by my mentor.&lt;/p&gt;
+&lt;h2 id="references"&gt;References&lt;/h2&gt;
+&lt;p&gt;&lt;a href="http://docs.oracle.com/javase/7/docs/technotes/guides/management/jconsole.html"&gt;Guide to using jconsole&lt;/a&gt;&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Thu, 08 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-08:ng-zhi-an-using-jconsole-to-look-at-mbeans.html</guid></item><item><title>Ng Zhi An - GSOC 2014, jmxetric</title><link>http://blog.ngzhian.com/ng-zhi-an-gsoc-2014-jmxetric.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;GSOC 2014, jmxetric&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May  7, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;Couple of weeks ago, I received great news that my project with &lt;a href="http://ganglia.sourceforge.net"&gt;Ganglia&lt;/a&gt; has been accepted into GSOC. I’m extremely glad to be given this opportunity to participate in open source, it’s a dream come true for me.&lt;/p&gt;
+&lt;h2 id="jmxetric-is"&gt;jmxetric is…&lt;/h2&gt;
+&lt;p&gt;My project is on &lt;a href="http://github.com/ganglia/jmxetric"&gt;jmxetric&lt;/a&gt;, which is a jvm instrumentation to ganglia.&lt;/p&gt;
+&lt;h2 id="the-plans"&gt;The plans&lt;/h2&gt;
+&lt;p&gt;A rough overview of my plan is to improve the current current implementation, fix outstanding issues, and implement more features. The &lt;em&gt;more features&lt;/em&gt; part include support for popular Java software, such as HornetQ, Karaf, Tomcat, and Wildfly.&lt;/p&gt;
+&lt;p&gt;This is quite a challenge for me because I’ve not been exposed to Java EE technologies, and most of these buzzwords are foreign to me. But I’m confident that I will pick them up pretty fast, and am very fortunate to have an extremely patient mentor, Daniel to guide me.&lt;/p&gt;
+&lt;h2 id="this-series"&gt;This series&lt;/h2&gt;
+&lt;p&gt;I’ve decided, having been inspired by other GSOC students, to document this entire journey in a series of blog posts tagged &lt;strong&gt;gsoc&lt;/strong&gt;. This series will chronicle every detail of this experience, including what I learn, pitfalls, reflections.&lt;/p&gt;
+&lt;h2 id="thank-you"&gt;Thank you&lt;/h2&gt;
+&lt;p&gt;Once again, thank you Google, Ganglia, and Daniel for this extremely rare chance. I’ll work hard and do my best for this project! Here’s to a fantastic summer :)&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Wed, 07 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-07:ng-zhi-an-gsoc-2014-jmxetric.html</guid></item><item><title>Ng Zhi An - JMX and MBeans</title><link>http://blog.ngzhian.com/ng-zhi-an-jmx-and-mbeans.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;JMX and MBeans&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May  7, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;The first thing was to understand a bit more about what jmxetric does. But before that we have to lay the foundation first, let’s talk about JMX and MBean.&lt;/p&gt;
+&lt;h2 id="jmx-is-a-technology-that-lets-you-monitor-resources-easily"&gt;JMX is a technology that lets you monitor resources easily&lt;/h2&gt;
+&lt;p&gt;JMX stands for Java Management Extension. Resources can be applications, devices, services, etc. By monitoring, it means that you can 1. consult and change configuration, 2. view statistics of the application 3. be notified of changes and/or erros&lt;/p&gt;
+&lt;p&gt;How can you make use of this JMX technology? You follow the patterns and interfaces defined in this specification. And one of it is MBean&lt;/p&gt;
+&lt;h2 id="mbean-or-managed-bean"&gt;MBean, or &lt;em&gt;Managed Bean&lt;/em&gt;&lt;/h2&gt;
+&lt;p&gt;A MBean, is a Java object that is associated with a resource that you want to monitor. All MBeans expose an interface that has 1. set of readable and/or writable attributes 2. set of invokable operations 3. self-description&lt;/p&gt;
+&lt;p&gt;You can make an MBean by making a Java interface called &lt;code&gt;FooMBean&lt;/code&gt;, and a class &lt;code&gt;Foo&lt;/code&gt; that implements that interface.&lt;/p&gt;
+&lt;h2 id="you-can-manage-mbeans-using-a-jmx-agent"&gt;You can manage MBeans using a JMX agent&lt;/h2&gt;
+&lt;p&gt;It’s strange that you still need to &lt;em&gt;manage&lt;/em&gt; a &lt;em&gt;managed bean&lt;/em&gt;, but that’s just how it goes. A JMX agent is the manager of all these MBeans and the resources instrumented by the MBeans. The agent consists of a MBean server, which is where MBeans are registered. I think of the MBean server as a manager that overseas the registered MBeans.&lt;/p&gt;
+&lt;h2 id="how-does-jmxetric-fit-in-here"&gt;How does jmxetric fit in here?&lt;/h2&gt;
+&lt;p&gt;The role of jmxetric is then to pool these MBeans, and pass on the attributes to Ganglia.&lt;/p&gt;
+&lt;h2 id="references"&gt;References&lt;/h2&gt;
+&lt;p&gt;&lt;a href="docs.oracle.com/javase/tutorial/jmx/index.html"&gt;Oracle’s tutorial trail on JMX&lt;/a&gt; &lt;a href="docs.oracle.com/javase/tutorial/jmx/mbeans/standard.html"&gt;Oracle’s tutorial on MBeans&lt;/a&gt;&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Wed, 07 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-07:ng-zhi-an-jmx-and-mbeans.html</guid></item><item><title>Ng Zhi An - Debian Jessie, Screen resolution, and VirtualBox Guest Additions</title><link>http://blog.ngzhian.com/ng-zhi-an-debian-jessie-screen-resolution-and-virtualbox-guest-additions.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Debian Jessie, Screen resolution, and VirtualBox Guest Additions&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May  4, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;I decided to upgrade to Debian Jessie, to take advantage of the newer packages available, mainly the new GHC version. Initially I wanted to upgrade from my current Wheezy, but I faced problems with the screen resolution. I thought that had something to do with a bad upgrade, I did something wrong while upgrading, so I decided to do a fresh install. To my surprise, I met with the same issue.&lt;/p&gt;
+&lt;p&gt;For the record this is the system I’m running now:&lt;/p&gt;
+&lt;pre class="sourceCode bash"&gt;&lt;code class="sourceCode bash"&gt;$ &lt;span class="kw"&gt;uname&lt;/span&gt; -a
+&lt;span class="kw"&gt;Linux&lt;/span&gt; debian-gsoc 3.13-1-amd64 &lt;span class="co"&gt;#1 SMP Debian 3.13.10-1 (2014-04-15) x86_64 GNU/Linux&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="the-problem"&gt;The problem&lt;/h2&gt;
+&lt;p&gt;The issue was that the screen resolution was not right. Previously I managed to get 1920x1080, which is my native resolution. But after installing Jessie, I could only get 1240x768, that’s not good at all. &lt;code&gt;xrandr -q&lt;/code&gt; says something like &lt;code&gt;failed to get size of output default&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="steps-to-solving"&gt;Steps to solving&lt;/h2&gt;
+&lt;p&gt;I researched about it, and found many suggested solutions, most had to do with editing &lt;code&gt;/etc/X11/xorg.conf&lt;/code&gt;. Those didn’t work for me at all, and I figure that was because I was running on VirtualBox. The magical search term was this&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;debian wheezy virtualbox resolution&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;which led me to &lt;a href="https://forums.virtualbox.org/viewtopic.php?f=7&amp;amp;t=44117"&gt;this forum post&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The OP faced a problem with screen resolution on his guest os as well, and there are replies that mention an old VirtualBox Guest Additions. Apparently Debian Jessie ships with a version of Guest Additions, but it isn’t the lastest one.&lt;/p&gt;
+&lt;p&gt;My take away was to try to install Guest Additions, and see what happens. &lt;a href="www.binarytides.com/virtualbox-guest-additions-debian-wheezy/"&gt;This post&lt;/a&gt; was extremely helpful. I ignored the part on &lt;code&gt;lsmod&lt;/code&gt; and skipped straight to &lt;code&gt;apt-get install build-essentials module-assistant&lt;/code&gt;. I then got stuck at running &lt;code&gt;VBoxLinuxAdditions.run&lt;/code&gt; - I couldn’t mount the cdrom.&lt;/p&gt;
+&lt;h2 id="more-problems"&gt;More problems&lt;/h2&gt;
+&lt;p&gt;The simplest way to mount the cdrom onto your guest os is to go to the VirtualBox window, click on &lt;code&gt;Devices &amp;gt; Insert Guest Additions CD Image&lt;/code&gt;, but somehow that didn’t work for me. Click that didn’t see to have any effect, my &lt;code&gt;/media/cdrom&lt;/code&gt; was still empty. I decided to mount the cdrom manually.&lt;/p&gt;
+&lt;h2 id="success"&gt;Success!&lt;/h2&gt;
+&lt;p&gt;I got most of the information from &lt;a href="www.virtualbox.org/manual/ch04.html#idp55231856"&gt;VirtualBox’s official manual&lt;/a&gt;. Basically it involved me going to the VirtualBox window, selecting &lt;code&gt;Devices &amp;gt; CD/DVD Devices &amp;gt; Choose a virtual CD/DVD disk file...&lt;/code&gt; and then navigate to &lt;code&gt;C:\Program Files\Oracle\VirtualBox&lt;/code&gt;. Substitute that for wherever you installed VirtualBox.&lt;/p&gt;
+&lt;p&gt;After that I manually mounted the cdrom, with help from &lt;a href="www.cyberciti.biz/faq/mounting-cdrom-in-linux/"&gt;nixcraft&lt;/a&gt;, and ran the file&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# mount /dev/cdrom /media/cdrom
+# /media/cdrom/VBoxLinuxAdditions.run&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Wait a couple of minutes and rebooted, and now everything is fine! &lt;code&gt;xrandr -q&lt;/code&gt; now gives me many more options, including 1920x1080, and I happily selected that using &lt;code&gt;xrandr --output VBOX0 --mode 1920x1080&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The initial reason why I decided to virtualize was because of UEFI issues, and because virtualization has less problems. Today’s challenges has made me realize how it is difficult to pinpoint where the problem lies, because technology is so complex now. But still, a simple installation leading to so much convenience, I’ll definitely remember this lesson!&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sun, 04 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-04:ng-zhi-an-debian-jessie-screen-resolution-and-virtualbox-guest-additions.html</guid></item><item><title>Ng Zhi An - Rock Paper Scissors in Haskell</title><link>http://blog.ngzhian.com/ng-zhi-an-rock-paper-scissors-in-haskell.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Rock Paper Scissors in Haskell&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on May  1, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;This is a simple &lt;a href="www.github.com/ngzhian/rcp-haskell"&gt;Rock Paper Scissors&lt;/a&gt; game in Haskell, it was made as an exercise in learning Haskell, especially the syntax, data constructors, and IO.&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img src="../images/rcp-haskell.png" alt="How the game looks like now" /&gt;&lt;p class="caption"&gt;How the game looks like now&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2 id="program-design"&gt;Program Design&lt;/h2&gt;
+&lt;p&gt;This is a very simple program. The parts of the code that has to do with the logic is actually very short and simple, because RPS has very simple rules:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="co"&gt;-- Player or AI can make any of these moves each turn&lt;/span&gt;
+&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Move&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Rock&lt;/span&gt; &lt;span class="fu"&gt;|&lt;/span&gt; &lt;span class="dt"&gt;Paper&lt;/span&gt; &lt;span class="fu"&gt;|&lt;/span&gt; &lt;span class="dt"&gt;Scissors&lt;/span&gt; &lt;span class="kw"&gt;deriving&lt;/span&gt; (&lt;span class="dt"&gt;Show&lt;/span&gt;)
+
+&lt;span class="co"&gt;-- Player is the current person playing, and AI is our intelligent program!&lt;/span&gt;
+&lt;span class="kw"&gt;data&lt;/span&gt; &lt;span class="dt"&gt;Winner&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Player&lt;/span&gt; &lt;span class="fu"&gt;|&lt;/span&gt; &lt;span class="dt"&gt;AI&lt;/span&gt; &lt;span class="fu"&gt;|&lt;/span&gt; &lt;span class="dt"&gt;Draw&lt;/span&gt; &lt;span class="kw"&gt;deriving&lt;/span&gt; (&lt;span class="dt"&gt;Show&lt;/span&gt;)
+
+&lt;span class="co"&gt;-- use a throwaway function getWinner' because&lt;/span&gt;
+&lt;span class="co"&gt;-- we want to be clear that `user' is the first parameter&lt;/span&gt;
+&lt;span class="ot"&gt;getWinner ::&lt;/span&gt; &lt;span class="dt"&gt;Move&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Move&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Winner&lt;/span&gt;
+getWinner user ai &lt;span class="fu"&gt;=&lt;/span&gt; getWinner' user ai
+  &lt;span class="kw"&gt;where&lt;/span&gt; getWinner' &lt;span class="dt"&gt;Rock&lt;/span&gt; &lt;span class="dt"&gt;Paper&lt;/span&gt;     &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;AI&lt;/span&gt;
+        getWinner' &lt;span class="dt"&gt;Rock&lt;/span&gt; &lt;span class="dt"&gt;Scissors&lt;/span&gt;  &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Player&lt;/span&gt;
+        getWinner' &lt;span class="dt"&gt;Paper&lt;/span&gt; &lt;span class="dt"&gt;Scissors&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;AI&lt;/span&gt;
+        getWinner' &lt;span class="dt"&gt;Paper&lt;/span&gt; &lt;span class="dt"&gt;Rock&lt;/span&gt;     &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Player&lt;/span&gt;
+        getWinner' &lt;span class="dt"&gt;Scissors&lt;/span&gt; &lt;span class="dt"&gt;Rock&lt;/span&gt;  &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;AI&lt;/span&gt;
+        getWinner' &lt;span class="dt"&gt;Scissors&lt;/span&gt; &lt;span class="dt"&gt;Paper&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Player&lt;/span&gt;
+        getWinner' _        _     &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Draw&lt;/span&gt;
+
+&lt;span class="co"&gt;-- a heuristics&lt;/span&gt;
+&lt;span class="ot"&gt;makeAIMove ::&lt;/span&gt; &lt;span class="dt"&gt;Move&lt;/span&gt;
+makeAIMove &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Paper&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I think the &lt;code&gt;getWinner&lt;/code&gt; method is quite ugly, but I haven’t thought of a good way to write it. Maybe I can differentiate the &lt;code&gt;Move&lt;/code&gt; to &lt;code&gt;UserMove&lt;/code&gt; or &lt;code&gt;AIMove&lt;/code&gt;, something along those lines, so I can make use of the type checker to ensure what that the arguments are fed correctly.&lt;/p&gt;
+&lt;p&gt;The AI is currently really &lt;em&gt;smart&lt;/em&gt;, reason is that I’m not concerned with learning about random numbers now, I just want this to be an exercise in writing Haskell, doing IO and some other stuff.&lt;/p&gt;
+&lt;h2 id="interaction-with-user"&gt;Interaction with User&lt;/h2&gt;
+&lt;p&gt;This is a text-based game, so there are quite a few instances where the program prints a line, and gets another line of input from the user, which resulted in me writing this helper:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="ot"&gt;getResponse ::&lt;/span&gt; &lt;span class="dt"&gt;String&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;IO&lt;/span&gt; &lt;span class="dt"&gt;String&lt;/span&gt;
+getResponse s &lt;span class="fu"&gt;=&lt;/span&gt; putStrLn s &lt;span class="fu"&gt;&amp;gt;&amp;gt;&lt;/span&gt; getLine&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;&amp;gt;&amp;gt;&lt;/code&gt; operator basically discards whatever output &lt;code&gt;putStrLn s&lt;/code&gt; gives. This is required because &lt;code&gt;getLine&lt;/code&gt; does not take any arguments.&lt;/p&gt;
+&lt;p&gt;Initially I wanted to define all the interaction strings else where, thereby removing &lt;em&gt;magic constants&lt;/em&gt;, and also stick to the DRY principle:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="ot"&gt;welcomeMessage ::&lt;/span&gt; &lt;span class="dt"&gt;String&lt;/span&gt;
+welcomeMessage &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;Lets play Rock Paper Scissors&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But I found this to be too verbose and distracting. I decided that instead of doing this, I should refactor it such that a string is only used at a single place. I made good progress with that, and the only String that is repeated is the prompt/insructions.&lt;/p&gt;
+&lt;h2 id="handling-invalid-input"&gt;Handling invalid input&lt;/h2&gt;
+&lt;p&gt;I handled invalid input using &lt;code&gt;Either&lt;/code&gt; and recursion. &lt;code&gt;Either&lt;/code&gt; allows me to determine if the user’s input was valid or not, and this check is done by &lt;code&gt;convertToMove&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="co"&gt;-- handle invalid cases&lt;/span&gt;
+&lt;span class="ot"&gt;convertToMove ::&lt;/span&gt; &lt;span class="dt"&gt;String&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Either&lt;/span&gt; &lt;span class="dt"&gt;String&lt;/span&gt; &lt;span class="dt"&gt;Move&lt;/span&gt;
+convertToMove input &lt;span class="fu"&gt;=&lt;/span&gt; convert &lt;span class="fu"&gt;$&lt;/span&gt; map toLower input
+  &lt;span class="kw"&gt;where&lt;/span&gt; convert &lt;span class="st"&gt;&amp;quot;r&amp;quot;&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Right&lt;/span&gt; &lt;span class="dt"&gt;Rock&lt;/span&gt;
+        convert &lt;span class="st"&gt;&amp;quot;s&amp;quot;&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Right&lt;/span&gt; &lt;span class="dt"&gt;Scissors&lt;/span&gt;
+        convert &lt;span class="st"&gt;&amp;quot;p&amp;quot;&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Right&lt;/span&gt; &lt;span class="dt"&gt;Paper&lt;/span&gt;
+        convert _   &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Left&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;I don't know that move!&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above function is called by another function, &lt;code&gt;getValidMove&lt;/code&gt;, whos job is to get a valid move from the user. By pattern matching against the value of &lt;code&gt;convertToMove&lt;/code&gt;, it can either display the error message when it is a &lt;code&gt;Left&lt;/code&gt;, and recursively call itself, or it will return the &lt;code&gt;Move&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="ot"&gt;getValidMove ::&lt;/span&gt; &lt;span class="dt"&gt;IO&lt;/span&gt; &lt;span class="dt"&gt;Move&lt;/span&gt;
+getValidMove &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="kw"&gt;do&lt;/span&gt;
+  userMove &lt;span class="ot"&gt;&amp;lt;-&lt;/span&gt; convertToMove &lt;span class="fu"&gt;&amp;lt;$&amp;gt;&lt;/span&gt; getResponse &lt;span class="st"&gt;&amp;quot;What's your move?&amp;quot;&lt;/span&gt;
+  &lt;span class="kw"&gt;case&lt;/span&gt; userMove &lt;span class="kw"&gt;of&lt;/span&gt;
+    &lt;span class="dt"&gt;Left&lt;/span&gt; msg &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;do&lt;/span&gt;
+      putStrLn msg
+      putStrLn &lt;span class="st"&gt;&amp;quot;R for rock, P for paper, S for scissors.&amp;quot;&lt;/span&gt;
+      getValidMove
+    &lt;span class="dt"&gt;Right&lt;/span&gt; m  &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; return m&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is called from within the &lt;code&gt;game&lt;/code&gt; function. &lt;code&gt;game&lt;/code&gt; runs a single round of RPS, which is marked by an outcome, or a &lt;code&gt;Winner&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="ot"&gt;game ::&lt;/span&gt; &lt;span class="dt"&gt;IO&lt;/span&gt; ()
+game &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="kw"&gt;do&lt;/span&gt;
+  userMove &lt;span class="ot"&gt;&amp;lt;-&lt;/span&gt; getValidMove
+  play userMove makeAIMove
+  choice &lt;span class="ot"&gt;&amp;lt;-&lt;/span&gt; getResponse &lt;span class="st"&gt;&amp;quot;Continue? Y/N&amp;quot;&lt;/span&gt;
+  continue choice
+    &lt;span class="kw"&gt;where&lt;/span&gt; play m ai &lt;span class="fu"&gt;=&lt;/span&gt; putStrLn &lt;span class="fu"&gt;$&lt;/span&gt; announceWinner &lt;span class="fu"&gt;$&lt;/span&gt; getWinner m ai
+          continue &lt;span class="st"&gt;&amp;quot;y&amp;quot;&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; game
+          continue _ &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="kw"&gt;do&lt;/span&gt; putStrLn &lt;span class="st"&gt;&amp;quot;Thanks for playing!&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;announceWinner&lt;/code&gt;’s role is to give the correct String output given an outcome of a game. This is to showcase how creative I can be with messages :P&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="co"&gt;-- Gives the correct anouncement String for different outcomes of the game&lt;/span&gt;
+&lt;span class="ot"&gt;announceWinner ::&lt;/span&gt; &lt;span class="dt"&gt;Winner&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;String&lt;/span&gt;
+announceWinner &lt;span class="dt"&gt;AI&lt;/span&gt;     &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;The AI won :)&amp;quot;&lt;/span&gt;
+announceWinner &lt;span class="dt"&gt;Draw&lt;/span&gt;   &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;It was a draw!&amp;quot;&lt;/span&gt;
+announceWinner &lt;span class="dt"&gt;Player&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;Yay you won!&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As explained above, &lt;code&gt;getValidMove&lt;/code&gt; will always give a &lt;code&gt;IO Move&lt;/code&gt;, so the value of &lt;code&gt;userMove&lt;/code&gt; is always a &lt;code&gt;Move&lt;/code&gt;. This delegation of retrieving and validating the user’s input for a move simplifies this function. I should adopt this way of building and composing functions more.&lt;/p&gt;
+&lt;p&gt;The entire program runs in the &lt;code&gt;main&lt;/code&gt; function:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="ot"&gt;main ::&lt;/span&gt; &lt;span class="dt"&gt;IO&lt;/span&gt; ()
+main &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="kw"&gt;do&lt;/span&gt;
+  &lt;span class="co"&gt;-- Message to user when the user first runs this program&lt;/span&gt;
+  putStrLn &lt;span class="st"&gt;&amp;quot;Lets play Rock Paper Scissors&amp;quot;&lt;/span&gt;
+  &lt;span class="co"&gt;-- Instructions on ohw to play this game&lt;/span&gt;
+  putStrLn &lt;span class="st"&gt;&amp;quot;R for rock, P for paper, S for scissors.&amp;quot;&lt;/span&gt;
+  game&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This function is extremely simple, it just prints a welcome message and instructions for new players.&lt;/p&gt;
+&lt;p&gt;So that’s it, my first haskell program from scratch! Pretty happy with it now, next idea I will try is probably another simple game, like tic tac toe or some.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Thu, 01 May 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-05-01:ng-zhi-an-rock-paper-scissors-in-haskell.html</guid></item><item><title>Ng Zhi An - How Java sorts Objects</title><link>http://blog.ngzhian.com/ng-zhi-an-how-java-sorts-objects.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;How Java sorts Objects&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on April 28, 2014
+    
+&lt;/div&gt;
+
+&lt;h2 id="it-started-with-an-experiment-on-sorting"&gt;It started with an experiment on sorting…&lt;/h2&gt;
+&lt;p&gt;The reason why I had this question in my head was because I was wondering &lt;a href="../posts/2014-04-28-scissors-paper-stone-and-ordering.html"&gt;how sorting would look like for Scissors, Paper, Stone objects&lt;/a&gt;, since they have a &lt;a href="https://en.wikipedia.org/wiki/Cyclic_order"&gt;cyclic ordering&lt;/a&gt;. And in that little experiment I used Java’s &lt;code&gt;Collections.sort&lt;/code&gt; method, which is really useful if the class you wish to sort implements &lt;a href="http://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html"&gt;&lt;code&gt;Comparable&lt;/code&gt;&lt;/a&gt;, and that just requires you to define a single method &lt;code&gt;compareTo&lt;/code&gt;. So I went ahead to investigate how Java implements this method. My initial guess was that for small collections, insertion sort would be used, because it’s actually more efficient. But for larger collections, mergesort/quicksort would be used. Eventually I found out I was wrong, here’s why.&lt;/p&gt;
+&lt;h2 id="grep-that-method"&gt;Grep that method&lt;/h2&gt;
+&lt;p&gt;&lt;a href="grepcode.com"&gt;GrepCode&lt;/a&gt; is a wonderful resource. It lets you search the code bases of many open source projects including Java and Eclipse, and there’s so much to learn from robust code that is being used by so many people.&lt;/p&gt;
+&lt;p&gt;A simple search for &lt;code&gt;Collections.sort&lt;/code&gt; took me &lt;a href="http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/Collections.java#Collections.sort%28java.util.List%29"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="kw"&gt;public&lt;/span&gt; &lt;span class="dt"&gt;static&lt;/span&gt; &amp;lt;T &lt;span class="kw"&gt;extends&lt;/span&gt; Comparable&amp;lt;? &lt;span class="kw"&gt;super&lt;/span&gt; T&amp;gt;&amp;gt; &lt;span class="dt"&gt;void&lt;/span&gt;  [More ...] &lt;span class="fu"&gt;sort&lt;/span&gt;(List&amp;lt;T&amp;gt; list) {
+  Object[] a = list.&lt;span class="fu"&gt;toArray&lt;/span&gt;();
+  Arrays.&lt;span class="fu"&gt;sort&lt;/span&gt;(a);
+  ListIterator&amp;lt;T&amp;gt; i = list.&lt;span class="fu"&gt;listIterator&lt;/span&gt;();
+  &lt;span class="kw"&gt;for&lt;/span&gt; (&lt;span class="dt"&gt;int&lt;/span&gt; j=&lt;span class="dv"&gt;0&lt;/span&gt;; j&amp;lt;a.&lt;span class="fu"&gt;length&lt;/span&gt;; j++) {
+    i.&lt;span class="fu"&gt;next&lt;/span&gt;();
+    i.&lt;span class="fu"&gt;set&lt;/span&gt;((T)a[j]);
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So actually &lt;code&gt;Collections.sort&lt;/code&gt; converts the collection of objects into an &lt;code&gt;Array&lt;/code&gt; internally, and uses &lt;code&gt;Arrays.sort&lt;/code&gt;. Sounds like a simple way to &lt;a href="http://www.c2.com/cgi/wiki?DontRepeatYourself"&gt;reduce duplication of code&lt;/a&gt;!&lt;/p&gt;
+&lt;h2 id="digging-deeper-into-arrays.sort"&gt;Digging deeper into &lt;code&gt;Arrays.sort&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;So I looked into &lt;a href="http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/Arrays.java#Arrays.sort%28java.lang.Object[]%29"&gt;&lt;code&gt;Array.sort&lt;/code&gt;&lt;/a&gt; and see that &lt;code&gt;Arrays.sort&lt;/code&gt; uses either &lt;code&gt;legacyMergeSort&lt;/code&gt; or something called &lt;code&gt;ComparableTimSort&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="kw"&gt;public&lt;/span&gt; &lt;span class="dt"&gt;static&lt;/span&gt; &lt;span class="dt"&gt;void&lt;/span&gt;  [More ...] &lt;span class="fu"&gt;sort&lt;/span&gt;(Object[] a) {
+  &lt;span class="kw"&gt;if&lt;/span&gt; (LegacyMergeSort.&lt;span class="fu"&gt;userRequested&lt;/span&gt;)
+    &lt;span class="fu"&gt;legacyMergeSort&lt;/span&gt;(a);
+  &lt;span class="kw"&gt;else&lt;/span&gt;
+    ComparableTimSort.&lt;span class="fu"&gt;sort&lt;/span&gt;(a);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Well I know &lt;a href="https://en.wikipedia.org/wiki/Mergesort"&gt;mergesort&lt;/a&gt;, and it seems like you need to set some system parameter to use it, so my guess is that it isn’t used most of the time. How about the other one, &lt;code&gt;ComparableTimSort&lt;/code&gt;?&lt;/p&gt;
+&lt;h2 id="tims-sort"&gt;Tim’s sort&lt;/h2&gt;
+&lt;p&gt;I’ve never heard of such a sort before, so I continued investigating and reached the &lt;a href="http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/ComparableTimSort.java#ComparableTimSort.sort%28java.lang.Object[]%29"&gt;method definition&lt;/a&gt;, which said this was just like &lt;a href="http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/TimSort.java#TimSort"&gt;TimSort&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The comments for the &lt;code&gt;TimSort&lt;/code&gt; class actually describes the history of &lt;a href="https://en.wikipedia.org/wiki/Timsort"&gt;TimSort&lt;/a&gt;, which was first used by Python!&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="co"&gt;// A stable, adaptive, iterative mergesort that requires far fewer than n lg(n)&lt;/span&gt;
+&lt;span class="co"&gt;// comparisons when running on partially sorted arrays, while offering&lt;/span&gt;
+&lt;span class="co"&gt;// performance comparable to a traditional mergesort when run on random arrays.&lt;/span&gt;
+&lt;span class="co"&gt;// Like all proper mergesorts, this sort is stable and runs O(n log n) time (worst case).&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I haven’t completely figured out how it works, but it has &lt;code&gt;O(n)&lt;/code&gt; best case performance, and performs very well on real world data. Here’s a &lt;a href="https://svn.python.org/projects/python/trunk/Objects/listsort.txt"&gt;description of the algorithm&lt;/a&gt; by its author Tim Peters, and a &lt;a href="http://sortvis.org/algorithms/timsort.html"&gt;cool visualization&lt;/a&gt; of the process. Oh by the way that previous website, &lt;a href="http://sortvis.org"&gt;sortvis&lt;/a&gt; has visualizations of other sorting algorithms as well, check it out!&lt;/p&gt;
+&lt;h2 id="so"&gt;So…&lt;/h2&gt;
+&lt;p&gt;I don’t really understand Tim’s sort as for now, and I think this won’t be the last time I’ll see it, but at least know I know how Java sorts stuff :)&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Mon, 28 Apr 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-04-28:ng-zhi-an-how-java-sorts-objects.html</guid></item><item><title>Ng Zhi An - Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</title><link>http://blog.ngzhian.com/ng-zhi-an-scissors-paper-stone-and-their-ordering-or-is-it-rock-paper-scissors.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on April 28, 2014
+    
+&lt;/div&gt;
+
+&lt;h2 id="inspiration"&gt;Inspiration&lt;/h2&gt;
+&lt;p&gt;I was in the bathroom, after watching a &lt;a href="https://www.youtube.com/watch?v=WBJ3hdcM7G8"&gt;video on Kata&lt;/a&gt;, and fiddling with the thought of doing a Kata using Haskell. So I thought of what Kata I could try, and figured that a Scissors Paper Stone kata would be cool. I would have a chance to practice IO, hence Monads, and also some simple logic. So that led to the thought of how a game of SPS may work out…&lt;/p&gt;
+&lt;h2 id="scissors-paper-stone"&gt;Scissors Paper Stone&lt;/h2&gt;
+&lt;p&gt;Now you probably know the game and &lt;a href="http://worldrps.com/game-basics"&gt;how it’s played&lt;/a&gt;. Scissors beats Paper, Paper beats Stone, Stone beats Scissors. Hmm what? If we plot how powerful each Move is, we see this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt; Stone
+&amp;gt;&amp;gt;&amp;gt; Paper
+&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; Scissors
+&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; Stone   // what???&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is interesting because, given a list of Scissors, Paper, and Stone, how would the result look like?&lt;/p&gt;
+&lt;p&gt;Eventually I went to research a bit more, sometimes you just got to know what search terms to type, and I found &lt;a href="https://en.wikipedia.org/wiki/Cyclic_order"&gt;cyclic ordering&lt;/a&gt;. It even classifies Scissors Paper Stone as a Discrete Cycle. But that didn’t stop me from wondering what sorting them will look like!&lt;/p&gt;
+&lt;h2 id="code"&gt;Code&lt;/h2&gt;
+&lt;p&gt;So I went ahead to explore. Code given is in Java, my most familiar lanugage. Code is ugly because, well its ugly. Maybe I should try to use polymorphism to clean it up… hm… Anyway, the &lt;a href="https://gist.github.com/ngzhian/11373536" title="GitHub Gist for this experiment"&gt;gist is here&lt;/a&gt;&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="dt"&gt;static&lt;/span&gt; &lt;span class="kw"&gt;class&lt;/span&gt; Move &lt;span class="kw"&gt;implements&lt;/span&gt; Comparable&amp;lt;Move&amp;gt; {
+  &lt;span class="kw"&gt;public&lt;/span&gt; &lt;span class="kw"&gt;enum&lt;/span&gt; TYPE {
+    SCISSORS, PAPER, STONE
+  };
+
+  &lt;span class="kw"&gt;public&lt;/span&gt; &lt;span class="dt"&gt;static&lt;/span&gt; &lt;span class="dt"&gt;int&lt;/span&gt; COUNT = &lt;span class="dv"&gt;0&lt;/span&gt;;
+  &lt;span class="kw"&gt;private&lt;/span&gt; TYPE type;
+  &lt;span class="kw"&gt;private&lt;/span&gt; &lt;span class="dt"&gt;int&lt;/span&gt; count;
+
+  &lt;span class="kw"&gt;private&lt;/span&gt; &lt;span class="dt"&gt;static&lt;/span&gt; Move &lt;span class="fu"&gt;paper&lt;/span&gt;() {
+    Move move = &lt;span class="kw"&gt;new&lt;/span&gt; &lt;span class="fu"&gt;Move&lt;/span&gt;();
+    move.&lt;span class="fu"&gt;type&lt;/span&gt; = TYPE.&lt;span class="fu"&gt;PAPER&lt;/span&gt;;
+    move.&lt;span class="fu"&gt;count&lt;/span&gt; = COUNT++;
+    &lt;span class="kw"&gt;return&lt;/span&gt; move;
+  }
+
+  &lt;span class="kw"&gt;private&lt;/span&gt; &lt;span class="dt"&gt;static&lt;/span&gt; Move &lt;span class="fu"&gt;scissors&lt;/span&gt;() {
+    Move move = &lt;span class="kw"&gt;new&lt;/span&gt; &lt;span class="fu"&gt;Move&lt;/span&gt;();
+    move.&lt;span class="fu"&gt;type&lt;/span&gt; = TYPE.&lt;span class="fu"&gt;SCISSORS&lt;/span&gt;;
+    move.&lt;span class="fu"&gt;count&lt;/span&gt; = COUNT++;
+    &lt;span class="kw"&gt;return&lt;/span&gt; move;
+  }
+
+  &lt;span class="kw"&gt;private&lt;/span&gt; &lt;span class="dt"&gt;static&lt;/span&gt; Move &lt;span class="fu"&gt;stone&lt;/span&gt;() {
+    Move move = &lt;span class="kw"&gt;new&lt;/span&gt; &lt;span class="fu"&gt;Move&lt;/span&gt;();
+    move.&lt;span class="fu"&gt;type&lt;/span&gt; = TYPE.&lt;span class="fu"&gt;STONE&lt;/span&gt;;
+    move.&lt;span class="fu"&gt;count&lt;/span&gt; = COUNT++;
+    &lt;span class="kw"&gt;return&lt;/span&gt; move;
+  }
+
+  &lt;span class="kw"&gt;public&lt;/span&gt; String &lt;span class="fu"&gt;toString&lt;/span&gt;() {
+    &lt;span class="kw"&gt;switch&lt;/span&gt; (type) {
+      &lt;span class="kw"&gt;case&lt;/span&gt; SCISSORS:
+        &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;Scissors [&amp;quot;&lt;/span&gt; + count + &lt;span class="st"&gt;&amp;quot;]&amp;quot;&lt;/span&gt;;
+      &lt;span class="kw"&gt;case&lt;/span&gt; PAPER:
+        &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;Paper [&amp;quot;&lt;/span&gt; + count + &lt;span class="st"&gt;&amp;quot;]&amp;quot;&lt;/span&gt;;
+      &lt;span class="kw"&gt;case&lt;/span&gt; STONE:
+        &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;Stone [&amp;quot;&lt;/span&gt; + count + &lt;span class="st"&gt;&amp;quot;]&amp;quot;&lt;/span&gt;;
+    }
+    &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;&amp;quot;&lt;/span&gt;;
+  }
+
+  &lt;span class="fu"&gt;@Override&lt;/span&gt;
+  &lt;span class="kw"&gt;public&lt;/span&gt; &lt;span class="dt"&gt;int&lt;/span&gt; &lt;span class="fu"&gt;compareTo&lt;/span&gt;(Move o) {
+    &lt;span class="kw"&gt;switch&lt;/span&gt; (&lt;span class="kw"&gt;this&lt;/span&gt;.&lt;span class="fu"&gt;type&lt;/span&gt;) {
+      &lt;span class="kw"&gt;case&lt;/span&gt; SCISSORS:
+        &lt;span class="kw"&gt;switch&lt;/span&gt; (o.&lt;span class="fu"&gt;type&lt;/span&gt;) {
+          &lt;span class="kw"&gt;case&lt;/span&gt; SCISSORS:
+            &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;0&lt;/span&gt;;
+          &lt;span class="kw"&gt;case&lt;/span&gt; PAPER:
+            &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;;
+          &lt;span class="kw"&gt;case&lt;/span&gt; STONE:
+            &lt;span class="kw"&gt;return&lt;/span&gt; -&lt;span class="dv"&gt;1&lt;/span&gt;;
+        }
+      &lt;span class="kw"&gt;case&lt;/span&gt; PAPER:
+        &lt;span class="kw"&gt;switch&lt;/span&gt; (o.&lt;span class="fu"&gt;type&lt;/span&gt;) {
+          &lt;span class="kw"&gt;case&lt;/span&gt; SCISSORS:
+            &lt;span class="kw"&gt;return&lt;/span&gt; -&lt;span class="dv"&gt;1&lt;/span&gt;;
+          &lt;span class="kw"&gt;case&lt;/span&gt; PAPER:
+            &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;0&lt;/span&gt;;
+          &lt;span class="kw"&gt;case&lt;/span&gt; STONE:
+            &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;;
+        }
+      &lt;span class="kw"&gt;case&lt;/span&gt; STONE:
+        &lt;span class="kw"&gt;switch&lt;/span&gt; (o.&lt;span class="fu"&gt;type&lt;/span&gt;) {
+          &lt;span class="kw"&gt;case&lt;/span&gt; SCISSORS:
+            &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;;
+          &lt;span class="kw"&gt;case&lt;/span&gt; PAPER:
+            &lt;span class="kw"&gt;return&lt;/span&gt; -&lt;span class="dv"&gt;1&lt;/span&gt;;
+          &lt;span class="kw"&gt;case&lt;/span&gt; STONE:
+            &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;0&lt;/span&gt;;
+        }
+  }
+  &lt;span class="kw"&gt;return&lt;/span&gt; &lt;span class="dv"&gt;0&lt;/span&gt;;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is how the &lt;code&gt;Move&lt;/code&gt; class looks like, and &lt;code&gt;compareTo&lt;/code&gt; basically has the rules for the entire game. After this it was just making an outer class to add &lt;code&gt;Move&lt;/code&gt;s to a list and to use &lt;code&gt;Collections.sort&lt;/code&gt; on them:&lt;/p&gt;
+&lt;pre class="sourceCode java"&gt;&lt;code class="sourceCode java"&gt;&lt;span class="kw"&gt;public&lt;/span&gt; &lt;span class="kw"&gt;class&lt;/span&gt; ScissorsPaperStone {
+  &lt;span class="kw"&gt;public&lt;/span&gt; &lt;span class="dt"&gt;static&lt;/span&gt; &lt;span class="dt"&gt;void&lt;/span&gt; &lt;span class="fu"&gt;main&lt;/span&gt;(String[] args) {
+    List&amp;lt;Move&amp;gt; list = &lt;span class="kw"&gt;new&lt;/span&gt; Vector&amp;lt;Move&amp;gt;();
+
+    &lt;span class="kw"&gt;for&lt;/span&gt; (Move move : list) {
+      System.&lt;span class="fu"&gt;out&lt;/span&gt;.&lt;span class="fu"&gt;print&lt;/span&gt;(move + &lt;span class="st"&gt;&amp;quot;, &amp;quot;&lt;/span&gt;);
+    }
+    System.&lt;span class="fu"&gt;out&lt;/span&gt;.&lt;span class="fu"&gt;println&lt;/span&gt;();
+
+    Collections.&lt;span class="fu"&gt;sort&lt;/span&gt;(list);
+
+    &lt;span class="kw"&gt;for&lt;/span&gt; (Move move : list) {
+      System.&lt;span class="fu"&gt;out&lt;/span&gt;.&lt;span class="fu"&gt;print&lt;/span&gt;(move + &lt;span class="st"&gt;&amp;quot;, &amp;quot;&lt;/span&gt;);
+    }
+    System.&lt;span class="fu"&gt;out&lt;/span&gt;.&lt;span class="fu"&gt;println&lt;/span&gt;();
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="results---everything-is-sorted"&gt;Results - everything is sorted&lt;/h2&gt;
+&lt;p&gt;The results are as such:&lt;/p&gt;
+&lt;h3 id="moves-added-are-scissors-paper-stone-3-times"&gt;Moves added are: (Scissors-Paper-Stone) 3 times&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Original:
+Scissors [0], Paper [1], Stone [2], Scissors [3], Paper [4], Stone [5], Scissors [6], Paper [7], Stone [8], 
+Sorted:
+Stone [8], Paper [7], Scissors [6], Stone [5], Paper [4], Scissors [3], Stone [2], Paper [1], Scissors [0], &lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="scissors-stone-paper-3-times"&gt;(Scissors-Stone-Paper) 3 times&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Original:
+Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], 
+Sorted:
+Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], &lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="stone-paper-scissors-3-times"&gt;(Stone-Paper-Scissors) 3 times&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Original:
+Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], 
+Sorted:
+Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], &lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="stone-scissors-paper-3-times"&gt;(Stone-Scissors-Paper) 3 times&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Original:
+Stone [0], Scissors [1], Paper [2], Stone [3], Scissors [4], Paper [5], Stone [6], Scissors [7], Paper [8], 
+Sorted:
+Paper [8], Scissors [7], Stone [6], Paper [5], Scissors [4], Stone [3], Paper [2], Scissors [1], Stone [0], &lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="paper-scissors-stone-3-times"&gt;(Paper-Scissors-Stone) 3 times&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Original:
+Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], 
+Sorted:
+Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], &lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="paper-stone-scissors-3-times"&gt;(Paper-Stone-Scissors) 3 times&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Original:
+Paper [0], Stone [1], Scissors [2], Paper [3], Stone [4], Scissors [5], Paper [6], Stone [7], Scissors [8], 
+Sorted:
+Scissors [8], Stone [7], Paper [6], Scissors [5], Stone [4], Paper [3], Scissors [2], Stone [1], Paper [0], &lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="somewhat-random-sequence"&gt;Somewhat random sequence&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;Original:
+Paper [0], Scissors [1], Scissors [2], Stone [3], Paper [4], Stone [5], Paper [6], Scissors [7], Paper [8], Scissors [9], Stone [10], Stone [11], 
+Sorted:
+Paper [0], Scissors [1], Scissors [2], Scissors [7], Scissors [9], Stone [3], Stone [5], Stone [10], Stone [11], Paper [4], Paper [6], Paper [8], &lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="observations-i-dont-really-know"&gt;Observations?? I don’t really know…&lt;/h2&gt;
+&lt;p&gt;The results are definitely sorted, if we look at them pairwise. For example in the somehwat random sequence, every pair of &lt;code&gt;Move&lt;/code&gt;s is sored, but we can see that the 2nd element is &lt;code&gt;Scissors&lt;/code&gt;, but the last element is a &lt;code&gt;Paper&lt;/code&gt;, and clearly Paper does not beat Scissors.&lt;/p&gt;
+&lt;p&gt;Another observation is that, sequences that are already sorted don’t change. For example, Paper-Scissors-Stone is already in order, so the whole sequence is sorted, and hence doesn’t change. But I’m not sure how to explain the resuts for the rest, especially for the somewhat random sequence.&lt;/p&gt;
+&lt;p&gt;But I wanted to know a bit more about how Java does sorting, and so I went to a bit of digging and jotted my discoveries &lt;a href="../posts/2014-04-28-how-java-sorts-objects.html" title="A journey to discover how Java sorts objects"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Mon, 28 Apr 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-04-28:ng-zhi-an-scissors-paper-stone-and-their-ordering-or-is-it-rock-paper-scissors.html</guid></item><item><title>Ng Zhi An - Setting up a killer development environment for CS2103T</title><link>http://blog.ngzhian.com/ng-zhi-an-setting-up-a-killer-development-environment-for-cs2103t.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Setting up a killer development environment for CS2103T&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on April 27, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;This post is about setting up a CS2103T development environment that is fast, efficient and will be useful for whatever Java development needs you may have in the future. These are gleaned from research I did when I was preparing my own environment for CS2103T at the start of this year, my experience going through the module, and observations of how my peers develop. Tips are broken into 3 categories, &lt;a href="#setup"&gt;Setting up Eclipse&lt;/a&gt;, &lt;a href="#usage"&gt;Using Eclipse&lt;/a&gt;, and &lt;a href="#teamwork"&gt;Working as a team&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="setting-up-eclipse"&gt;&lt;a name="setup"&gt;&lt;/a&gt;Setting up Eclipse&lt;/h2&gt;
+&lt;p&gt;You will probably be developing on the &lt;a href="http://eclipse.org/" title="Eclipse"&gt;Eclipse Platform&lt;/a&gt;, if not, just stop reading.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note that Eclipse itself can do a lot of things, but you’ll just be using it to power your Java development needs.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eclipse will be your second home this semester, let’s make things comfortable by doing some minor &lt;em&gt;renovations&lt;/em&gt;.&lt;/p&gt;
+&lt;h3 id="color-scheme"&gt;Color scheme&lt;/h3&gt;
+&lt;p&gt;If I’m going to stare at a program for a long time, it needs to look nice. Eclipse isn’t ugly, but &lt;em&gt;nice&lt;/em&gt; is subjecting, but I prefer a dark theme. If you have the same taste as me, &lt;em&gt;hi 5&lt;/em&gt;, you can get it &lt;a href="https://github.com/guari/eclipse-ui-theme" title="Guari MoonRise UI Theme for Eclipse"&gt;here&lt;/a&gt;, and it looks something like this&lt;/p&gt;
+&lt;p&gt;&lt;a href="../images/eclipse-dark.png"&gt;&lt;img src="../images/eclipse-dark-thumbnail.png" title="my eclipse looks like this" alt="How my eclipse looks like with the dark theme" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Alternatively, you can just choose the colours of the editor, the syntax colours, with &lt;a href="http://marketplace.eclipse.org/content/eclipse-color-theme"&gt;the Eclipse Color Theme plugin&lt;/a&gt;. Personally I like &lt;a href="http://eclipsecolorthemes.org/?view=theme&amp;amp;id=52"&gt;Monokai&lt;/a&gt; or &lt;a href="http://eclipsecolorthemes.org/?view=theme&amp;amp;id=118"&gt;Wombat&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="formatter"&gt;Formatter&lt;/h3&gt;
+&lt;p&gt;Now that Eclipse looks prettier, let’s work on how our source code looks like. There’s no way I can tell you how to write nice code, including naming classes, methods and such, thats the Prof’s job. But at least I can teach you how to ensure your code follows the specified code style guideline.&lt;/p&gt;
+&lt;p&gt;Under the &lt;em&gt;Package Explorer&lt;/em&gt; view, right click your project, and click &lt;em&gt;Properties&lt;/em&gt;, this is the &lt;em&gt;Project Properties&lt;/em&gt; window, a place to set project-specific configurations. Or just select your project and hit &lt;code&gt;Alt-Enter&lt;/code&gt;. You should see a new window pop up:&lt;/p&gt;
+&lt;p&gt;&lt;a href="../images/project-settings.png"&gt;&lt;img src="../images/project-settings-thumbnail.png" alt="Project-specific properties" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Click on &lt;em&gt;Java Code Style&lt;/em&gt;, and check &lt;em&gt;Enable project specific settings&lt;/em&gt;. Then expand the &lt;em&gt;Java Code Style&lt;/em&gt; tree, and click &lt;em&gt;Formatter&lt;/em&gt;. This is where you specify how your Java code is formatted, indentation, braces, whitespace, etc. I’ve check out the style guide for my module, configured it by hand using whichever settings I could find/understand, and the XML is uploaded &lt;a href="https://gist.github.com/ngzhian/11338052"&gt;here&lt;/a&gt;. You can just download this and import it in. But note that I probably didn’t do everything right, and that requirements may change, so do run through the formatted files and see if it matches!&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Most preferences window have a search box, so you could have just typed &lt;em&gt;Formatter&lt;/em&gt; and reached the same view! Try to remember these time savers, those seconds really add up :)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id="code-style"&gt;Code Style&lt;/h3&gt;
+&lt;p&gt;This has more to do with the way you write Java code, rather than white space and such. This option is under &lt;em&gt;Java Code Style&lt;/em&gt; as well, so just enable it for your project and fiddle around with it. THe default Eclipse profile should work fine.&lt;/p&gt;
+&lt;h3 id="save-actions"&gt;Save Actions&lt;/h3&gt;
+&lt;p&gt;You can find this under &lt;em&gt;Java Editor&lt;/em&gt; and this is an awesome time-saver. Basically it lets you configure actions that happen upon saving a file! Quickly enable it, and the default settings are fine. Go ahead and save these changes, and then make some minor edits on a file, such as importing an unused class, and save the file. See the magic happened.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Warning though, make sure you don’t enable the formatter options that sorts methods by alphabetical order, that will be painful.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You can see some advanced stuff under &lt;em&gt;Additional actions&lt;/em&gt;. No sweat, those are just good practices, feel free to research about them. Particularly, I found some articles about &lt;a href="http://www.dinduks.com/why-are-trailing-whitespaces-bad/"&gt;why&lt;/a&gt; trailing spaces are &lt;a href="http://stackoverflow.com/questions/300489/why-is-it-bad-to-commit-lines-with-trailing-whitespace-into-source-control"&gt;bad&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="build-paths"&gt;Build Paths&lt;/h3&gt;
+&lt;p&gt;Build paths are places where the compiler looks for classes when compiling your code. If you end up using libraries for your project, quite likely, note that adding the &lt;code&gt;.jar&lt;/code&gt; into your project folder is insufficient. You need to add the jar to your project build path. You can do so using the project properties window too. Click on &lt;em&gt;Java Build Path&lt;/em&gt;, and click &lt;em&gt;Add Jars&lt;/em&gt;, point it to the jar. Simple :)&lt;/p&gt;
+&lt;h3 id="useful-plugins"&gt;Useful plugins&lt;/h3&gt;
+&lt;p&gt;&lt;a href="http://marketplace.eclipse.org/"&gt;Eclipse Marketplace&lt;/a&gt; has lots and lots of plugins, and you can actually visit the marketplace from inside Eclipse, just go to your main Eclipse window, select &lt;em&gt;Help&lt;/em&gt; then &lt;em&gt;Eclipse Marketplace&lt;/em&gt;. Or hit &lt;code&gt;Alt+H&lt;/code&gt; then &lt;code&gt;W&lt;/code&gt;. For me I have &lt;a href="http://marketplace.eclipse.org/content/vrapper"&gt;Vrapper&lt;/a&gt;, because I love to use &lt;a href="www.vim.org"&gt;Vim&lt;/a&gt;. If you want to use Vim within Eclipse, install Vrapper, it provides support for all of my Vim needs including movement comands, search and replace etc.&lt;/p&gt;
+&lt;h3 id="misc"&gt;Misc&lt;/h3&gt;
+&lt;p&gt;When you try to copy paste your code from Eclipse to say Word, the syntax highlighting might not show up right. If so, disable code folding, go to &lt;em&gt;Window&lt;/em&gt; -&amp;gt; &lt;em&gt;Preferences&lt;/em&gt; -&amp;gt; &lt;em&gt;Java&lt;/em&gt; -&amp;gt; &lt;em&gt;Editor&lt;/em&gt; -&amp;gt; &lt;em&gt;Folding&lt;/em&gt; and disable it.&lt;/p&gt;
+&lt;h2 id="using-eclipse"&gt;&lt;a name="usage"&gt;&lt;/a&gt;Using Eclipse&lt;/h2&gt;
+&lt;p&gt;There’s really only one thing I want to talk about here: using keyboard shortcuts. The saying goes “the keyboard is mightier than the mouse”, and that holds at least for software development. Trying to move your cursor to click that small “Run” button to test your code takes ages compared to a simple &lt;code&gt;F11&lt;/code&gt;. Learn the shortcuts and use them well, I’ve compiled a short list of my favourites.&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+Shift+L&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+quick view of shortcuts
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+Shift+L&lt;/code&gt; again
+&lt;/td&gt;&lt;td&gt; 
+open shortcuts preferences page
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+1&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+quick fix
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+Shift+R&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+open resource or any file
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+F11&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+run
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;F11&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+debug
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+Space&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+offer content assist/completion
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+M&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+maximize/minimize current tab
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Alt+Left&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+go to previous place u edited
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Alt+Right&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+symmetry of &lt;code&gt;Alt-Left&lt;/code&gt;
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Ctrl+O&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+code outline
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;F2&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+open tooltip
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;F3&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+show declaration
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Alt+Shift+T&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+open refactoring dropdown
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+&lt;code&gt;Alt+Shift+M&lt;/code&gt;
+&lt;/td&gt;&lt;td&gt; 
+extract method (good for refactoring)
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;h2 id="working-as-a-team"&gt;&lt;a name="teamwork"&gt;&lt;/a&gt;Working as a team&lt;/h2&gt;
+&lt;p&gt;I’m not talking about conflict resolution, intercultural communications or that sort- go to CS2101 for that. I’m talking about multiple people working on the same piece of code, and how to do that with as little friction as possible.&lt;/p&gt;
+&lt;h3 id="google-code"&gt;Google Code&lt;/h3&gt;
+&lt;p&gt;On hindsight, we didn’t appreciate Google Code that much, and we didn’t start using it early enough. My advise is to &lt;strong&gt;use it for everything&lt;/strong&gt;. Google Code itself is a great task tracker- you can list your user stories, feature suggestion, ideas, bugs, deadlines as &lt;strong&gt;issues&lt;/strong&gt;, And then mark them as ongoing, completed, wontfix, done, or closed as you work on your code. This may distract you from writing code, but it helps the team keep the project so much more organized. Besides, usage of Google Code is factored into your marks, so why not use it? Yes, it doesn’t have the most beautiful interface, but it’s quite speedy and effective. So start from day one, and religiously enter and update your issues there.&lt;/p&gt;
+&lt;p&gt;Also, the commenting system is pretty useful. It automatically emails anyone cc-ed on the issue as well, so you can keep updated even without going to the web interface.&lt;/p&gt;
+&lt;h3 id="mercurial"&gt;Mercurial&lt;/h3&gt;
+&lt;p&gt;I like using &lt;a href="http://tortoisehg.bitbucket.org/"&gt;TortoiseHg&lt;/a&gt; because it’s so simple: choosing which files to stage for commit, commiting, visualizing branches, merging, pushing, fetching etc; all these common functionalities all just a click away. Get used to it, and learn how to use it. But don’t forget that a command line interface exists! When faced with a difficult situation, like improper pulling/merging, &lt;a href="http://stackoverflow.com/questions/2584407/how-to-save-username-and-password-with-mercurial"&gt;most&lt;/a&gt; questions and &lt;a href="http://stackoverflow.com/questions/623052/how-to-edit-incorrect-commit-message-in-mercurial"&gt;answers&lt;/a&gt; on &lt;a href="http://stackoverflow.com/questions/tagged/mercurial"&gt;StackOverflow&lt;/a&gt; or such are &lt;a href="http://stackoverflow.com/questions/1101167/what-is-the-difference-between-hg-forget-and-hg-remove"&gt;about&lt;/a&gt; the command line. So you probably have to use it once in a while.&lt;/p&gt;
+&lt;h3 id="talking"&gt;Talking&lt;/h3&gt;
+&lt;p&gt;We have great technology that enable us to work remotely, and technically we can complete this project without having to meet up at all, sans tutorials/lectures. But where’s the fun and learning in that, right? Take this chance to hang out with your group, talk to them in person about your project, and about other stuff as well. This will help build chemistry and bonds within your team, and will make this module so much more enjoyable and fruitful. The product is not your application, it is you, and the friendships you make.&lt;/p&gt;
+&lt;p&gt;This is just a quick guide to optimizing your workflow for CS2103T development, and isn’t comprehensive. But I’ve talked quite a bit about Setting up Eclipse, Using it, and Working with your teammates. I hope you have learned something new and these tips will help you for this module. More importantly though, I hope you keep learning, and share your knowledge with everyone, to that we, and our craft, can grow together - so that we become better software engineers.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sun, 27 Apr 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-04-27:ng-zhi-an-setting-up-a-killer-development-environment-for-cs2103t.html</guid></item><item><title>Ng Zhi An - Don't waste their time!</title><link>http://blog.ngzhian.com/ng-zhi-an-dont-waste-their-time.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Don't waste their time!&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on April 26, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;In &lt;a href="http://www.smashingmagazine.com/2014/04/25/stop-wasting-users-time/"&gt;this article&lt;/a&gt; on Smashing Magazine, &lt;a href="http://www.smashingmagazine.com/author/paul-boag/?rel=author"&gt;Paul Boag&lt;/a&gt; talks about not wasting users’ time. This resonated well with me, considering I just completed the module CS2103T, Software Engineering (exam was this noon), and in that module our lecturer actually gave us some advice on usability.&lt;/p&gt;
+&lt;h2 id="key-idea-time-is-precious"&gt;Key idea: time is precious&lt;/h2&gt;
+&lt;p&gt;The key idea of the article is that time is precious to users, and also developers. But as developers it is our responsibility to spend more time our on work so that users don’t have to. He brought up excellent examples which almost anyone on the Internet would have encountered: CAPTCHA, and Country Selector in forms. This is a worthwhile read, as he points to various other posts that tackles those examples, or talk about usability. His conclusion is simple, constantly ask “Can I save the user time?”.&lt;/p&gt;
+&lt;h2 id="cs2103t-adding-tasks"&gt;CS2103T: adding tasks&lt;/h2&gt;
+&lt;p&gt;To link it back to CS2103T, the task tracker we were asked to implement was pretty simple, but there are many design issues to consider while building the application. For example, what are the commands we should support? We could be rigid and say that the user must use the “add” keyword to add a task. But if we consider the common use case for a task tracker, the user will probably be adding tasks &lt;em&gt;a lot&lt;/em&gt;. Hence it makes sense to make adding, simpler. So we could reduce the size of the keyword to just “a”. Can we go a step further though?&lt;/p&gt;
+&lt;p&gt;Does the user even have to specify a keyword? Can we just let the user type the task title, and add it in? Our eventual decision was no. Our implementation became as such:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;when the user enters an invalid command, we suggest some valid commands for them&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Hm… This actually feels a bit like filling in bank account numbers &lt;strong&gt;without&lt;/strong&gt; the hyphens, or the postal-code example brought up by Boag. Why are we making the user type the same command again, when she probably just misspelled it by a single character? I can actually think of a few ways to tackle this issue:&lt;/p&gt;
+&lt;h2 id="ways-to-solve-it"&gt;Ways to solve it&lt;/h2&gt;
+&lt;ol style="list-style-type: decimal"&gt;
+&lt;li&gt;&lt;em&gt;guess&lt;/em&gt; what the user wants to do, and execute&lt;/li&gt;
+&lt;li&gt;feedback that the result was invalid, and repopulate the input, with the caret positioned at where the problem lies&lt;/li&gt;
+&lt;li&gt;treat it as an add command&lt;/li&gt;
+&lt;li&gt;treat it as a search&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="guess"&gt;Guess&lt;/h3&gt;
+&lt;p&gt;This seems to be a good solution, considering that the user probably made a typo, like “ad” instead of “add”, so we can just execute the closest valid command, saving the user some time time. However, in this case we will definitely need an “undo” function in case the user does not intend to do that.&lt;/p&gt;
+&lt;h3 id="feedback-and-repopulate"&gt;Feedback and repopulate&lt;/h3&gt;
+&lt;p&gt;Say the user enters commands via an input field. An invalid command shall lead to the field being repopulated, with the problematic part highlighted. By ‘highlighted’ I mean, ‘made obvious’. This can be in the form of a red wiggly underline, like in Word, or font with red fill. This is useful because the user does not have to retype the entire command. She gets feedback that the command is not recognized, and can verify what she wants to do exactly, before trying again.&lt;/p&gt;
+&lt;h3 id="search"&gt;Search&lt;/h3&gt;
+&lt;p&gt;I think this is an apt solution as most input fields that we face nowadays are actually search boxes. But there is a slight issue if our search is done as the user type - aka live search. Imagine the user typing a sequece ‘a’, ‘d’, ‘d’. Having live search will mean that results matching “add” will be shown, but if the user meant to add a task, surely she doesn’t want to see all these unrelated tasks? What if we recognized “add” as a keyword and stopped trying to search, this becomes a problem if the user wishes to search for tasks with the word “add” in it.&lt;/p&gt;
+&lt;h2 id="retrospective"&gt;Retrospective&lt;/h2&gt;
+&lt;p&gt;If I were to reimplement this, I would do a combination of “Guess” and “Feedback and repopulate”. Assuming that we treat the first word of the user input as a keyword, we can attempt to first “Guess”, but trying to match the invalid keyword with a valid one, which we are actually doing already when we provide “did you mean” suggestions. This can be done using &lt;a href="https://en.wikipedia.org/wiki/Levenshtein_distance"&gt;Levenshtein distance&lt;/a&gt;. If there is no good match, we feedback to the user, highlight the problematic part, and allow them to easily fix those errors.&lt;/p&gt;
+&lt;h2 id="the-last-mile"&gt;The last mile?&lt;/h2&gt;
+&lt;p&gt;Let’s go one step further. Why not parse the user input on the fly. As the user type, we parse the input to see if it is valid or not. So when typing the keyword, an invalid command will immediately give a red wiggly line, so the user knows something is wrong. This could be implemented on top of the 2 suggestions, because the user might just go ahead and press enter despite the errors anyway.&lt;/p&gt;
+&lt;p&gt;An article on saving users’ time actually sparked that much thought into a simple problem for my project module! Though I wish these thoughts came earlier, I’m still glad because the article brought about such thoughts and ideas, and really showed out CS2103T has huge relevance to the industry.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sat, 26 Apr 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-04-26:ng-zhi-an-dont-waste-their-time.html</guid></item><item><title>Ng Zhi An - Configuring XMonad</title><link>http://blog.ngzhian.com/ng-zhi-an-configuring-xmonad.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Configuring XMonad&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on April 25, 2014
+    
+&lt;/div&gt;
+
+&lt;p&gt;I have been setting up XMonad on my Debian box, partially because I am kinda hooked on &lt;a href="www.haskell.org"&gt;Haskell&lt;/a&gt; right now, and so far it has been a prety fun adventure. Just wish to share some thoughts here.&lt;/p&gt;
+&lt;h2 id="getting-xmonad"&gt;Getting XMonad&lt;/h2&gt;
+&lt;p&gt;Being on Debian has its perks, a &lt;code&gt;aptitude install xmonad&lt;/code&gt; simply works, else just head to &lt;a href="www.xmonad.org/download.html"&gt;XMonad&lt;/a&gt; to get the suitable package.&lt;/p&gt;
+&lt;h2 id="running-xmonad"&gt;Running XMonad&lt;/h2&gt;
+&lt;p&gt;I’m using &lt;code&gt;startx&lt;/code&gt; to run XMonad, so all I have to do is to edit &lt;code&gt;~/.xinitrc&lt;/code&gt;, and add the line&lt;/p&gt;
+&lt;pre class="sourceCode bash"&gt;&lt;code class="sourceCode bash"&gt;&lt;span class="kw"&gt;exec&lt;/span&gt; xmonad&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you’re using a display manager such as KDM, GDM, slim, lightdm etc, there’s probably a way to select which which session you want to run, or you can edit your &lt;code&gt;~/.xsession&lt;/code&gt; file. You can probably get more information &lt;a href="xmonad.org/documentation.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="configuring-xmonad"&gt;Configuring XMonad&lt;/h2&gt;
+&lt;p&gt;This is the really fun part. I’ve tried finding &lt;em&gt;good&lt;/em&gt; configurations I can immediately copy and use, and actually found &lt;a href="github.com/vicfryzel/xmonad-config"&gt;this&lt;/a&gt;, but when it comes to configuring your window manager, everyone is heavily opiniated. After spending some time on it, I found that the best way to configure XMonad is to do it in small steps.&lt;/p&gt;
+&lt;p&gt;I think the most efficient way to figure things out is to learn the defaults first, by looking at the &lt;a href="xmonad.org/tour.html"&gt;tour&lt;/a&gt; from the official pages. This will give you a feel of how to do things. The most important takeaway is: - &lt;code&gt;Mod + Shift + Enter&lt;/code&gt; fires up a terminal, and by default &lt;code&gt;Mod&lt;/code&gt; is &lt;code&gt;Left-Alt&lt;/code&gt; - &lt;code&gt;Mod-Q&lt;/code&gt; restarts xmonad, this allows you to see changes you have made to the config file quickly - &lt;code&gt;~/.xmonad/xmonad.hs&lt;/code&gt; is the default configuration file&lt;/p&gt;
+&lt;p&gt;Then move on to the actual configuration, and a gentleman has wrote a extremely easy to follow step-wise [guide](www.haskell.org/haskellwiki/Xmonad/Config_archive/John_Goerzen’s_Configuration) on configuring XMonad. Follow this guide to the end, and you should have a simple yet efficient XMonad up and running.&lt;/p&gt;
+&lt;h2 id="caveats"&gt;Caveats&lt;/h2&gt;
+&lt;p&gt;I faced one small issue, which was the loading of xmobar configuration file. Particularly the line&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;xmproc &lt;span class="ot"&gt;&amp;lt;-&lt;/span&gt; spawnPipe &lt;span class="st"&gt;&amp;quot;xmobar /home/ngzhian/.xmonad/.xmobarrc&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;For some reason xmobar didn’t manage to load the file that I passed in. I solved it by not passing in a filename, and just creating the config file at the default location, which is &lt;code&gt;~/.xmobarrc&lt;/code&gt;. So that line simply became&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;xmproc &lt;span class="ot"&gt;&amp;lt;-&lt;/span&gt; spawnPipe &lt;span class="st"&gt;&amp;quot;xmobar&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I’ll write about xmobar soon, it’s fun to configure it as well, but for now here’s what I have&lt;/p&gt;
+&lt;p&gt;&lt;a href="../images/xmonad.png"&gt;&lt;img src="../images/xmonad-thumbnail.png" alt="How my XMonad looks like now" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="co"&gt;-- /home/ngzhian/.xmonad/xmonad.sh&lt;/span&gt;
+&lt;span class="kw"&gt;import &lt;/span&gt;&lt;span class="dt"&gt;XMonad&lt;/span&gt;
+&lt;span class="kw"&gt;import &lt;/span&gt;&lt;span class="dt"&gt;XMonad.Hooks.DynamicLog&lt;/span&gt;
+&lt;span class="kw"&gt;import &lt;/span&gt;&lt;span class="dt"&gt;XMonad.Hooks.ManageDocks&lt;/span&gt;
+&lt;span class="kw"&gt;import &lt;/span&gt;&lt;span class="dt"&gt;XMonad.Util.Run&lt;/span&gt;(spawnPipe)
+&lt;span class="kw"&gt;import &lt;/span&gt;&lt;span class="dt"&gt;XMonad.Util.EZConfig&lt;/span&gt;(additionalKeys)
+&lt;span class="kw"&gt;import &lt;/span&gt;&lt;span class="dt"&gt;System.IO&lt;/span&gt;
+
+main &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="kw"&gt;do&lt;/span&gt;
+  xmproc &lt;span class="ot"&gt;&amp;lt;-&lt;/span&gt; spawnPipe &lt;span class="st"&gt;&amp;quot;xmobar&amp;quot;&lt;/span&gt;
+  xmonad &lt;span class="fu"&gt;$&lt;/span&gt; defaultConfig
+    { manageHook &lt;span class="fu"&gt;=&lt;/span&gt; manageDocks &lt;span class="fu"&gt;&amp;lt;+&amp;gt;&lt;/span&gt; myManageHook &lt;span class="fu"&gt;&amp;lt;+&amp;gt;&lt;/span&gt; manageHook defaultConfig
+    , layoutHook &lt;span class="fu"&gt;=&lt;/span&gt; avoidStruts  &lt;span class="fu"&gt;$&lt;/span&gt;  layoutHook defaultConfig
+    , logHook    &lt;span class="fu"&gt;=&lt;/span&gt; dynamicLogWithPP xmobarPP
+                       { ppOutput &lt;span class="fu"&gt;=&lt;/span&gt; hPutStrLn xmproc
+                       , ppTitle  &lt;span class="fu"&gt;=&lt;/span&gt; xmobarColor &lt;span class="st"&gt;&amp;quot;#021030&amp;quot;&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;&amp;quot;&lt;/span&gt; &lt;span class="fu"&gt;.&lt;/span&gt; shorten &lt;span class="dv"&gt;100&lt;/span&gt;
+                       }
+    , modMask &lt;span class="fu"&gt;=&lt;/span&gt; mod4Mask    &lt;span class="co"&gt;-- Rebind Mod to Windows key&lt;/span&gt;
+    , terminal &lt;span class="fu"&gt;=&lt;/span&gt; myTerminal &lt;span class="co"&gt;-- set terminal&lt;/span&gt;
+    } &lt;span class="ot"&gt;`additionalKeys`&lt;/span&gt;
+    [ ((mod4Mask &lt;span class="fu"&gt;.|.&lt;/span&gt; shiftMask,    xK_l),     spawn &lt;span class="st"&gt;&amp;quot;xscreensaver-command -lock&amp;quot;&lt;/span&gt;)
+    , ((controlMask,               xK_Print), spawn &lt;span class="st"&gt;&amp;quot;sleep 0.2; scrot -s&amp;quot;&lt;/span&gt;)
+    , ((&lt;span class="dv"&gt;0&lt;/span&gt;,                         xK_Print), spawn &lt;span class="st"&gt;&amp;quot;scrot&amp;quot;&lt;/span&gt;)
+    ]
+
+&lt;span class="co"&gt;-- Preferred terminal&lt;/span&gt;
+myTerminal &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;/usr/bin/urxvt&amp;quot;&lt;/span&gt;
+
+&lt;span class="co"&gt;-- Managing hooks when windows are created&lt;/span&gt;
+myManageHook &lt;span class="fu"&gt;=&lt;/span&gt; composeAll
+  [ className &lt;span class="fu"&gt;=?&lt;/span&gt; &lt;span class="st"&gt;&amp;quot;Gimp&amp;quot;&lt;/span&gt; &lt;span class="fu"&gt;--&amp;gt;&lt;/span&gt; doFloat
+  ]&lt;/code&gt;&lt;/pre&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Fri, 25 Apr 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-04-25:ng-zhi-an-configuring-xmonad.html</guid></item><item><title>Ng Zhi An - Planes, Airports, and Monads - Adventures in Haskell</title><link>http://blog.ngzhian.com/ng-zhi-an-planes-airports-and-monads-adventures-in-haskell.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Planes, Airports, and Monads - Adventures in Haskell&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on April 20, 2014
+    
+&lt;/div&gt;
+
+&lt;h1 id="planes-airports-and-monads"&gt;Planes, Airports, and Monads&lt;/h1&gt;
+&lt;p&gt; TODO is the smallest airport in the world, it can only hold 3 planes at any time. You are the air traffic controller there, and your job is to plan the landings and taking off of all the planes so that no accidents happen.  This job is not too difficult, you just have to look at the landing and taking-off sequence, and determine if the airport can accomodate the sequence. Let’s model that. &lt;code&gt;haskell type Planes = Int type Airport = Planes&lt;/code&gt;  Planes can land, or take off: &lt;code&gt;haskell land :: Planes -&amp;gt; Airport -&amp;gt; Airport land incoming grounded = grounded + incoming  takeoff :: Planes -&amp;gt; Airport -&amp;gt; Airport takeoff flying grounded = grounded - flying&lt;/code&gt;  We can try landing and taking off: &lt;code&gt;haskell &amp;gt; takeoff 1 (land 2 0) 1 &amp;gt; takeoff 2 (land 3 (takeoff 1 (land 2 0))) &amp;gt; 0 `land` 2 `takeoff` 1 `land` 3 `takeoff` 2 2&lt;/code&gt;  The second example seems to be okay, but actually we had let 4 planes in the airport at once. Let’s fix that using &lt;code&gt;Maybe&lt;/code&gt;. When we have too many planes, we return a &lt;code&gt;Nothing&lt;/code&gt;, meaning that this particular sequence can not be accomodated safely by the airport. &lt;code&gt;haskell land :: Planes -&amp;gt; Airport -&amp;gt; Maybe Airport land incoming grounded   | grounded + incoming &amp;gt; 3 = Nothing   | otherwise               = Just (grounded + incoming)  takeoff :: Planes -&amp;gt; Airport -&amp;gt; Maybe Airport takeoff flying grounded   | grounded - flying &amp;lt; 0 = Nothing   | otherwise             = Just (grounded - flying)&lt;/code&gt;  Let’s try this: &lt;code&gt;haskell &amp;gt; land 3 0 Just 3 &amp;gt; land 4 0 Nothing &amp;gt; takeoff 2 0 Nothing &amp;gt; takeoff 1 2 Just 1&lt;/code&gt;  Now we have a problem because we can no longer chain our &lt;code&gt;land&lt;/code&gt; and &lt;code&gt;takeoff&lt;/code&gt; methods together easily. They both return a &lt;code&gt;Maybe Airport&lt;/code&gt;, but they take in &lt;code&gt;Airport&lt;/code&gt;. We can try to write a function to take care of this. &lt;code&gt;haskell chain :: Maybe Airport -&amp;gt; (Airport -&amp;gt; Maybe Airport) -&amp;gt; Maybe Airport chain Nothing _ = Nothing chain (Just grounded) action = action grounded&lt;/code&gt;  And we can now write things smoothly &lt;code&gt;haskell &amp;gt; Just 1 `chain` takeoff 1 `chain` land 2 `chain` takeoff 2 Just 0&lt;/code&gt;  And if we just change the name of &lt;code&gt;chain&lt;/code&gt; to &lt;code&gt;&amp;gt;&amp;gt;=&lt;/code&gt; &lt;code&gt;haskell &amp;gt; Just 1 -:: takeoff 2 Nothing &amp;gt; Just 2 -:: takeoff 1 Just 1&lt;/code&gt; There we have it, the &lt;code&gt;bind&lt;/code&gt; operator in Monads!&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sun, 20 Apr 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-04-20:ng-zhi-an-planes-airports-and-monads-adventures-in-haskell.html</guid></item><item><title>Ng Zhi An - Learning Haskell through Maybe - Functors</title><link>http://blog.ngzhian.com/ng-zhi-an-learning-haskell-through-maybe-functors.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Learning Haskell through Maybe - Functors&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on April 18, 2014
+    
+&lt;/div&gt;
+
+&lt;h2 id="types"&gt;Types&lt;/h2&gt;
+&lt;p&gt;You have a &lt;code&gt;Type&lt;/code&gt;, &lt;code&gt;Integer&lt;/code&gt;. &lt;code&gt;Integer&lt;/code&gt; is an integer, representing intergers, just like real life.&lt;/p&gt;
+&lt;p&gt;Other types are &lt;code&gt;Char&lt;/code&gt;, which are characters such as &lt;code&gt;'a'&lt;/code&gt;, &lt;code&gt;'b'&lt;/code&gt; etc. The one we will look at in detail is &lt;code&gt;Maybe&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id="type-variable-constructors"&gt;Type variable, constructors&lt;/h2&gt;
+&lt;p&gt;A data of type &lt;code&gt;Maybe&lt;/code&gt; can only be made if a &lt;em&gt;type variable&lt;/em&gt; is specified. This means that you can make a &lt;code&gt;Maybe Integer&lt;/code&gt;, &lt;code&gt;Maybe Char&lt;/code&gt;, but a &lt;code&gt;Maybe&lt;/code&gt; isn’t a complete type.&lt;/p&gt;
+&lt;p&gt;The way to make a data of type &lt;code&gt;Maybe&lt;/code&gt; is to use a &lt;em&gt;type constructor&lt;/em&gt;. &lt;code&gt;Maybe&lt;/code&gt; has two type constructors, &lt;code&gt;Just&lt;/code&gt; and &lt;code&gt;Nothing&lt;/code&gt;. &lt;code&gt;Just&lt;/code&gt; is like &lt;code&gt;Maybe&lt;/code&gt;, it can only be made if a type variable is specified. &lt;code&gt;Nothing&lt;/code&gt; can be made simply on its own, it is a complete type.&lt;/p&gt;
+&lt;p&gt;Let’s try making &lt;code&gt;Maybe&lt;/code&gt;s in GHCI:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; best_friends &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Just&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; best_friends
+&lt;span class="dt"&gt;Just&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You have just used the type constructor &lt;code&gt;Just&lt;/code&gt;, passed in the &lt;code&gt;Int&lt;/code&gt; 1, to make a type of &lt;code&gt;Maybe Int&lt;/code&gt;. To verify the type of &lt;code&gt;best_friends&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="fu"&gt;:&lt;/span&gt;t best_friends
+&lt;span class="ot"&gt;best_friends ::&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; &lt;span class="dt"&gt;Integer&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;::&lt;/code&gt; can be read as &lt;strong&gt;is of type&lt;/strong&gt;. How about make a &lt;code&gt;Maybe&lt;/code&gt; using &lt;code&gt;Nothing&lt;/code&gt;?&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; girlfriend &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Nothing&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; girlfriend
+&lt;span class="dt"&gt;Nothing&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="functor"&gt;Functor&lt;/h2&gt;
+&lt;p&gt;Suppose you have twice as many best friends as I do, how can I find out how many best friends you have?&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; your_best_friends &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt; &lt;span class="fu"&gt;*&lt;/span&gt; &lt;span class="dv"&gt;2&lt;/span&gt; &lt;span class="co"&gt;--hard coded value for the number best friends I have&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; your_best_friends
+&lt;span class="dv"&gt;2&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; your_best_friends &lt;span class="fu"&gt;=&lt;/span&gt; best_friends &lt;span class="fu"&gt;*&lt;/span&gt; &lt;span class="dv"&gt;2&lt;/span&gt; &lt;span class="co"&gt;--fails terribly&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You get a crazy error message. It means that you cannot multiply 2 with &lt;code&gt;best_friends&lt;/code&gt;, because &lt;code&gt;best_friends&lt;/code&gt; is not a type that can be multiplied with 2. Clearly there is something going on here, because &lt;code&gt;best_friends&lt;/code&gt; can contain an &lt;code&gt;Integer&lt;/code&gt;, and we can definitely multiply &lt;code&gt;Integer&lt;/code&gt;s, what we can do is to define a function that helps us do so.&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="fu"&gt;:&lt;/span&gt;{
+&lt;span class="fu"&gt;|&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt;&lt;span class="ot"&gt; calc_friends ::&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; &lt;span class="dt"&gt;Integer&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; &lt;span class="dt"&gt;Integer&lt;/span&gt;
+&lt;span class="fu"&gt;|&lt;/span&gt; 		calc_friends &lt;span class="dt"&gt;Nothing&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Nothing&lt;/span&gt;
+&lt;span class="fu"&gt;|&lt;/span&gt;			calc_friends (&lt;span class="dt"&gt;Just&lt;/span&gt; x) &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Just&lt;/span&gt; (x &lt;span class="fu"&gt;*&lt;/span&gt; &lt;span class="dv"&gt;2&lt;/span&gt;)
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="fu"&gt;:&lt;/span&gt;}
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; your_best_friends &lt;span class="fu"&gt;=&lt;/span&gt; calc_friends best_friends
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; your_best_friends
+&lt;span class="dt"&gt;Just&lt;/span&gt; &lt;span class="dv"&gt;2&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What we did was to define a function that can calculate the number of best friends you have, given the number of best friends I have. By applying this function to &lt;code&gt;best_friends&lt;/code&gt;, you get the number of best friends you have, wrapped in a &lt;code&gt;Just&lt;/code&gt;. What if I told you that you had twice as many girlfriends as I do?&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; your_girlfriends &lt;span class="fu"&gt;=&lt;/span&gt; calc_friends girlfriend
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; your_girlfriends
+&lt;span class="dt"&gt;Nothing&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Hahaha.&lt;/p&gt;
+&lt;p&gt;Perhaps you grow more popular, and you actually had 3 times more friends than I do. Since we hard coded the value &lt;code&gt;2&lt;/code&gt;, we have to make another function with the value &lt;code&gt;3&lt;/code&gt;, or we can actually generalize the function as such.&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="fu"&gt;:&lt;/span&gt;{
+&lt;span class="fu"&gt;|&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt;&lt;span class="ot"&gt; calc_friends ::&lt;/span&gt; (&lt;span class="dt"&gt;Integer&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Integer&lt;/span&gt;) &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; &lt;span class="dt"&gt;Integer&lt;/span&gt; &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; &lt;span class="dt"&gt;Integer&lt;/span&gt;
+&lt;span class="fu"&gt;|&lt;/span&gt;     calc_friends _ &lt;span class="dt"&gt;Nothing&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Nothing&lt;/span&gt;
+&lt;span class="fu"&gt;|&lt;/span&gt;     calc_friends f (&lt;span class="dt"&gt;Just&lt;/span&gt; x) &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Just&lt;/span&gt; (f x)
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="fu"&gt;:&lt;/span&gt;}
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; your_best_friends &lt;span class="fu"&gt;=&lt;/span&gt; calc_friends (&lt;span class="fu"&gt;*&lt;/span&gt; &lt;span class="dv"&gt;3&lt;/span&gt;) best_friends
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; your_best_friends
+&lt;span class="dt"&gt;Just&lt;/span&gt; &lt;span class="dv"&gt;3&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; your_girlfriends &lt;span class="fu"&gt;=&lt;/span&gt; calc_friends (&lt;span class="fu"&gt;*&lt;/span&gt; &lt;span class="dv"&gt;2&lt;/span&gt;) girlfriend
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; your_girlfriends
+&lt;span class="dt"&gt;Nothing&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We define &lt;code&gt;calc_friends&lt;/code&gt; as a function that takes in another function, &lt;code&gt;f&lt;/code&gt;, and this function &lt;code&gt;f&lt;/code&gt; takes in an &lt;code&gt;Integer&lt;/code&gt; and returns another &lt;code&gt;Integer&lt;/code&gt;. An example of this function would be &lt;code&gt;(* 3)&lt;/code&gt;. &lt;code&gt;calc_friends&lt;/code&gt; also takes in a &lt;code&gt;Maybe Integer&lt;/code&gt;, which it will apply the function &lt;code&gt;f&lt;/code&gt; to, and returning a resut of type &lt;code&gt;Maybe Integer&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;What if instead of number of best friends, an &lt;code&gt;Integer&lt;/code&gt;, we wanted to compare height, a &lt;code&gt;Double&lt;/code&gt;, and you are 1 metre taller than me, this looks pretty similar to calc_friends, so let’s reuse that:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; height &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Just&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;&lt;span class="fu"&gt;.&lt;/span&gt;&lt;span class="dv"&gt;7&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt; calc_height &lt;span class="fu"&gt;=&lt;/span&gt; calc_friends (&lt;span class="fu"&gt;+&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;)
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; calc_height height&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Throws you an error about incompatible types. This is becase we defined &lt;code&gt;calc_height&lt;/code&gt; in terms of &lt;code&gt;calc_friends&lt;/code&gt;, which only worked with &lt;code&gt;Maybe Integer&lt;/code&gt;, but our height was a &lt;code&gt;Maybe Double&lt;/code&gt;. So let’s generalize our function using &lt;em&gt;type variables&lt;/em&gt;, just like how &lt;code&gt;Maybe&lt;/code&gt; is defined.&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="fu"&gt;:&lt;/span&gt;{
+&lt;span class="fu"&gt;|&lt;/span&gt; &lt;span class="kw"&gt;let&lt;/span&gt;&lt;span class="ot"&gt; calc_stuff ::&lt;/span&gt; (a &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; a) &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; a &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; a
+&lt;span class="fu"&gt;|&lt;/span&gt;     calc_stuff _ &lt;span class="dt"&gt;Nothing&lt;/span&gt; &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Nothing&lt;/span&gt;
+&lt;span class="fu"&gt;|&lt;/span&gt;     calc_stuff f (&lt;span class="dt"&gt;Just&lt;/span&gt; x) &lt;span class="fu"&gt;=&lt;/span&gt; &lt;span class="dt"&gt;Just&lt;/span&gt; (f x)
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; &lt;span class="fu"&gt;:&lt;/span&gt;}
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; calc_stuff (&lt;span class="fu"&gt;*&lt;/span&gt; &lt;span class="dv"&gt;3&lt;/span&gt;) best_friends
+&lt;span class="dt"&gt;Just&lt;/span&gt; &lt;span class="dv"&gt;9&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; calc_stuff (&lt;span class="fu"&gt;+&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;) height
+&lt;span class="dt"&gt;Just&lt;/span&gt; &lt;span class="dv"&gt;2&lt;/span&gt;&lt;span class="fu"&gt;.&lt;/span&gt;&lt;span class="dv"&gt;7&lt;/span&gt;
+&lt;span class="fu"&gt;&amp;gt;&lt;/span&gt; calc_stuff (&lt;span class="fu"&gt;*&lt;/span&gt; &lt;span class="dv"&gt;2&lt;/span&gt;) girlfriend
+&lt;span class="dt"&gt;Nothing&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The last bit to understanding &lt;code&gt;Functor&lt;/code&gt; is a method called &lt;code&gt;fmap&lt;/code&gt;, all types that are instances of the &lt;em&gt;typeclass&lt;/em&gt; &lt;code&gt;Functor&lt;/code&gt; have to implement a method called &lt;code&gt;fmap&lt;/code&gt;, which has the signature:&lt;/p&gt;
+&lt;pre class="sourceCode haskell"&gt;&lt;code class="sourceCode haskell"&gt;fmap&lt;span class="ot"&gt; 			 ::&lt;/span&gt; (a &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; b) &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; f a &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; f b 
+&lt;span class="ot"&gt;calc_stuff ::&lt;/span&gt; (a &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; a) &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; a &lt;span class="ot"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="dt"&gt;Maybe&lt;/span&gt; a&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I’m putting them one above the other to let you see how similar they are. &lt;code&gt;fmap&lt;/code&gt; is just &lt;code&gt;calc_stuff&lt;/code&gt; generalized - generalizing the function that &lt;code&gt;calc_stuff&lt;/code&gt; takes in and - generaizing the type &lt;code&gt;Maybe&lt;/code&gt; to other types that take in a single type variable&lt;/p&gt;
+&lt;p&gt;And the &lt;code&gt;f&lt;/code&gt; we see in the &lt;code&gt;fmap&lt;/code&gt; is the Functor, a typeclass of which &lt;code&gt;Maybe&lt;/code&gt; is an instance of.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Fri, 18 Apr 2014 00:00:00 -0400</pubDate><guid>tag:blog.ngzhian.com,2014-04-18:ng-zhi-an-learning-haskell-through-maybe-functors.html</guid></item><item><title>Ng Zhi An - CS2101 - Should news agency ask Google to pay up?</title><link>http://blog.ngzhian.com/ng-zhi-an-cs2101-should-news-agency-ask-google-to-pay-up.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;CS2101 - Should news agency ask Google to pay up?&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on March  4, 2013
+    
+&lt;/div&gt;
+
+&lt;h2 id="case"&gt;Case&lt;/h2&gt;
+&lt;p&gt;Brazil’s National Association of Newspaper asks Google to pay up to post the headlines of their news articles. The NAN’s claim is that because Google currently uses the heading of the articles, and show the first few sentences, users are not as likely to click through to the new site itself, because they already have the gist of the article based on the snippet. Google’s view is that it has helped the agencies reach a bigger audience, and has not in fact reduced the visits to their &lt;a href="http://arstechnica.com/tech-policy/2012/10/brazilian-press-to-google-news-pay-up-or-leave-our-content-alone/" title="Brazil"&gt;sites&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;French government also &lt;a href="http://arstechnica.com/tech-policy/2012/10/google-threatens-to-cut-french-media-out-of-news-search/" title="France"&gt;proposed a law&lt;/a&gt; that requires Google to pay when the French media appear in news searches.&lt;/p&gt;
+&lt;p&gt;And in Germany, the lower house has passed a &lt;a href="http://arstechnica.com/tech-policy/2013/03/germany-wants-google-to-pay-for-news-citations-passes-re-printing-bill/" title="Germany"&gt;bill&lt;/a&gt; requiring search engines to pay a license fee when re-posting content that is longer than “individual words or short exerpts”.&lt;/p&gt;
+&lt;p&gt;These three countries seem to be going against the tech giant, with the 2 agendas: protecting the copyright of published content, and encouraging users to visit their own news sites. Google’s general stand is not to pay, as it feels that it has helped direct more users to the news sites, and that extensive protection of copyright will threathen start-ups.&lt;/p&gt;
+&lt;p&gt;What I want to talk about here is whether the countries should ask for payments from Google.&lt;/p&gt;
+&lt;h2 id="utilitarianism"&gt;Utilitarianism&lt;/h2&gt;
+&lt;p&gt;The main groups of people involved here are the news agencies, the consumers (those who read the news), and Google. I will assume that as companies, thew news agencies and Google have profit-maximisation as one of their priorities. The agencies however have other goals, such as protecting their copyright, and delivering news to a big audience. Google’s other aim is to be the first stop for people reading news. The consumers have a much simpler goal, to read accurate and relevant news, at their convenience.&lt;/p&gt;
+&lt;p&gt;My view here is that by asking Google to pay up, the overall good experienced by the stakeholders decrease. First of all, the news agencies stand to gain. By collecting a license fee, their profits increase, and this has a multiplier effect; they will be able to hire better journalists, management, have better infrastructure, provide wider and deeper coverage etc. But all that is assuming that Google agrees to pay up. A different way that this situation can turn out is that Google refuses to pay. In this case, it is likely that the new agencies will suffer some consequences. UK paper &lt;em&gt;The Times&lt;/em&gt; noted that 30 to 40 percent of their traffic was coming from search, and for other news agencies, the percentage is probably at that levels too. Hence when Google refuses, the agencies stand to lose that amount of traffic, and that is definitely harmful for them.&lt;/p&gt;
+&lt;p&gt;For Google, if they pay, they lose money. Depending on the amount that is to be paid, Google could lose quite a bit of money. This is because Google crawls and displays a huge amount of different news sites, and the number of users on Google’s services is immense. However if they don’t pay, their news aggregation offering will be limited. Consumers might see this as a reason to no longer use Google’s services, but jump directly to the news site. This is likely if the consumers are from within the country which news agencies are no longer re-published by Google. But I would think that this is unlikely to happen, as consumers can just turn to the many other snippets of news available from the many other agencies that Google is still tracking.&lt;/p&gt;
+&lt;p&gt;The happiness of the consumers is a bit more tricky to be calculated. Many consumers turn to Google because as an aggregator, it provides a huge variety of news, from different perspectives. The headline plus snippets combination also means that content is easily digestible. If we assume that the cost incurred by Google is not passed down to the consumers, the consumers will not feel it at all. They will still enjoy this free service like they always have. However this assumption will not likely stand as Google is not a charity. If Google refuses to pay, consumers will lose several avenues of information. And if they depended on those sources that are not cut off, it would be a loss for those consumers.&lt;/p&gt;
+&lt;p&gt;It seems like the Utilitarianism views are not helping much in this case, as it is hard to predict the way things will turn out, and also the costs and benefits to the stakeholders are not easy to quantify and measure.&lt;/p&gt;
+&lt;h2 id="kantianism"&gt;Kantianism&lt;/h2&gt;
+&lt;p&gt;If we universalize this case, it gets pretty extreme. Imagine if every company indexed by Google asks for payments, because a headline, or a title, or a snippet is re-published. Now we will not just be talking about Google, but about search engine in general, because they all do the same thing that the agencies are demanding license fees for.&lt;/p&gt;
+&lt;p&gt;Asking for payments will kill small start-ups in the field of search. It will kill innovation and will only allow the incumbent giants to thrive. In fact if license fees get large enough, even big companies will fall.&lt;/p&gt;
+&lt;p&gt;By asking for payments, agencies risk not getting included in search results. This is detrimental for consumers because it means that they do not get accurate and relevant results. The only results they get will be those that search engines do not have to pay to display.&lt;/p&gt;
+&lt;p&gt;This act is a selfish because companies only think about their own interests and copyright but fail to think of the human population as a whole.&lt;/p&gt;
+&lt;h2 id="virtue-ethics"&gt;Virtue Ethics&lt;/h2&gt;
+&lt;p&gt;It seems like there is a conflict of values going on with the news agencies: on one hand they want to protect their copyright, on the other they want users on their sites and they know Google will affect that a lot.&lt;/p&gt;
+&lt;p&gt;On first look it seems to me like the agencies value the copyright more, which is why they went ahead with asking for payments. Perhaps they are also encouraged by the license deal Google struck with Agence France-Presse, and they hope to achieve both at the same time.&lt;/p&gt;
+&lt;p&gt;But from an outsider point of view, it seems like the motivation of the agencies are profits. Given the large amount of readership and exposure Google has brought to the new agencies, it is ironic that they still want Google to pay up. And why should copyright be protected by payments? The news agencies can just decline to be included in Google’s tracker, and that will safely avoid all copyright issues. The fact that they &lt;em&gt;offered&lt;/em&gt; Google a choice to pay up clearly shows that they do not want to be left behind.&lt;/p&gt;
+&lt;h2 id="closing-thoughts"&gt;Closing thoughts&lt;/h2&gt;
+&lt;p&gt;Analyzing the consequences proved to be too complicated for me, with the various branches that this action could result in. Universalizing this action shows us a radical side of things, where Google has to pay every company that appears in its search results. I also questioned the real intentions of asking for payments, and feel that it isn’t motivated purely by protecting copyright, but perhaps by profits.&lt;/p&gt;
+&lt;p&gt;In all I feel that asking for payments is a wrong move, and a short-sighted ones. If the agencies were really that particular about protecting copyright, there are other ways to do so besides asking for payments.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Mon, 04 Mar 2013 00:00:00 -0500</pubDate><guid>tag:blog.ngzhian.com,2013-03-04:ng-zhi-an-cs2101-should-news-agency-ask-google-to-pay-up.html</guid></item><item><title>Ng Zhi An - Notes on "Thinking Forth"</title><link>http://blog.ngzhian.com/ng-zhi-an-notes-on-thinking-forth.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Notes on &amp;quot;Thinking Forth&amp;quot;&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on March  3, 2013
+    
+&lt;/div&gt;
+
+&lt;p&gt;I saw a mention of &lt;a href="http://thinking-forth.sourceforge.net/"&gt;Thinking Forth&lt;/a&gt; online sometime back, and downloaded it. I finally got down to reading it this lazy Sunday afternoon, and made some notes. To quote from the homepage &amp;gt; Thinking Forth is a book about the philosophy of problem solving &amp;gt; and programming style, applied to the unique programming &amp;gt; language &lt;a href="https://en.wikipedia.org/wiki/Forth_(programming_language)"&gt;Forth&lt;/a&gt;. What I feel after reading this book is that many concepts and tips taught in the book can actually be applied to which ever programming langugage you are using now. Here are some general notes that I have made.&lt;/p&gt;
+&lt;h2 id="component-programming"&gt;Component Programming&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Component programming&lt;/strong&gt; is about &lt;em&gt;minimizing&lt;/em&gt; the impact of any change. A component is a resource, which can be a piece of hardware or a software resource (such as a queue or stack). This idea is in contrast to Sequential or Hierachical Design. An example was given by the author: updating a record. However when designing by components, we think in terms of the components which describe the structure of the records, provide a set of editing commands, and provide read/write methods to storage.&lt;/p&gt;
+&lt;h2 id="analysis"&gt;Analysis&lt;/h2&gt;
+&lt;p&gt;Thinking Forth talks about the &lt;strong&gt;Nine Phases of the Programming Cycle&lt;/strong&gt;, I took special note of the first two: discovering requirements and constraints, and building a conceptual model of the solution. To build a conceptual model, we can follow these steps: 1. Define interfaces By using Data Flow Diagrams for example. 2. Define rules By using English, Decision Tree, Tables. And subsequentlhy simplify the rules so that it can be easily understood and coded 3. Define data structures. This is a description of the structures’ conceptual model, i.e. what attributes to keep.&lt;/p&gt;
+&lt;h2 id="problem-solving"&gt;Problem Solving&lt;/h2&gt;
+&lt;p&gt;These are general ways we can use to approach problem solving. - Determine you goal - Picture the problem as a whole - Develop a plan (e.g. work backwards) - Step back from the problem - Believe&lt;/p&gt;
+&lt;p&gt;I found &lt;strong&gt;Believe&lt;/strong&gt; to be exceptionally inspiring. To achieve success you first need to believe you can succeed.&lt;/p&gt;
+&lt;h2 id="naming"&gt;Naming&lt;/h2&gt;
+&lt;p&gt;As a pretty well-known quote goes &amp;gt; The 2 hardest things in Computer Science are naming things, &amp;gt; cache-invalidation, and off-by-one errors. Thinking Forth gives some tips on naming things, though some may actually be more relevant for the Forth language itself. - Choose names according to “what”, not “how” - Choose names that work in phrases - Spell names in full - Favour shorter words&lt;/p&gt;
+&lt;p&gt;I feel that naming is a &lt;em&gt;balancing act&lt;/em&gt;. On one hand you want the names to be &lt;em&gt;expressive&lt;/em&gt;, but you also want them to be &lt;em&gt;concise&lt;/em&gt;. For certain local variables, especially array indices, it makes sense not to give them long names; you will be typing them a lot, and they will not matter once you return from the function, so naming them &lt;code&gt;i&lt;/code&gt; is fine. For variables with a bigger scope, the name &lt;code&gt;data&lt;/code&gt; could mean a lot of different things.&lt;/p&gt;
+&lt;h2 id="factoring"&gt;Factoring&lt;/h2&gt;
+&lt;p&gt;Factoring is about organizing code into useful fragments by separating reusable parts from non-reusable parts. We can work to factor out: - Data - Functions - Code within Control Structures - Names After factoring, make sure that the factored code serves a single purpose, if not the refactoring might just have made things worse.&lt;/p&gt;
+&lt;h2 id="minimizing-control-structures"&gt;Minimizing Control Structures&lt;/h2&gt;
+&lt;p&gt;The rationale behind this is that control structures introduce complexity into the code, and makes it harder to read and maintain. This rationale is clearly demonstrated in an example given by the author, where there is a &lt;em&gt;heptly-nested&lt;/em&gt; (6 levels) &lt;code&gt;if-else&lt;/code&gt; flow. The author suggests a few ways to minimize control structures: - Do not test for something that has already executed - Combine booleans of similar weight - When conditions do not share similar weight, place conditions that are easier to calculate, or least likely to be true on the outside. - Choose control structures that closely matches the control-flow&lt;/p&gt;
+&lt;h2 id="closing-thoughts"&gt;Closing Thoughts&lt;/h2&gt;
+&lt;p&gt;I read through the book quite quickly, and skipped the parts which I felt was about Forth, because I was more interested in the concepts taught than the language. However many concepts introduced are based on what Forth provides, and how Forth works. As such, I think that learning Forth while you are going through this book will greatly increase the value gained from reading. Nonetheless, I gained a lot of valuable insights from Thinking Forth, all of which I shared above, which will definitely help me in being a better programmer. I would like to thank the author, &lt;a href="http://punchandbrodie.com/leo/"&gt;Leo Brodie&lt;/a&gt;, and &lt;a href="http://thinking-forth.sourceforge.net/"&gt;Thinking Forth Project&lt;/a&gt;, for taking time time and effort to make the book available for free, and in high-quality format.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sun, 03 Mar 2013 00:00:00 -0500</pubDate><guid>tag:blog.ngzhian.com,2013-03-03:ng-zhi-an-notes-on-thinking-forth.html</guid></item><item><title>Ng Zhi An - Thanksgiving 2013</title><link>http://blog.ngzhian.com/ng-zhi-an-thanksgiving-2013.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Thanksgiving 2013&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on March  2, 2013
+    
+&lt;/div&gt;
+
+&lt;h1 id="who-do-you-thank"&gt;Who do you thank?&lt;/h1&gt;
+&lt;p&gt;Thanksgiving is hardly, if not never, celebrated in Singapore, but it should be. When you sit down, and spend time thinking of who to thank, or what to thank, it makes you feel so much more, happy. You feel more appreciative, of all the experiences you have been through, all the people around you, all the things that you have.&lt;/p&gt;
+&lt;h2 id="thank-you-dear-family"&gt;Thank you dear family&lt;/h2&gt;
+&lt;p&gt;To the closest people in my life, thank you. To my &lt;strong&gt;parents&lt;/strong&gt; for raising me, for providing for me, for teaching me, nurturing me. There are just so many things to thank you for. For supporting me, no matter my decisions. To my &lt;strong&gt;sister&lt;/strong&gt;, for your words of encouragement, for your questions about math and science and wireless, because you make me feel privileged that I have someone to teach and guide.&lt;/p&gt;
+&lt;h2 id="thank-you-darling"&gt;Thank you darling&lt;/h2&gt;
+&lt;p&gt;To the &lt;strong&gt;girl I love&lt;/strong&gt;, thank you. For showing me how to love, for loving me, for letting me love you. For the good and bad times we share. For the many wonderful memories, some of which I have forgotten, just because there were so many. For your constant motivation, for your care, for being there.&lt;/p&gt;
+&lt;h2 id="thank-you-friends"&gt;Thank you friends&lt;/h2&gt;
+&lt;p&gt;To the people surrounding me, thank you. For the times we worked hard together, for the times we enjoyed our success, and failures. To &lt;strong&gt;MAD&lt;/strong&gt;, thank you for the nights of practice. Being able to work hard with a group of people sharing a common goal was really a joy. To the &lt;strong&gt;BBoys&lt;/strong&gt; especially, for showing me what true friends are like. For sticking up for one another, for entertaining one another, for wingman-ing one another. Cheers to everlasting brotherhood. To the people in NUS, I have not known you for long, but thank you for the study sessions, for the lunch breaks together. If not for all of you, school will really be lonely.&lt;/p&gt;
+&lt;h2 id="what-i-am-thankful-for"&gt;What I am thankful for&lt;/h2&gt;
+&lt;p&gt;I’m thankful for being a person of good health. For being a person who is able to pursue his interests. To not be constrained by lack of finances. To be brought up in a non-discriminatory environment. To be surrounded by people whom I enjoy being with, and hopefully they enjoy being around me too. I’m thankful for being able to write and read, and surf the net. And I thank you for reading this.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sat, 02 Mar 2013 00:00:00 -0500</pubDate><guid>tag:blog.ngzhian.com,2013-03-02:ng-zhi-an-thanksgiving-2013.html</guid></item><item><title>Ng Zhi An - Hack&amp;Roll 2013</title><link>http://blog.ngzhian.com/ng-zhi-an-hackroll-2013.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;Hack&amp;amp;Roll 2013&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on February  3, 2013
+    
+&lt;/div&gt;
+
+&lt;h1 id="our-experience-at-hackroll-2013"&gt;Our experience at Hack&amp;amp;Roll 2013&lt;/h1&gt;
+&lt;h2 id="what-we-built"&gt;What we built&lt;/h2&gt;
+&lt;p&gt;Our team (Nange) built &lt;a href="http://morge.nuscomputing.com/"&gt;NUSMorge&lt;/a&gt; , a simple way for NUS students to visualize multiple time tables together. Check out our &lt;a href="http://yjyao.com/NUSMorge/"&gt;intro page&lt;/a&gt; too!&lt;/p&gt;
+&lt;h2 id="the-stack"&gt;The Stack&lt;/h2&gt;
+&lt;p&gt;NUSMorge is built on &lt;a href="www.nodejs.org"&gt;Node.js&lt;/a&gt; with &lt;a href="www.expressjs.com"&gt;Express&lt;/a&gt; serving our requests, &lt;a href="http://www.mongodb.org/"&gt;mongoDB&lt;/a&gt; taking care of unique links, with &lt;a href="https://github.com/gett/mongojs"&gt;mongojs&lt;/a&gt; as the glue. The rest of it (creating the table, merging the table, parsing the input url etc.) is Javascript, with help from &lt;a href="http://jquery.com/"&gt;jQuery&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;NUSMorge also makes use of the json file crawled by &lt;a href="http://nusmods.com/"&gt;NUSMods&lt;/a&gt;. NUSMods is a timetable builder which many NUSStudents use. We take in a long url from NUSMods, and parse it into our own representation, and displays it in the our timetable.&lt;/p&gt;
+&lt;h2 id="challenges"&gt;Challenges&lt;/h2&gt;
+&lt;p&gt;For most of us, hacking on something was a relatively new experience, what more having to work together as a team and come up with something at the end of 24 hours.&lt;/p&gt;
+&lt;p&gt;Communication is vital, stating clearly the route endpoints you expect to get, the object representation, error handling etc. All these were essential for your code to work together, and for the application to even work at all. It was hard to get the message across just by talking, so we drew and scribbled, and that really helped in our understanding.&lt;/p&gt;
+&lt;p&gt;Fatigue started to dawn upon us three quarters of the way through, but with the help of snacks and sugar, we managed to complete our application before some of us took a snooze.&lt;/p&gt;
+&lt;p&gt;Encouragement from each other helps a lot too!&lt;/p&gt;
+&lt;h2 id="learning-points"&gt;Learning Points&lt;/h2&gt;
+&lt;p&gt;Stay focused, stay motivated. 24 hours isn’t a long time, to be able to ship something that works, it takes hard work. What is important is to get things working, then start adding features in if you have time.&lt;/p&gt;
+&lt;p&gt;Learn to distribute work, and learn the strengths of each member. Everyone will have an easier time this way.&lt;/p&gt;
+&lt;p&gt;Keep updating each other. Everyone should know what everyone else is working on this time. There needs to discussion and communication, so that members don’t go working on the same thing (like writing two different ways of parsing), or working on wildly different things.&lt;/p&gt;
+&lt;h2 id="source"&gt;Source&lt;/h2&gt;
+&lt;p&gt;Our &lt;a href="https://github.com/yyjhao/NUSMorge"&gt;project&lt;/a&gt; is on Github.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sun, 03 Feb 2013 00:00:00 -0500</pubDate><guid>tag:blog.ngzhian.com,2013-02-03:ng-zhi-an-hackroll-2013.html</guid></item><item><title>Ng Zhi An - What I learned about fonts on Linux</title><link>http://blog.ngzhian.com/ng-zhi-an-what-i-learned-about-fonts-on-linux.html</link><description>
+        &lt;div id="header"&gt;
+            &lt;div id="logo"&gt;
+                &lt;a href="../"&gt;$fancy-logo$&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div id="navigation"&gt;
+                &lt;a href="../about.html"&gt;About&lt;/a&gt;
+                &lt;a href="../contact.html"&gt;Contact&lt;/a&gt;
+                &lt;a href="../archive.html"&gt;Archive&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div id="content"&gt;
+            &lt;h1&gt;What I learned about fonts on Linux&lt;/h1&gt;
+
+            &lt;div class="info"&gt;
+    Posted on January 11, 2013
+    
+&lt;/div&gt;
+
+&lt;p&gt;I started on this because I wanted to use unicode characters for &lt;a href="https://github.com/LemonBoy/bar"&gt;LemonBoy’s bar&lt;/a&gt;. I wanted to display funky symbols without installing a new font, so I decided to use Dejavu Sans Mono to display them.&lt;/p&gt;
+&lt;p&gt;I had to get bar to find my font, and that is the gist of this post. In X, a font is specified in a funny way. Here’s an example:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-misc-dejavu sans mono-medium-r-normal--17-120-100-100-m-100-iso10646-1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Most of the time though, we will not need to be so specific, can this will do:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-*-dejavu sans mono-medium-r-normal--17-*-*-*-*-*-iso10646-1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If you’re as curious as me you’ll probably want to find out what all those numbers as me, and if you’re as stupid too, you’ld probably spend an entire afternoon finding out.&lt;/p&gt;
+&lt;p&gt;If you’re just interested in the answer jump to the bottom, ’cos I will be going though steps to find this information yourself.&lt;/p&gt;
+&lt;ol style="list-style-type: decimal"&gt;
+&lt;li&gt;&lt;code&gt;xlsfonts&lt;/code&gt; is is the server font list displayer for X (&lt;code&gt;man xlsfonts&lt;/code&gt;) This is the most crucial thing we need. Get it from your distribution’s package manager, I’m on arch so I just had to&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;pacman -S xlsfonts&lt;/code&gt;&lt;/p&gt;
+&lt;ol start="2" style="list-style-type: decimal"&gt;
+&lt;li&gt;skim through&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;xlsfonts --help&lt;/code&gt;&lt;/p&gt;
+&lt;ol start="3" style="list-style-type: decimal"&gt;
+&lt;li&gt;&lt;p&gt;try this:&lt;/p&gt;
+&lt;p&gt;xlsfonts&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;You should see a bunch of fonts displayed similar to what I showed you above.&lt;/p&gt;
+&lt;ol start="4" style="list-style-type: decimal"&gt;
+&lt;li&gt;&lt;p&gt;If you have DejaVu Sans already installed you can probably try this:&lt;/p&gt;
+&lt;p&gt;xlsfonts -l -fn -misc-dejavu sans  mono-medium-r-normal–17-120-100-100-m-100-iso10646-1&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Make sure you type the backslash as well, you have to escape the spaces.&lt;/p&gt;
+&lt;ol start="5" style="list-style-type: decimal"&gt;
+&lt;li&gt;&lt;p&gt;If not you, pick a font from the list generated by &lt;code&gt;xlsfonts&lt;/code&gt;, and do:&lt;/p&gt;
+&lt;p&gt;xlsfonts -l -fn -the-font-you-picked-some-numbers-blah-blah111&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Or if you’re lazy to type we can just select the first font in the list:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;xlsfonts -l -fn $(xlsfonts | head -1)&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start="6" style="list-style-type: decimal"&gt;
+&lt;li&gt;&lt;p&gt;Now thats not very interesting, a bunch of short cryptic headings, so lets try this:&lt;/p&gt;
+&lt;p&gt;xlsfonts -ll -fn $(xlsfonts | head -1)&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Note the 2 l’s this time. So this gets much more interesting, lots of information, not that difficult to understand. Most are self-explanatory, such as direction, rows, columns. To go more in-depth, try these search terms: character encoding, character map, fonts in x.&lt;/p&gt;
+&lt;ol start="7" style="list-style-type: decimal"&gt;
+&lt;li&gt;Now things become clearer, lets separate the full font name by hypens, and match them to the properties in the output:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;td&gt;
+misc
+&lt;/td&gt;&lt;td&gt;
+FOUNDRY
+&lt;/td&gt; &lt;/tr&gt; 
+&lt;tr&gt;&lt;td&gt;
+dejavu sans mono
+&lt;/td&gt;&lt;td&gt; 
+FAMILY_NAME
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+medium
+&lt;/td&gt;&lt;td&gt; 
+WEIGHT NAME
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+r
+&lt;/td&gt;&lt;td&gt; 
+SLANT
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+normal
+&lt;/td&gt;&lt;td&gt; 
+SETWIDTH_NAME
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;  &lt;/td&gt;&lt;td&gt; 
+ADD_STYLE_NAME
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+17
+&lt;/td&gt;&lt;td&gt; 
+PIXEL_SIZE
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+120
+&lt;/td&gt;&lt;td&gt; 
+POINT_SIZE
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+100
+&lt;/td&gt;&lt;td&gt; 
+RESOLUTION_X
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+100
+&lt;/td&gt;&lt;td&gt; 
+RESOLUTION_Y
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+m
+&lt;/td&gt;&lt;td&gt; 
+SPACING
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+100
+&lt;/td&gt;&lt;td&gt; 
+AVERAGE_WIDTH
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+iso10646
+&lt;/td&gt;&lt;td&gt; 
+CHARSET_REGISTRY
+&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;
+1
+&lt;/td&gt;&lt;td&gt;
+CHARSET_ENCODING
+&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;SLANT has to do with the italics, r stands for Roman, there is also o for Oblique. Mystery solved! I don’t know what every property means, but I guess you can probably find out if you want to&lt;/p&gt;
+&lt;p&gt;This worked for &lt;code&gt;bar&lt;/code&gt;, with the specific full font name. I also learned that the &lt;code&gt;PIXEL_SIZE&lt;/code&gt; and &lt;code&gt;POINT_SIZE&lt;/code&gt; should not both be set at the same time. For example, looking at the information above, you can set &lt;code&gt;PIXEL_SIZE&lt;/code&gt; and &lt;code&gt;POINT_SIZE&lt;/code&gt; to 17 and 120 respectively, but 12 and 120 will fail.&lt;/p&gt;
+&lt;p&gt;I suppose this has something to do with font rasterizing, so setting one will optimize the other for you. As such I chose to fidget with &lt;code&gt;PIXEL_SIZE&lt;/code&gt; and leave &lt;code&gt;POINT_SIZE&lt;/code&gt; as *.&lt;/p&gt;
+&lt;p&gt;What I’m using now is this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;-misc-dejavu sans mono-medium-r-normal--11-*-*-*-m-*-iso10646-1&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Which ensures that I get the correct font family, weight, encoding, which I guess are the most important parts, just leave the rest to the computer!&lt;/p&gt;
+&lt;p&gt;Notes: &lt;code&gt;xlsfonts&lt;/code&gt; has a &lt;code&gt;-lll&lt;/code&gt; flag to, shows you every character in the font, pretty crazy and useful at the same time! And guess what I think I’ll be back to stlarch so it looks so much better.&lt;/p&gt;
+
+        &lt;/div&gt;
+        &lt;div id="footer"&gt;
+            Site proudly generated by
+            &lt;a href="http://jaspervdj.be/hakyll"&gt;Hakyll&lt;/a&gt;
+        &lt;/div&gt;
+    </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Fri, 11 Jan 2013 00:00:00 -0500</pubDate><guid>tag:blog.ngzhian.com,2013-01-11:ng-zhi-an-what-i-learned-about-fonts-on-linux.html</guid></item></channel></rss>

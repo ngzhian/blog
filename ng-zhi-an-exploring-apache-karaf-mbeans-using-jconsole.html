@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>Ng Zhi An - Exploring Apache Karaf MBeans using JConsole</title>
+        <link rel="stylesheet" href="http://blog.ngzhian.com/theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+<a href="http://github.com/ngzhian">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+        <header id="banner" class="body">
+                <h1><a href="http://blog.ngzhian.com/">Zhi An Blog </a></h1>
+                <nav><ul>
+                    <li><a href="http://blog.ngzhian.com/category/equityzen.html">equityzen</a></li>
+                    <li class="active"><a href="http://blog.ngzhian.com/category/misc.html">misc</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="http://blog.ngzhian.com/ng-zhi-an-exploring-apache-karaf-mbeans-using-jconsole.html" rel="bookmark"
+           title="Permalink to Ng Zhi An - Exploring Apache Karaf MBeans using JConsole">Ng Zhi An - Exploring Apache Karaf MBeans using JConsole</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2014-05-10T00:00:00">
+                Published: Sat 10 May 2014
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://blog.ngzhian.com/author/ng-zhi-an.html">Ng Zhi An</a>
+        </address>
+<p>In <a href="http://blog.ngzhian.com/category/misc.html">misc</a>. </p>
+
+</footer><!-- /.post-info -->      
+        <div id="header">
+            <div id="logo">
+                <a href="../">$fancy-logo$</a>
+            </div>
+            <div id="navigation">
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Exploring Apache Karaf MBeans using JConsole</h1>
+
+            <div class="info">
+    Posted on May 10, 2014
+    
+</div>
+
+<p>This post will be about using JConsole to explore the MBeans exposed by Apache Karaf. <a href="http://karaf.apache.org/manual/latest-2.3.x/users-guide/jmx.html">Here’s</a> a list of MBeans that Karaf provides.</p>
+<h2 id="getting-karaf-up-and-running">Getting Karaf up and running</h2>
+<p>Karaf provides an extremely clear an concise <a href="http://karaf.apache.org/manual/latest-2.3.x/quick-start.html">quick start guide</a> and I was able to up everything up and running by following the instructions.</p>
+<h2 id="monitoring-using-jconsole">Monitoring using JConsole</h2>
+<ol style="list-style-type: decimal">
+<li>Fire up Karaf using <code>$KARAF_INSTALL_LOCATION\bin\start</code></li>
+<li>Fire up JConsole</li>
+</ol>
+<div class="figure">
+<img src="../images/jconsole-karaf.png" alt="JConsole can detect the Karaf process" /><p class="caption">JConsole can detect the Karaf process</p>
+</div>
+<p>Under the new connection window, JConsole should be able to detect the Karaf process. We can connect to it, and head straight to the MBeans tab. We can immediately see the list of MBeans available. The <code>java.lang.Memory</code> and <code>java.lang.Threading</code> MBeans are there, and we explored it in a previous blog post.</p>
+<div class="figure">
+<img src="../images/jconsole-karaf-mbeans.png" alt="MBeans tab of the Karaf process" /><p class="caption">MBeans tab of the Karaf process</p>
+</div>
+<h2 id="the-karaf-mbeans">The Karaf MBeans</h2>
+<p>Karaf actually provides quite a number of MBeans, and are categorized by <code>type</code>. For example the mbeans have the domain <code>org.apache.karaf</code>, and some of the types are <code>admin</code>, <code>bundles</code>, <code>config</code>, etc. All of them have the same <code>name</code>, which is <code>root</code>.</p>
+<div class="figure">
+<img src="../images/jconsole-karaf-mbeans-all.png" alt="Karaf provides MBeans of many kinds" /><p class="caption">Karaf provides MBeans of many kinds</p>
+</div>
+<h2 id="camel-mbeans">Camel MBeans</h2>
+<p>While exploring MBeans using JConsole, and following the Karaf quickstart, I chanced upon MBeans with the domain <code>org.apache.camel</code>, so it seems like <code>Camel</code> provides quite a number of mbeans as well! What’s interesting to me is that I am able to see <code>Camel</code> MBeans when my connection is to <code>Karaf</code>. I think this is because <code>Camel</code> was started by <code>Karaf</code>, so they are attached to the same process.</p>
+<div class="figure">
+<img src="../images/jconsole-karaf-camel.png" alt="Camel provides MBeans as well" /><p class="caption">Camel provides MBeans as well</p>
+</div>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="#">You can modify those links in your config file</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="http://github.com/ngzhian">github</a></li>
+                            <li><a href="#">Another social link</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>Ng Zhi An - Planes, Airports, and Monads - Adventures in Haskell</title>
+        <link rel="stylesheet" href="http://blog.ngzhian.com/theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+<a href="http://github.com/ngzhian">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+        <header id="banner" class="body">
+                <h1><a href="http://blog.ngzhian.com/">Zhi An Blog </a></h1>
+                <nav><ul>
+                    <li><a href="http://blog.ngzhian.com/category/equityzen.html">equityzen</a></li>
+                    <li class="active"><a href="http://blog.ngzhian.com/category/misc.html">misc</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="http://blog.ngzhian.com/ng-zhi-an-planes-airports-and-monads-adventures-in-haskell.html" rel="bookmark"
+           title="Permalink to Ng Zhi An - Planes, Airports, and Monads - Adventures in Haskell">Ng Zhi An - Planes, Airports, and Monads - Adventures in Haskell</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2014-04-20T00:00:00">
+                Published: Sun 20 April 2014
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://blog.ngzhian.com/author/ng-zhi-an.html">Ng Zhi An</a>
+        </address>
+<p>In <a href="http://blog.ngzhian.com/category/misc.html">misc</a>. </p>
+
+</footer><!-- /.post-info -->      
+        <div id="header">
+            <div id="logo">
+                <a href="../">$fancy-logo$</a>
+            </div>
+            <div id="navigation">
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Planes, Airports, and Monads - Adventures in Haskell</h1>
+
+            <div class="info">
+    Posted on April 20, 2014
+    
+</div>
+
+<h1 id="planes-airports-and-monads">Planes, Airports, and Monads</h1>
+<p> TODO is the smallest airport in the world, it can only hold 3 planes at any time. You are the air traffic controller there, and your job is to plan the landings and taking off of all the planes so that no accidents happen.  This job is not too difficult, you just have to look at the landing and taking-off sequence, and determine if the airport can accomodate the sequence. Let’s model that. <code>haskell type Planes = Int type Airport = Planes</code>  Planes can land, or take off: <code>haskell land :: Planes -&gt; Airport -&gt; Airport land incoming grounded = grounded + incoming  takeoff :: Planes -&gt; Airport -&gt; Airport takeoff flying grounded = grounded - flying</code>  We can try landing and taking off: <code>haskell &gt; takeoff 1 (land 2 0) 1 &gt; takeoff 2 (land 3 (takeoff 1 (land 2 0))) &gt; 0 `land` 2 `takeoff` 1 `land` 3 `takeoff` 2 2</code>  The second example seems to be okay, but actually we had let 4 planes in the airport at once. Let’s fix that using <code>Maybe</code>. When we have too many planes, we return a <code>Nothing</code>, meaning that this particular sequence can not be accomodated safely by the airport. <code>haskell land :: Planes -&gt; Airport -&gt; Maybe Airport land incoming grounded   | grounded + incoming &gt; 3 = Nothing   | otherwise               = Just (grounded + incoming)  takeoff :: Planes -&gt; Airport -&gt; Maybe Airport takeoff flying grounded   | grounded - flying &lt; 0 = Nothing   | otherwise             = Just (grounded - flying)</code>  Let’s try this: <code>haskell &gt; land 3 0 Just 3 &gt; land 4 0 Nothing &gt; takeoff 2 0 Nothing &gt; takeoff 1 2 Just 1</code>  Now we have a problem because we can no longer chain our <code>land</code> and <code>takeoff</code> methods together easily. They both return a <code>Maybe Airport</code>, but they take in <code>Airport</code>. We can try to write a function to take care of this. <code>haskell chain :: Maybe Airport -&gt; (Airport -&gt; Maybe Airport) -&gt; Maybe Airport chain Nothing _ = Nothing chain (Just grounded) action = action grounded</code>  And we can now write things smoothly <code>haskell &gt; Just 1 `chain` takeoff 1 `chain` land 2 `chain` takeoff 2 Just 0</code>  And if we just change the name of <code>chain</code> to <code>&gt;&gt;=</code> <code>haskell &gt; Just 1 -:: takeoff 2 Nothing &gt; Just 2 -:: takeoff 1 Just 1</code> There we have it, the <code>bind</code> operator in Monads!</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="#">You can modify those links in your config file</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="http://github.com/ngzhian">github</a></li>
+                            <li><a href="#">Another social link</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
