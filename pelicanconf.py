@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Ng Zhi An'
 SITENAME = u'Zhi An Blog'
-SITEURL = 'http://blog.ngzhian.com'
+SITEURL = 'http://ngzhian.github.io'
 
 GITHUB_URL = 'http://github.com/ngzhian'
 
@@ -32,4 +32,4 @@ SOCIAL = (('github', GITHUB_URL),
 DEFAULT_PAGINATION = False
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+RELATIVE_URLS = True
