@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Ng Zhi An - Setting up a killer development environment for CS2103T</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">$fancy-logo$</a>
+            </div>
+            <div id="navigation">
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Setting up a killer development environment for CS2103T</h1>
+
+            <div class="info">
+    Posted on April 27, 2014
+    
+</div>
+
+<p>This post is about setting up a CS2103T development environment that is fast, efficient and will be useful for whatever Java development needs you may have in the future. These are gleaned from research I did when I was preparing my own environment for CS2103T at the start of this year, my experience going through the module, and observations of how my peers develop. Tips are broken into 3 categories, <a href="#setup">Setting up Eclipse</a>, <a href="#usage">Using Eclipse</a>, and <a href="#teamwork">Working as a team</a>.</p>
+<h2 id="setting-up-eclipse"><a name="setup"></a>Setting up Eclipse</h2>
+<p>You will probably be developing on the <a href="http://eclipse.org/" title="Eclipse">Eclipse Platform</a>, if not, just stop reading.</p>
+<blockquote>
+<p>Note that Eclipse itself can do a lot of things, but you’ll just be using it to power your Java development needs.</p>
+</blockquote>
+<p>Eclipse will be your second home this semester, let’s make things comfortable by doing some minor <em>renovations</em>.</p>
+<h3 id="color-scheme">Color scheme</h3>
+<p>If I’m going to stare at a program for a long time, it needs to look nice. Eclipse isn’t ugly, but <em>nice</em> is subjecting, but I prefer a dark theme. If you have the same taste as me, <em>hi 5</em>, you can get it <a href="https://github.com/guari/eclipse-ui-theme" title="Guari MoonRise UI Theme for Eclipse">here</a>, and it looks something like this</p>
+<p><a href="../images/eclipse-dark.png"><img src="../images/eclipse-dark-thumbnail.png" title="my eclipse looks like this" alt="How my eclipse looks like with the dark theme" /></a></p>
+<p>Alternatively, you can just choose the colours of the editor, the syntax colours, with <a href="http://marketplace.eclipse.org/content/eclipse-color-theme">the Eclipse Color Theme plugin</a>. Personally I like <a href="http://eclipsecolorthemes.org/?view=theme&amp;id=52">Monokai</a> or <a href="http://eclipsecolorthemes.org/?view=theme&amp;id=118">Wombat</a>.</p>
+<h3 id="formatter">Formatter</h3>
+<p>Now that Eclipse looks prettier, let’s work on how our source code looks like. There’s no way I can tell you how to write nice code, including naming classes, methods and such, thats the Prof’s job. But at least I can teach you how to ensure your code follows the specified code style guideline.</p>
+<p>Under the <em>Package Explorer</em> view, right click your project, and click <em>Properties</em>, this is the <em>Project Properties</em> window, a place to set project-specific configurations. Or just select your project and hit <code>Alt-Enter</code>. You should see a new window pop up:</p>
+<p><a href="../images/project-settings.png"><img src="../images/project-settings-thumbnail.png" alt="Project-specific properties" /></a></p>
+<p>Click on <em>Java Code Style</em>, and check <em>Enable project specific settings</em>. Then expand the <em>Java Code Style</em> tree, and click <em>Formatter</em>. This is where you specify how your Java code is formatted, indentation, braces, whitespace, etc. I’ve check out the style guide for my module, configured it by hand using whichever settings I could find/understand, and the XML is uploaded <a href="https://gist.github.com/ngzhian/11338052">here</a>. You can just download this and import it in. But note that I probably didn’t do everything right, and that requirements may change, so do run through the formatted files and see if it matches!</p>
+<blockquote>
+<p>Most preferences window have a search box, so you could have just typed <em>Formatter</em> and reached the same view! Try to remember these time savers, those seconds really add up :)</p>
+</blockquote>
+<h3 id="code-style">Code Style</h3>
+<p>This has more to do with the way you write Java code, rather than white space and such. This option is under <em>Java Code Style</em> as well, so just enable it for your project and fiddle around with it. THe default Eclipse profile should work fine.</p>
+<h3 id="save-actions">Save Actions</h3>
+<p>You can find this under <em>Java Editor</em> and this is an awesome time-saver. Basically it lets you configure actions that happen upon saving a file! Quickly enable it, and the default settings are fine. Go ahead and save these changes, and then make some minor edits on a file, such as importing an unused class, and save the file. See the magic happened.</p>
+<blockquote>
+<p>Warning though, make sure you don’t enable the formatter options that sorts methods by alphabetical order, that will be painful.</p>
+</blockquote>
+<p>You can see some advanced stuff under <em>Additional actions</em>. No sweat, those are just good practices, feel free to research about them. Particularly, I found some articles about <a href="http://www.dinduks.com/why-are-trailing-whitespaces-bad/">why</a> trailing spaces are <a href="http://stackoverflow.com/questions/300489/why-is-it-bad-to-commit-lines-with-trailing-whitespace-into-source-control">bad</a>.</p>
+<h3 id="build-paths">Build Paths</h3>
+<p>Build paths are places where the compiler looks for classes when compiling your code. If you end up using libraries for your project, quite likely, note that adding the <code>.jar</code> into your project folder is insufficient. You need to add the jar to your project build path. You can do so using the project properties window too. Click on <em>Java Build Path</em>, and click <em>Add Jars</em>, point it to the jar. Simple :)</p>
+<h3 id="useful-plugins">Useful plugins</h3>
+<p><a href="http://marketplace.eclipse.org/">Eclipse Marketplace</a> has lots and lots of plugins, and you can actually visit the marketplace from inside Eclipse, just go to your main Eclipse window, select <em>Help</em> then <em>Eclipse Marketplace</em>. Or hit <code>Alt+H</code> then <code>W</code>. For me I have <a href="http://marketplace.eclipse.org/content/vrapper">Vrapper</a>, because I love to use <a href="www.vim.org">Vim</a>. If you want to use Vim within Eclipse, install Vrapper, it provides support for all of my Vim needs including movement comands, search and replace etc.</p>
+<h3 id="misc">Misc</h3>
+<p>When you try to copy paste your code from Eclipse to say Word, the syntax highlighting might not show up right. If so, disable code folding, go to <em>Window</em> -&gt; <em>Preferences</em> -&gt; <em>Java</em> -&gt; <em>Editor</em> -&gt; <em>Folding</em> and disable it.</p>
+<h2 id="using-eclipse"><a name="usage"></a>Using Eclipse</h2>
+<p>There’s really only one thing I want to talk about here: using keyboard shortcuts. The saying goes “the keyboard is mightier than the mouse”, and that holds at least for software development. Trying to move your cursor to click that small “Run” button to test your code takes ages compared to a simple <code>F11</code>. Learn the shortcuts and use them well, I’ve compiled a short list of my favourites.</p>
+<table>
+<tr><td>
+<code>Ctrl+Shift+L</code>
+</td><td> 
+quick view of shortcuts
+</td></tr>
+<tr><td>
+<code>Ctrl+Shift+L</code> again
+</td><td> 
+open shortcuts preferences page
+</td></tr>
+<tr><td>
+<code>Ctrl+1</code>
+</td><td> 
+quick fix
+</td></tr>
+<tr><td>
+<code>Ctrl+Shift+R</code>
+</td><td> 
+open resource or any file
+</td></tr>
+<tr><td>
+<code>Ctrl+F11</code>
+</td><td> 
+run
+</td></tr>
+<tr><td>
+<code>F11</code>
+</td><td> 
+debug
+</td></tr>
+<tr><td>
+<code>Ctrl+Space</code>
+</td><td> 
+offer content assist/completion
+</td></tr>
+<tr><td>
+<code>Ctrl+M</code>
+</td><td> 
+maximize/minimize current tab
+</td></tr>
+<tr><td>
+<code>Alt+Left</code>
+</td><td> 
+go to previous place u edited
+</td></tr>
+<tr><td>
+<code>Alt+Right</code>
+</td><td> 
+symmetry of <code>Alt-Left</code>
+</td></tr>
+<tr><td>
+<code>Ctrl+O</code>
+</td><td> 
+code outline
+</td></tr>
+<tr><td>
+<code>F2</code>
+</td><td> 
+open tooltip
+</td></tr>
+<tr><td>
+<code>F3</code>
+</td><td> 
+show declaration
+</td></tr>
+<tr><td>
+<code>Alt+Shift+T</code>
+</td><td> 
+open refactoring dropdown
+</td></tr>
+<tr><td>
+<code>Alt+Shift+M</code>
+</td><td> 
+extract method (good for refactoring)
+</td></tr>
+</table>
+
+<h2 id="working-as-a-team"><a name="teamwork"></a>Working as a team</h2>
+<p>I’m not talking about conflict resolution, intercultural communications or that sort- go to CS2101 for that. I’m talking about multiple people working on the same piece of code, and how to do that with as little friction as possible.</p>
+<h3 id="google-code">Google Code</h3>
+<p>On hindsight, we didn’t appreciate Google Code that much, and we didn’t start using it early enough. My advise is to <strong>use it for everything</strong>. Google Code itself is a great task tracker- you can list your user stories, feature suggestion, ideas, bugs, deadlines as <strong>issues</strong>, And then mark them as ongoing, completed, wontfix, done, or closed as you work on your code. This may distract you from writing code, but it helps the team keep the project so much more organized. Besides, usage of Google Code is factored into your marks, so why not use it? Yes, it doesn’t have the most beautiful interface, but it’s quite speedy and effective. So start from day one, and religiously enter and update your issues there.</p>
+<p>Also, the commenting system is pretty useful. It automatically emails anyone cc-ed on the issue as well, so you can keep updated even without going to the web interface.</p>
+<h3 id="mercurial">Mercurial</h3>
+<p>I like using <a href="http://tortoisehg.bitbucket.org/">TortoiseHg</a> because it’s so simple: choosing which files to stage for commit, commiting, visualizing branches, merging, pushing, fetching etc; all these common functionalities all just a click away. Get used to it, and learn how to use it. But don’t forget that a command line interface exists! When faced with a difficult situation, like improper pulling/merging, <a href="http://stackoverflow.com/questions/2584407/how-to-save-username-and-password-with-mercurial">most</a> questions and <a href="http://stackoverflow.com/questions/623052/how-to-edit-incorrect-commit-message-in-mercurial">answers</a> on <a href="http://stackoverflow.com/questions/tagged/mercurial">StackOverflow</a> or such are <a href="http://stackoverflow.com/questions/1101167/what-is-the-difference-between-hg-forget-and-hg-remove">about</a> the command line. So you probably have to use it once in a while.</p>
+<h3 id="talking">Talking</h3>
+<p>We have great technology that enable us to work remotely, and technically we can complete this project without having to meet up at all, sans tutorials/lectures. But where’s the fun and learning in that, right? Take this chance to hang out with your group, talk to them in person about your project, and about other stuff as well. This will help build chemistry and bonds within your team, and will make this module so much more enjoyable and fruitful. The product is not your application, it is you, and the friendships you make.</p>
+<p>This is just a quick guide to optimizing your workflow for CS2103T development, and isn’t comprehensive. But I’ve talked quite a bit about Setting up Eclipse, Using it, and Working with your teammates. I hope you have learned something new and these tips will help you for this module. More importantly though, I hope you keep learning, and share your knowledge with everyone, to that we, and our craft, can grow together - so that we become better software engineers.</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>

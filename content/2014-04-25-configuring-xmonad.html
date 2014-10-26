@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Ng Zhi An - Configuring XMonad</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">$fancy-logo$</a>
+            </div>
+            <div id="navigation">
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Configuring XMonad</h1>
+
+            <div class="info">
+    Posted on April 25, 2014
+    
+</div>
+
+<p>I have been setting up XMonad on my Debian box, partially because I am kinda hooked on <a href="www.haskell.org">Haskell</a> right now, and so far it has been a prety fun adventure. Just wish to share some thoughts here.</p>
+<h2 id="getting-xmonad">Getting XMonad</h2>
+<p>Being on Debian has its perks, a <code>aptitude install xmonad</code> simply works, else just head to <a href="www.xmonad.org/download.html">XMonad</a> to get the suitable package.</p>
+<h2 id="running-xmonad">Running XMonad</h2>
+<p>I’m using <code>startx</code> to run XMonad, so all I have to do is to edit <code>~/.xinitrc</code>, and add the line</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">exec</span> xmonad</code></pre>
+<p>If you’re using a display manager such as KDM, GDM, slim, lightdm etc, there’s probably a way to select which which session you want to run, or you can edit your <code>~/.xsession</code> file. You can probably get more information <a href="xmonad.org/documentation.html">here</a>.</p>
+<h2 id="configuring-xmonad">Configuring XMonad</h2>
+<p>This is the really fun part. I’ve tried finding <em>good</em> configurations I can immediately copy and use, and actually found <a href="github.com/vicfryzel/xmonad-config">this</a>, but when it comes to configuring your window manager, everyone is heavily opiniated. After spending some time on it, I found that the best way to configure XMonad is to do it in small steps.</p>
+<p>I think the most efficient way to figure things out is to learn the defaults first, by looking at the <a href="xmonad.org/tour.html">tour</a> from the official pages. This will give you a feel of how to do things. The most important takeaway is: - <code>Mod + Shift + Enter</code> fires up a terminal, and by default <code>Mod</code> is <code>Left-Alt</code> - <code>Mod-Q</code> restarts xmonad, this allows you to see changes you have made to the config file quickly - <code>~/.xmonad/xmonad.hs</code> is the default configuration file</p>
+<p>Then move on to the actual configuration, and a gentleman has wrote a extremely easy to follow step-wise [guide](www.haskell.org/haskellwiki/Xmonad/Config_archive/John_Goerzen’s_Configuration) on configuring XMonad. Follow this guide to the end, and you should have a simple yet efficient XMonad up and running.</p>
+<h2 id="caveats">Caveats</h2>
+<p>I faced one small issue, which was the loading of xmobar configuration file. Particularly the line</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">xmproc <span class="ot">&lt;-</span> spawnPipe <span class="st">&quot;xmobar /home/ngzhian/.xmonad/.xmobarrc&quot;</span></code></pre>
+<p>For some reason xmobar didn’t manage to load the file that I passed in. I solved it by not passing in a filename, and just creating the config file at the default location, which is <code>~/.xmobarrc</code>. So that line simply became</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">xmproc <span class="ot">&lt;-</span> spawnPipe <span class="st">&quot;xmobar&quot;</span></code></pre>
+<p>I’ll write about xmobar soon, it’s fun to configure it as well, but for now here’s what I have</p>
+<p><a href="../images/xmonad.png"><img src="../images/xmonad-thumbnail.png" alt="How my XMonad looks like now" /></a></p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- /home/ngzhian/.xmonad/xmonad.sh</span>
+<span class="kw">import </span><span class="dt">XMonad</span>
+<span class="kw">import </span><span class="dt">XMonad.Hooks.DynamicLog</span>
+<span class="kw">import </span><span class="dt">XMonad.Hooks.ManageDocks</span>
+<span class="kw">import </span><span class="dt">XMonad.Util.Run</span>(spawnPipe)
+<span class="kw">import </span><span class="dt">XMonad.Util.EZConfig</span>(additionalKeys)
+<span class="kw">import </span><span class="dt">System.IO</span>
+
+main <span class="fu">=</span> <span class="kw">do</span>
+  xmproc <span class="ot">&lt;-</span> spawnPipe <span class="st">&quot;xmobar&quot;</span>
+  xmonad <span class="fu">$</span> defaultConfig
+    { manageHook <span class="fu">=</span> manageDocks <span class="fu">&lt;+&gt;</span> myManageHook <span class="fu">&lt;+&gt;</span> manageHook defaultConfig
+    , layoutHook <span class="fu">=</span> avoidStruts  <span class="fu">$</span>  layoutHook defaultConfig
+    , logHook    <span class="fu">=</span> dynamicLogWithPP xmobarPP
+                       { ppOutput <span class="fu">=</span> hPutStrLn xmproc
+                       , ppTitle  <span class="fu">=</span> xmobarColor <span class="st">&quot;#021030&quot;</span> <span class="st">&quot;&quot;</span> <span class="fu">.</span> shorten <span class="dv">100</span>
+                       }
+    , modMask <span class="fu">=</span> mod4Mask    <span class="co">-- Rebind Mod to Windows key</span>
+    , terminal <span class="fu">=</span> myTerminal <span class="co">-- set terminal</span>
+    } <span class="ot">`additionalKeys`</span>
+    [ ((mod4Mask <span class="fu">.|.</span> shiftMask,    xK_l),     spawn <span class="st">&quot;xscreensaver-command -lock&quot;</span>)
+    , ((controlMask,               xK_Print), spawn <span class="st">&quot;sleep 0.2; scrot -s&quot;</span>)
+    , ((<span class="dv">0</span>,                         xK_Print), spawn <span class="st">&quot;scrot&quot;</span>)
+    ]
+
+<span class="co">-- Preferred terminal</span>
+myTerminal <span class="fu">=</span> <span class="st">&quot;/usr/bin/urxvt&quot;</span>
+
+<span class="co">-- Managing hooks when windows are created</span>
+myManageHook <span class="fu">=</span> composeAll
+  [ className <span class="fu">=?</span> <span class="st">&quot;Gimp&quot;</span> <span class="fu">--&gt;</span> doFloat
+  ]</code></pre>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>Ng Zhi An - Don't waste their time!</title>
+        <link rel="stylesheet" href="http://blog.ngzhian.com/theme/css/main.css" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+<a href="http://github.com/ngzhian">
+<img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+</a>
+        <header id="banner" class="body">
+                <h1><a href="http://blog.ngzhian.com/">Zhi An Blog </a></h1>
+                <nav><ul>
+                    <li><a href="http://blog.ngzhian.com/category/equityzen.html">equityzen</a></li>
+                    <li class="active"><a href="http://blog.ngzhian.com/category/misc.html">misc</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="http://blog.ngzhian.com/ng-zhi-an-dont-waste-their-time.html" rel="bookmark"
+           title="Permalink to Ng Zhi An - Don't waste their time!">Ng Zhi An - Don't waste their time!</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2014-04-26T00:00:00">
+                Published: Sat 26 April 2014
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://blog.ngzhian.com/author/ng-zhi-an.html">Ng Zhi An</a>
+        </address>
+<p>In <a href="http://blog.ngzhian.com/category/misc.html">misc</a>. </p>
+
+</footer><!-- /.post-info -->      
+        <div id="header">
+            <div id="logo">
+                <a href="../">$fancy-logo$</a>
+            </div>
+            <div id="navigation">
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Don't waste their time!</h1>
+
+            <div class="info">
+    Posted on April 26, 2014
+    
+</div>
+
+<p>In <a href="http://www.smashingmagazine.com/2014/04/25/stop-wasting-users-time/">this article</a> on Smashing Magazine, <a href="http://www.smashingmagazine.com/author/paul-boag/?rel=author">Paul Boag</a> talks about not wasting users’ time. This resonated well with me, considering I just completed the module CS2103T, Software Engineering (exam was this noon), and in that module our lecturer actually gave us some advice on usability.</p>
+<h2 id="key-idea-time-is-precious">Key idea: time is precious</h2>
+<p>The key idea of the article is that time is precious to users, and also developers. But as developers it is our responsibility to spend more time our on work so that users don’t have to. He brought up excellent examples which almost anyone on the Internet would have encountered: CAPTCHA, and Country Selector in forms. This is a worthwhile read, as he points to various other posts that tackles those examples, or talk about usability. His conclusion is simple, constantly ask “Can I save the user time?”.</p>
+<h2 id="cs2103t-adding-tasks">CS2103T: adding tasks</h2>
+<p>To link it back to CS2103T, the task tracker we were asked to implement was pretty simple, but there are many design issues to consider while building the application. For example, what are the commands we should support? We could be rigid and say that the user must use the “add” keyword to add a task. But if we consider the common use case for a task tracker, the user will probably be adding tasks <em>a lot</em>. Hence it makes sense to make adding, simpler. So we could reduce the size of the keyword to just “a”. Can we go a step further though?</p>
+<p>Does the user even have to specify a keyword? Can we just let the user type the task title, and add it in? Our eventual decision was no. Our implementation became as such:</p>
+<blockquote>
+<p>when the user enters an invalid command, we suggest some valid commands for them</p>
+</blockquote>
+<p>Hm… This actually feels a bit like filling in bank account numbers <strong>without</strong> the hyphens, or the postal-code example brought up by Boag. Why are we making the user type the same command again, when she probably just misspelled it by a single character? I can actually think of a few ways to tackle this issue:</p>
+<h2 id="ways-to-solve-it">Ways to solve it</h2>
+<ol style="list-style-type: decimal">
+<li><em>guess</em> what the user wants to do, and execute</li>
+<li>feedback that the result was invalid, and repopulate the input, with the caret positioned at where the problem lies</li>
+<li>treat it as an add command</li>
+<li>treat it as a search</li>
+</ol>
+<h3 id="guess">Guess</h3>
+<p>This seems to be a good solution, considering that the user probably made a typo, like “ad” instead of “add”, so we can just execute the closest valid command, saving the user some time time. However, in this case we will definitely need an “undo” function in case the user does not intend to do that.</p>
+<h3 id="feedback-and-repopulate">Feedback and repopulate</h3>
+<p>Say the user enters commands via an input field. An invalid command shall lead to the field being repopulated, with the problematic part highlighted. By ‘highlighted’ I mean, ‘made obvious’. This can be in the form of a red wiggly underline, like in Word, or font with red fill. This is useful because the user does not have to retype the entire command. She gets feedback that the command is not recognized, and can verify what she wants to do exactly, before trying again.</p>
+<h3 id="search">Search</h3>
+<p>I think this is an apt solution as most input fields that we face nowadays are actually search boxes. But there is a slight issue if our search is done as the user type - aka live search. Imagine the user typing a sequece ‘a’, ‘d’, ‘d’. Having live search will mean that results matching “add” will be shown, but if the user meant to add a task, surely she doesn’t want to see all these unrelated tasks? What if we recognized “add” as a keyword and stopped trying to search, this becomes a problem if the user wishes to search for tasks with the word “add” in it.</p>
+<h2 id="retrospective">Retrospective</h2>
+<p>If I were to reimplement this, I would do a combination of “Guess” and “Feedback and repopulate”. Assuming that we treat the first word of the user input as a keyword, we can attempt to first “Guess”, but trying to match the invalid keyword with a valid one, which we are actually doing already when we provide “did you mean” suggestions. This can be done using <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a>. If there is no good match, we feedback to the user, highlight the problematic part, and allow them to easily fix those errors.</p>
+<h2 id="the-last-mile">The last mile?</h2>
+<p>Let’s go one step further. Why not parse the user input on the fly. As the user type, we parse the input to see if it is valid or not. So when typing the keyword, an invalid command will immediately give a red wiggly line, so the user knows something is wrong. This could be implemented on top of the 2 suggestions, because the user might just go ahead and press enter despite the errors anyway.</p>
+<p>An article on saving users’ time actually sparked that much thought into a simple problem for my project module! Though I wish these thoughts came earlier, I’m still glad because the article brought about such thoughts and ideas, and really showed out CS2103T has huge relevance to the industry.</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="#">You can modify those links in your config file</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="http://github.com/ngzhian">github</a></li>
+                            <li><a href="#">Another social link</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
