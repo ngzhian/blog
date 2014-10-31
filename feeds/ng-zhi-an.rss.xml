@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Zhi An Blog</title><link>http://ngzhian.github.io/</link><description></description><atom:link href="http://ngzhian.github.io/feeds/ng-zhi-an.rss.xml" rel="self"></atom:link><lastBuildDate>Sat, 18 Oct 2014 10:20:00 -0400</lastBuildDate><item><title>Django compressor</title><link>http://ngzhian.github.io/django-compress.html</link><description>&lt;p&gt;in an ideal world, websites would load instantaenously.
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Zhi An</title><link>http://ngzhian.github.io/</link><description></description><atom:link href="http://ngzhian.github.io/feeds/ng-zhi-an.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 30 Oct 2014 23:30:00 -0400</lastBuildDate><item><title>Code that breaks 2 or 3 times every month</title><link>http://ngzhian.github.io/python-dateutil-gotcha.html</link><description>&lt;p&gt;If you've got Python 2.7.8 [1], try this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;python --version
+Python 2.7.8
+&amp;gt;&amp;gt;&amp;gt; from dateutil import parser
+&amp;gt;&amp;gt;&amp;gt; parser.parse&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;February 2006&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+Traceback &lt;span class="o"&gt;(&lt;/span&gt;most recent call last&lt;span class="o"&gt;)&lt;/span&gt;:
+File &lt;span class="s2"&gt;&amp;quot;&amp;lt;stdin&amp;gt;&amp;quot;&lt;/span&gt;, line 1, in &amp;lt;module&amp;gt;
+File &lt;span class="s2"&gt;&amp;quot;/usr/lib/python2.7/site-packages/dateutil/parser.py&amp;quot;&lt;/span&gt;, line 748, in parse
+    &lt;span class="k"&gt;return &lt;/span&gt;DEFAULTPARSER.parse&lt;span class="o"&gt;(&lt;/span&gt;timestr, **kwargs&lt;span class="o"&gt;)&lt;/span&gt;
+File &lt;span class="s2"&gt;&amp;quot;/usr/lib/python2.7/site-packages/dateutil/parser.py&amp;quot;&lt;/span&gt;, line 320, in parse
+    &lt;span class="nv"&gt;ret&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; default.replace&lt;span class="o"&gt;(&lt;/span&gt;**repl&lt;span class="o"&gt;)&lt;/span&gt;
+ValueError: day is out of range &lt;span class="k"&gt;for &lt;/span&gt;month
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Interesting.&lt;/p&gt;
+&lt;p&gt;Now try changing &lt;code&gt;February&lt;/code&gt; to any other month, some will fail and some won't.
+The year doesn't really matter that much, &lt;strong&gt;right now&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://labix.org/python-dateutil#head-c0e81a473b647dfa787dc11e8c69557ec2c3ecd2"&gt;Hint&lt;/a&gt;, it's Oct 31st right now, but try doing the same thing tomorrow, Nov 1st,
+and everything will be fine ;)&lt;/p&gt;
+&lt;p&gt;[1] probably in other versions of Python as well&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Thu, 30 Oct 2014 23:30:00 -0400</pubDate><guid>tag:ngzhian.github.io,2014-10-30:python-dateutil-gotcha.html</guid><category>python</category><category>gotcha</category></item><item><title>Django compressor</title><link>http://ngzhian.github.io/django-compress.html</link><description>&lt;p&gt;in an ideal world, websites would load instantaenously.
 my latest task was to move my company's website close to this ideal.&lt;/p&gt;
 &lt;p&gt;we ran a django shop, and there is a wonderful package called django-compressor that helps us compress our static files easily.
 it works as a template processor, finding the &lt;code&gt;{% compress %}&lt;/code&gt; tags in your templates, and squeezes all the css or js files into a single file,

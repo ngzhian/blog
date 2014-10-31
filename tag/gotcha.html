@@ -6,7 +6,7 @@
     <meta name="description" content="Zhi An, Curious, creative, programmer. Open-source enthusiast">
 
 
-        <title>django tag // Zhi An // Curious, creative, programmer. Open-source enthusiast</title>
+        <title>gotcha tag // Zhi An // Curious, creative, programmer. Open-source enthusiast</title>
 
     <link href="http://i.imgur.com/dA0h5oc.jpg" rel="icon">
 
@@ -42,13 +42,21 @@
             <!-- A wrapper for all the blog posts -->
             <div class="posts">
                 <h1 class="content-subhead">
-Posts tagged 'django'                </h1>
+Posts tagged 'gotcha'                </h1>
                     <section class="post">
                         <header class="post-header">
-                            <h3><a class="post-title" href="../django-compress.html">Django compressor</a></h3>
-                            <p class="post-meta"><p>using django compress to speed up web page</p></p>
+                            <h3><a class="post-title" href="../python-dateutil-gotcha.html">Code that breaks 2 or 3 times every month</a></h3>
+                            <p class="post-meta"><p>If you've got Python 2.7.8 [1], try this:</p>
+<div class="highlight"><pre><span class="nv">$ </span>python --version
+Python 2.7.8
+&gt;&gt;&gt; from dateutil import parser
+&gt;&gt;&gt; parser.parse<span class="o">(</span><span class="s1">&#39;February 2006&#39;</span><span class="o">)</span>
+Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+File <span class="s2">&quot;&lt;stdin&gt;&quot;</span>, line 1, in &lt;module&gt;
+File <span class="s2">&quot;/usr/lib/python2.7/site-packages/dateutil/parser.py&quot;</span>, line 748, in parse
+    <span class="k">return ...</span></pre></div></p>
                             <p class="post-meta">
-                                in <a href="../category/equityzen.html">equityzen</a> &middot; Sat 18 October 2014
+                                in <a href="../category/equityzen.html">equityzen</a> &middot; Thu 30 October 2014
                             </p>
                         </header>
                     </section>
