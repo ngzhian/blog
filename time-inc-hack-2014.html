@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zhi An, Curious, creative, programmer. Open-source enthusiast">
+
+
+        <title>Suggest - My Hack for TimeIncHack2014 // Zhi An // Curious, creative, programmer. Open-source enthusiast</title>
+
+    <link href="http://i.imgur.com/dA0h5oc.jpg" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./theme/css/pure.css">
+    <link rel="stylesheet" href="./theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('http://i.imgur.com/TAYo0g1.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="http://i.imgur.com/dA0h5oc.jpg">
+                            <h1 class="brand-main"><a href=".">Zhi An</a></h1>
+                            <p class="tagline">Curious, creative, programmer. Open-source enthusiast</p>
+                                <p class="social">
+                                    <a href="http://github.com/ngzhian">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>Suggest - My Hack for TimeIncHack2014</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="./tag/hackathon.html">hackathon</a>
+                        </p>
+                </header>
+            </section>
+            <p>Over the weekend of 15-16 Nov, I took part in TimeIncHack2014, organized by Time Inc. The theme was about getting millenials to consume content, but I took off on a tangent right after hearing the problem description by the organizers: instead of building applications or services that media consumers will use, I was interested in making an internal tool for content creators to write articles that are more relevant.</p>
+<p>Born out of around 20 hours of hacking (18 of which was while standing), I built <a href="http://128.199.204.208/">Suggest</a>, a tool that analyzes what has been written so far and tries to grab articles that are relevant.</p>
+<p>It begins with a simple textarea where you can type (or just copy and paste an article to test it out) into.</p>
+<p><img alt="simple textarea for your content" src="http://i.imgur.com/JH2FObx.png?1" /></p>
+<p>It will perform entity recognition on the content, grabbing <em>Nouns</em>, such as people, organizations, places, and list them at the bottom.</p>
+<p><img alt="live entity recognition" src="http://i.imgur.com/lctBs56.png?1" /></p>
+<p>When you press the <code>Suggest</code> button, it will perform a keyword analysis on your content, pull from new sources other articles that are relevant based on the keywords, and show them by the side, under the <code>Relevant</code> tab.</p>
+<p><img alt="related articles" src="http://i.imgur.com/FGlk8Vo.png?1" /></p>
+<p>The <code>Tag</code> tab suggests articles from Time Inc that are tagged under the same category as what Suggest thinks the current content should be under.</p>
+<p><img alt="tags" src="http://i.imgur.com/gjaboQT.png?1" /></p>
+<p>All of the hard work (keyword analysis and entity extraction) is powered by <a href="">AlchemyAPI</a>, which has a super simple way (and easy to use python sdk) to do all these. Thanks to them for the wonderful work and increasing my API calls limit for the hackathon! The articles are pulled from New York Times, who have a superb restful developers endpoint, and also Time Inc, lovely organizers of this hackathon.</p>
+<p>The code is <a href="https://github.com/ngzhian/suggest">open source</a>, feel free to check it out and throw suggestions at me. For the code to run you basically need to register with AlchemyAPI and New York Times for api keys - which is a super simple process.</p>
+            <a href="#" class="go-top">Go Top</a>
+<footer class="footer">
+    <p>&copy; Ng Zhi An &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+
+</body>
+</html>
