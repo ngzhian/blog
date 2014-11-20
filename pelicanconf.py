@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Ng Zhi An'
-SITENAME = u'Zhi An Blog'
+SITENAME = u'Zhi An'
 SITEURL = 'http://ngzhian.github.io'
 
 GITHUB_URL = 'http://github.com/ngzhian'
@@ -27,9 +27,15 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
 
 # Social widget
 SOCIAL = (('github', GITHUB_URL),
-          ('Another social link', '#'),)
+          )
 
 DEFAULT_PAGINATION = False
 
 # Uncomment following line if you want document-relative URLs when developing
 RELATIVE_URLS = True
+
+THEME = 'pure-single'
+COVER_IMG_URL = 'http://i.imgur.com/TAYo0g1.png'
+PROFILE_IMG_URL = 'http://i.imgur.com/dA0h5oc.jpg'
+FAVICON_URL = 'http://i.imgur.com/dA0h5oc.jpg'
+TAGLINE = 'Curious, creative, programmer. Open-source enthusiast'
