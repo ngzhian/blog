@@ -1,0 +1,55 @@
+Title: NOC New York Module Credits mapping for SoC
+Date: 2015-01-02 16:30
+Category: NOC
+Tags: noc, nus, soc
+Slug: noc-soc-mc-mapping
+
+*NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg*
+
+In one year, you should be able to clear 40 MCs in order to be MC-neutral<sup>*</sup>.
+For my batch we are able to clear up to **32 MCs** because we do not have discipline-based module<sup>#</sup>
+
+Here's how I allocated my MCs:
+
+| Module Code |  Name | MCs | Map to |
+|-----------|---------------------------------------|-------|---|
+|	TR3101	|	Internship Continuous assessment	|	4 	|	Internship |
+|	TR3102	|	Internship Program Report			|	8	|	Internship |
+|	TR3103	|	Start up Business case				|	8	|	ULR |
+|	TR3002	|	New Venture Creation				|	4 	|	UEM |
+|	MG2304	|	Marketing							|	4 	|	UEM |
+|	TRXXXX	|	TBC<sup>?</sup>						|	4 	|	UEM |
+
+For computing students, <code>TR3101</code> and <code>TR3102</code> can go towards clearing our [program requirements](http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html)
+
+> Either<br/>
+> CP4101 BComp Dissertation<br/>
+> or<br/>
+> Complete 12 MCs by taking CS modules at level-4000 or above, or modules approved by the Department of Computer Science<br/>
+> or<br/>
+> 12 MCs of Industrial Experience Training.
+
+Check the requirements for your cohort to be sure.
+
+Recall that the breakdown of ULR is
+- 8 MCs on GEM
+- 4 MCs on SS
+- 8 MCs on Breadth
+
+so <code>TR3103</code> essentially completes my ULR requirement.
+
+The remaining 3 modules (<code>TR3002</code>, <code>MG2304</code>, <code>TRXXXX</code>) maps to my UE, which has a cap of 20 MCs. This means that for you to be MC neutral, you should not have taken more than 2 UEs thus far.
+
+## What about the 8 MCs left?
+<code>40 - 32 = 8MCs</code>, so at the end of NOC I would have 8 MCs I need to clear.
+
+In my case, I haven't taken a single UE yet, so this 8 MCs will be used on UEs. I took Orbtial (a summer module) in Year 1, so that clears 4 MCs. I plan to overload 1 module in my final year, so that I can make 160 MCs and graduate in 4 years.
+
+## Need more info?
+Shoot me a question ngzhian@nus.edu.sg
+
+<sup>*</sup> this means to not take more modules than necessary
+
+<sup>#</sup> reasons are not easy to explain, and this might change for your batch
+
+<sup>?</sup> module not confirmed but can definitely map it to UE
