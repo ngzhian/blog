@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Zhi An</title><link>http://ngzhian.github.io/</link><description></description><atom:link href="http://ngzhian.github.io/feeds/ng-zhi-an.rss.xml" rel="self"></atom:link><lastBuildDate>Fri, 02 Jan 2015 16:30:00 -0500</lastBuildDate><item><title>NOC New York Module Credits mapping for SoC</title><link>http://ngzhian.github.io/noc-soc-mc-mapping.html</link><description>&lt;p&gt;&lt;em&gt;NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;In one year, you should be able to clear 40 MCs in order to be MC-neutral&lt;sup&gt;*&lt;/sup&gt;.
 For my batch we are able to clear up to &lt;strong&gt;32 MCs&lt;/strong&gt; because we do not have discipline-based module&lt;sup&gt;#&lt;/sup&gt;&lt;/p&gt;
-&lt;p&gt;Here's how I allocated my MCs:&lt;/p&gt;
+&lt;p&gt;Here's how I allocated my MCs (Computer Science):&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -51,7 +51,7 @@ For my batch we are able to clear up to &lt;strong&gt;32 MCs&lt;/strong&gt; beca
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;For computing students, &lt;code&gt;TR3101&lt;/code&gt; and &lt;code&gt;TR3102&lt;/code&gt; can go towards clearing our &lt;a href="http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html"&gt;program requirements&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;For &lt;strong&gt;CS&lt;/strong&gt; students, &lt;code&gt;TR3101&lt;/code&gt; and &lt;code&gt;TR3102&lt;/code&gt; can go towards clearing our &lt;a href="http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html"&gt;program requirements&lt;/a&gt;&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Either&lt;br/&gt;
 CP4101 BComp Dissertation&lt;br/&gt;
@@ -60,6 +60,7 @@ Complete 12 MCs by taking CS modules at level-4000 or above, or modules approved
 or&lt;br/&gt;
 12 MCs of Industrial Experience Training.&lt;/p&gt;
 &lt;/blockquote&gt;
+&lt;p&gt;For &lt;strong&gt;IS/EC&lt;/strong&gt; students, they can map IS4010 Industry Internship Programme (equivalent to 12-MC FYP or 3 IS modules) to NOC (TR3101 and TR3102). The other TR module confirmed is TR2202 Technological Innovation. (Thanks Jason for this!)&lt;/p&gt;
 &lt;p&gt;Check the requirements for your cohort to be sure.&lt;/p&gt;
 &lt;p&gt;Recall that the breakdown of ULR is
 - 8 MCs on GEM

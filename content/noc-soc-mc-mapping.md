@@ -9,7 +9,7 @@ Slug: noc-soc-mc-mapping
 In one year, you should be able to clear 40 MCs in order to be MC-neutral<sup>*</sup>.
 For my batch we are able to clear up to **32 MCs** because we do not have discipline-based module<sup>#</sup>
 
-Here's how I allocated my MCs:
+Here's how I allocated my MCs (Computer Science):
 
 | Module Code |  Name | MCs | Map to |
 |-----------|---------------------------------------|-------|---|
@@ -20,7 +20,7 @@ Here's how I allocated my MCs:
 |	MG2304	|	Marketing							|	4 	|	UEM |
 |	TRXXXX	|	TBC<sup>?</sup>						|	4 	|	UEM |
 
-For computing students, <code>TR3101</code> and <code>TR3102</code> can go towards clearing our [program requirements](http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html)
+For **CS** students, <code>TR3101</code> and <code>TR3102</code> can go towards clearing our [program requirements](http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html)
 
 > Either<br/>
 > CP4101 BComp Dissertation<br/>
@@ -28,6 +28,8 @@ For computing students, <code>TR3101</code> and <code>TR3102</code> can go towar
 > Complete 12 MCs by taking CS modules at level-4000 or above, or modules approved by the Department of Computer Science<br/>
 > or<br/>
 > 12 MCs of Industrial Experience Training.
+
+For **IS/EC** students, they can map IS4010 Industry Internship Programme (equivalent to 12-MC FYP or 3 IS modules) to NOC (TR3101 and TR3102). The other TR module confirmed is TR2202 Technological Innovation. (Thanks Jason for this!)
 
 Check the requirements for your cohort to be sure.
 
