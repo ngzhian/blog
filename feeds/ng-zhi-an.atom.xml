@@ -1,5 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.github.io/" rel="alternate"></link><link href="http://ngzhian.github.io/feeds/ng-zhi-an.atom.xml" rel="self"></link><id>http://ngzhian.github.io/</id><updated>2015-01-02T16:30:00-05:00</updated><entry><title>NOC New York Module Credits mapping for SoC</title><link href="http://ngzhian.github.io/noc-soc-mc-mapping.html" rel="alternate"></link><updated>2015-01-02T16:30:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.github.io,2015-01-02:noc-soc-mc-mapping.html</id><summary type="html">&lt;p&gt;&lt;em&gt;NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg&lt;/em&gt;&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.github.io/" rel="alternate"></link><link href="http://ngzhian.github.io/feeds/ng-zhi-an.atom.xml" rel="self"></link><id>http://ngzhian.github.io/</id><updated>2015-01-09T19:00:00-05:00</updated><entry><title>NOC New York Financials</title><link href="http://ngzhian.github.io/noc-financials.html" rel="alternate"></link><updated>2015-01-09T19:00:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.github.io,2015-01-09:noc-financials.html</id><summary type="html">&lt;p&gt;A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="left"&gt;Item&lt;/th&gt;
+&lt;th align="right"&gt;Income&lt;/th&gt;
+&lt;th align="center"&gt;Expenditure&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Take home&lt;/td&gt;
+&lt;td align="right"&gt;$1400&lt;/td&gt;
+&lt;td align="center"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Rent&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$700&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Phone&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$35&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;WiFi&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$14&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Gas &amp;amp; Electricity&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$40&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Heat&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Transport&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$112&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;(700 + 35 + 14 + 40 + 20 + 112) = $921 monthly essential expenses
+
+$1.4k - $921 = $479 remaining to spend a month
+
+$479 / 30 = $16 for food per day.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If I don't buy any clothes.&lt;sup&gt;*&lt;/sup&gt;&lt;/p&gt;
+&lt;h2&gt;Need more info?&lt;/h2&gt;
+&lt;p&gt;Shoot me a question ngzhian@nus.edu.sg&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;*&lt;/sup&gt; Which I don't&lt;/p&gt;</summary><category term="noc"></category><category term="nus"></category><category term="financials"></category></entry><entry><title>NOC New York Module Credits mapping for SoC</title><link href="http://ngzhian.github.io/noc-soc-mc-mapping.html" rel="alternate"></link><updated>2015-01-02T16:30:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.github.io,2015-01-02:noc-soc-mc-mapping.html</id><summary type="html">&lt;p&gt;&lt;em&gt;NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;In one year, you should be able to clear 40 MCs in order to be MC-neutral&lt;sup&gt;*&lt;/sup&gt;.
 For my batch we are able to clear up to &lt;strong&gt;32 MCs&lt;/strong&gt; because we do not have discipline-based module&lt;sup&gt;#&lt;/sup&gt;&lt;/p&gt;
 &lt;p&gt;Here's how I allocated my MCs (Computer Science):&lt;/p&gt;
