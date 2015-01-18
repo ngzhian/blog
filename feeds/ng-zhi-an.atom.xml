@@ -40,9 +40,11 @@ sudo apt-get install jenkins
 &lt;p&gt;&lt;img alt="Build Triggers" src="http://ngzhian.github.io/images/jenkins-build-trigger.png" /&gt;&lt;/p&gt;
 &lt;p&gt;setup a local jenkins&lt;/p&gt;
 &lt;h1&gt;References&lt;/h1&gt;
-&lt;p&gt;&lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu"&gt;https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu&lt;/a&gt;
-&lt;a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial"&gt;https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial&lt;/a&gt;
-&lt;a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting"&gt;http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting&lt;/a&gt;&lt;/p&gt;</summary><category term="jenkins"></category><category term="tests"></category></entry><entry><title>NOC New York Financials</title><link href="http://ngzhian.github.io/noc-financials.html" rel="alternate"></link><updated>2015-01-09T19:00:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.github.io,2015-01-09:noc-financials.html</id><summary type="html">&lt;p&gt;A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu"&gt;https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial"&gt;https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting"&gt;http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="jenkins"></category><category term="tests"></category></entry><entry><title>NOC New York Financials</title><link href="http://ngzhian.github.io/noc-financials.html" rel="alternate"></link><updated>2015-01-09T19:00:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.github.io,2015-01-09:noc-financials.html</id><summary type="html">&lt;p&gt;A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;

@@ -40,9 +40,11 @@ sudo apt-get install jenkins
 &lt;p&gt;&lt;img alt="Build Triggers" src="http://ngzhian.github.io/images/jenkins-build-trigger.png" /&gt;&lt;/p&gt;
 &lt;p&gt;setup a local jenkins&lt;/p&gt;
 &lt;h1&gt;References&lt;/h1&gt;
-&lt;p&gt;&lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu"&gt;https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu&lt;/a&gt;
-&lt;a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial"&gt;https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial&lt;/a&gt;
-&lt;a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting"&gt;http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting&lt;/a&gt;&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sun, 18 Jan 2015 18:00:00 -0500</pubDate><guid>tag:ngzhian.github.io,2015-01-18:so-i-set-up-a-jenkins-ci-server-today.html</guid><category>jenkins</category><category>tests</category></item><item><title>NOC New York Financials</title><link>http://ngzhian.github.io/noc-financials.html</link><description>&lt;p&gt;A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu"&gt;https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial"&gt;https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting"&gt;http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Ng Zhi An</dc:creator><pubDate>Sun, 18 Jan 2015 18:00:00 -0500</pubDate><guid>tag:ngzhian.github.io,2015-01-18:so-i-set-up-a-jenkins-ci-server-today.html</guid><category>jenkins</category><category>tests</category></item><item><title>NOC New York Financials</title><link>http://ngzhian.github.io/noc-financials.html</link><description>&lt;p&gt;A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
