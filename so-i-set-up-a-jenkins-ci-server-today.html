@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zhi An, Curious, creative, programmer. Open-source enthusiast">
+
+
+        <title>So I set up a Jenkins CI server today // Zhi An // Curious, creative, programmer. Open-source enthusiast</title>
+
+    <link href="http://i.imgur.com/dA0h5oc.jpg" rel="icon">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./theme/css/pure.css">
+    <link rel="stylesheet" href="./theme/css/pygments.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fitvids/1.0.1/jquery.fitvids.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".content").fitVids();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="pure-g-r" id="layout">
+        <div class="sidebar pure-u">
+            <div class="cover-img" style="background-image: url('http://i.imgur.com/TAYo0g1.png')">
+                <div class="cover-body">
+                    <header class="header">
+                        <hgroup>
+                            <img class="avatar" src="http://i.imgur.com/dA0h5oc.jpg">
+                            <h1 class="brand-main"><a href=".">Zhi An</a></h1>
+                            <p class="tagline">Curious, creative, programmer. Open-source enthusiast</p>
+                                <p class="social">
+                                    <a href="http://github.com/ngzhian">
+                                        <i class="fa fa-github fa-3x"></i>
+                                    </a>
+                                </p>
+                        </hgroup>
+                    </header>
+                </div>
+            </div>
+        </div>
+    <div class="pure-u">
+        <div class="content">
+            <section class="post">
+                <header class="post-header">
+                    <h1>So I set up a Jenkins CI server today</h1>
+                        <p class="post-meta">
+                            // under                                 <a class="post-category" href="./tag/jenkins.html">jenkins</a>
+                                <a class="post-category" href="./tag/tests.html">tests</a>
+                        </p>
+                </header>
+            </section>
+            <p>So I set up a local Jenkins CI server today that checks a local Git repository containing a Django project for any changes, runs tests, and reports coverage.</p>
+<h1>Tests? Wut?</h1>
+<p>There are many reasons to run test, and there are also many excuses not to run.
+For me it is because I forget, and am too eager to push code.</p>
+<p>So how did I solve this? By setting up a local Jenkins CI server.</p>
+<h1>What is Jenkins? (to me)</h1>
+<p>To me Jenkins is a way to build my project and run tests easily, because it doesn't require any interaction from me (beyond setting it up). This leaves me with <strong>no</strong> excuse not to run my tests.
+My goal was to set up Jenkins such that everytime a commit is made to my working Git repository, my tests will run.
+If you're wondering what CI is... <a href="http://www.martinfowler.com/articles/continuousIntegration.html">here</a></p>
+<h1>Installing Jenkins</h1>
+<p>I had a lot of help setting this up, refer to the bottom for a list. Here I'm just going to list the steps I went through and point out the challenges.</p>
+<p>First, I develop in a Vagrant box running Ubuntu. Jenkins has a Ubuntu package that makes installation simple, and they actually have <a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu">instructions there</a>. Basically it involves adding a new apt source and then installing Jenkins from there.</p>
+<div class="highlight"><pre>wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key <span class="p">|</span> sudo apt-key add -
+sudo sh -c <span class="s1">&#39;echo deb http://pkg.jenkins-ci.org/debian binary/ &gt; /etc/apt/sources.list.d/jenkins.list&#39;</span>
+sudo apt-get update
+sudo apt-get install jenkins
+</pre></div>
+
+
+<p>After this you can navigate to localhost:8080 on your browser to see Jenkin's web interface.</p>
+<p><em>Note</em>: Since I develop in a Vagrant box, to access the Jenkins web interface I had to forward the ports. Jenkins listens on localhost:8080, so in my Vagrant file forwards 8080 (guest) to 8081 (host), and I can access Jenkins from my host at localhost:8081</p>
+<h1>Installing Plugins</h1>
+<p>My project resides in a Git repository, and Jenkins doesn't offer Git support out of the box. There's a plugin to help though. Detailed plugin instructions are <a href="https://wiki.jenkins-ci.org/display/JENKINS/Plugins">here</a></p>
+<p>Go to Jenkins interface &gt; manage jenkins &gt; manage plugins, and install Git Plugin. After installing, you can configure your job. Here are the settings I use:
+- Repository URL is a path passed to <code>git clone</code>, and my project is mounted onto <code>/vagrant</code>
+- Shallow clone, I don't need the full history of the repository, so this should make things speedier</p>
+<p><img alt="Git configuration" src="./images/jenkins-git.png" /></p>
+<p>The setup for the Git means that your local git repo will be cloned down to Jenkin's <em>workspace</em> before each build. A workspace is the directory Jenkins is processing the build in, and for me it is <code>/var/lib/jenkins/jobs/project/workspace</code> where project is the name of the Jenkin's job. More information on the folder structure used by Jenkins can be found <a href="https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins">here</a></p>
+<h1>The first build!</h1>
+<p>Next up we need to actually run the tests. This can be configured in the <em>Build</em> section further down the page. Before Jenkins, how I was running my tests was just a shellscript, which is a simple wrapper around <code>manage.py test</code> to pass in the right parameters. So for Jenkins, all I needed to do was to call the shell script.</p>
+<p><img alt="Build" src="./images/jenkins-build.png" /></p>
+<p>Click Build Now, and then navigate to the console output to enjoy your success! I hope. That's your first Jenkin's build :)</p>
+<h1>Report coverage with Cobertura</h1>
+<p>I use <code>coverage.py</code> to generate reports for my tests, and it also has <a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting">the ability</a> to generate XML file that Cobertura can regonize.</p>
+<p><img alt="Cobertura" src="./images/jenkins-cobertura.png" /></p>
+<p>So again install Cobertura, and set it up by pointing it to the name of your coverage file. After this, click Build Now and you should be able to view the report from your build's status page.</p>
+<h1>Automate!</h1>
+<p>The final step is to set it up such that any changes you make (commit) will cause a build. We can do this is to set up a Build Trigger to Poll SCM (Git), on a 5 min schedule. So every 5 minutes, if Jenkins detects a change to the Git repository, it will run a new build.</p>
+<p><img alt="Build Triggers" src="./images/jenkins-build-trigger.png" /></p>
+<p>setup a local jenkins</p>
+<h1>References</h1>
+<p><a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu">https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu</a>
+<a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial">https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial</a>
+<a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting">http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting</a></p>
+            <a href="#" class="go-top">Go Top</a>
+<footer class="footer">
+    <p>&copy; Ng Zhi An &ndash;
+        Built with <a href="https://github.com/PurePelicanTheme/pure-single">Pure Theme</a>
+        for <a href="http://blog.getpelican.com/">Pelican</a>
+    </p>
+</footer>        </div>
+    </div>
+    </div>
+    <script>
+        var $top = $('.go-top');
+
+        // Show or hide the sticky footer button
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 200) {
+                $top.fadeIn(200);
+            } else {
+                $top.fadeOut(200);
+            }
+        });
+
+        // Animate the scroll to top
+        $top.click(function(event) {
+            event.preventDefault();
+            $('html, body').animate({scrollTop: 0}, 300);
+        })
+
+        // Makes sure that the href="#" attached to the <a> elements
+        // don't scroll you back up the page.
+        $('body').on('click', 'a[href="#"]', function(event) {
+            event.preventDefault();
+        });
+    </script>
+
+</body>
+</html>
