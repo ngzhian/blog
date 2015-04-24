@@ -1,0 +1,68 @@
+body {
+    font-size: 20px;
+    line-height: 1.6;
+}
+
+ul {
+    list-style-type: circle;
+}
+
+a {
+    color: #222;
+}
+
+a:hover {
+    color: #777;
+}
+
+.entry-title a {
+    text-decoration: none;
+}
+
+#banner {
+    padding: 50px 0 20px 0;
+    text-align: center;
+}
+
+.avatar {
+    height: 75px;
+}
+
+.content {
+    max-width: 768px;
+    margin: auto auto;
+}
+
+#post-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.published {
+    font-size: 16px;
+    color: #aaa;
+}
+
+.entry-title {
+    margin-top: 20px;
+    font-size: 40px;
+}
+
+pre {
+    border: solid 1px #d9d9d9;
+    border-radius: 5px;
+    background: #fff;
+    padding: 12px;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    overflow-x: auto;
+}
+
+code {
+    background: #edf6ea;
+    border: 1px solid #e3edf3;
+    border-radius: 2px;
+    font-family: Inconsolata,monospace,sans-serif;
+    padding: 1px 3px;
+}

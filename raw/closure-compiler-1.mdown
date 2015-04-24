@@ -1,0 +1,349 @@
+Title: What the heck is Google Closure Compiler?
+Date: 2015-04-20 19:00
+Category: code
+
+It "compiles from JavaScript to better JavaScript", so why would any one want that?
+
+According to the [GitHub repo](https://github.com/google/closure-compiler), closure compiler does many amazing things:
+
+- parses your JavaScript,
+- analyzes it,
+- removes dead code and rewrites
+- minimizes what's left
+- checks syntax, variable references, and types,
+- and warns about common JavaScript pitfalls
+
+That's pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.
+
+Let's follow their instructions and try to run it from the command line.
+
+```
+var x = 17 + 25;
+```
+
+```
+var x=42;
+```
+
+What noticeable differences are there?
+
+1. `17 + 25` became `42`
+2. Space between and after `=` is gone
+
+So even for this simple one liner, closure compiler has managed to run 2 optimizations.
+
+Let's examine these optimizations closer, and what better way to do that then jump into the debugger :)
+
+We create file called `in1.js` with the contents `var x = 17 + 25`, and in our debug configuration
+specify the program arguments as `--js_output_file=out.js in1.js`.
+
+We do this because we don't want to be typing input in the Eclipse console (I don't know how to do that :P)
+
+The initial part isn't that interesting, we just initiate the `CommandLineRunner`
+
+``@CommandLineRunner.java#L1434-1437``
+
+Which delegates work to `AbstractCommandLineRunner`'s `run()` method
+
+``@AbstractCommandLineRunner.java#L397-403``
+
+Which then hands off to `doRun()`
+
+I had to go into my debug configuration in eclipse and add the folder where `externs.zip` was located in so `getResourceAsStream` could find the file.
+
+Basically `createExterns` copies all the files in `externs.zip` into a list that will be used later.
+
+
+The next steps just setting up the compiler with the appropriate options
+
+``@AbstractCommandLineRunner.java#L807-813``
+
+
+The part where usually the runner will wait for user input is here:
+
+``@AbstractCommandLineRunner.java#L847-853``
+
+But because we supplied arguments to the parameter, it reads from that file and not `stdin`.
+
+There are some set up steps again, and finally we jump into the `compile` method, the meat of
+which happens in a separate thread it seems
+
+``@Compiler.java#L652-660``
+
+Because it is a separate thread, I had to set a breakpoint inside `compileInternal`
+in order to take a look at what's happening.
+
+Some very small set up to process compiler options and initialize progress state, but
+there's a very interesting comment here:
+
+``@Compiler.java#L741-747``
+
+We're not going to dive into the `parse` method, that's not what we're after.
+
+From a cursory look into the method, `parse` parses the inputs and returns an AST. This AST is stored in the jsRoot instance variable
+
+And we end up in the `optimize` method! Okay I have a feeling this is where things are going to get exciting.
+
+``@Compiler.java#L764``
+
+First it gathers up a list of optimizations that will be performed, e.g.
+
+- gatherExternProperties,
+- garbageCollectChecks
+
+A list of all these optimizations can be found in the `getOptimizations` method of `DefaultPassConfig`.
+
+From how the code looks like, each optimization is also called a `pass`.
+
+``@Compiler.java#L1951-1955``
+
+Observe how `optimizations` is a `List` of `PassFactory` (factory pattern).
+
+The first pass is the `normalize` pass. It seems like for each pass there is a set of steps that must be followed, something like:
+
+1. `startPass` is called with the name of the pass
+2. actually process the pass
+3. `endPass` is called, probably for cleanup effects
+
+`startPass` itself has a number of steps as well:
+
+1. check the current state of passing
+2. set `currentPassName` to signify what pass it is
+3. set `currentTracer` to a new `Tracer`
+
+I haven't dug into what a `Tracer` does, but from the comments it looks like it figures out how long a particular action took, and thus will be useful when you want to pin point slow areas in the code.
+
+So let's jump into the work that `normalize` actually does.
+
+It's not difficult to see what it does, because most of it is well document in the `Normalize` class.
+
+Here's directly quoting the docs:
+
+``@Normalize.java#L33-46``
+
+If you keep looking down, you see descriptions about the 7 things that this class does.
+
+After some set up, the `process` method of `Normalize` is called, and that's where magic happens!
+
+The first step is strange to me at first sight:
+
+``@Normalize.java#L116-118``
+
+It looks like this isn't doing anything. But we we look into what `NodeTraversal` does, it actually takes in a `Callback`, and when it traverses the AST (`traverseRoots`), it calls particular methods of `Callback` at different points of traversing.
+
+For example, `traverseRoots` calls `traverseBranch`
+
+``@NodeTraversal.java#L306``
+
+and in `traverseBranch`, it calls the `visit` method of the callback
+
+``@NodeTraversal.java#L577``
+
+In summary the `NodeTraversal` goes through the AST and at various points, asks the `Callback` if it wants to visit a particular node (visitor pattern).
+
+Now we can see what `NormalizeStatements` does.
+
+There are really only 2 methods of interest here, `shouldTraverse` and `visit`.
+
+`shouldTraverse` is `NormalizeStatements` way of saying if it should descend down one level in the AST.
+
+`visit` is what `NormalizeStatements` will do to modify the AST.
+
+Looking into `shouldTraverse` we see that first, it always returns `true`, and it does some normalizations inside of this method
+
+``@Normalize.java#L368-372``
+
+If we dive deeper into the code we can see very well written comments why certain normalizations are done in the `shouldTraverse` method, and why others are done in the `visit`.
+
+For example, in `doStatementNormalizations`, the `extractForInitializer` method is called, and the comments are as such:
+
+``@Normalize.java#L561-571``
+
+Because it's a AST traversal implemented with callbacks, it wasn't easy to get to the code that was interesting. A lot of is was just descending the AST (in what looks like a depth first manner), before we finally get to the `visit` part of the code.
+
+Particularly I hit a point where I ended up in this switch case:
+
+``@Normalize.java#L399-403``
+
+I couldn't understand what `Token.SETTER_DEF` meant, so I went to the Variables panel in eclipse and looked at what `n` was (the switch block switched on `n.getType()`), and saw that n was "x".
+
+The rest of the `process` method looks similar, where callbacks are passed into a travesal, with different callbacks doing different things.
+
+The slight differences are the types of `Callback`s used.
+
+`NormalizeStatements` implements the `Callback` interface at the highest level, and there over 20 classes or abstract classes that implement this interface.
+
+`MakeDeclaredNamesUnique` implements the ScopedCallback, because when renaming variables, scope has to be considered. E.g. a variable that refers to a variable in the outer scope cannot be renamed to something different.
+
+Here's something that caused me difficulty in reading this particular method: there are multiple layers of abstraction here, which makes it pretty confusing.
+
+1. It's not clear how many things `process` is actually doing.
+2. The actions are inconsistent. In some places, the construction of a `NodeTraversal` using `new` and calling `traverseRoots` happens on the same line. But in others, the `Callback` is constructed separately from the `NodeTraversal`, which are separate from actually calling the `traverse` method. In other places, these 3 steps are separated into another method.
+
+Perhaps to clean up this method slightly, we can move each sub-processing step into its own method, like `removeDuplicateDeclarations`
+
+``@Normalize.java#L138``
+
+Then `process` will look like this
+
+```java
+public void process(Node externs, Node root) {
+    normalizeStatements(externs, root);
+    makeDeclaredNamesUnique(externs, root);
+    removeDuplicateDeclarations(externs, root);
+    propagateConstantAnnotationsOverVars(externs, root);
+    findExposeAnnotations(root)
+}
+```
+
+For our simple piece of code, `normalize` actually doesn't do anything, so that was a pretty long detour. But I think we will see the patterns in `normalize` again thorughout the codebase, so it is useful to examine it.
+
+For each `startPass`, there is its dual `endPass`, which stops the `Tracer` (so a tracer probably records how long each compiler pass took).
+
+And we're back in `optimize`! Here we hit something scary (to me) called the `PhaseOptimizer`.
+We throw all the optimizations in to the `phaseOptimizer` via its `consume` method, and basically `consume` organizes these `PassFactory`-ies into `CompilePasses`.
+
+Like its name suggest, `PhaseOptimizer` does some optimizations. These are (for now) too complicated to get into, but here are relevant portions of the code that describes what happens:
+
+``@PhaseOptimizer.java#L128-139``
+
+``@PhaseOptimizer.java#L400-408``
+
+At the end of `consume`, what we have is `passes` which is a list of `CompilerPass`-es that will be run. We then call the `process` method of the `PhaseOptimizer`, which goes through each `CompilerPass` (in `passes`) and calls the `process` method of that `CompilerPass`.
+
+This should look pretty familiar because `Normalize` actually implements `CompilerPass`, and so we have a clue of what happens in the `process` method of each `CompilerPass`.
+
+I wanted to figure out which exact `CompilerPass` was causing the change, so I added some if else and print statements to notify me when the nodes were changed by a pass. This is how it roughly looked like
+
+```java
+      String old_root_str = root.toStringTree();
+      pass.process(externs, root);
+      String new_root_str = root.toStringTree();
+      if (old_root_str.contentEquals(new_root_str)){
+          System.out.println("Same: " + pass);
+      } else {
+          System.out.println("Pass: " + pass + " old: " + old_root_str + " new: " + new_root_str);
+      }
+```
+
+What I found strange is that the `process` method of `PhaseOptimizer` ran twice. I found out because I had set breakpoints in that method.
+
+In the first run of `process`, there was only 1 pass that caused a change: `inferConsts`, but I couldn't tell what changed based on the `toString()` output, so this isn't the pass we are interested in.
+
+In the second run of `process`, we get this:
+
+```
+Same: pass: beforeMainOptimizations
+Pass: com.google.javascript.jscomp.PhaseOptimizer$Loop@dd37992 old: BLOCK [synthetic: 1]
+    SCRIPT 1 [synthetic: 1] [source_file: in1.js] [input_id: InputId: in1.js]
+        VAR 1 [source_file: in1.js]
+            NAME x 1 [source_file: in1.js] [is_constant_var: 1]
+                ADD 1 [source_file: in1.js]
+                    NUMBER 17.0 1 [source_file: in1.js]
+                    NUMBER 25.0 1 [source_file: in1.js]
+ new: BLOCK [synthetic: 1] [change_time: 15]
+    SCRIPT 1 [synthetic: 1] [source_file: in1.js] [input_id: InputId: in1.js]
+        VAR 1 [source_file: in1.js]
+            NAME x 1 [source_file: in1.js] [is_constant_var: 1]
+                NUMBER 42.0 1 [source_file: in1.js]
+Same: pass: beforeModuleMotion
+```
+
+Bingo! Or not?
+
+We managed to figure out the pass that caused the optimization, but the name of the pass didn't really help at all.
+
+But at least we know this pass happens before `beforeModuleMotion` and after `beforeMainOptimizations`, and because the list of `CompilerPass` is traversed in order, we can go into `DefaultPassConfig` and take a look at what is in between these 2 passes.
+
+``@DefaultPassConfig.java#L594``
+
+This basically adds about 10+ `PassFactory`-ies to the list via the methods `getMainOptimizationLoop` and `getCodeRemovingPasses`.
+
+By setting more debug breakpoints, I was able to narrow down my options to those found in `getCodeRemovingPasses`. Now I guess I just have to read what each pass does, or set breakpoints in every pass and observe what happens!
+
+I think the former isn't a good idea, because the `PhaseOptimizer` might run each pass multiple times, and I'll just be debugging for a long time.
+
+Here, I basically looked at each of them, read the comments and figure out what was likely to be the `CompilerPass` that did some work. My guess is that `PeepholeOptimizationsPass` did it.
+
+Digging into the creation of `PeepholeOptimizationsPass` we see multiple kinds of peephole optimizations
+
+``@DefaultPassConfig.java#L1299-1313
+
+I decided to brute force and figure out which of these are responsible for the AST changes, so I basically just removed these `AbstractPeepholeOptimization` one by one until the AST didn't change, that way I can figure out which one is responsible.
+
+Here I stumbled upon a funny little problem that took me a good deal of debuggin to solve.
+
+Since we figure that the pass happens in `getMainOptimizationLoop`, I tried commenting that part out, but found that the pass still happened! That was really strange. Here's the part I commented out:
+
+``@DefaultPassConfig.java#L596``
+
+What I ended up doing was to slowly comment out parts of the `getOptimizations` method, which `getMainOptimizationLoop` lives in, and see when I can get the the pass to not be processed.
+
+While going through the file to comment the code I took glances at the code as well and found out that in multiple places `PeepholeOptimizationsPass` was inserted in to the list of `CompilerPass`!
+
+``@DefaultPassConfig.java#L711``
+
+``@DefaultPassConfig.java#L752``
+
+To reduce the surface area of search, we will comment out all of these except for 1,
+
+``@DefaultPassConfig.java#L711``
+
+Now we can proceed to comment out parts of `peepholeOptimizations` to figure out which exact `AbstractPeepholeOptimization` is doing the work, which is `PeepholeFoldConstants`.
+
+This optimzation is not that simple to understand because it is made up of multiple smaller peephole optimizations.
+
+Let's start from the top, which is a `PeepholeOptimizationsPass`. As per normal, this is a `CompilerPass`, so the `process` method is where this happen.
+
+``@PeepholeOptimizationsPass.java#L55-72
+
+In `process` we see something different, the usage of `NodeTraversal.traverseChangedFunctions`.
+
+This works similarly to the `Callbacks` we discussed above, except that the traversal only happens when functions are changed. The callback for this traversal is actually called `PeepCallback`, which runs each `AbstractPeepholeOptimization` when visiting each node by calling their `optimizeSubtree` method.
+
+``@PeepholeOptimizationsPass.java#L74-93
+
+Now we know where to look to find out what `PeepholeFoldConstants` does.
+
+``@PeepholeFoldConstants.java#L78-100
+
+Reading the code we can guess which switch case we will land into, the `default` case.
+
+Here we're just going to make a guess which method does the optimization, I'm going to pick `tryFoldBinaryOperator` because it sounds like it.
+
+Jumping in we see a switch statement switching on the type of the subtree, which in our case is an addition. So we dive into the `tryFoldAdd` method.
+
+``@PeepholeFoldConstants.java#L151-152
+
+We encounter some useful comments here so we can jump straight into the `else` branch.
+
+``@PeepholeFoldConstants.java#L849-856
+
+To verify that this is indeed the optimization we care about, we can jump into the method and just result whatever was passed in.
+
+Success!
+
+By commenting out the lines in `tryFoldArithmeticOp` and just return `n`, we can verify that the optimization does not run!
+
+We can dig deeper and look into `performArithmeticOp`, but all we need to know is that it performs the addition, returning a Node. If the addition worked, Node would just be a number, which is the result of the addition (in our case thats 42), and replace `n` (which was a `add` subtree), with just a single node!
+
+After this long post, I think it's worth recapping what happens.
+
+1. The compiler is set up with options, things like where to get the JS (stdin or a file?)
+2. JavaScript is parsed into a tree
+3. Gather up the list of optimizations that will be run
+4. normalize (which is actually a compiler pass)
+5. Feed the list of optimziations into the `PhaseOptimizer`
+6. `PhaseOptimizer` will run through all the optimizations
+7. Each `CompilerPass` will process the AST via callbacks when traversing the tree
+8. Compiled JavaScript is output (to stdout or file)
+
+There's way more that goes on, like how the `PhaseOptimizer` runs the list of optimizations, fixed-point optimizations that can be run multiple times safely, the many different kinds of `Callback`s.
+
+But at a high level, this is how things are run.
+
+Conclusion:
+
+1. Open source is awesome. Because Google released this source code, we can look into the code to figure out how things work!
+2. Debuggers are super useful. Because Eclipse, and other IDEs, are such fantastic tools, we can insert breakpoints, jump around code, build and run projects with ease.
+3. Patterns are useful! In this dive into the code, we have already observed a couple of design patterns, namely the Visitor pattern and the Factory pattern. This has allowed the compiler to stay very flexible. I can imagine adding a new optimization pass by declaring a couple of new classes without touching the core of the compiler

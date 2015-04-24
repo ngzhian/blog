@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Zhi An</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="../theme/css/styles.css">
+        <link rel="stylesheet" href="../theme/css/github.css">
+</head>
+
+<body id="index" class="home">
+    <div class="content">
+        <header id="banner" class="body">
+                <a href="../">
+                    <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+                </a>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+        </ul></nav><!-- /#menu -->
+<section id="content">
+<h2>Articles in the code category</h2>
+
+<ul id="post-list">
+        <li><article class="hentry">
+                <footer class="post-info">
+                    <time class="published" title="2015-04-20T19:00:00-04:00"> Mon 20 April 2015 </time>
+                </footer><!-- /.post-info -->
+                <header> <h2 class="entry-title"><a href="../what-the-heck-is-google-closure-compiler.html" rel="bookmark" title="Permalink to What the heck is Google Closure Compiler?">What the heck is Google Closure Compiler?</a></h2> </header>
+                <div class="entry-content"> <p>It "compiles from JavaScript to better JavaScript", so why would any one want that?</p>
+<p>According to the <a href="https://github.com/google/closure-compiler">GitHub repo</a>, closure compiler does many amazing things:</p>
+<ul>
+<li>parses your JavaScript,</li>
+<li>analyzes it,</li>
+<li>removes dead code and rewrites</li>
+<li>minimizes what's left</li>
+<li>checks syntax, variable references, and types,</li>
+<li>and warns about common JavaScript pitfalls</li>
+</ul>
+<p>That's pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.</p>
+<p>Let's follow their instructions and try to run it from the command line.</p>
+<div class="highlight"><pre>var x = 17 + 25;
+</pre></div>
+
+
+<div class="highlight"><pre>var x=42;
+</pre></div>
+
+
+<p>What noticeable differences are there?</p>
+<ol>
+<li><code>17 + 25</code> became <code>42</code></li>
+<li>Space between and after <code>=</code> is gone</li>
+</ol>
+<p>So even for this simple one liner, closure compiler has managed to run 2 optimizations.</p>
+<p>Let's examine these optimizations closer, and what better ...</p> </div><!-- /.entry-content -->
+        </article></li>
+</ol><!-- /#posts-list -->
+</section><!-- /#content -->
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+    </div>
+</body>
+</html>
