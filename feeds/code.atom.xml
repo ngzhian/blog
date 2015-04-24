@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/" rel="alternate"></link><link href="http://ngzhian.com/feeds/code.atom.xml" rel="self"></link><id>http://ngzhian.com/</id><updated>2015-04-20T19:00:00-04:00</updated><entry><title>What the heck is Google Closure Compiler?</title><link href="http://ngzhian.com/what-the-heck-is-google-closure-compiler.html" rel="alternate"></link><updated>2015-04-20T19:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-20:what-the-heck-is-google-closure-compiler.html</id><summary type="html">&lt;p&gt;It "compiles from JavaScript to better JavaScript", so why would any one want that?&lt;/p&gt;
+&lt;p&gt;According to the &lt;a href="https://github.com/google/closure-compiler"&gt;GitHub repo&lt;/a&gt;, closure compiler does many amazing things:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;parses your JavaScript,&lt;/li&gt;
+&lt;li&gt;analyzes it,&lt;/li&gt;
+&lt;li&gt;removes dead code and rewrites&lt;/li&gt;
+&lt;li&gt;minimizes what's left&lt;/li&gt;
+&lt;li&gt;checks syntax, variable references, and types,&lt;/li&gt;
+&lt;li&gt;and warns about common JavaScript pitfalls&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;That's pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.&lt;/p&gt;
+&lt;p&gt;Let's follow their instructions and try to run it from the command line.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;var x = 17 + 25;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;var x=42;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What noticeable differences are there?&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;17 + 25&lt;/code&gt; became &lt;code&gt;42&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Space between and after &lt;code&gt;=&lt;/code&gt; is gone&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;So even for this simple one liner, closure compiler has managed to run 2 optimizations.&lt;/p&gt;
+&lt;p&gt;Let's examine these optimizations closer, and what better way to do that then jump into the debugger :)&lt;/p&gt;
+&lt;h1&gt;Running from the command line&lt;/h1&gt;
+&lt;p&gt;We create file called &lt;code&gt;in1.js&lt;/code&gt; with the contents &lt;code&gt;var x = 17 + 25&lt;/code&gt;, and in our debug configuration
+specify the program arguments as &lt;code&gt;--js_output_file=out.js in1.js&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;We do this because we don't want to be typing input in the Eclipse console (I don't know how to do that :P)&lt;/p&gt;
+&lt;p&gt;The initial part isn't that interesting, we just initiate the &lt;code&gt;CommandLineRunner&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="n"&gt;CommandLineRunner&lt;/span&gt; &lt;span class="n"&gt;runner&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;CommandLineRunner&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;runner&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;shouldRunCompiler&lt;/span&gt;&lt;span class="o"&gt;())&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="n"&gt;runner&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;run&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Which delegates work to &lt;code&gt;AbstractCommandLineRunner&lt;/code&gt;'s &lt;code&gt;run()&lt;/code&gt; method&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;final&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;run&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;try&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="o"&gt;++)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;doRun&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Which then hands off to &lt;code&gt;doRun()&lt;/code&gt;&lt;/p&gt;
+&lt;h4&gt;Warning&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I had to go into my debug configuration in eclipse and add the folder where &lt;code&gt;externs.zip&lt;/code&gt; was located in so &lt;code&gt;getResourceAsStream&lt;/code&gt; could find the file.
+Basically &lt;code&gt;createExterns&lt;/code&gt; copies all the files in &lt;code&gt;externs.zip&lt;/code&gt; into a list that will be used later.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The next steps just setting up the compiler with the appropriate options&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;protected&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;doRun&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="kd"&gt;throws&lt;/span&gt; &lt;span class="n"&gt;FlagUsageException&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;IOException&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;Compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setLoggingLevel&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Level&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;parse&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;loggingLevel&lt;/span&gt;&lt;span class="o"&gt;));&lt;/span&gt;
+
+    &lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;SourceFile&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;externs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;createExterns&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+
+    &lt;span class="n"&gt;compiler&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;createCompiler&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+    &lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;createOptions&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The part where usually the runner will wait for user input is here:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;SourceFile&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;inputs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;createSourceInputs&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;jsFiles&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;skipNormalOutputs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;init&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;inputs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+        &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;hoistExterns&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;compile&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;inputs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;But because we supplied arguments to the parameter, it reads from that file and not &lt;code&gt;stdin&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;There are some set up steps again, and finally we jump into the &lt;code&gt;compile&lt;/code&gt; method, the meat of
+which happens in a separate thread it seems&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;Result&lt;/span&gt; &lt;span class="nf"&gt;compile&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;runInCompilerThread&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;Callable&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Result&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="nd"&gt;@Override&lt;/span&gt;
+      &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="n"&gt;Result&lt;/span&gt; &lt;span class="nf"&gt;call&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="kd"&gt;throws&lt;/span&gt; &lt;span class="n"&gt;Exception&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;compileInternal&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;getResult&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+    &lt;span class="o"&gt;});&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Because it is a separate thread, I had to set a breakpoint inside &lt;code&gt;compileInternal&lt;/code&gt;
+in order to take a look at what's happening.&lt;/p&gt;
+&lt;h2&gt;Inside the compiler&lt;/h2&gt;
+&lt;p&gt;Some very small set up to process compiler options and initialize progress state, but
+there's a very interesting comment here:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;compileInternal&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;setProgress&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;0.0&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;CompilerOptionsPreprocessor&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;preprocess&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;parse&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+    &lt;span class="c1"&gt;// 15 percent of the work is assumed to be for parsing (based on some&lt;/span&gt;
+    &lt;span class="c1"&gt;// minimal analysis on big JS projects, of course this depends on options)&lt;/span&gt;
+    &lt;span class="n"&gt;setProgress&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="mf"&gt;0.15&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;parse&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We're not going to dive into the &lt;code&gt;parse&lt;/code&gt; method, that's not what we're after.&lt;/p&gt;
+&lt;p&gt;From a cursory look into the method, &lt;code&gt;parse&lt;/code&gt; parses the inputs and returns an AST. This AST is stored in the jsRoot instance variable&lt;/p&gt;
+&lt;p&gt;And we end up in the &lt;code&gt;optimize&lt;/code&gt; method! Okay I have a feeling this is where things are going to get exciting.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="n"&gt;optimize&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;First it gathers up a list of optimizations that will be performed, e.g.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;gatherExternProperties,&lt;/li&gt;
+&lt;li&gt;garbageCollectChecks&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A list of all these optimizations can be found in the &lt;code&gt;getOptimizations&lt;/code&gt; method of &lt;code&gt;DefaultPassConfig&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;From how the code looks like, each optimization is also called a &lt;code&gt;pass&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;optimize&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;PassFactory&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;optimizations&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;getPassConfig&lt;/span&gt;&lt;span class="o"&gt;().&lt;/span&gt;&lt;span class="na"&gt;getOptimizations&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;optimizations&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;isEmpty&lt;/span&gt;&lt;span class="o"&gt;())&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Observe how &lt;code&gt;optimizations&lt;/code&gt; is a &lt;code&gt;List&lt;/code&gt; of &lt;code&gt;PassFactory&lt;/code&gt; (factory pattern).&lt;/p&gt;
+&lt;p&gt;The first pass is the &lt;code&gt;normalize&lt;/code&gt; pass. It seems like for each pass there is a set of steps that must be followed, something like:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;startPass&lt;/code&gt; is called with the name of the pass&lt;/li&gt;
+&lt;li&gt;actually process the pass&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;endPass&lt;/code&gt; is called, probably for cleanup effects&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;startPass&lt;/code&gt; itself has a number of steps as well:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;check the current state of passing&lt;/li&gt;
+&lt;li&gt;set &lt;code&gt;currentPassName&lt;/code&gt; to signify what pass it is&lt;/li&gt;
+&lt;li&gt;set &lt;code&gt;currentTracer&lt;/code&gt; to a new &lt;code&gt;Tracer&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I haven't dug into what a &lt;code&gt;Tracer&lt;/code&gt; does, but from the comments it looks like it figures out how long a particular action took, and thus will be useful when you want to pin point slow areas in the code.&lt;/p&gt;
+&lt;p&gt;So let's jump into the work that &lt;code&gt;normalize&lt;/code&gt; actually does.&lt;/p&gt;
+&lt;p&gt;It's not difficult to see what it does, because most of it is well document in the &lt;code&gt;Normalize&lt;/code&gt; class.&lt;/p&gt;
+&lt;p&gt;Here's directly quoting the docs:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;/**&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;goal&lt;/span&gt; &lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt; &lt;span class="n"&gt;pass&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;simplify&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt; &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;making&lt;/span&gt; &lt;span class="n"&gt;less&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt; &lt;span class="n"&gt;statements&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Starting&lt;/span&gt; &lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="n"&gt;statements&lt;/span&gt; &lt;span class="n"&gt;like&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt;   &lt;span class="n"&gt;var&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;Which&lt;/span&gt; &lt;span class="n"&gt;become&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt;   &lt;span class="n"&gt;var&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt;   &lt;span class="n"&gt;var&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt; &lt;span class="n"&gt;here&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;only&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="k"&gt;break&lt;/span&gt; &lt;span class="n"&gt;down&lt;/span&gt; &lt;span class="n"&gt;things&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;help&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;other&lt;/span&gt; &lt;span class="n"&gt;passes&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;can&lt;/span&gt; &lt;span class="n"&gt;be&lt;/span&gt; &lt;span class="n"&gt;put&lt;/span&gt; &lt;span class="n"&gt;back&lt;/span&gt; &lt;span class="n"&gt;together&lt;/span&gt; &lt;span class="n"&gt;in&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;form&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;at&lt;/span&gt; &lt;span class="n"&gt;least&lt;/span&gt; &lt;span class="n"&gt;as&lt;/span&gt; &lt;span class="n"&gt;small&lt;/span&gt; &lt;span class="n"&gt;when&lt;/span&gt;
+ &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;all&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;said&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;done&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If you keep looking down, you see descriptions about the 7 things that this class does.&lt;/p&gt;
+&lt;p&gt;After some set up, the &lt;code&gt;process&lt;/code&gt; method of &lt;code&gt;Normalize&lt;/code&gt; is called, and that's where magic happens!&lt;/p&gt;
+&lt;h2&gt;Traversing/Visiting&lt;/h2&gt;
+&lt;p&gt;The first step is strange to me at first sight:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;NodeTraversal&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;
+        &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;NormalizeStatements&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;assertOnChange&lt;/span&gt;&lt;span class="o"&gt;))&lt;/span&gt;
+        &lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;traverseRoots&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It looks like this isn't doing anything. But we we look into what &lt;code&gt;NodeTraversal&lt;/code&gt; does, it actually takes in a &lt;code&gt;Callback&lt;/code&gt;, and when it traverses the AST (&lt;code&gt;traverseRoots&lt;/code&gt;), it calls particular methods of &lt;code&gt;Callback&lt;/code&gt; at different points of traversing.&lt;/p&gt;
+&lt;p&gt;For example, &lt;code&gt;traverseRoots&lt;/code&gt; calls &lt;code&gt;traverseBranch&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="n"&gt;traverseBranch&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;scopeRoot&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;and in &lt;code&gt;traverseBranch&lt;/code&gt;, it calls the &lt;code&gt;visit&lt;/code&gt; method of the callback&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="n"&gt;callback&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;visit&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In summary the &lt;code&gt;NodeTraversal&lt;/code&gt; goes through the AST and at various points, asks the &lt;code&gt;Callback&lt;/code&gt; if it wants to visit a particular node (visitor pattern).&lt;/p&gt;
+&lt;p&gt;Now we can see what &lt;code&gt;NormalizeStatements&lt;/code&gt; does.&lt;/p&gt;
+&lt;p&gt;There are really only 2 methods of interest here, &lt;code&gt;shouldTraverse&lt;/code&gt; and &lt;code&gt;visit&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;shouldTraverse&lt;/code&gt; is &lt;code&gt;NormalizeStatements&lt;/code&gt; way of saying if it should descend down one level in the AST.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;visit&lt;/code&gt; is what &lt;code&gt;NormalizeStatements&lt;/code&gt; will do to modify the AST.&lt;/p&gt;
+&lt;p&gt;Looking into &lt;code&gt;shouldTraverse&lt;/code&gt; we see that first, it always returns &lt;code&gt;true&lt;/code&gt;, and it does some normalizations inside of this method&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;boolean&lt;/span&gt; &lt;span class="nf"&gt;shouldTraverse&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NodeTraversal&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="n"&gt;doStatementNormalizations&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If we dive deeper into the code we can see very well written comments why certain normalizations are done in the &lt;code&gt;shouldTraverse&lt;/code&gt; method, and why others are done in the &lt;code&gt;visit&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For example, in &lt;code&gt;doStatementNormalizations&lt;/code&gt;, the &lt;code&gt;extractForInitializer&lt;/code&gt; method is called, and the comments are as such:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="cm"&gt;/**&lt;/span&gt;
+&lt;span class="cm"&gt;     * Bring the initializers out of FOR loops.  These need to be placed&lt;/span&gt;
+&lt;span class="cm"&gt;     * before any associated LABEL nodes. This needs to be done from the top&lt;/span&gt;
+&lt;span class="cm"&gt;     * level label first so this is called as a pre-order callback (from&lt;/span&gt;
+&lt;span class="cm"&gt;     * shouldTraverse).&lt;/span&gt;
+&lt;span class="cm"&gt;     *&lt;/span&gt;
+&lt;span class="cm"&gt;     * @param n The node to inspect.&lt;/span&gt;
+&lt;span class="cm"&gt;     * @param before The node to insert the initializer before.&lt;/span&gt;
+&lt;span class="cm"&gt;     * @param beforeParent The parent of the node before which the initializer&lt;/span&gt;
+&lt;span class="cm"&gt;     *     will be inserted.&lt;/span&gt;
+&lt;span class="cm"&gt;     */&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Because it's a AST traversal implemented with callbacks, it wasn't easy to get to the code that was interesting. A lot of is was just descending the AST (in what looks like a depth first manner), before we finally get to the &lt;code&gt;visit&lt;/code&gt; part of the code.&lt;/p&gt;
+&lt;p&gt;Particularly I hit a point where I ended up in this switch case:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;SETTER_DEF&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+          &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(!&lt;/span&gt;&lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getLifeCycleStage&lt;/span&gt;&lt;span class="o"&gt;().&lt;/span&gt;&lt;span class="na"&gt;isNormalizedObfuscated&lt;/span&gt;&lt;span class="o"&gt;())&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;annotateConstantsByConvention&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+          &lt;span class="o"&gt;}&lt;/span&gt;
+          &lt;span class="k"&gt;break&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I couldn't understand what &lt;code&gt;Token.SETTER_DEF&lt;/code&gt; meant, so I went to the Variables panel in eclipse and looked at what &lt;code&gt;n&lt;/code&gt; was (the switch block switched on &lt;code&gt;n.getType()&lt;/code&gt;), and saw that n was "x".&lt;/p&gt;
+&lt;p&gt;The rest of the &lt;code&gt;process&lt;/code&gt; method looks similar, where callbacks are passed into a travesal, with different callbacks doing different things.&lt;/p&gt;
+&lt;p&gt;The slight differences are the types of &lt;code&gt;Callback&lt;/code&gt;s used.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;NormalizeStatements&lt;/code&gt; implements the &lt;code&gt;Callback&lt;/code&gt; interface at the highest level, and there over 20 classes or abstract classes that implement this interface.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;MakeDeclaredNamesUnique&lt;/code&gt; implements the ScopedCallback, because when renaming variables, scope has to be considered. E.g. a variable that refers to a variable in the outer scope cannot be renamed to something different.&lt;/p&gt;
+&lt;p&gt;Here's something that caused me difficulty in reading this particular method: there are multiple layers of abstraction here, which makes it pretty confusing.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;It's not clear how many things &lt;code&gt;process&lt;/code&gt; is actually doing.&lt;/li&gt;
+&lt;li&gt;The actions are inconsistent. In some places, the construction of a &lt;code&gt;NodeTraversal&lt;/code&gt; using &lt;code&gt;new&lt;/code&gt; and calling &lt;code&gt;traverseRoots&lt;/code&gt; happens on the same line. But in others, the &lt;code&gt;Callback&lt;/code&gt; is constructed separately from the &lt;code&gt;NodeTraversal&lt;/code&gt;, which are separate from actually calling the &lt;code&gt;traverse&lt;/code&gt; method. In other places, these 3 steps are separated into another method.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Perhaps to clean up this method slightly, we can move each sub-processing step into its own method, like &lt;code&gt;removeDuplicateDeclarations&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="n"&gt;removeDuplicateDeclarations&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then &lt;code&gt;process&lt;/code&gt; will look like this&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;process&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;normalizeStatements&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;makeDeclaredNamesUnique&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;removeDuplicateDeclarations&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;propagateConstantAnnotationsOverVars&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;findExposeAnnotations&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;For our simple piece of code, &lt;code&gt;normalize&lt;/code&gt; actually doesn't do anything, so that was a pretty long detour. But I think we will see the patterns in &lt;code&gt;normalize&lt;/code&gt; again thorughout the codebase, so it is useful to examine it.&lt;/p&gt;
+&lt;p&gt;For each &lt;code&gt;startPass&lt;/code&gt;, there is its dual &lt;code&gt;endPass&lt;/code&gt;, which stops the &lt;code&gt;Tracer&lt;/code&gt; (so a tracer probably records how long each compiler pass took).&lt;/p&gt;
+&lt;h1&gt;The PhaseOptimizer&lt;/h1&gt;
+&lt;p&gt;And we're back in &lt;code&gt;optimize&lt;/code&gt;! Here we hit something scary (to me) called the &lt;code&gt;PhaseOptimizer&lt;/code&gt;.
+We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt; via its &lt;code&gt;consume&lt;/code&gt; method, and basically &lt;code&gt;consume&lt;/code&gt; organizes these &lt;code&gt;PassFactory&lt;/code&gt;-ies into &lt;code&gt;CompilePasses&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Like its name suggest, &lt;code&gt;PhaseOptimizer&lt;/code&gt; does some optimizations. These are (for now) too complicated to get into, but here are relevant portions of the code that describes what happens:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="cm"&gt;/**&lt;/span&gt;
+&lt;span class="cm"&gt;   * Add the passes generated by the given factories to the compile sequence.&lt;/span&gt;
+&lt;span class="cm"&gt;   * &amp;lt;p&amp;gt;&lt;/span&gt;
+&lt;span class="cm"&gt;   * Automatically pulls multi-run passes into fixed point loops. If there&lt;/span&gt;
+&lt;span class="cm"&gt;   * are 1 or more multi-run passes in a row, they will run together in&lt;/span&gt;
+&lt;span class="cm"&gt;   * the same fixed point loop. The passes will run until they are finished&lt;/span&gt;
+&lt;span class="cm"&gt;   * making changes.&lt;/span&gt;
+&lt;span class="cm"&gt;   * &amp;lt;p&amp;gt;&lt;/span&gt;
+&lt;span class="cm"&gt;   * The PhaseOptimizer is free to tweak the order and frequency of multi-run&lt;/span&gt;
+&lt;span class="cm"&gt;   * passes in a fixed-point loop.&lt;/span&gt;
+&lt;span class="cm"&gt;   */&lt;/span&gt;
+  &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;consume&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;PassFactory&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;factories&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="cm"&gt;/**&lt;/span&gt;
+&lt;span class="cm"&gt;   * A compound pass that contains atomic passes and runs them until they reach&lt;/span&gt;
+&lt;span class="cm"&gt;   * a fixed point.&lt;/span&gt;
+&lt;span class="cm"&gt;   * &amp;lt;p&amp;gt;&lt;/span&gt;
+&lt;span class="cm"&gt;   * Notice that this is a non-static class, because it includes the closure&lt;/span&gt;
+&lt;span class="cm"&gt;   * of PhaseOptimizer.&lt;/span&gt;
+&lt;span class="cm"&gt;   */&lt;/span&gt;
+  &lt;span class="nd"&gt;@VisibleForTesting&lt;/span&gt;
+  &lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Loop&lt;/span&gt; &lt;span class="kd"&gt;implements&lt;/span&gt; &lt;span class="n"&gt;CompilerPass&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;At the end of &lt;code&gt;consume&lt;/code&gt;, what we have is &lt;code&gt;passes&lt;/code&gt; which is a list of &lt;code&gt;CompilerPass&lt;/code&gt;-es that will be run. We then call the &lt;code&gt;process&lt;/code&gt; method of the &lt;code&gt;PhaseOptimizer&lt;/code&gt;, which goes through each &lt;code&gt;CompilerPass&lt;/code&gt; (in &lt;code&gt;passes&lt;/code&gt;) and calls the &lt;code&gt;process&lt;/code&gt; method of that &lt;code&gt;CompilerPass&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This should look pretty familiar because &lt;code&gt;Normalize&lt;/code&gt; actually implements &lt;code&gt;CompilerPass&lt;/code&gt;, and so we have a clue of what happens in the &lt;code&gt;process&lt;/code&gt; method of each &lt;code&gt;CompilerPass&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I wanted to figure out which exact &lt;code&gt;CompilerPass&lt;/code&gt; was causing the change, so I added some if else and print statements to notify me when the nodes were changed by a pass. This is how it roughly looked like&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;old_root_str&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;toStringTree&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+      &lt;span class="n"&gt;pass&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;process&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+      &lt;span class="n"&gt;String&lt;/span&gt; &lt;span class="n"&gt;new_root_str&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;toStringTree&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;old_root_str&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;contentEquals&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;new_root_str&lt;/span&gt;&lt;span class="o"&gt;)){&lt;/span&gt;
+          &lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;out&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;println&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Same: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;pass&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+          &lt;span class="n"&gt;System&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;out&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;println&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;Pass: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;pass&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;quot; old: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;old_root_str&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s"&gt;&amp;quot; new: &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;new_root_str&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What I found strange is that the &lt;code&gt;process&lt;/code&gt; method of &lt;code&gt;PhaseOptimizer&lt;/code&gt; ran twice. I found out because I had set breakpoints in that method.&lt;/p&gt;
+&lt;p&gt;In the first run of &lt;code&gt;process&lt;/code&gt;, there was only 1 pass that caused a change: &lt;code&gt;inferConsts&lt;/code&gt;, but I couldn't tell what changed based on the &lt;code&gt;toString()&lt;/code&gt; output, so this isn't the pass we are interested in.&lt;/p&gt;
+&lt;p&gt;In the second run of &lt;code&gt;process&lt;/code&gt;, we get this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;Same&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;pass&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;beforeMainOptimizations&lt;/span&gt;
+&lt;span class="n"&gt;Pass&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;com&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;google&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;javascript&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;jscomp&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;PhaseOptimizer&lt;/span&gt;&lt;span class="n"&gt;$Loop&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;dd37992&lt;/span&gt; &lt;span class="n"&gt;old&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;BLOCK&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;synthetic&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    &lt;span class="n"&gt;SCRIPT&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;synthetic&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;input_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;InputId&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+        &lt;span class="n"&gt;VAR&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+            &lt;span class="n"&gt;NAME&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;is_constant_var&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+                &lt;span class="n"&gt;ADD&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+                    &lt;span class="n"&gt;NUMBER&lt;/span&gt; &lt;span class="mf"&gt;17.0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+                    &lt;span class="n"&gt;NUMBER&lt;/span&gt; &lt;span class="mf"&gt;25.0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+ &lt;span class="k"&gt;new&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;BLOCK&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;synthetic&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;change_time&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;15&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+    &lt;span class="n"&gt;SCRIPT&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;synthetic&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;input_id&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;InputId&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+        &lt;span class="n"&gt;VAR&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+            &lt;span class="n"&gt;NAME&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;is_constant_var&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+                &lt;span class="n"&gt;NUMBER&lt;/span&gt; &lt;span class="mf"&gt;42.0&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;source_file&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;in1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;span class="n"&gt;Same&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;pass&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;beforeModuleMotion&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Bingo! Or not?&lt;/p&gt;
+&lt;h2&gt;Multiple passes&lt;/h2&gt;
+&lt;p&gt;We managed to figure out the pass that caused the optimization, but the name of the pass didn't really help at all.&lt;/p&gt;
+&lt;p&gt;But at least we know this pass happens before &lt;code&gt;beforeModuleMotion&lt;/code&gt; and after &lt;code&gt;beforeMainOptimizations&lt;/code&gt;, and because the list of &lt;code&gt;CompilerPass&lt;/code&gt; is traversed in order, we can go into &lt;code&gt;DefaultPassConfig&lt;/code&gt; and take a look at what is in between these 2 passes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;addAll&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;getMainOptimizationLoop&lt;/span&gt;&lt;span class="o"&gt;());&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This basically adds about 10+ &lt;code&gt;PassFactory&lt;/code&gt;-ies to the list via the methods &lt;code&gt;getMainOptimizationLoop&lt;/code&gt; and &lt;code&gt;getCodeRemovingPasses&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;By setting more debug breakpoints, I was able to narrow down my options to those found in &lt;code&gt;getCodeRemovingPasses&lt;/code&gt;. Now I guess I just have to read what each pass does, or set breakpoints in every pass and observe what happens!&lt;/p&gt;
+&lt;p&gt;I think the former isn't a good idea, because the &lt;code&gt;PhaseOptimizer&lt;/code&gt; might run each pass multiple times, and I'll just be debugging for a long time.&lt;/p&gt;
+&lt;p&gt;Here, I basically looked at each of them, read the comments and figure out what was likely to be the &lt;code&gt;CompilerPass&lt;/code&gt; that did some work. My guess is that &lt;code&gt;PeepholeOptimizationsPass&lt;/code&gt; did it.&lt;/p&gt;
+&lt;p&gt;Digging into the creation of &lt;code&gt;PeepholeOptimizationsPass&lt;/code&gt; we see multiple kinds of peephole optimizations&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="cm"&gt;/** Various peephole optimizations. */&lt;/span&gt;
+  &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="kd"&gt;final&lt;/span&gt; &lt;span class="n"&gt;PassFactory&lt;/span&gt; &lt;span class="n"&gt;peepholeOptimizations&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;
+      &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PassFactory&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;peepholeOptimizations&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="nd"&gt;@Override&lt;/span&gt;
+    &lt;span class="kd"&gt;protected&lt;/span&gt; &lt;span class="n"&gt;CompilerPass&lt;/span&gt; &lt;span class="nf"&gt;create&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;AbstractCompiler&lt;/span&gt; &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="kd"&gt;final&lt;/span&gt; &lt;span class="kt"&gt;boolean&lt;/span&gt; &lt;span class="n"&gt;late&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepholeOptimizationsPass&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt;
+            &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepholeMinimizeConditions&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;late&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+            &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepholeSubstituteAlternateSyntax&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;late&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+            &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepholeReplaceKnownMethods&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;late&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+            &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepholeRemoveDeadCode&lt;/span&gt;&lt;span class="o"&gt;(),&lt;/span&gt;
+            &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepholeFoldConstants&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;late&lt;/span&gt;&lt;span class="o"&gt;),&lt;/span&gt;
+            &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepholeCollectPropertyAssignments&lt;/span&gt;&lt;span class="o"&gt;());&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;};&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;I decided to brute force and figure out which of these are responsible for the AST changes, so I basically just removed these &lt;code&gt;AbstractPeepholeOptimization&lt;/code&gt; one by one until the AST didn't change, that way I can figure out which one is responsible.&lt;/p&gt;
+&lt;p&gt;Here I stumbled upon a funny little problem that took me a good deal of debuggin to solve.&lt;/p&gt;
+&lt;p&gt;Since we figure that the pass happens in &lt;code&gt;getMainOptimizationLoop&lt;/code&gt;, I tried commenting that part out, but found that the pass still happened! That was really strange. Here's the part I commented out:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;createEmptyPass&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;beforeModuleMotion&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;));&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What I ended up doing was to slowly comment out parts of the &lt;code&gt;getOptimizations&lt;/code&gt; method, which &lt;code&gt;getMainOptimizationLoop&lt;/code&gt; lives in, and see when I can get the the pass to not be processed.&lt;/p&gt;
+&lt;p&gt;While going through the file to comment the code I took glances at the code as well and found out that in multiple places &lt;code&gt;PeepholeOptimizationsPass&lt;/code&gt; was inserted in to the list of &lt;code&gt;CompilerPass&lt;/code&gt;!&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;peepholeOptimizations&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;latePeepholeOptimizations&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To reduce the surface area of search, we will comment out all of these except for 1,&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;peepholeOptimizations&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now we can proceed to comment out parts of &lt;code&gt;peepholeOptimizations&lt;/code&gt; to figure out which exact &lt;code&gt;AbstractPeepholeOptimization&lt;/code&gt; is doing the work, which is &lt;code&gt;PeepholeFoldConstants&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This optimzation is not that simple to understand because it is made up of multiple smaller peephole optimizations.&lt;/p&gt;
+&lt;p&gt;Let's start from the top, which is a &lt;code&gt;PeepholeOptimizationsPass&lt;/code&gt;. As per normal, this is a &lt;code&gt;CompilerPass&lt;/code&gt;, so the &lt;code&gt;process&lt;/code&gt; method is where this happen.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;process&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;addChangeHandler&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;handler&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;beginTraversal&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+    &lt;span class="n"&gt;NodeTraversal&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;traverseChangedFunctions&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;FunctionCallback&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="nd"&gt;@Override&lt;/span&gt;
+        &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;visit&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;AbstractCompiler&lt;/span&gt; &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+          &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;isFunction&lt;/span&gt;&lt;span class="o"&gt;())&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;root&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getLastChild&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+          &lt;span class="o"&gt;}&lt;/span&gt;
+          &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;handler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;reset&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+            &lt;span class="n"&gt;NodeTraversal&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;traverse&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;PeepCallback&lt;/span&gt;&lt;span class="o"&gt;());&lt;/span&gt;
+          &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;retraverseOnChange&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;handler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;hasCodeChanged&lt;/span&gt;&lt;span class="o"&gt;());&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+      &lt;span class="o"&gt;});&lt;/span&gt;
+    &lt;span class="n"&gt;endTraversal&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
+    &lt;span class="n"&gt;compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;removeChangeHandler&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;handler&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In &lt;code&gt;process&lt;/code&gt; we see something different, the usage of &lt;code&gt;NodeTraversal.traverseChangedFunctions&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This works similarly to the &lt;code&gt;Callbacks&lt;/code&gt; we discussed above, except that the traversal only happens when functions are changed. The callback for this traversal is actually called &lt;code&gt;PeepCallback&lt;/code&gt;, which runs each &lt;code&gt;AbstractPeepholeOptimization&lt;/code&gt; when visiting each node by calling their &lt;code&gt;optimizeSubtree&lt;/code&gt; method.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;PeepCallback&lt;/span&gt; &lt;span class="kd"&gt;extends&lt;/span&gt; &lt;span class="n"&gt;AbstractShallowCallback&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="nd"&gt;@Override&lt;/span&gt;
+    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;visit&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NodeTraversal&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;currentNode&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;newNode&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+      &lt;span class="kt"&gt;boolean&lt;/span&gt; &lt;span class="n"&gt;codeChanged&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+      &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;codeChanged&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;AbstractPeepholeOptimization&lt;/span&gt; &lt;span class="n"&gt;optim&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;peepholeOptimizations&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+          &lt;span class="n"&gt;newNode&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;optim&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;optimizeSubtree&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;currentNode&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+          &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newNode&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;currentNode&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="n"&gt;codeChanged&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+            &lt;span class="n"&gt;currentNode&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;newNode&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+          &lt;span class="o"&gt;}&lt;/span&gt;
+          &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;currentNode&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+            &lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+          &lt;span class="o"&gt;}&lt;/span&gt;
+        &lt;span class="o"&gt;}&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;while&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;codeChanged&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Finally, we found it!&lt;/h2&gt;
+&lt;p&gt;Now we know where to look to find out what &lt;code&gt;PeepholeFoldConstants&lt;/code&gt; does.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="nf"&gt;optimizeSubtree&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;switch&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;getType&lt;/span&gt;&lt;span class="o"&gt;())&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;NEW&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tryFoldCtorCall&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;TYPEOF&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tryFoldTypeof&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;NOT&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;POS&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;NEG&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;BITNOT&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;tryReduceOperandsForOp&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tryFoldUnaryOperator&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;VOID&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tryReduceVoid&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+
+&lt;span class="nl"&gt;      default:&lt;/span&gt;
+        &lt;span class="n"&gt;tryReduceOperandsForOp&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tryFoldBinaryOperator&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Reading the code we can guess which switch case we will land into, the &lt;code&gt;default&lt;/code&gt; case.&lt;/p&gt;
+&lt;p&gt;Here we're just going to make a guess which method does the optimization, I'm going to pick &lt;code&gt;tryFoldBinaryOperator&lt;/code&gt; because it sounds like it.&lt;/p&gt;
+&lt;p&gt;Jumping in we see a switch statement switching on the type of the subtree, which in our case is an addition. So we dive into the &lt;code&gt;tryFoldAdd&lt;/code&gt; method.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;ADD&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tryFoldAdd&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;left&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;right&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We encounter some useful comments here so we can jump straight into the &lt;code&gt;else&lt;/code&gt; branch.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+      &lt;span class="c1"&gt;// Try arithmetic add&lt;/span&gt;
+      &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;tryFoldArithmeticOp&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;left&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;right&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+      &lt;span class="o"&gt;}&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;tryFoldLeftChildOp&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;left&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;right&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
+    &lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To verify that this is indeed the optimization we care about, we can jump into the method and just result whatever was passed in.&lt;/p&gt;
+&lt;p&gt;Success!&lt;/p&gt;
+&lt;p&gt;By commenting out the lines in &lt;code&gt;tryFoldArithmeticOp&lt;/code&gt; and just return &lt;code&gt;n&lt;/code&gt;, we can verify that the optimization does not run!&lt;/p&gt;
+&lt;p&gt;We can dig deeper and look into &lt;code&gt;performArithmeticOp&lt;/code&gt;, but all we need to know is that it performs the addition, returning a Node. If the addition worked, Node would just be a number, which is the result of the addition (in our case thats 42), and replace &lt;code&gt;n&lt;/code&gt; (which was a &lt;code&gt;add&lt;/code&gt; subtree), with just a single node!&lt;/p&gt;
+&lt;h1&gt;Recap&lt;/h1&gt;
+&lt;p&gt;After this long post, I think it's worth recapping what happens.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The compiler is set up with options, things like where to get the JS (stdin or a file?)&lt;/li&gt;
+&lt;li&gt;JavaScript is parsed into a tree&lt;/li&gt;
+&lt;li&gt;Gather up the list of optimizations that will be run&lt;/li&gt;
+&lt;li&gt;normalize (which is actually a compiler pass)&lt;/li&gt;
+&lt;li&gt;Feed the list of optimziations into the &lt;code&gt;PhaseOptimizer&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;PhaseOptimizer&lt;/code&gt; will run through all the optimizations&lt;/li&gt;
+&lt;li&gt;Each &lt;code&gt;CompilerPass&lt;/code&gt; will process the AST via callbacks when traversing the tree&lt;/li&gt;
+&lt;li&gt;Compiled JavaScript is output (to stdout or file)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;There's way more that goes on, like how the &lt;code&gt;PhaseOptimizer&lt;/code&gt; runs the list of optimizations, fixed-point optimizations that can be run multiple times safely, the many different kinds of &lt;code&gt;Callback&lt;/code&gt;s.&lt;/p&gt;
+&lt;p&gt;But at a high level, this is how things are run.&lt;/p&gt;
+&lt;p&gt;Conclusion:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open source is awesome. Because Google released this source code, we can look into the code to figure out how things work!&lt;/li&gt;
+&lt;li&gt;Debuggers are super useful. Because Eclipse, and other IDEs, are such fantastic tools, we can insert breakpoints, jump around code, build and run projects with ease.&lt;/li&gt;
+&lt;li&gt;Patterns are useful! In this dive into the code, we have already observed a couple of design patterns, namely the Visitor pattern and the Factory pattern. This has allowed the compiler to stay very flexible. I can imagine adding a new optimization pass by declaring a couple of new classes without touching the core of the compiler&lt;/li&gt;
+&lt;/ol&gt;</summary></entry></feed>

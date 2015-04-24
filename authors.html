@@ -1,71 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Zhi An, Curious, creative, programmer. Open-source enthusiast">
-
-
         <title>Zhi An - Authors</title>
-
-    <link href="http://i.imgur.com/dA0h5oc.jpg" rel="icon">
-
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/0.3.0/pure-min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./theme/css/pure.css">
-
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <meta charset="utf-8" />
+        <link href="http://ngzhian.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Full Atom Feed" />
+        <link rel="stylesheet" href="http://ngzhian.com/theme/css/styles.css">
+        <link rel="stylesheet" href="http://ngzhian.com/theme/css/github.css">
 </head>
 
-<body>
-    <div class="pure-g-r" id="layout">
-        <div class="sidebar pure-u">
-            <div class="cover-img" style="background-image: url('http://i.imgur.com/TAYo0g1.png')">
-                <div class="cover-body">
-                    <header class="header">
-                        <hgroup>
-                            <img class="avatar" src="http://i.imgur.com/dA0h5oc.jpg">
-                            <h1 class="brand-main"><a href=".">Zhi An</a></h1>
-                            <p class="tagline">Curious, creative, programmer. Open-source enthusiast</p>
-                                <p class="social">
-                                    <a href="http://github.com/ngzhian">
-                                        <i class="fa fa-github fa-3x"></i>
-                                    </a>
-                                </p>
-                        </hgroup>
-                    </header>
-                </div>
-            </div>
-        </div>
+<body id="index" class="home">
+    <div class="content">
+        <header id="banner" class="body">
+                <a href="http://ngzhian.com/">
+                    <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+                </a>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+        </ul></nav><!-- /#menu -->
     <h1>Authors on Zhi An</h1>
 
-    <ul>        <li><a href="./author/ng-zhi-an.html">Ng Zhi An</a> (25)</li>
+    <ul>        <li><a href="http://ngzhian.com/author/ng-zhi-an.html">Ng Zhi An</a> (1)</li>
     </ul>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
     </div>
-    <script>
-        var $top = $('.go-top');
-
-        // Show or hide the sticky footer button
-        $(window).scroll(function() {
-            if ($(this).scrollTop() > 200) {
-                $top.fadeIn(200);
-            } else {
-                $top.fadeOut(200);
-            }
-        });
-
-        // Animate the scroll to top
-        $top.click(function(event) {
-            event.preventDefault();
-            $('html, body').animate({scrollTop: 0}, 300);
-        })
-
-        // Makes sure that the href="#" attached to the <a> elements
-        // don't scroll you back up the page.
-        $('body').on('click', 'a[href="#"]', function(event) {
-            event.preventDefault();
-        });
-    </script>
-
 </body>
 </html>
