@@ -36,10 +36,12 @@
 </ul>
 <p>That's pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.</p>
 <p>Let's follow their instructions and try to run it from the command line.</p>
-<div class="highlight"><pre>var x = 17 + 25;
+<div class="highlight"><pre><span class="nv">$ </span>java -jar build/compiler.jar
+var <span class="nv">x</span> <span class="o">=</span> <span class="m">17</span> + 25<span class="p">;</span>
 </pre></div>
 
 
+<p>The output we get is:</p>
 <div class="highlight"><pre>var x=42;
 </pre></div>
 
@@ -49,8 +51,7 @@
 <li><code>17 + 25</code> became <code>42</code></li>
 <li>Space between and after <code>=</code> is gone</li>
 </ol>
-<p>So even for this simple one liner, closure compiler has managed to run 2 optimizations.</p>
-<p>Let's examine these optimizations closer, and what better ...</p> </div><!-- /.entry-content -->
+<p>So even for this simple one liner, closure compiler has managed to run 2 ...</p> </div><!-- /.entry-content -->
         </article></li>
 </ol><!-- /#posts-list -->
 </section><!-- /#content -->

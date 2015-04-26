@@ -18,8 +18,11 @@ That's pretty complicated. But no fear, this series will explore the Closure Com
 Let's follow their instructions and try to run it from the command line.
 
 ```
+$ java -jar build/compiler.jar
 var x = 17 + 25;
 ```
+
+The output we get is:
 
 ```
 var x=42;
@@ -49,6 +52,7 @@ The initial part isn't that interesting, we just initiate the `CommandLineRunner
       runner.run();
     }
 ```
+`@CommandLineRunner.java#L1434-1437`
 
 Which delegates work to `AbstractCommandLineRunner`'s `run()` method
 
@@ -61,6 +65,7 @@ Which delegates work to `AbstractCommandLineRunner`'s `run()` method
         result = doRun();
       }
 ```
+`@AbstractCommandLineRunner.java#L397-403`
 
 Which then hands off to `doRun()`
 
@@ -70,7 +75,7 @@ Which then hands off to `doRun()`
 > Basically `createExterns` copies all the files in `externs.zip` into a list that will be used later.
 
 
-The next steps just setting up the compiler with the appropriate options
+The next steps sets up the compiler with the appropriate options
 
 ```java
   protected int doRun() throws FlagUsageException, IOException {
@@ -81,6 +86,7 @@ The next steps just setting up the compiler with the appropriate options
     compiler = createCompiler();
     B options = createOptions();
 ```
+`@AbstractCommandLineRunner.java#L807-813`
 
 
 The part where usually the runner will wait for user input is here:
@@ -94,11 +100,12 @@ The part where usually the runner will wait for user input is here:
         result = compiler.compile(externs, inputs, options);
       }
 ```
+`@AbstractCommandLineRunner.java#L847-853`
 
 But because we supplied arguments to the parameter, it reads from that file and not `stdin`.
 
 There are some set up steps again, and finally we jump into the `compile` method, the meat of
-which happens in a separate thread it seems
+which happens in a separate thread it seems:
 
 ```java
   private Result compile() {
@@ -111,6 +118,7 @@ which happens in a separate thread it seems
     });
   }
 ```
+`@Compiler.java#L652-660`
 
 Because it is a separate thread, I had to set a breakpoint inside `compileInternal`
 in order to take a look at what's happening.
@@ -129,16 +137,18 @@ there's a very interesting comment here:
     // minimal analysis on big JS projects, of course this depends on options)
     setProgress(0.15, "parse");
 ```
+`@Compiler.java#L741-747`
 
 We're not going to dive into the `parse` method, that's not what we're after.
 
-From a cursory look into the method, `parse` parses the inputs and returns an AST. This AST is stored in the jsRoot instance variable
+From a cursory look into the method, `parse` parses the inputs and returns an AST. This AST is stored in the `jsRoot` instance variable
 
 And we end up in the `optimize` method! Okay I have a feeling this is where things are going to get exciting.
 
 ```java
         optimize();
 ```
+`@Compiler.java#L764`
 
 First it gathers up a list of optimizations that will be performed, e.g.
 
@@ -156,6 +166,7 @@ From how the code looks like, each optimization is also called a `pass`.
       return;
     }
 ```
+`@Compiler.java#L1951-1955`
 
 Observe how `optimizations` is a `List` of `PassFactory` (factory pattern).
 
@@ -195,6 +206,7 @@ Here's directly quoting the docs:
  * and can be put back together in a form that is at least as small when
  * all is said and done.
 ```
+`@Normalize.java#L33-46`
 
 If you keep looking down, you see descriptions about the 7 things that this class does.
 
@@ -209,6 +221,7 @@ The first step is strange to me at first sight:
         compiler, new NormalizeStatements(compiler, assertOnChange))
         .traverseRoots(externs, root);
 ```
+`@Normalize.java#L116-118`
 
 It looks like this isn't doing anything. But we we look into what `NodeTraversal` does, it actually takes in a `Callback`, and when it traverses the AST (`traverseRoots`), it calls particular methods of `Callback` at different points of traversing.
 
@@ -217,24 +230,26 @@ For example, `traverseRoots` calls `traverseBranch`
 ```java
       traverseBranch(externs, scopeRoot);
 ```
+`@NodeTraversal.java#L306`
 
 and in `traverseBranch`, it calls the `visit` method of the callback
 
 ```java
     callback.visit(this, n, parent);
 ```
+`@NodeTraversal.java#L577`
 
-In summary the `NodeTraversal` goes through the AST and at various points, asks the `Callback` if it wants to visit a particular node (visitor pattern).
+In summary the `NodeTraversal` goes through the AST and at various points, asks the `Callback` if it wants to visit a particular node (Visitor pattern).
 
 Now we can see what `NormalizeStatements` does.
 
 There are really only 2 methods of interest here, `shouldTraverse` and `visit`.
 
-`shouldTraverse` is `NormalizeStatements` way of saying if it should descend down one level in the AST.
+`shouldTraverse` is `NormalizeStatements`'' way of saying if it should descend down one level in the AST.
 
 `visit` is what `NormalizeStatements` will do to modify the AST.
 
-Looking into `shouldTraverse` we see that first, it always returns `true`, and it does some normalizations inside of this method
+Looking into `shouldTraverse`, we see that first, it always returns `true`, and it does some normalizations inside of this method
 
 ```java
     public boolean shouldTraverse(NodeTraversal t, Node n, Node parent) {
@@ -243,6 +258,7 @@ Looking into `shouldTraverse` we see that first, it always returns `true`, and i
       return true;
     }
 ```
+`@Normalize.java#L368-372`
 
 If we dive deeper into the code we can see very well written comments why certain normalizations are done in the `shouldTraverse` method, and why others are done in the `visit`.
 
@@ -261,6 +277,7 @@ For example, in `doStatementNormalizations`, the `extractForInitializer` method 
      *     will be inserted.
      */
 ```
+`@Normalize.java#L561-571`
 
 Because it's a AST traversal implemented with callbacks, it wasn't easy to get to the code that was interesting. A lot of is was just descending the AST (in what looks like a depth first manner), before we finally get to the `visit` part of the code.
 
@@ -273,6 +290,7 @@ Particularly I hit a point where I ended up in this switch case:
           }
           break;
 ```
+`@Normalize.java#L399-403`
 
 I couldn't understand what `Token.SETTER_DEF` meant, so I went to the Variables panel in eclipse and looked at what `n` was (the switch block switched on `n.getType()`), and saw that n was "x".
 
@@ -294,6 +312,7 @@ Perhaps to clean up this method slightly, we can move each sub-processing step i
 ```java
     removeDuplicateDeclarations(externs, root);
 ```
+`@Normalize.java#L138`
 
 Then `process` will look like this
 
@@ -307,7 +326,7 @@ public void process(Node externs, Node root) {
 }
 ```
 
-For our simple piece of code, `normalize` actually doesn't do anything, so that was a pretty long detour. But I think we will see the patterns in `normalize` again thorughout the codebase, so it is useful to examine it.
+For our simple piece of code, `normalize` actually doesn't do anything, so that was a pretty long detour. But I think we will see the patterns in `normalize` again thorughout the codebase, so it is still useful to examine it.
 
 For each `startPass`, there is its dual `endPass`, which stops the `Tracer` (so a tracer probably records how long each compiler pass took).
 
@@ -332,6 +351,7 @@ Like its name suggest, `PhaseOptimizer` does some optimizations. These are (for 
    */
   void consume(List<PassFactory> factories) {
 ```
+`@PhaseOptimizer.java#L128-139`
 
 ```java
   /**
@@ -344,6 +364,7 @@ Like its name suggest, `PhaseOptimizer` does some optimizations. These are (for 
   @VisibleForTesting
   class Loop implements CompilerPass {
 ```
+`@PhaseOptimizer.java#L400-408`
 
 At the end of `consume`, what we have is `passes` which is a list of `CompilerPass`-es that will be run. We then call the `process` method of the `PhaseOptimizer`, which goes through each `CompilerPass` (in `passes`) and calls the `process` method of that `CompilerPass`.
 
@@ -396,6 +417,7 @@ But at least we know this pass happens before `beforeModuleMotion` and after `be
 ```java
     passes.addAll(getMainOptimizationLoop());
 ```
+`@DefaultPassConfig.java#L594`
 
 This basically adds about 10+ `PassFactory`-ies to the list via the methods `getMainOptimizationLoop` and `getCodeRemovingPasses`.
 
@@ -424,16 +446,18 @@ Digging into the creation of `PeepholeOptimizationsPass` we see multiple kinds o
     }
   };
 ```
+`@DefaultPassConfig.java#L1299-1313`
 
 I decided to brute force and figure out which of these are responsible for the AST changes, so I basically just removed these `AbstractPeepholeOptimization` one by one until the AST didn't change, that way I can figure out which one is responsible.
 
-Here I stumbled upon a funny little problem that took me a good deal of debuggin to solve.
+Here I stumbled upon a funny little problem that took me a good deal of debugging to solve.
 
 Since we figure that the pass happens in `getMainOptimizationLoop`, I tried commenting that part out, but found that the pass still happened! That was really strange. Here's the part I commented out:
 
 ```java
     passes.add(createEmptyPass("beforeModuleMotion"));
 ```
+`@DefaultPassConfig.java#L596`
 
 What I ended up doing was to slowly comment out parts of the `getOptimizations` method, which `getMainOptimizationLoop` lives in, and see when I can get the the pass to not be processed.
 
@@ -442,16 +466,19 @@ While going through the file to comment the code I took glances at the code as w
 ```java
         passes.add(peepholeOptimizations);
 ```
+`@DefaultPassConfig.java#L711`
 
 ```java
       passes.add(latePeepholeOptimizations);
 ```
+`@DefaultPassConfig.java#L752`
 
 To reduce the surface area of search, we will comment out all of these except for 1,
 
 ```java
         passes.add(peepholeOptimizations);
 ```
+`@DefaultPassConfig.java#L711`
 
 Now we can proceed to comment out parts of `peepholeOptimizations` to figure out which exact `AbstractPeepholeOptimization` is doing the work, which is `PeepholeFoldConstants`.
 
@@ -479,6 +506,7 @@ Let's start from the top, which is a `PeepholeOptimizationsPass`. As per normal,
     compiler.removeChangeHandler(handler);
   }
 ```
+`@PeepholeOptimizationsPass.java#L55-72`
 
 In `process` we see something different, the usage of `NodeTraversal.traverseChangedFunctions`.
 
@@ -506,6 +534,7 @@ This works similarly to the `Callbacks` we discussed above, except that the trav
     }
   }
 ```
+`@PeepholeOptimizationsPass.java#L74-93`
 
 ## Finally, we found it!
 
@@ -536,6 +565,7 @@ Now we know where to look to find out what `PeepholeFoldConstants` does.
     }
   }
 ```
+`@PeepholeFoldConstants.java#L78-100`
 
 Reading the code we can guess which switch case we will land into, the `default` case.
 
@@ -547,6 +577,7 @@ Jumping in we see a switch statement switching on the type of the subtree, which
       case Token.ADD:
         return tryFoldAdd(subtree, left, right);
 ```
+`@PeepholeFoldConstants.java#L151-152`
 
 We encounter some useful comments here so we can jump straight into the `else` branch.
 
@@ -560,6 +591,7 @@ We encounter some useful comments here so we can jump straight into the `else` b
       return tryFoldLeftChildOp(node, left, right);
     }
 ```
+`@PeepholeFoldConstants.java#L849-856`
 
 To verify that this is indeed the optimization we care about, we can jump into the method and just result whatever was passed in.
 
