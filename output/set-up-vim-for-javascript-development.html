@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Zhi An</title>
+        <meta charset="utf-8" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+
+
+
+        <link rel="stylesheet" href="./theme/css/styles.css">
+        <link rel="stylesheet" href="./theme/css/github.css">
+</head>
+
+<body id="index" class="home">
+    <div class="content">
+        <header id="banner" class="body">
+                <a href="./">
+                    <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+                </a>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <time class="published" title="2015-04-24T18:00:00-04:00">
+      Fri 24 April 2015
+    </time>
+    <h2 class="entry-title">
+      <a href="./set-up-vim-for-javascript-development.html" rel="bookmark"
+         title="Permalink to Set up Vim for JavaScript development">Set up Vim for JavaScript development</a></h2>
+ 
+  </header>
+  <div class="entry-content">
+    <p>A couple of days ago I decided to get my JavaScript development environment in order.</p>
+<p>I haven't been doing much JS dev lately, mostly just tweaking a tiny bit of JS, but I had just received a pure frontend JS task. So I thought it would be a good time to do so!</p>
+<p>I live in Vim world, and these instructions are assembled from various places all over the web.</p>
+<p>Here's how my setup looks like right now</p>
+<p><img alt="My Vim JavaScript setup, with d3.js code" src="http://i.imgur.com/JjT5XW2.png" /></p>
+<h1>Syntax highlighting</h1>
+<p>First thing I wanted was syntax highlighting, and I usually just head to GitHub to do a search.</p>
+<p>I found a couple of vim scripts for this, and I chose [this] (https://github.com/pangloss/vim-javascript) because it was the most recently updated, and had the most number of stars.</p>
+<p>As I used <a href="https://github.com/gmarik/Vundle.vim">Vundle</a>, this was as easy as adding a line to my <code>.vimrc</code></p>
+<div class="highlight"><pre>Plugin <span class="s2">&quot;pangloss/vim-javascript&quot;</span>
+</pre></div>
+
+
+<h1>Indentation</h1>
+<p>From my observation, 2 spaces seems to be pretty popular, so I went with that as well.</p>
+<p>This doesn't require any plugin, Vim has really good support for smart indentations built in, we just need to which command does it!</p>
+<p>In this case refering to <code>.vimrc</code> files of experienced vim users really helps. One notable Vim (and Ruby) expert I really like is <a href="https://github.com/r00k/">Ben Orenstein</a>. Thanks Ben!</p>
+<p>I went to <a href="https://github.com/r00k/dotfiles/blob/master/vimrc#L59-72">his dotfiles</a> and found the lines that was releveant, which was the <code>autocmd</code> command, <a href="http://vimdoc.sourceforge.net/htmldoc/autocmd.html#:autocmd">docs</a></p>
+<div class="highlight"><pre>autocmd FileType javascript setlocal sw=2
+</pre></div>
+
+
+<p><code>autocmd</code> basically sets some settings when you open a file of a specific type.</p>
+<p>So for the setting aove, everytime you open a <code>javascript</code> file, it will set the <code>shiftwidth</code> to 2 locally (i.e. only the current buffer or window), <a href="http://vimdoc.sourceforge.net/htmldoc/options.html#:setlocal">docs on setlocal</a>, <a href="http://vimdoc.sourceforge.net/htmldoc/options.html#" title="shiftwidth">docs on shiftwidth</a></p>
+<p>Check out my own <code>.vimrc</code> <a href="https://github.com/ngzhian/dotfiles/blob/master/.vimrc">here</a></p>
+<h1>Linting, style checks</h1>
+<p>Linting is really helpful and we should always have it turned on.</p>
+<p>It helps captures stupid typos which would result in undefined references, breaking the page. It also ensures that you write code that is formatted consistently.</p>
+<p>And there are many other reasons as well!</p>
+<p>A helpful resource was <a href="http://stackoverflow.com/questions/473478/vim-jslint/5893447#5893447">this stackoverflow question</a>, and I basically followed the instruction on one of those answer.</p>
+<p>First, install <a href="https://github.com/scrooloose/syntastic">Syntastic</a>, which is an amazing, flexible syntax checker for Vim. It works really well and is extensible, so you can plug in different checkers for each file type.</p>
+<p>For JavaScript, there are multiple checkers available, one that I chose was <a href="http://jshint.com/docs/">jshint</a></p>
+<p>This is easy to install, assuming you have <code>npm</code></p>
+<div class="highlight"><pre>npm install jshint -g
+</pre></div>
+
+
+<p>Restart Vim, and Syntastic will automatically pick up jshint.</p>
+<p>Open up a JavaScript file, then use this ex command <code>:SyntasticInfo</code> to verify that <code>jshint</code> is indeed active.</p>
+<p>Another checker worth looking at is Google's <a href="https://developers.google.com/closure/utilities/docs/linter_howto">closure library linter</a>. This is particularly interesting because just a couple of days ago I was exploring the Google Closure Compiler, <a href="./what-the-heck-is-google-closure-compiler.html">here's my blog post on it.</a></p>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-40546270-4', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>
