@@ -11,10 +11,12 @@
 &lt;/ul&gt;
 &lt;p&gt;That's pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.&lt;/p&gt;
 &lt;p&gt;Let's follow their instructions and try to run it from the command line.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;var x = 17 + 25;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;java -jar build/compiler.jar
+var &lt;span class="nv"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="m"&gt;17&lt;/span&gt; + 25&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;The output we get is:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;var x=42;
 &lt;/pre&gt;&lt;/div&gt;
 
@@ -38,6 +40,7 @@ specify the program arguments as &lt;code&gt;--js_output_file=out.js in1.js&lt;/
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@CommandLineRunner.java#L1434-1437&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Which delegates work to &lt;code&gt;AbstractCommandLineRunner&lt;/code&gt;'s &lt;code&gt;run()&lt;/code&gt; method&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;final&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;run&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
     &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
@@ -49,13 +52,14 @@ specify the program arguments as &lt;code&gt;--js_output_file=out.js in1.js&lt;/
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@AbstractCommandLineRunner.java#L397-403&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Which then hands off to &lt;code&gt;doRun()&lt;/code&gt;&lt;/p&gt;
 &lt;h4&gt;Warning&lt;/h4&gt;
 &lt;blockquote&gt;
 &lt;p&gt;I had to go into my debug configuration in eclipse and add the folder where &lt;code&gt;externs.zip&lt;/code&gt; was located in so &lt;code&gt;getResourceAsStream&lt;/code&gt; could find the file.
 Basically &lt;code&gt;createExterns&lt;/code&gt; copies all the files in &lt;code&gt;externs.zip&lt;/code&gt; into a list that will be used later.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;The next steps just setting up the compiler with the appropriate options&lt;/p&gt;
+&lt;p&gt;The next steps sets up the compiler with the appropriate options&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;protected&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;doRun&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="kd"&gt;throws&lt;/span&gt; &lt;span class="n"&gt;FlagUsageException&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;IOException&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
     &lt;span class="n"&gt;Compiler&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;setLoggingLevel&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Level&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;parse&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;loggingLevel&lt;/span&gt;&lt;span class="o"&gt;));&lt;/span&gt;
 
@@ -66,6 +70,7 @@ Basically &lt;code&gt;createExterns&lt;/code&gt; copies all the files in &lt;cod
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@AbstractCommandLineRunner.java#L807-813&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;The part where usually the runner will wait for user input is here:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;SourceFile&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;inputs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;createSourceInputs&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;jsFiles&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
       &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;skipNormalOutputs&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
@@ -77,9 +82,10 @@ Basically &lt;code&gt;createExterns&lt;/code&gt; copies all the files in &lt;cod
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@AbstractCommandLineRunner.java#L847-853&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;But because we supplied arguments to the parameter, it reads from that file and not &lt;code&gt;stdin&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;There are some set up steps again, and finally we jump into the &lt;code&gt;compile&lt;/code&gt; method, the meat of
-which happens in a separate thread it seems&lt;/p&gt;
+which happens in a separate thread it seems:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;Result&lt;/span&gt; &lt;span class="nf"&gt;compile&lt;/span&gt;&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;runInCompilerThread&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="n"&gt;Callable&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Result&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
       &lt;span class="nd"&gt;@Override&lt;/span&gt;
@@ -92,6 +98,7 @@ which happens in a separate thread it seems&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Compiler.java#L652-660&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Because it is a separate thread, I had to set a breakpoint inside &lt;code&gt;compileInternal&lt;/code&gt;
 in order to take a look at what's happening.&lt;/p&gt;
 &lt;h2&gt;Inside the compiler&lt;/h2&gt;
@@ -107,13 +114,15 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Compiler.java#L741-747&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;We're not going to dive into the &lt;code&gt;parse&lt;/code&gt; method, that's not what we're after.&lt;/p&gt;
-&lt;p&gt;From a cursory look into the method, &lt;code&gt;parse&lt;/code&gt; parses the inputs and returns an AST. This AST is stored in the jsRoot instance variable&lt;/p&gt;
+&lt;p&gt;From a cursory look into the method, &lt;code&gt;parse&lt;/code&gt; parses the inputs and returns an AST. This AST is stored in the &lt;code&gt;jsRoot&lt;/code&gt; instance variable&lt;/p&gt;
 &lt;p&gt;And we end up in the &lt;code&gt;optimize&lt;/code&gt; method! Okay I have a feeling this is where things are going to get exciting.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="n"&gt;optimize&lt;/span&gt;&lt;span class="o"&gt;();&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Compiler.java#L764&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;First it gathers up a list of optimizations that will be performed, e.g.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;gatherExternProperties,&lt;/li&gt;
@@ -129,6 +138,7 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Compiler.java#L1951-1955&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Observe how &lt;code&gt;optimizations&lt;/code&gt; is a &lt;code&gt;List&lt;/code&gt; of &lt;code&gt;PassFactory&lt;/code&gt; (factory pattern).&lt;/p&gt;
 &lt;p&gt;The first pass is the &lt;code&gt;normalize&lt;/code&gt; pass. It seems like for each pass there is a set of steps that must be followed, something like:&lt;/p&gt;
 &lt;ol&gt;
@@ -163,6 +173,7 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Normalize.java#L33-46&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;If you keep looking down, you see descriptions about the 7 things that this class does.&lt;/p&gt;
 &lt;p&gt;After some set up, the &lt;code&gt;process&lt;/code&gt; method of &lt;code&gt;Normalize&lt;/code&gt; is called, and that's where magic happens!&lt;/p&gt;
 &lt;h2&gt;Traversing/Visiting&lt;/h2&gt;
@@ -173,23 +184,26 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Normalize.java#L116-118&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;It looks like this isn't doing anything. But we we look into what &lt;code&gt;NodeTraversal&lt;/code&gt; does, it actually takes in a &lt;code&gt;Callback&lt;/code&gt;, and when it traverses the AST (&lt;code&gt;traverseRoots&lt;/code&gt;), it calls particular methods of &lt;code&gt;Callback&lt;/code&gt; at different points of traversing.&lt;/p&gt;
 &lt;p&gt;For example, &lt;code&gt;traverseRoots&lt;/code&gt; calls &lt;code&gt;traverseBranch&lt;/code&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="n"&gt;traverseBranch&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;scopeRoot&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@NodeTraversal.java#L306&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;and in &lt;code&gt;traverseBranch&lt;/code&gt;, it calls the &lt;code&gt;visit&lt;/code&gt; method of the callback&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="n"&gt;callback&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;visit&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;In summary the &lt;code&gt;NodeTraversal&lt;/code&gt; goes through the AST and at various points, asks the &lt;code&gt;Callback&lt;/code&gt; if it wants to visit a particular node (visitor pattern).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;@NodeTraversal.java#L577&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;In summary the &lt;code&gt;NodeTraversal&lt;/code&gt; goes through the AST and at various points, asks the &lt;code&gt;Callback&lt;/code&gt; if it wants to visit a particular node (Visitor pattern).&lt;/p&gt;
 &lt;p&gt;Now we can see what &lt;code&gt;NormalizeStatements&lt;/code&gt; does.&lt;/p&gt;
 &lt;p&gt;There are really only 2 methods of interest here, &lt;code&gt;shouldTraverse&lt;/code&gt; and &lt;code&gt;visit&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;shouldTraverse&lt;/code&gt; is &lt;code&gt;NormalizeStatements&lt;/code&gt; way of saying if it should descend down one level in the AST.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;shouldTraverse&lt;/code&gt; is &lt;code&gt;NormalizeStatements&lt;/code&gt;'' way of saying if it should descend down one level in the AST.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;visit&lt;/code&gt; is what &lt;code&gt;NormalizeStatements&lt;/code&gt; will do to modify the AST.&lt;/p&gt;
-&lt;p&gt;Looking into &lt;code&gt;shouldTraverse&lt;/code&gt; we see that first, it always returns &lt;code&gt;true&lt;/code&gt;, and it does some normalizations inside of this method&lt;/p&gt;
+&lt;p&gt;Looking into &lt;code&gt;shouldTraverse&lt;/code&gt;, we see that first, it always returns &lt;code&gt;true&lt;/code&gt;, and it does some normalizations inside of this method&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;boolean&lt;/span&gt; &lt;span class="nf"&gt;shouldTraverse&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;NodeTraversal&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
       &lt;span class="n"&gt;doStatementNormalizations&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
 
@@ -198,6 +212,7 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Normalize.java#L368-372&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;If we dive deeper into the code we can see very well written comments why certain normalizations are done in the &lt;code&gt;shouldTraverse&lt;/code&gt; method, and why others are done in the &lt;code&gt;visit&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;For example, in &lt;code&gt;doStatementNormalizations&lt;/code&gt;, the &lt;code&gt;extractForInitializer&lt;/code&gt; method is called, and the comments are as such:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="cm"&gt;/**&lt;/span&gt;
@@ -214,6 +229,7 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Normalize.java#L561-571&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Because it's a AST traversal implemented with callbacks, it wasn't easy to get to the code that was interesting. A lot of is was just descending the AST (in what looks like a depth first manner), before we finally get to the &lt;code&gt;visit&lt;/code&gt; part of the code.&lt;/p&gt;
 &lt;p&gt;Particularly I hit a point where I ended up in this switch case:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;SETTER_DEF&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
@@ -224,6 +240,7 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Normalize.java#L399-403&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;I couldn't understand what &lt;code&gt;Token.SETTER_DEF&lt;/code&gt; meant, so I went to the Variables panel in eclipse and looked at what &lt;code&gt;n&lt;/code&gt; was (the switch block switched on &lt;code&gt;n.getType()&lt;/code&gt;), and saw that n was "x".&lt;/p&gt;
 &lt;p&gt;The rest of the &lt;code&gt;process&lt;/code&gt; method looks similar, where callbacks are passed into a travesal, with different callbacks doing different things.&lt;/p&gt;
 &lt;p&gt;The slight differences are the types of &lt;code&gt;Callback&lt;/code&gt;s used.&lt;/p&gt;
@@ -239,6 +256,7 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@Normalize.java#L138&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Then &lt;code&gt;process&lt;/code&gt; will look like this&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;process&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
     &lt;span class="n"&gt;normalizeStatements&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;externs&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
@@ -250,7 +268,7 @@ there's a very interesting comment here:&lt;/p&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;For our simple piece of code, &lt;code&gt;normalize&lt;/code&gt; actually doesn't do anything, so that was a pretty long detour. But I think we will see the patterns in &lt;code&gt;normalize&lt;/code&gt; again thorughout the codebase, so it is useful to examine it.&lt;/p&gt;
+&lt;p&gt;For our simple piece of code, &lt;code&gt;normalize&lt;/code&gt; actually doesn't do anything, so that was a pretty long detour. But I think we will see the patterns in &lt;code&gt;normalize&lt;/code&gt; again thorughout the codebase, so it is still useful to examine it.&lt;/p&gt;
 &lt;p&gt;For each &lt;code&gt;startPass&lt;/code&gt;, there is its dual &lt;code&gt;endPass&lt;/code&gt;, which stops the &lt;code&gt;Tracer&lt;/code&gt; (so a tracer probably records how long each compiler pass took).&lt;/p&gt;
 &lt;h1&gt;The PhaseOptimizer&lt;/h1&gt;
 &lt;p&gt;And we're back in &lt;code&gt;optimize&lt;/code&gt;! Here we hit something scary (to me) called the &lt;code&gt;PhaseOptimizer&lt;/code&gt;.
@@ -271,6 +289,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@PhaseOptimizer.java#L128-139&lt;/code&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="cm"&gt;/**&lt;/span&gt;
 &lt;span class="cm"&gt;   * A compound pass that contains atomic passes and runs them until they reach&lt;/span&gt;
 &lt;span class="cm"&gt;   * a fixed point.&lt;/span&gt;
@@ -283,6 +302,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@PhaseOptimizer.java#L400-408&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;At the end of &lt;code&gt;consume&lt;/code&gt;, what we have is &lt;code&gt;passes&lt;/code&gt; which is a list of &lt;code&gt;CompilerPass&lt;/code&gt;-es that will be run. We then call the &lt;code&gt;process&lt;/code&gt; method of the &lt;code&gt;PhaseOptimizer&lt;/code&gt;, which goes through each &lt;code&gt;CompilerPass&lt;/code&gt; (in &lt;code&gt;passes&lt;/code&gt;) and calls the &lt;code&gt;process&lt;/code&gt; method of that &lt;code&gt;CompilerPass&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;This should look pretty familiar because &lt;code&gt;Normalize&lt;/code&gt; actually implements &lt;code&gt;CompilerPass&lt;/code&gt;, and so we have a clue of what happens in the &lt;code&gt;process&lt;/code&gt; method of each &lt;code&gt;CompilerPass&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;I wanted to figure out which exact &lt;code&gt;CompilerPass&lt;/code&gt; was causing the change, so I added some if else and print statements to notify me when the nodes were changed by a pass. This is how it roughly looked like&lt;/p&gt;
@@ -325,6 +345,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@DefaultPassConfig.java#L594&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This basically adds about 10+ &lt;code&gt;PassFactory&lt;/code&gt;-ies to the list via the methods &lt;code&gt;getMainOptimizationLoop&lt;/code&gt; and &lt;code&gt;getCodeRemovingPasses&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;By setting more debug breakpoints, I was able to narrow down my options to those found in &lt;code&gt;getCodeRemovingPasses&lt;/code&gt;. Now I guess I just have to read what each pass does, or set breakpoints in every pass and observe what happens!&lt;/p&gt;
 &lt;p&gt;I think the former isn't a good idea, because the &lt;code&gt;PhaseOptimizer&lt;/code&gt; might run each pass multiple times, and I'll just be debugging for a long time.&lt;/p&gt;
@@ -348,28 +369,33 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@DefaultPassConfig.java#L1299-1313&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;I decided to brute force and figure out which of these are responsible for the AST changes, so I basically just removed these &lt;code&gt;AbstractPeepholeOptimization&lt;/code&gt; one by one until the AST didn't change, that way I can figure out which one is responsible.&lt;/p&gt;
-&lt;p&gt;Here I stumbled upon a funny little problem that took me a good deal of debuggin to solve.&lt;/p&gt;
+&lt;p&gt;Here I stumbled upon a funny little problem that took me a good deal of debugging to solve.&lt;/p&gt;
 &lt;p&gt;Since we figure that the pass happens in &lt;code&gt;getMainOptimizationLoop&lt;/code&gt;, I tried commenting that part out, but found that the pass still happened! That was really strange. Here's the part I commented out:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;createEmptyPass&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;beforeModuleMotion&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;));&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@DefaultPassConfig.java#L596&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;What I ended up doing was to slowly comment out parts of the &lt;code&gt;getOptimizations&lt;/code&gt; method, which &lt;code&gt;getMainOptimizationLoop&lt;/code&gt; lives in, and see when I can get the the pass to not be processed.&lt;/p&gt;
 &lt;p&gt;While going through the file to comment the code I took glances at the code as well and found out that in multiple places &lt;code&gt;PeepholeOptimizationsPass&lt;/code&gt; was inserted in to the list of &lt;code&gt;CompilerPass&lt;/code&gt;!&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;peepholeOptimizations&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@DefaultPassConfig.java#L711&lt;/code&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;      &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;latePeepholeOptimizations&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@DefaultPassConfig.java#L752&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;To reduce the surface area of search, we will comment out all of these except for 1,&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;        &lt;span class="n"&gt;passes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;add&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;peepholeOptimizations&lt;/span&gt;&lt;span class="o"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@DefaultPassConfig.java#L711&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Now we can proceed to comment out parts of &lt;code&gt;peepholeOptimizations&lt;/code&gt; to figure out which exact &lt;code&gt;AbstractPeepholeOptimization&lt;/code&gt; is doing the work, which is &lt;code&gt;PeepholeFoldConstants&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;This optimzation is not that simple to understand because it is made up of multiple smaller peephole optimizations.&lt;/p&gt;
 &lt;p&gt;Let's start from the top, which is a &lt;code&gt;PeepholeOptimizationsPass&lt;/code&gt;. As per normal, this is a &lt;code&gt;CompilerPass&lt;/code&gt;, so the &lt;code&gt;process&lt;/code&gt; method is where this happen.&lt;/p&gt;
@@ -394,6 +420,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@PeepholeOptimizationsPass.java#L55-72&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;In &lt;code&gt;process&lt;/code&gt; we see something different, the usage of &lt;code&gt;NodeTraversal.traverseChangedFunctions&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;This works similarly to the &lt;code&gt;Callbacks&lt;/code&gt; we discussed above, except that the traversal only happens when functions are changed. The callback for this traversal is actually called &lt;code&gt;PeepCallback&lt;/code&gt;, which runs each &lt;code&gt;AbstractPeepholeOptimization&lt;/code&gt; when visiting each node by calling their &lt;code&gt;optimizeSubtree&lt;/code&gt; method.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;PeepCallback&lt;/span&gt; &lt;span class="kd"&gt;extends&lt;/span&gt; &lt;span class="n"&gt;AbstractShallowCallback&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
@@ -419,6 +446,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@PeepholeOptimizationsPass.java#L74-93&lt;/code&gt;&lt;/p&gt;
 &lt;h2&gt;Finally, we found it!&lt;/h2&gt;
 &lt;p&gt;Now we know where to look to find out what &lt;code&gt;PeepholeFoldConstants&lt;/code&gt; does.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;  &lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="nf"&gt;optimizeSubtree&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Node&lt;/span&gt; &lt;span class="n"&gt;subtree&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
@@ -447,6 +475,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@PeepholeFoldConstants.java#L78-100&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Reading the code we can guess which switch case we will land into, the &lt;code&gt;default&lt;/code&gt; case.&lt;/p&gt;
 &lt;p&gt;Here we're just going to make a guess which method does the optimization, I'm going to pick &lt;code&gt;tryFoldBinaryOperator&lt;/code&gt; because it sounds like it.&lt;/p&gt;
 &lt;p&gt;Jumping in we see a switch statement switching on the type of the subtree, which in our case is an addition. So we dive into the &lt;code&gt;tryFoldAdd&lt;/code&gt; method.&lt;/p&gt;
@@ -455,6 +484,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@PeepholeFoldConstants.java#L151-152&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;We encounter some useful comments here so we can jump straight into the &lt;code&gt;else&lt;/code&gt; branch.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;    &lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
       &lt;span class="c1"&gt;// Try arithmetic add&lt;/span&gt;
@@ -467,6 +497,7 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;/pre&gt;&lt;/div&gt;
 
 
+&lt;p&gt;&lt;code&gt;@PeepholeFoldConstants.java#L849-856&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;To verify that this is indeed the optimization we care about, we can jump into the method and just result whatever was passed in.&lt;/p&gt;
 &lt;p&gt;Success!&lt;/p&gt;
 &lt;p&gt;By commenting out the lines in &lt;code&gt;tryFoldArithmeticOp&lt;/code&gt; and just return &lt;code&gt;n&lt;/code&gt;, we can verify that the optimization does not run!&lt;/p&gt;
