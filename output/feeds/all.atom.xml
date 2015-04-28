@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-04-20T19:00:00-04:00</updated><entry><title>What the heck is Google Closure Compiler?</title><link href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html" rel="alternate"></link><updated>2015-04-20T19:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-20:blog/what-the-heck-is-google-closure-compiler.html</id><summary type="html">&lt;p&gt;It "compiles from JavaScript to better JavaScript", so why would any one want that?&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-04-24T18:00:00-04:00</updated><entry><title>Set up Vim for JavaScript development</title><link href="http://ngzhian.com/blog/set-up-vim-for-javascript-development.html" rel="alternate"></link><updated>2015-04-24T18:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-24:blog/set-up-vim-for-javascript-development.html</id><summary type="html">&lt;p&gt;A couple of days ago I decided to get my JavaScript development environment in order.&lt;/p&gt;
+&lt;p&gt;I haven't been doing much JS dev lately, mostly just tweaking a tiny bit of JS, but I had just received a pure frontend JS task. So I thought it would be a good time to do so!&lt;/p&gt;
+&lt;p&gt;I live in Vim world, and these instructions are assembled from various places all over the web.&lt;/p&gt;
+&lt;p&gt;Here's how my setup looks like right now&lt;/p&gt;
+&lt;p&gt;&lt;img alt="My Vim JavaScript setup, with d3.js code" src="http://i.imgur.com/JjT5XW2.png" /&gt;&lt;/p&gt;
+&lt;h1&gt;Syntax highlighting&lt;/h1&gt;
+&lt;p&gt;First thing I wanted was syntax highlighting, and I usually just head to GitHub to do a search.&lt;/p&gt;
+&lt;p&gt;I found a couple of vim scripts for this, and I chose [this] (https://github.com/pangloss/vim-javascript) because it was the most recently updated, and had the most number of stars.&lt;/p&gt;
+&lt;p&gt;As I used &lt;a href="https://github.com/gmarik/Vundle.vim"&gt;Vundle&lt;/a&gt;, this was as easy as adding a line to my &lt;code&gt;.vimrc&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;Plugin &lt;span class="s2"&gt;&amp;quot;pangloss/vim-javascript&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Indentation&lt;/h1&gt;
+&lt;p&gt;From my observation, 2 spaces seems to be pretty popular, so I went with that as well.&lt;/p&gt;
+&lt;p&gt;This doesn't require any plugin, Vim has really good support for smart indentations built in, we just need to which command does it!&lt;/p&gt;
+&lt;p&gt;In this case refering to &lt;code&gt;.vimrc&lt;/code&gt; files of experienced vim users really helps. One notable Vim (and Ruby) expert I really like is &lt;a href="https://github.com/r00k/"&gt;Ben Orenstein&lt;/a&gt;. Thanks Ben!&lt;/p&gt;
+&lt;p&gt;I went to &lt;a href="https://github.com/r00k/dotfiles/blob/master/vimrc#L59-72"&gt;his dotfiles&lt;/a&gt; and found the lines that was releveant, which was the &lt;code&gt;autocmd&lt;/code&gt; command, &lt;a href="http://vimdoc.sourceforge.net/htmldoc/autocmd.html#:autocmd"&gt;docs&lt;/a&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;autocmd FileType javascript setlocal sw=2
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;autocmd&lt;/code&gt; basically sets some settings when you open a file of a specific type.&lt;/p&gt;
+&lt;p&gt;So for the setting aove, everytime you open a &lt;code&gt;javascript&lt;/code&gt; file, it will set the &lt;code&gt;shiftwidth&lt;/code&gt; to 2 locally (i.e. only the current buffer or window), &lt;a href="http://vimdoc.sourceforge.net/htmldoc/options.html#:setlocal"&gt;docs on setlocal&lt;/a&gt;, &lt;a href="http://vimdoc.sourceforge.net/htmldoc/options.html#" title="shiftwidth"&gt;docs on shiftwidth&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Check out my own &lt;code&gt;.vimrc&lt;/code&gt; &lt;a href="https://github.com/ngzhian/dotfiles/blob/master/.vimrc"&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;h1&gt;Linting, style checks&lt;/h1&gt;
+&lt;p&gt;Linting is really helpful and we should always have it turned on.&lt;/p&gt;
+&lt;p&gt;It helps captures stupid typos which would result in undefined references, breaking the page. It also ensures that you write code that is formatted consistently.&lt;/p&gt;
+&lt;p&gt;And there are many other reasons as well!&lt;/p&gt;
+&lt;p&gt;A helpful resource was &lt;a href="http://stackoverflow.com/questions/473478/vim-jslint/5893447#5893447"&gt;this stackoverflow question&lt;/a&gt;, and I basically followed the instruction on one of those answer.&lt;/p&gt;
+&lt;p&gt;First, install &lt;a href="https://github.com/scrooloose/syntastic"&gt;Syntastic&lt;/a&gt;, which is an amazing, flexible syntax checker for Vim. It works really well and is extensible, so you can plug in different checkers for each file type.&lt;/p&gt;
+&lt;p&gt;For JavaScript, there are multiple checkers available, one that I chose was &lt;a href="http://jshint.com/docs/"&gt;jshint&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This is easy to install, assuming you have &lt;code&gt;npm&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;npm install jshint -g
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Restart Vim, and Syntastic will automatically pick up jshint.&lt;/p&gt;
+&lt;p&gt;Open up a JavaScript file, then use this ex command &lt;code&gt;:SyntasticInfo&lt;/code&gt; to verify that &lt;code&gt;jshint&lt;/code&gt; is indeed active.&lt;/p&gt;
+&lt;p&gt;Another checker worth looking at is Google's &lt;a href="https://developers.google.com/closure/utilities/docs/linter_howto"&gt;closure library linter&lt;/a&gt;. This is particularly interesting because just a couple of days ago I was exploring the Google Closure Compiler, &lt;a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html"&gt;here's my blog post on it.&lt;/a&gt;&lt;/p&gt;</summary></entry><entry><title>What the heck is Google Closure Compiler?</title><link href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html" rel="alternate"></link><updated>2015-04-20T19:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-20:blog/what-the-heck-is-google-closure-compiler.html</id><summary type="html">&lt;p&gt;It "compiles from JavaScript to better JavaScript", so why would any one want that?&lt;/p&gt;
 &lt;p&gt;According to the &lt;a href="https://github.com/google/closure-compiler"&gt;GitHub repo&lt;/a&gt;, closure compiler does many amazing things:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;parses your JavaScript,&lt;/li&gt;

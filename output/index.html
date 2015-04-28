@@ -22,6 +22,28 @@
 <ul id="post-list">
         <li><article class="hentry">
                 <footer class="post-info">
+                    <time class="published" title="2015-04-28T18:00:00-04:00"> Tue 28 April 2015 </time>
+                </footer><!-- /.post-info -->
+                <header> <h2 class="entry-title"><a href="./what-are-peephole-optimizations.html" rel="bookmark" title="Permalink to What are Peephole Optimizations?">What are Peephole Optimizations?</a></h2> </header>
+                <div class="entry-content"> <p>As part of <a href="./what-the-heck-is-google-closure-compiler.html">the series</a> exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.</p>
+<p>The <a href="https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28">code itself</a> describes peephole optimizations as:</p>
+<blockquote>
+<p>optimizations that look at a small section of code and either remove
+that code (if it is not needed) or replaces it with smaller code.</p>
+</blockquote>
+<p>And from <a href="https://en.wikipedia.org/wiki/Peephole_optimization">Wikipedia</a></p>
+<blockquote>
+<p>In compiler theory, peephole optimization is a kind of optimization performed over a very small set of instructions in a segment of generated code. The set is called a &gt; "peephole" or a "window". It works by recognising sets of instructions that can be replaced by shorter or faster sets of instructions.</p>
+</blockquote>
+<p>Let's try an example:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+
+
+<p>This would be completely correct if ...</p> </div><!-- /.entry-content -->
+        </article></li>
+        <li><article class="hentry">
+                <footer class="post-info">
                     <time class="published" title="2015-04-24T18:00:00-04:00"> Fri 24 April 2015 </time>
                 </footer><!-- /.post-info -->
                 <header> <h2 class="entry-title"><a href="./set-up-vim-for-javascript-development.html" rel="bookmark" title="Permalink to Set up Vim for JavaScript development">Set up Vim for JavaScript development</a></h2> </header>
