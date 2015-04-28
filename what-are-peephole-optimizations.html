@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Zhi An</title>
+        <meta charset="utf-8" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <link href="http://ngzhian.com/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Full Atom Feed" />
+        <link href="http://ngzhian.com/blog/feeds/code-compiler.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Categories Atom Feed" />
+
+
+
+
+        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/styles.css">
+        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/github.css">
+</head>
+
+<body id="index" class="home">
+    <div class="content">
+        <header id="banner" class="body">
+                <a href="http://ngzhian.com/blog/">
+                    <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+                </a>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <time class="published" title="2015-04-28T18:00:00-04:00">
+      Tue 28 April 2015
+    </time>
+    <h2 class="entry-title">
+      <a href="http://ngzhian.com/blog/what-are-peephole-optimizations.html" rel="bookmark"
+         title="Permalink to What are Peephole Optimizations?">What are Peephole Optimizations?</a></h2>
+ 
+  </header>
+  <div class="entry-content">
+    <p>As part of <a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html">the series</a> exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.</p>
+<p>The <a href="https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28">code itself</a> describes peephole optimizations as:</p>
+<blockquote>
+<p>optimizations that look at a small section of code and either remove
+that code (if it is not needed) or replaces it with smaller code.</p>
+</blockquote>
+<p>And from <a href="https://en.wikipedia.org/wiki/Peephole_optimization">Wikipedia</a></p>
+<blockquote>
+<p>In compiler theory, peephole optimization is a kind of optimization performed over a very small set of instructions in a segment of generated code. The set is called a &gt; "peephole" or a "window". It works by recognising sets of instructions that can be replaced by shorter or faster sets of instructions.</p>
+</blockquote>
+<p>Let's try an example:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+
+
+<p>This would be completely correct if it were written as</p>
+<div class="highlight"><pre> <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</pre></div>
+
+
+<p>And it's easy to verify so!</p>
+<p>This is a particular kind of peephole optimization that known as "contant folding", which has an <a href="https://en.wikipedia.org/wiki/Constant_folding">entire wiki page</a> dedicated.</p>
+<p>To quote what Wikipedia has to say about constant folding:</p>
+<blockquote>
+<p>Constant folding is the process of recognizing and evaluating constant expressions at compile time rather than computing them at runtime.</p>
+</blockquote>
+<p>It's about getting results event before running any code! I think of it as being similar to static typing, where you can prove correctness without running the code.</p>
+<p>The Wiki page gives more examples of constant folding that a compiler may do, including:</p>
+<ul>
+<li>fold <code>0 * x</code> to <code>0</code></li>
+<li>fold <code>"abc" + "def"</code> to <code>"abcdef"</code></li>
+</ul>
+<p>We can find out if the closure compiler does such folding:</p>
+<p><code>var z = 0 * 10;</code> gets compiled to <code>var z = 0</code>.</p>
+<p>And, probably unsurprisingly, <code>var s = "abc" + "def"</code> gets compiled to <code>var s = "abcdefg"</code>.</p>
+<p>A more advanced optimization is <em>Constant Propagation</em>. This is when values of expressions are known during the compilation stage, because they are constant, and can be substituted.</p>
+<p>For example, this code:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">z</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+</pre></div>
+
+
+<p>will be compiled down to</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">x</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="nx">z</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span>
+</pre></div>
+
+
+<p>However to get this using the closure compiler, you have to turn on advanced optimizations, the instructions are <a href="https://developers.google.com/closure/compiler/docs/api-tutorial3#enable-app">here</a>.</p>
+<p>If you tried this and got and empty file, chances are that the compiler eliminated all code in the <em>dead code elimination</em> pass, where unused code is just thrown away. This is another compilation pass that is enabled when you turn on advanced optimizations.</p>
+<p>In this case you can just add a stray log statement to ensure that the variable is used, like so:</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">z</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">z</span><span class="p">);</span>
+</pre></div>
+
+
+<p>and you should see, <code>console.log(20)</code>. Pretty crazy optimizations huh?</p>
+<h1>Why would anyone write code like this?</h1>
+<p>When I first saw this example, I was thinking to myself, would people even write such code? And almost immediately I realized that I was guilty of this!</p>
+<p>When building websites, I often use the <code>setInterval</code> and <code>setTimeout</code> functions. Both of these functions take as their first argument a callback function, and the second argument is a time duration in milliseconds. For example,</p>
+<div class="highlight"><pre><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hi!&#39;</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">5000</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Would set off an alert saying 'Hi!' every 5 seconds. It isn't that hard seeing that 5000ms is 5 seconds... Or you could write it like this:</p>
+<div class="highlight"><pre><span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Hi!&#39;</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">5</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span>
+</pre></div>
+
+
+<p>This makes the 5 extremely obvious.</p>
+<p>When more complicated calculations are involved:</p>
+<div class="highlight"><pre><span class="nx">SECONDS_IN_DAY</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+</pre></div>
+
+
+<p>It's nice knowing that it will be compiled down to <code>SECONDS_IN_DAY=86400</code>.</p>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-40546270-4', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
         <meta charset="utf-8" />
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link href="http://ngzhian.com/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Full Atom Feed" />
+        <link href="http://ngzhian.com/blog/feeds/code-compiler.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Categories Atom Feed" />
         <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/styles.css">
         <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/github.css">
 </head>
@@ -19,6 +20,7 @@
         <nav id="menu"><ul>
         </ul></nav><!-- /#menu -->
 <section id="content">
+<h2>Articles in the code, compiler category</h2>
 
 <ul id="post-list">
         <li><article class="hentry">
@@ -42,54 +44,6 @@ that code (if it is not needed) or replaces it with smaller code.</p>
 
 
 <p>This would be completely correct if ...</p> </div><!-- /.entry-content -->
-        </article></li>
-        <li><article class="hentry">
-                <footer class="post-info">
-                    <time class="published" title="2015-04-24T18:00:00-04:00"> Fri 24 April 2015 </time>
-                </footer><!-- /.post-info -->
-                <header> <h2 class="entry-title"><a href="http://ngzhian.com/blog/set-up-vim-for-javascript-development.html" rel="bookmark" title="Permalink to Set up Vim for JavaScript development">Set up Vim for JavaScript development</a></h2> </header>
-                <div class="entry-content"> <p>A couple of days ago I decided to get my JavaScript development environment in order.</p>
-<p>I haven't been doing much JS dev lately, mostly just tweaking a tiny bit of JS, but I had just received a pure frontend JS task. So I thought it would be a good time to do so!</p>
-<p>I live in Vim world, and these instructions are assembled from various places all over the web.</p>
-<p>Here's how my setup looks like right now</p>
-<p><img alt="My Vim JavaScript setup, with d3.js code" src="http://i.imgur.com/JjT5XW2.png" /></p>
-<h1>Syntax highlighting</h1>
-<p>First thing I wanted was syntax highlighting, and I usually just head to GitHub to do a search.</p>
-<p>I found a couple of vim scripts for this, and I chose [this] (https://github.com/pangloss/vim-javascript) because it was the most recently updated, and had the most number ...</p> </div><!-- /.entry-content -->
-        </article></li>
-        <li><article class="hentry">
-                <footer class="post-info">
-                    <time class="published" title="2015-04-20T19:00:00-04:00"> Mon 20 April 2015 </time>
-                </footer><!-- /.post-info -->
-                <header> <h2 class="entry-title"><a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html" rel="bookmark" title="Permalink to What the heck is Google Closure Compiler?">What the heck is Google Closure Compiler?</a></h2> </header>
-                <div class="entry-content"> <p>It "compiles from JavaScript to better JavaScript", so why would any one want that?</p>
-<p>According to the <a href="https://github.com/google/closure-compiler">GitHub repo</a>, closure compiler does many amazing things:</p>
-<ul>
-<li>parses your JavaScript,</li>
-<li>analyzes it,</li>
-<li>removes dead code and rewrites</li>
-<li>minimizes what's left</li>
-<li>checks syntax, variable references, and types,</li>
-<li>and warns about common JavaScript pitfalls</li>
-</ul>
-<p>That's pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.</p>
-<p>Let's follow their instructions and try to run it from the command line.</p>
-<div class="highlight"><pre><span class="nv">$ </span>java -jar build/compiler.jar
-var <span class="nv">x</span> <span class="o">=</span> <span class="m">17</span> + 25<span class="p">;</span>
-</pre></div>
-
-
-<p>The output we get is:</p>
-<div class="highlight"><pre>var x=42;
-</pre></div>
-
-
-<p>What noticeable differences are there?</p>
-<ol>
-<li><code>17 + 25</code> became <code>42</code></li>
-<li>Space between and after <code>=</code> is gone</li>
-</ol>
-<p>So even for this simple one liner, closure compiler has managed to run 2 ...</p> </div><!-- /.entry-content -->
         </article></li>
 </ol><!-- /#posts-list -->
 </section><!-- /#content -->
