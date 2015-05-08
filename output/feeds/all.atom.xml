@@ -1,5 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-04-24T18:00:00-04:00</updated><entry><title>Set up Vim for JavaScript development</title><link href="http://ngzhian.com/blog/set-up-vim-for-javascript-development.html" rel="alternate"></link><updated>2015-04-24T18:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-24:blog/set-up-vim-for-javascript-development.html</id><summary type="html">&lt;p&gt;A couple of days ago I decided to get my JavaScript development environment in order.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-04-28T18:00:00-04:00</updated><entry><title>What are Peephole Optimizations?</title><link href="http://ngzhian.com/blog/what-are-peephole-optimizations.html" rel="alternate"></link><updated>2015-04-28T18:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-28:blog/what-are-peephole-optimizations.html</id><summary type="html">&lt;p&gt;As part of &lt;a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html"&gt;the series&lt;/a&gt; exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.&lt;/p&gt;
+&lt;p&gt;The &lt;a href="https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28"&gt;code itself&lt;/a&gt; describes peephole optimizations as:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;optimizations that look at a small section of code and either remove
+that code (if it is not needed) or replaces it with smaller code.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;And from &lt;a href="https://en.wikipedia.org/wiki/Peephole_optimization"&gt;Wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In compiler theory, peephole optimization is a kind of optimization performed over a very small set of instructions in a segment of generated code. The set is called a &amp;gt; "peephole" or a "window". It works by recognising sets of instructions that can be replaced by shorter or faster sets of instructions.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Let's try an example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This would be completely correct if it were written as&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And it's easy to verify so!&lt;/p&gt;
+&lt;p&gt;This is a particular kind of peephole optimization that known as "contant folding", which has an &lt;a href="https://en.wikipedia.org/wiki/Constant_folding"&gt;entire wiki page&lt;/a&gt; dedicated.&lt;/p&gt;
+&lt;p&gt;To quote what Wikipedia has to say about constant folding:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Constant folding is the process of recognizing and evaluating constant expressions at compile time rather than computing them at runtime.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;It's about getting results event before running any code! I think of it as being similar to static typing, where you can prove correctness without running the code.&lt;/p&gt;
+&lt;p&gt;The Wiki page gives more examples of constant folding that a compiler may do, including:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;fold &lt;code&gt;0 * x&lt;/code&gt; to &lt;code&gt;0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;fold &lt;code&gt;"abc" + "def"&lt;/code&gt; to &lt;code&gt;"abcdef"&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can find out if the closure compiler does such folding:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;var z = 0 * 10;&lt;/code&gt; gets compiled to &lt;code&gt;var z = 0&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;And, probably unsurprisingly, &lt;code&gt;var s = "abc" + "def"&lt;/code&gt; gets compiled to &lt;code&gt;var s = "abcdefg"&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;A more advanced optimization is &lt;em&gt;Constant Propagation&lt;/em&gt;. This is when values of expressions are known during the compilation stage, because they are constant, and can be substituted.&lt;/p&gt;
+&lt;p&gt;For example, this code:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;will be compiled down to&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="nx"&gt;z&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;However to get this using the closure compiler, you have to turn on advanced optimizations, the instructions are &lt;a href="https://developers.google.com/closure/compiler/docs/api-tutorial3#enable-app"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you tried this and got and empty file, chances are that the compiler eliminated all code in the &lt;em&gt;dead code elimination&lt;/em&gt; pass, where unused code is just thrown away. This is another compilation pass that is enabled when you turn on advanced optimizations.&lt;/p&gt;
+&lt;p&gt;In this case you can just add a stray log statement to ensure that the variable is used, like so:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;z&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;and you should see, &lt;code&gt;console.log(20)&lt;/code&gt;. Pretty crazy optimizations huh?&lt;/p&gt;
+&lt;h1&gt;Why would anyone write code like this?&lt;/h1&gt;
+&lt;p&gt;When I first saw this example, I was thinking to myself, would people even write such code? And almost immediately I realized that I was guilty of this!&lt;/p&gt;
+&lt;p&gt;When building websites, I often use the &lt;code&gt;setInterval&lt;/code&gt; and &lt;code&gt;setTimeout&lt;/code&gt; functions. Both of these functions take as their first argument a callback function, and the second argument is a time duration in milliseconds. For example,&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;setInterval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;alert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Hi!&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;5000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Would set off an alert saying 'Hi!' every 5 seconds. It isn't that hard seeing that 5000ms is 5 seconds... Or you could write it like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;setInterval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;alert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Hi!&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This makes the 5 extremely obvious.&lt;/p&gt;
+&lt;p&gt;When more complicated calculations are involved:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nx"&gt;SECONDS_IN_DAY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;24&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;60&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="mi"&gt;60&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It's nice knowing that it will be compiled down to &lt;code&gt;SECONDS_IN_DAY=86400&lt;/code&gt;.&lt;/p&gt;</summary></entry><entry><title>Set up Vim for JavaScript development</title><link href="http://ngzhian.com/blog/set-up-vim-for-javascript-development.html" rel="alternate"></link><updated>2015-04-24T18:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-24:blog/set-up-vim-for-javascript-development.html</id><summary type="html">&lt;p&gt;A couple of days ago I decided to get my JavaScript development environment in order.&lt;/p&gt;
 &lt;p&gt;I haven't been doing much JS dev lately, mostly just tweaking a tiny bit of JS, but I had just received a pure frontend JS task. So I thought it would be a good time to do so!&lt;/p&gt;
 &lt;p&gt;I live in Vim world, and these instructions are assembled from various places all over the web.&lt;/p&gt;
 &lt;p&gt;Here's how my setup looks like right now&lt;/p&gt;

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Zhi An</title>
+        <meta charset="utf-8" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+
+
+
+        <link rel="stylesheet" href="./theme/css/styles.css">
+        <link rel="stylesheet" href="./theme/css/github.css">
+</head>
+
+<body id="index" class="home">
+    <div class="content">
+        <header id="banner" class="body">
+                <a href="./">
+                    <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+                </a>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <time class="published" title="2015-05-08T19:00:00-04:00">
+      Fri 08 May 2015
+    </time>
+    <h2 class="entry-title">
+      <a href="./common-problems-i-faced-with-vagrant-and-virtualbox.html" rel="bookmark"
+         title="Permalink to Common problems I faced with Vagrant and VirtualBox">Common problems I faced with Vagrant and VirtualBox</a></h2>
+ 
+  </header>
+  <div class="entry-content">
+    <p>Sometimes I have a little bit of trouble getting my development setup to work properly.</p>
+<p>My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
+I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.</p>
+<h2>Vagrant lost my old development environment omgomgomg!</h2>
+<p>Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox.
+Vagrant stores this UUID in a file called <code>id</code> and this file is located in the <code>.vagrant</code> directory which is located beside the <code>Vagrantfile</code>.</p>
+<p>Specifically for me, it is located</p>
+<div class="highlight"><pre>|-- .vagrant
+ |-- machines
+  |-- default
+   |-- virtualbox
+    |-- id
+|-- Vagrantfile
+</pre></div>
+
+
+<p>Your layout may look different depending on your <code>Vagrantfile</code> config.</p>
+<p>Usually, when the <code>id</code> file is messed up, either its contents has been corrupted or the file deleted, Vagrant will be unable to find the VirtualBox that is backing this.</p>
+<p>The fix is simple, create the <code>id</code> file in the place that it should be located (and this isn't difficult to find because those directories will not be removed even if the file was deleted), with the contents being the UUID of the original VirtualBox. The trouble is finding the UUID.</p>
+<p>You will not be able to find the UUID from the VirtualBox GUI. I found the best way to find the UUID is through the <code>VBoxManage</code> command that comes with the VirtualBox installation. Here's how (in powershell):</p>
+<div class="highlight"><pre><span class="n">PS</span> <span class="n">C</span><span class="err">:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">ZhiAn</span><span class="p">&gt;</span> <span class="p">&amp;</span> <span class="s1">&#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39;</span> <span class="n">list</span> <span class="n">vms</span>
+<span class="s2">&quot;stuff-dev_default_1430843699366_68732&quot;</span> <span class="p">{</span><span class="n">4ba4dec6</span><span class="p">-</span><span class="n">7f96</span><span class="p">-</span><span class="n">4185-bf64</span><span class="p">-</span><span class="n">97bb6334c090</span><span class="p">}</span>
+<span class="s2">&quot;morestuff_default_1430602346381_75524&quot;</span> <span class="p">{</span><span class="n">3eb30515</span><span class="p">-</span><span class="n">6eac</span><span class="p">-</span><span class="n">472c</span><span class="p">-</span><span class="n">87bd</span><span class="p">-</span><span class="n">9abc3503031b</span><span class="p">}</span>
+<span class="s2">&quot;yetmorestuff_default_1430751792081_54559&quot;</span> <span class="p">{</span><span class="n">e35079c1</span><span class="p">-</span><span class="n">387e</span><span class="p">-</span><span class="n">4bbe-ac0e</span><span class="p">-</span><span class="n">47ce139fee7d</span><span class="p">}</span>
+</pre></div>
+
+
+<p>The UUID is the string within the curly braces <code>{}</code>.</p>
+<h2>I upgraded VirtualBox and it lost all my VMs, HELP!!!</h2>
+<p>I encountered this problem because (I think):</p>
+<ol>
+<li>I created those VirtualBox boxes via vagrant while in cygwin drive, e.g. <code>C:\cygwin\home\ZhiAn</code></li>
+<li>Vagrant created a folder called <code>VirtualBox VMs</code> inside <code>~</code>, which in the cygwin drive meant <code>C:\cygwin\home\ZhiAn</code></li>
+<li>I upgraded my VirtualBox in host machine, and it registered all the VMs that were in <code>~</code>, which meant <code>C:\Users\ZhiAn\VirtualBox VMs</code>.</li>
+<li>Poof, old boxes gone!</li>
+</ol>
+<p>This isn't too difficult to solve, we just had to register those VMs that lived inside cygwin, and let VirtualBox know about them.</p>
+<p>I found that a <code>VBoxManage</code> command is helpful here.</p>
+<div class="highlight"><pre><span class="n">PS</span> <span class="n">C</span><span class="err">:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">ZhiAn</span><span class="p">&gt;</span> <span class="p">&amp;</span> <span class="s1">&#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39;</span> <span class="n">registervm</span> <span class="s1">&#39;C:\cygwin\home\ZhiAn\VirtualBox VMs\box\box.vbox&#39;</span>
+</pre></div>
+
+
+<p>So just call the <code>registervm</code> subcommand and pass in the path to a <code>.vbox</code> file, which lived my cygwin drive.</p>
+<h2>VirtualBox Guest Additions version don't match! What is that???</h2>
+<p>The Guest Additions is installed on the guest OS to enable cool stuff, like mouse pointer integration etc. Don't know too much about it, I just don't like the warnings.</p>
+<p>I had some trouble finding instructions to upgrade this, and after some digging through old forum posts, issues on vagrant's GitHub issue tracker, and Oracle's documentation on VirtualBox, I believe I have the solution. But only if you're on a Windows host and trying to run a Linux guest.</p>
+<ol>
+<li>Get the Guest Additions iso from here <a href="">http://dlc-cdn.sun.com/virtualbox/4.3.26/index.html</a>.</li>
+<li>Open up your VirtualBox GUI, start the box you want to update the Guest Additions.</li>
+<li>In the open window for the box, select 'Insert Guest Additions'</li>
+<li>
+<p>Now in the guest OS execute these commands:</p>
+<p>cd ~ &amp;&amp; mkdir vbox
+mount /dev/sr0 vbox/
+./VBoxLinuxAdditions</p>
+</li>
+</ol>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-40546270-4', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>
