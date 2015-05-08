@@ -12,6 +12,7 @@
                 </footer><!-- /.post-info -->
                 <header> <h2 class="entry-title"><a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark" title="Permalink to {{ article.title|striptags }}">{{ article.title }}</a></h2> </header>
                 <div class="entry-content"> {{ article.summary }} </div><!-- /.entry-content -->
+                <a href="{{ SITEURL }}/{{ article.url }}" title="Permalink to {{ article.title|striptags }}">More</a>
         </article></li>
 {% endfor %}
 </ol><!-- /#posts-list -->
