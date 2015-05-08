@@ -24,6 +24,30 @@
 <ul id="post-list">
         <li><article class="hentry">
                 <footer class="post-info">
+                    <time class="published" title="2015-05-08T19:00:00-04:00"> Fri 08 May 2015 </time>
+                </footer><!-- /.post-info -->
+                <header> <h2 class="entry-title"><a href="http://ngzhian.com/blog/common-problems-i-faced-with-vagrant-and-virtualbox.html" rel="bookmark" title="Permalink to Common problems I faced with Vagrant and VirtualBox">Common problems I faced with Vagrant and VirtualBox</a></h2> </header>
+                <div class="entry-content"> <p>Sometimes I have a little bit of trouble getting my development setup to work properly.</p>
+<p>My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
+I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.</p>
+<h2>Vagrant lost my old development environment omgomgomg!</h2>
+<p>Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox.
+Vagrant stores this UUID in a file called <code>id</code> and this file is located in the <code>.vagrant</code> directory which is located beside the <code>Vagrantfile</code>.</p>
+<p>Specifically for me, it is located</p>
+<div class="highlight"><pre>|-- .vagrant
+ |-- machines
+  |-- default
+   |-- virtualbox
+    |-- id
+|-- Vagrantfile
+</pre></div>
+
+
+<p>Your layout may look ...</p> </div><!-- /.entry-content -->
+                <a href="http://ngzhian.com/blog/common-problems-i-faced-with-vagrant-and-virtualbox.html" title="Permalink to Common problems I faced with Vagrant and VirtualBox">More</a>
+        </article></li>
+        <li><article class="hentry">
+                <footer class="post-info">
                     <time class="published" title="2015-04-28T18:00:00-04:00"> Tue 28 April 2015 </time>
                 </footer><!-- /.post-info -->
                 <header> <h2 class="entry-title"><a href="http://ngzhian.com/blog/what-are-peephole-optimizations.html" rel="bookmark" title="Permalink to What are Peephole Optimizations?">What are Peephole Optimizations?</a></h2> </header>
@@ -43,6 +67,7 @@ that code (if it is not needed) or replaces it with smaller code.</p>
 
 
 <p>This would be completely correct if ...</p> </div><!-- /.entry-content -->
+                <a href="http://ngzhian.com/blog/what-are-peephole-optimizations.html" title="Permalink to What are Peephole Optimizations?">More</a>
         </article></li>
         <li><article class="hentry">
                 <footer class="post-info">
@@ -57,6 +82,7 @@ that code (if it is not needed) or replaces it with smaller code.</p>
 <h1>Syntax highlighting</h1>
 <p>First thing I wanted was syntax highlighting, and I usually just head to GitHub to do a search.</p>
 <p>I found a couple of vim scripts for this, and I chose [this] (https://github.com/pangloss/vim-javascript) because it was the most recently updated, and had the most number ...</p> </div><!-- /.entry-content -->
+                <a href="http://ngzhian.com/blog/set-up-vim-for-javascript-development.html" title="Permalink to Set up Vim for JavaScript development">More</a>
         </article></li>
         <li><article class="hentry">
                 <footer class="post-info">
@@ -91,6 +117,7 @@ var <span class="nv">x</span> <span class="o">=</span> <span class="m">17</span>
 <li>Space between and after <code>=</code> is gone</li>
 </ol>
 <p>So even for this simple one liner, closure compiler has managed to run 2 ...</p> </div><!-- /.entry-content -->
+                <a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html" title="Permalink to What the heck is Google Closure Compiler?">More</a>
         </article></li>
 </ol><!-- /#posts-list -->
 </section><!-- /#content -->
