@@ -91,6 +91,8 @@ that code (if it is not needed) or replaces it with smaller code.</p>
 
 
 <p>and you should see, <code>console.log(20)</code>. Pretty crazy optimizations huh?</p>
+<p>Here are the peephole optimizations that the closure compiler has:</p>
+<p><img alt="List of peephole optimizations in closure compiler" src="http://i.imgur.com/dhRAzCX.png" /></p>
 <h1>Why would anyone write code like this?</h1>
 <p>When I first saw this example, I was thinking to myself, would people even write such code? And almost immediately I realized that I was guilty of this!</p>
 <p>When building websites, I often use the <code>setInterval</code> and <code>setTimeout</code> functions. Both of these functions take as their first argument a callback function, and the second argument is a time duration in milliseconds. For example,</p>

@@ -56,6 +56,8 @@ that code (if it is not needed) or replaces it with smaller code.&lt;/p&gt;
 
 
 &lt;p&gt;and you should see, &lt;code&gt;console.log(20)&lt;/code&gt;. Pretty crazy optimizations huh?&lt;/p&gt;
+&lt;p&gt;Here are the peephole optimizations that the closure compiler has:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="List of peephole optimizations in closure compiler" src="http://i.imgur.com/dhRAzCX.png" /&gt;&lt;/p&gt;
 &lt;h1&gt;Why would anyone write code like this?&lt;/h1&gt;
 &lt;p&gt;When I first saw this example, I was thinking to myself, would people even write such code? And almost immediately I realized that I was guilty of this!&lt;/p&gt;
 &lt;p&gt;When building websites, I often use the &lt;code&gt;setInterval&lt;/code&gt; and &lt;code&gt;setTimeout&lt;/code&gt; functions. Both of these functions take as their first argument a callback function, and the second argument is a time duration in milliseconds. For example,&lt;/p&gt;
