@@ -75,6 +75,10 @@ console.log(z);
 
 and you should see, `console.log(20)`. Pretty crazy optimizations huh?
 
+Here are the peephole optimizations that the closure compiler has:
+
+![List of peephole optimizations in closure compiler](http://i.imgur.com/dhRAzCX.png)
+
 # Why would anyone write code like this?
 
 When I first saw this example, I was thinking to myself, would people even write such code? And almost immediately I realized that I was guilty of this!
