@@ -1,5 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-04-28T18:00:00-04:00</updated><entry><title>What are Peephole Optimizations?</title><link href="http://ngzhian.com/blog/what-are-peephole-optimizations.html" rel="alternate"></link><updated>2015-04-28T18:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-28:blog/what-are-peephole-optimizations.html</id><summary type="html">&lt;p&gt;As part of &lt;a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html"&gt;the series&lt;/a&gt; exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-05-08T19:00:00-04:00</updated><entry><title>Common problems I faced with Vagrant and VirtualBox</title><link href="http://ngzhian.com/blog/common-problems-i-faced-with-vagrant-and-virtualbox.html" rel="alternate"></link><updated>2015-05-08T19:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-08:blog/common-problems-i-faced-with-vagrant-and-virtualbox.html</id><summary type="html">&lt;p&gt;Sometimes I have a little bit of trouble getting my development setup to work properly.&lt;/p&gt;
+&lt;p&gt;My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
+I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.&lt;/p&gt;
+&lt;h2&gt;Vagrant lost my old development environment omgomgomg!&lt;/h2&gt;
+&lt;p&gt;Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox.
+Vagrant stores this UUID in a file called &lt;code&gt;id&lt;/code&gt; and this file is located in the &lt;code&gt;.vagrant&lt;/code&gt; directory which is located beside the &lt;code&gt;Vagrantfile&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Specifically for me, it is located&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;|-- .vagrant
+ |-- machines
+  |-- default
+   |-- virtualbox
+    |-- id
+|-- Vagrantfile
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Your layout may look different depending on your &lt;code&gt;Vagrantfile&lt;/code&gt; config.&lt;/p&gt;
+&lt;p&gt;Usually, when the &lt;code&gt;id&lt;/code&gt; file is messed up, either its contents has been corrupted or the file deleted, Vagrant will be unable to find the VirtualBox that is backing this.&lt;/p&gt;
+&lt;p&gt;The fix is simple, create the &lt;code&gt;id&lt;/code&gt; file in the place that it should be located (and this isn't difficult to find because those directories will not be removed even if the file was deleted), with the contents being the UUID of the original VirtualBox. The trouble is finding the UUID.&lt;/p&gt;
+&lt;p&gt;You will not be able to find the UUID from the VirtualBox GUI. I found the best way to find the UUID is through the &lt;code&gt;VBoxManage&lt;/code&gt; command that comes with the VirtualBox installation. Here's how (in powershell):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;PS&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;\&lt;/span&gt;&lt;span class="n"&gt;Users&lt;/span&gt;&lt;span class="p"&gt;\&lt;/span&gt;&lt;span class="n"&gt;ZhiAn&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;&amp;amp;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&amp;#39;&lt;/span&gt; &lt;span class="n"&gt;list&lt;/span&gt; &lt;span class="n"&gt;vms&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;stuff-dev_default_1430843699366_68732&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;4ba4dec6&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;7f96&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;4185-bf64&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;97bb6334c090&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;morestuff_default_1430602346381_75524&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;3eb30515&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;6eac&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;472c&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;87bd&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;9abc3503031b&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="s2"&gt;&amp;quot;yetmorestuff_default_1430751792081_54559&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;e35079c1&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;387e&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;4bbe-ac0e&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="n"&gt;47ce139fee7d&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The UUID is the string within the curly braces &lt;code&gt;{}&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;I upgraded VirtualBox and it lost all my VMs, HELP!!!&lt;/h2&gt;
+&lt;p&gt;I encountered this problem because (I think):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;I created those VirtualBox boxes via vagrant while in cygwin drive, e.g. &lt;code&gt;C:\cygwin\home\ZhiAn&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Vagrant created a folder called &lt;code&gt;VirtualBox VMs&lt;/code&gt; inside &lt;code&gt;~&lt;/code&gt;, which in the cygwin drive meant &lt;code&gt;C:\cygwin\home\ZhiAn&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;I upgraded my VirtualBox in host machine, and it registered all the VMs that were in &lt;code&gt;~&lt;/code&gt;, which meant &lt;code&gt;C:\Users\ZhiAn\VirtualBox VMs&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Poof, old boxes gone!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This isn't too difficult to solve, we just had to register those VMs that lived inside cygwin, and let VirtualBox know about them.&lt;/p&gt;
+&lt;p&gt;I found that a &lt;code&gt;VBoxManage&lt;/code&gt; command is helpful here.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;PS&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="p"&gt;\&lt;/span&gt;&lt;span class="n"&gt;Users&lt;/span&gt;&lt;span class="p"&gt;\&lt;/span&gt;&lt;span class="n"&gt;ZhiAn&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;&amp;amp;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&amp;#39;&lt;/span&gt; &lt;span class="n"&gt;registervm&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;C:\cygwin\home\ZhiAn\VirtualBox VMs\box\box.vbox&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So just call the &lt;code&gt;registervm&lt;/code&gt; subcommand and pass in the path to a &lt;code&gt;.vbox&lt;/code&gt; file, which lived my cygwin drive.&lt;/p&gt;
+&lt;h2&gt;VirtualBox Guest Additions version don't match! What is that???&lt;/h2&gt;
+&lt;p&gt;The Guest Additions is installed on the guest OS to enable cool stuff, like mouse pointer integration etc. Don't know too much about it, I just don't like the warnings.&lt;/p&gt;
+&lt;p&gt;I had some trouble finding instructions to upgrade this, and after some digging through old forum posts, issues on vagrant's GitHub issue tracker, and Oracle's documentation on VirtualBox, I believe I have the solution. But only if you're on a Windows host and trying to run a Linux guest.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Get the Guest Additions iso from here &lt;a href=""&gt;http://dlc-cdn.sun.com/virtualbox/4.3.26/index.html&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Open up your VirtualBox GUI, start the box you want to update the Guest Additions.&lt;/li&gt;
+&lt;li&gt;In the open window for the box, select 'Insert Guest Additions'&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Now in the guest OS execute these commands:&lt;/p&gt;
+&lt;p&gt;cd ~ &amp;amp;&amp;amp; mkdir vbox
+mount /dev/sr0 vbox/
+./VBoxLinuxAdditions&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</summary></entry><entry><title>What are Peephole Optimizations?</title><link href="http://ngzhian.com/blog/what-are-peephole-optimizations.html" rel="alternate"></link><updated>2015-04-28T18:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-04-28:blog/what-are-peephole-optimizations.html</id><summary type="html">&lt;p&gt;As part of &lt;a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html"&gt;the series&lt;/a&gt; exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.&lt;/p&gt;
 &lt;p&gt;The &lt;a href="https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28"&gt;code itself&lt;/a&gt; describes peephole optimizations as:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;optimizations that look at a small section of code and either remove
