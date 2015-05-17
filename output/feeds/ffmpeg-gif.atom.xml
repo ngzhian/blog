@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/ffmpeg-gif.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-05-17T09:30:00-04:00</updated><entry><title>ffmpeg to make gifs</title><link href="http://ngzhian.com/blog/ffmpeg-to-make-gifs.html" rel="alternate"></link><updated>2015-05-17T09:30:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-17:blog/ffmpeg-to-make-gifs.html</id><summary type="html">&lt;p&gt;Over the weekend I was working on a little hack called &lt;a href="https://github.com/ngzhian/help-me-man/"&gt;Help me man!&lt;/a&gt;, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.&lt;/p&gt;
+&lt;p&gt;I've heard quite a bit about &lt;code&gt;ffmpeg&lt;/code&gt; as a swiss army knife for manipulating videos, so I decided to try it out.&lt;/p&gt;
+&lt;p&gt;ffmpeg can be downloaded from its &lt;a href="http://ffmpeg.org/"&gt;homepage&lt;/a&gt;, and the documentation is available &lt;a href="http://ffmpeg.org/ffmpeg.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I couldn't find a package for it on Ubuntu, so I downloaded the binary file and it ran fine&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;There are so many command line parameters available that it can be daunting to use this tool. But since my use cases were pretty common, a quick search online turned out the right commands to run.&lt;/p&gt;
+&lt;p&gt;The simplest command here is this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This converts a video file to a gif. The &lt;code&gt;-i&lt;/code&gt; parameter specifies the input file, and the last argument is the name of the output file. &lt;code&gt;ffmpeg&lt;/code&gt; will look at the name of the output file and determine what is the type of the file it will write to.&lt;/p&gt;
+&lt;p&gt;However, the gif turned out to be too huge.&lt;/p&gt;
+&lt;p&gt;One way to reduce the size of the gif is to reduce the screen resolution:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -vf &lt;span class="nv"&gt;scale&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;320x260 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;-vf&lt;/code&gt; argument takes a scale in the format of &lt;code&gt;WIDTHxHEIGHT&lt;/code&gt;. This requires us to calculate both the height and width of the output we want, but there is a better way:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -vf &lt;span class="nv"&gt;scale&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;320:-1 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;By writing &lt;code&gt;:-1&lt;/code&gt;, &lt;code&gt;ffmpeg&lt;/code&gt; will automatically scale the video to fit!&lt;/p&gt;
+&lt;p&gt;We can also crop the video using ffmpeg:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -ss 00:00:04 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;-ss&lt;/code&gt; paramter specifies the time you want the video to crop to.&lt;/p&gt;
+&lt;p&gt;To specify the end time, there are a couple of ways&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -ss &lt;span class="m"&gt;4&lt;/span&gt; -t &lt;span class="m"&gt;10&lt;/span&gt; demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Note that you can specify the number of seconds as well, so you don't have to keep typing &lt;code&gt;00:00:04&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;-t&lt;/code&gt; paramter specifics the duration of the video to run, so in the above example, we start from 4 seconds into the video, and run for 10 seconds. Our resulting gif is then 10 seconds long.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -ss &lt;span class="m"&gt;4&lt;/span&gt; -to &lt;span class="m"&gt;10&lt;/span&gt; demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If you instead use &lt;code&gt;-to&lt;/code&gt;, it will seek to 4 seconds and stop at 10 seconds, the resulting gif is then 6 seconds (10 - 4) long.&lt;/p&gt;
+&lt;p&gt;The last thing I did to reduce the file size was to reduce the frame rate of the resulting video.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4  -r &lt;span class="m"&gt;6&lt;/span&gt; demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;-r&lt;/code&gt; parameter specifies the frame rate of the output file, in this case we set the output frame rate to 6 frames per second.&lt;/p&gt;
+&lt;p&gt;One last helpful thing, if you call &lt;code&gt;ffmpeg&lt;/code&gt; without an output file name, it will print out the info of the input file.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4
+&lt;/pre&gt;&lt;/div&gt;</summary></entry></feed>
