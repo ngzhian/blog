@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+          <title>Zhi An</title>
+        <meta charset="utf-8" />
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <link href="http://ngzhian.com/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Full Atom Feed" />
+        <link href="http://ngzhian.com/blog/feeds/ffmpeg-gif.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Categories Atom Feed" />
+
+
+
+
+        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/styles.css">
+        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/github.css">
+</head>
+
+<body id="index" class="home">
+    <div class="content">
+        <header id="banner" class="body">
+                <a href="http://ngzhian.com/blog/">
+                    <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+                </a>
+        </header><!-- /#banner -->
+        <nav id="menu"><ul>
+        </ul></nav><!-- /#menu -->
+<section id="content" class="body">
+  <header>
+    <time class="published" title="2015-05-17T09:30:00-04:00">
+      Sun 17 May 2015
+    </time>
+    <h2 class="entry-title">
+      <a href="http://ngzhian.com/blog/ffmpeg-to-make-gifs.html" rel="bookmark"
+         title="Permalink to ffmpeg to make gifs">ffmpeg to make gifs</a></h2>
+ 
+  </header>
+  <div class="entry-content">
+    <p>Over the weekend I was working on a little hack called <a href="https://github.com/ngzhian/help-me-man/">Help me man!</a>, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.</p>
+<p>I've heard quite a bit about <code>ffmpeg</code> as a swiss army knife for manipulating videos, so I decided to try it out.</p>
+<p>ffmpeg can be downloaded from its <a href="http://ffmpeg.org/">homepage</a>, and the documentation is available <a href="http://ffmpeg.org/ffmpeg.html">here</a>.</p>
+<blockquote>
+<p>I couldn't find a package for it on Ubuntu, so I downloaded the binary file and it ran fine</p>
+</blockquote>
+<p>There are so many command line parameters available that it can be daunting to use this tool. But since my use cases were pretty common, a quick search online turned out the right commands to run.</p>
+<p>The simplest command here is this:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4 demo.gif
+</pre></div>
+
+
+<p>This converts a video file to a gif. The <code>-i</code> parameter specifies the input file, and the last argument is the name of the output file. <code>ffmpeg</code> will look at the name of the output file and determine what is the type of the file it will write to.</p>
+<p>However, the gif turned out to be too huge.</p>
+<p>One way to reduce the size of the gif is to reduce the screen resolution:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4 -vf <span class="nv">scale</span><span class="o">=</span>320x260 demo.gif
+</pre></div>
+
+
+<p>The <code>-vf</code> argument takes a scale in the format of <code>WIDTHxHEIGHT</code>. This requires us to calculate both the height and width of the output we want, but there is a better way:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4 -vf <span class="nv">scale</span><span class="o">=</span>320:-1 demo.gif
+</pre></div>
+
+
+<p>By writing <code>:-1</code>, <code>ffmpeg</code> will automatically scale the video to fit!</p>
+<p>We can also crop the video using ffmpeg:</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4 -ss 00:00:04 demo.gif
+</pre></div>
+
+
+<p>The <code>-ss</code> paramter specifies the time you want the video to crop to.</p>
+<p>To specify the end time, there are a couple of ways</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4 -ss <span class="m">4</span> -t <span class="m">10</span> demo.gif
+</pre></div>
+
+
+<p>Note that you can specify the number of seconds as well, so you don't have to keep typing <code>00:00:04</code>.</p>
+<p>The <code>-t</code> paramter specifics the duration of the video to run, so in the above example, we start from 4 seconds into the video, and run for 10 seconds. Our resulting gif is then 10 seconds long.</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4 -ss <span class="m">4</span> -to <span class="m">10</span> demo.gif
+</pre></div>
+
+
+<p>If you instead use <code>-to</code>, it will seek to 4 seconds and stop at 10 seconds, the resulting gif is then 6 seconds (10 - 4) long.</p>
+<p>The last thing I did to reduce the file size was to reduce the frame rate of the resulting video.</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4  -r <span class="m">6</span> demo.gif
+</pre></div>
+
+
+<p>The <code>-r</code> parameter specifies the frame rate of the output file, in this case we set the output frame rate to 6 frames per second.</p>
+<p>One last helpful thing, if you call <code>ffmpeg</code> without an output file name, it will print out the info of the input file.</p>
+<div class="highlight"><pre><span class="nv">$ </span>./ffmpeg -i demo.mp4
+</pre></div>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-40546270-4', 'auto');
+      ga('send', 'pageview');
+    </script>
+</body>
+</html>

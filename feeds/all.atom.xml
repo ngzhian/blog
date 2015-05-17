@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-05-08T19:00:00-04:00</updated><entry><title>Common problems I faced with Vagrant and VirtualBox</title><link href="http://ngzhian.com/blog/common-problems-i-faced-with-vagrant-and-virtualbox.html" rel="alternate"></link><updated>2015-05-08T19:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-08:blog/common-problems-i-faced-with-vagrant-and-virtualbox.html</id><summary type="html">&lt;p&gt;Sometimes I have a little bit of trouble getting my development setup to work properly.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-05-17T09:30:00-04:00</updated><entry><title>ffmpeg to make gifs</title><link href="http://ngzhian.com/blog/ffmpeg-to-make-gifs.html" rel="alternate"></link><updated>2015-05-17T09:30:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-17:blog/ffmpeg-to-make-gifs.html</id><summary type="html">&lt;p&gt;Over the weekend I was working on a little hack called &lt;a href="https://github.com/ngzhian/help-me-man/"&gt;Help me man!&lt;/a&gt;, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.&lt;/p&gt;
+&lt;p&gt;I've heard quite a bit about &lt;code&gt;ffmpeg&lt;/code&gt; as a swiss army knife for manipulating videos, so I decided to try it out.&lt;/p&gt;
+&lt;p&gt;ffmpeg can be downloaded from its &lt;a href="http://ffmpeg.org/"&gt;homepage&lt;/a&gt;, and the documentation is available &lt;a href="http://ffmpeg.org/ffmpeg.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;I couldn't find a package for it on Ubuntu, so I downloaded the binary file and it ran fine&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;There are so many command line parameters available that it can be daunting to use this tool. But since my use cases were pretty common, a quick search online turned out the right commands to run.&lt;/p&gt;
+&lt;p&gt;The simplest command here is this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This converts a video file to a gif. The &lt;code&gt;-i&lt;/code&gt; parameter specifies the input file, and the last argument is the name of the output file. &lt;code&gt;ffmpeg&lt;/code&gt; will look at the name of the output file and determine what is the type of the file it will write to.&lt;/p&gt;
+&lt;p&gt;However, the gif turned out to be too huge.&lt;/p&gt;
+&lt;p&gt;One way to reduce the size of the gif is to reduce the screen resolution:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -vf &lt;span class="nv"&gt;scale&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;320x260 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;-vf&lt;/code&gt; argument takes a scale in the format of &lt;code&gt;WIDTHxHEIGHT&lt;/code&gt;. This requires us to calculate both the height and width of the output we want, but there is a better way:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -vf &lt;span class="nv"&gt;scale&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;320:-1 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;By writing &lt;code&gt;:-1&lt;/code&gt;, &lt;code&gt;ffmpeg&lt;/code&gt; will automatically scale the video to fit!&lt;/p&gt;
+&lt;p&gt;We can also crop the video using ffmpeg:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -ss 00:00:04 demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;-ss&lt;/code&gt; paramter specifies the time you want the video to crop to.&lt;/p&gt;
+&lt;p&gt;To specify the end time, there are a couple of ways&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -ss &lt;span class="m"&gt;4&lt;/span&gt; -t &lt;span class="m"&gt;10&lt;/span&gt; demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Note that you can specify the number of seconds as well, so you don't have to keep typing &lt;code&gt;00:00:04&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;-t&lt;/code&gt; paramter specifics the duration of the video to run, so in the above example, we start from 4 seconds into the video, and run for 10 seconds. Our resulting gif is then 10 seconds long.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4 -ss &lt;span class="m"&gt;4&lt;/span&gt; -to &lt;span class="m"&gt;10&lt;/span&gt; demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If you instead use &lt;code&gt;-to&lt;/code&gt;, it will seek to 4 seconds and stop at 10 seconds, the resulting gif is then 6 seconds (10 - 4) long.&lt;/p&gt;
+&lt;p&gt;The last thing I did to reduce the file size was to reduce the frame rate of the resulting video.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4  -r &lt;span class="m"&gt;6&lt;/span&gt; demo.gif
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;-r&lt;/code&gt; parameter specifies the frame rate of the output file, in this case we set the output frame rate to 6 frames per second.&lt;/p&gt;
+&lt;p&gt;One last helpful thing, if you call &lt;code&gt;ffmpeg&lt;/code&gt; without an output file name, it will print out the info of the input file.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$ &lt;/span&gt;./ffmpeg -i demo.mp4
+&lt;/pre&gt;&lt;/div&gt;</summary></entry><entry><title>Common problems I faced with Vagrant and VirtualBox</title><link href="http://ngzhian.com/blog/common-problems-i-faced-with-vagrant-and-virtualbox.html" rel="alternate"></link><updated>2015-05-08T19:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-08:blog/common-problems-i-faced-with-vagrant-and-virtualbox.html</id><summary type="html">&lt;p&gt;Sometimes I have a little bit of trouble getting my development setup to work properly.&lt;/p&gt;
 &lt;p&gt;My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
 I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.&lt;/p&gt;
 &lt;h2&gt;Vagrant lost my old development environment omgomgomg!&lt;/h2&gt;
@@ -697,4 +748,194 @@ We throw all the optimizations in to the &lt;code&gt;phaseOptimizer&lt;/code&gt;
 &lt;li&gt;Open source is awesome. Because Google released this source code, we can look into the code to figure out how things work!&lt;/li&gt;
 &lt;li&gt;Debuggers are super useful. Because Eclipse, and other IDEs, are such fantastic tools, we can insert breakpoints, jump around code, build and run projects with ease.&lt;/li&gt;
 &lt;li&gt;Patterns are useful! In this dive into the code, we have already observed a couple of design patterns, namely the Visitor pattern and the Factory pattern. This has allowed the compiler to stay very flexible. I can imagine adding a new optimization pass by declaring a couple of new classes without touching the core of the compiler&lt;/li&gt;
-&lt;/ol&gt;</summary></entry></feed>
+&lt;/ol&gt;</summary></entry><entry><title>So I set up a Jenkins CI server today</title><link href="http://ngzhian.com/blog/so-i-set-up-a-jenkins-ci-server-today.html" rel="alternate"></link><updated>2015-01-18T18:00:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-01-18:blog/so-i-set-up-a-jenkins-ci-server-today.html</id><summary type="html">&lt;p&gt;So I set up a local Jenkins CI server today that checks a local Git repository containing a Django project for any changes, runs tests, and reports coverage.&lt;/p&gt;
+&lt;h1&gt;Tests? Wut?&lt;/h1&gt;
+&lt;p&gt;There are many reasons to run test, and there are also many excuses not to run.
+For me it is because I forget, and am too eager to push code.&lt;/p&gt;
+&lt;p&gt;So how did I solve this? By setting up a local Jenkins CI server.&lt;/p&gt;
+&lt;h1&gt;What is Jenkins? (to me)&lt;/h1&gt;
+&lt;p&gt;To me Jenkins is a way to build my project and run tests easily, because it doesn't require any interaction from me (beyond setting it up). This leaves me with &lt;strong&gt;no&lt;/strong&gt; excuse not to run my tests.
+My goal was to set up Jenkins such that everytime a commit is made to my working Git repository, my tests will run.
+If you're wondering what CI is... &lt;a href="http://www.martinfowler.com/articles/continuousIntegration.html"&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;h1&gt;Installing Jenkins&lt;/h1&gt;
+&lt;p&gt;I had a lot of help setting this up, refer to the bottom for a list. Here I'm just going to list the steps I went through and point out the challenges.&lt;/p&gt;
+&lt;p&gt;First, I develop in a Vagrant box running Ubuntu. Jenkins has a Ubuntu package that makes installation simple, and they actually have &lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu"&gt;instructions there&lt;/a&gt;. Basically it involves adding a new apt source and then installing Jenkins from there.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key &lt;span class="p"&gt;|&lt;/span&gt; sudo apt-key add -
+sudo sh -c &lt;span class="s1"&gt;&amp;#39;echo deb http://pkg.jenkins-ci.org/debian binary/ &amp;gt; /etc/apt/sources.list.d/jenkins.list&amp;#39;&lt;/span&gt;
+sudo apt-get update
+sudo apt-get install jenkins
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;After this you can navigate to localhost:8080 on your browser to see Jenkin's web interface.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt;: Since I develop in a Vagrant box, to access the Jenkins web interface I had to forward the ports. Jenkins listens on localhost:8080, so in my Vagrant file forwards 8080 (guest) to 8081 (host), and I can access Jenkins from my host at localhost:8081&lt;/p&gt;
+&lt;h1&gt;Installing Plugins&lt;/h1&gt;
+&lt;p&gt;My project resides in a Git repository, and Jenkins doesn't offer Git support out of the box. There's a plugin to help though. Detailed plugin instructions are &lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Plugins"&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Go to Jenkins interface &amp;gt; manage jenkins &amp;gt; manage plugins, and install Git Plugin. After installing, you can configure your job. Here are the settings I use:
+- Repository URL is a path passed to &lt;code&gt;git clone&lt;/code&gt;, and my project is mounted onto &lt;code&gt;/vagrant&lt;/code&gt;
+- Shallow clone, I don't need the full history of the repository, so this should make things speedier&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Git configuration" src="{filename}/images/jenkins-git.png" /&gt;&lt;/p&gt;
+&lt;p&gt;The setup for the Git means that your local git repo will be cloned down to Jenkin's &lt;em&gt;workspace&lt;/em&gt; before each build. A workspace is the directory Jenkins is processing the build in, and for me it is &lt;code&gt;/var/lib/jenkins/jobs/project/workspace&lt;/code&gt; where project is the name of the Jenkin's job. More information on the folder structure used by Jenkins can be found &lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins"&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;h1&gt;The first build!&lt;/h1&gt;
+&lt;p&gt;Next up we need to actually run the tests. This can be configured in the &lt;em&gt;Build&lt;/em&gt; section further down the page. Before Jenkins, how I was running my tests was just a shellscript, which is a simple wrapper around &lt;code&gt;manage.py test&lt;/code&gt; to pass in the right parameters. So for Jenkins, all I needed to do was to call the shell script.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Build" src="{filename}/images/jenkins-build.png" /&gt;&lt;/p&gt;
+&lt;p&gt;Click Build Now, and then navigate to the console output to enjoy your success! I hope. That's your first Jenkin's build :)&lt;/p&gt;
+&lt;h1&gt;Report coverage with Cobertura&lt;/h1&gt;
+&lt;p&gt;I use &lt;code&gt;coverage.py&lt;/code&gt; to generate reports for my tests, and it also has &lt;a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting"&gt;the ability&lt;/a&gt; to generate XML file that Cobertura can regonize.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Cobertura" src="{filename}/images/jenkins-cobertura.png" /&gt;&lt;/p&gt;
+&lt;p&gt;So again install Cobertura, and set it up by pointing it to the name of your coverage file. After this, click Build Now and you should be able to view the report from your build's status page.&lt;/p&gt;
+&lt;h1&gt;Automate!&lt;/h1&gt;
+&lt;p&gt;The final step is to set it up such that any changes you make (commit) will cause a build. We can do this is to set up a Build Trigger to Poll SCM (Git), on a 5 min schedule. So every 5 minutes, if Jenkins detects a change to the Git repository, it will run a new build.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Build Triggers" src="{filename}/images/jenkins-build-trigger.png" /&gt;&lt;/p&gt;
+&lt;p&gt;setup a local jenkins&lt;/p&gt;
+&lt;h1&gt;References&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu"&gt;https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial"&gt;https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting"&gt;http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</summary><category term="jenkins"></category><category term="tests"></category></entry><entry><title>NOC New York Financials</title><link href="http://ngzhian.com/blog/noc-financials.html" rel="alternate"></link><updated>2015-01-09T19:00:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-01-09:blog/noc-financials.html</id><summary type="html">&lt;p&gt;A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align="left"&gt;Item&lt;/th&gt;
+&lt;th align="right"&gt;Income&lt;/th&gt;
+&lt;th align="center"&gt;Expenditure&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Take home&lt;/td&gt;
+&lt;td align="right"&gt;$1400&lt;/td&gt;
+&lt;td align="center"&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Rent&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$700&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Phone&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$35&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;WiFi&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$14&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Gas &amp;amp; Electricity&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$40&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Heat&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align="left"&gt;Transport&lt;/td&gt;
+&lt;td align="right"&gt;&lt;/td&gt;
+&lt;td align="center"&gt;$112&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;(700 + 35 + 14 + 40 + 20 + 112) = $921 monthly essential expenses
+
+$1.4k - $921 = $479 remaining to spend a month
+
+$479 / 30 = $16 for food per day.
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;If I don't buy any clothes.&lt;sup&gt;*&lt;/sup&gt;&lt;/p&gt;
+&lt;h2&gt;Need more info?&lt;/h2&gt;
+&lt;p&gt;Shoot me a question ngzhian@nus.edu.sg&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;*&lt;/sup&gt; Which I don't&lt;/p&gt;</summary><category term="noc"></category><category term="nus"></category><category term="financials"></category></entry><entry><title>NOC New York Module Credits mapping for SoC</title><link href="http://ngzhian.com/blog/noc-soc-mc-mapping.html" rel="alternate"></link><updated>2015-01-02T16:30:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-01-02:blog/noc-soc-mc-mapping.html</id><summary type="html">&lt;p&gt;&lt;em&gt;NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In one year, you should be able to clear 40 MCs in order to be MC-neutral&lt;sup&gt;*&lt;/sup&gt;.
+For my batch we are able to clear up to &lt;strong&gt;32 MCs&lt;/strong&gt; because we do not have discipline-based module&lt;sup&gt;#&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;Here's how I allocated my MCs (Computer Science):&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Module Code&lt;/th&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;MCs&lt;/th&gt;
+&lt;th&gt;Map to&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;TR3101&lt;/td&gt;
+&lt;td&gt;Internship Continuous assessment&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;Internship&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;TR3102&lt;/td&gt;
+&lt;td&gt;Internship Program Report&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;Internship&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;TR3103&lt;/td&gt;
+&lt;td&gt;Start up Business case&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;ULR&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;TR3002&lt;/td&gt;
+&lt;td&gt;New Venture Creation&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;UEM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;MG2304&lt;/td&gt;
+&lt;td&gt;Marketing&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;UEM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;TRXXXX&lt;/td&gt;
+&lt;td&gt;TBC&lt;sup&gt;?&lt;/sup&gt;&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;UEM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;For &lt;strong&gt;CS&lt;/strong&gt; students, &lt;code&gt;TR3101&lt;/code&gt; and &lt;code&gt;TR3102&lt;/code&gt; can go towards clearing our &lt;a href="http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html"&gt;program requirements&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Either&lt;br/&gt;
+CP4101 BComp Dissertation&lt;br/&gt;
+or&lt;br/&gt;
+Complete 12 MCs by taking CS modules at level-4000 or above, or modules approved by the Department of Computer Science&lt;br/&gt;
+or&lt;br/&gt;
+12 MCs of Industrial Experience Training.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;For &lt;strong&gt;IS/EC&lt;/strong&gt; students, they can map IS4010 Industry Internship Programme (equivalent to 12-MC FYP or 3 IS modules) to NOC (TR3101 and TR3102). The other TR module confirmed is TR2202 Technological Innovation. (Thanks Jason for this!)&lt;/p&gt;
+&lt;p&gt;Check the requirements for your cohort to be sure.&lt;/p&gt;
+&lt;p&gt;Recall that the breakdown of ULR is
+- 8 MCs on GEM
+- 4 MCs on SS
+- 8 MCs on Breadth&lt;/p&gt;
+&lt;p&gt;so &lt;code&gt;TR3103&lt;/code&gt; essentially completes my ULR requirement.&lt;/p&gt;
+&lt;p&gt;The remaining 3 modules (&lt;code&gt;TR3002&lt;/code&gt;, &lt;code&gt;MG2304&lt;/code&gt;, &lt;code&gt;TRXXXX&lt;/code&gt;) maps to my UE, which has a cap of 20 MCs. This means that for you to be MC neutral, you should not have taken more than 2 UEs thus far.&lt;/p&gt;
+&lt;h2&gt;What about the 8 MCs left?&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;40 - 32 = 8MCs&lt;/code&gt;, so at the end of NOC I would have 8 MCs I need to clear.&lt;/p&gt;
+&lt;p&gt;In my case, I haven't taken a single UE yet, so this 8 MCs will be used on UEs. I took Orbtial (a summer module) in Year 1, so that clears 4 MCs. I plan to overload 1 module in my final year, so that I can make 160 MCs and graduate in 4 years.&lt;/p&gt;
+&lt;h2&gt;Need more info?&lt;/h2&gt;
+&lt;p&gt;Shoot me a question ngzhian@nus.edu.sg&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;*&lt;/sup&gt; this means to not take more modules than necessary&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;#&lt;/sup&gt; reasons are not easy to explain, and this might change for your batch&lt;/p&gt;
+&lt;p&gt;&lt;sup&gt;?&lt;/sup&gt; module not confirmed but can definitely map it to UE&lt;/p&gt;</summary><category term="noc"></category><category term="nus"></category><category term="soc"></category></entry><entry><title>Suggest - My Hack for TimeIncHack2014</title><link href="http://ngzhian.com/blog/time-inc-hack-2014.html" rel="alternate"></link><updated>2014-11-20T08:00:00-05:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2014-11-20:blog/time-inc-hack-2014.html</id><summary type="html">&lt;p&gt;Over the weekend of 15-16 Nov, I took part in TimeIncHack2014, organized by Time Inc. The theme was about getting millenials to consume content, but I took off on a tangent right after hearing the problem description by the organizers: instead of building applications or services that media consumers will use, I was interested in making an internal tool for content creators to write articles that are more relevant.&lt;/p&gt;
+&lt;p&gt;Born out of around 20 hours of hacking (18 of which was while standing), I built &lt;a href="http://128.199.204.208/"&gt;Suggest&lt;/a&gt;, a tool that analyzes what has been written so far and tries to grab articles that are relevant.&lt;/p&gt;
+&lt;p&gt;It begins with a simple textarea where you can type (or just copy and paste an article to test it out) into.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="simple textarea for your content" src="http://i.imgur.com/JH2FObx.png?1" /&gt;&lt;/p&gt;
+&lt;p&gt;It will perform entity recognition on the content, grabbing &lt;em&gt;Nouns&lt;/em&gt;, such as people, organizations, places, and list them at the bottom.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="live entity recognition" src="http://i.imgur.com/lctBs56.png?1" /&gt;&lt;/p&gt;
+&lt;p&gt;When you press the &lt;code&gt;Suggest&lt;/code&gt; button, it will perform a keyword analysis on your content, pull from new sources other articles that are relevant based on the keywords, and show them by the side, under the &lt;code&gt;Relevant&lt;/code&gt; tab.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="related articles" src="http://i.imgur.com/FGlk8Vo.png?1" /&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;Tag&lt;/code&gt; tab suggests articles from Time Inc that are tagged under the same category as what Suggest thinks the current content should be under.&lt;/p&gt;
+&lt;p&gt;&lt;img alt="tags" src="http://i.imgur.com/gjaboQT.png?1" /&gt;&lt;/p&gt;
+&lt;p&gt;All of the hard work (keyword analysis and entity extraction) is powered by &lt;a href="http://www.alchemyapi.com/"&gt;AlchemyAPI&lt;/a&gt;, which has a super simple way (and easy to use python sdk) to do all these. Thanks to them for the wonderful work and increasing my API calls limit for the hackathon! The articles are pulled from &lt;a href="http://developer.nytimes.com/"&gt;New York Times&lt;/a&gt;, who have a superb restful developers endpoint, and also &lt;a href="http://time.com/"&gt;Time Inc&lt;/a&gt;, lovely organizers of this hackathon.&lt;/p&gt;
+&lt;p&gt;The code is &lt;a href="https://github.com/ngzhian/suggest"&gt;open source&lt;/a&gt;, feel free to check it out and throw suggestions at me. For the code to run you basically need to register with AlchemyAPI and New York Times for api keys - which is a super simple process.&lt;/p&gt;</summary></entry></feed>
