@@ -25,19 +25,19 @@ sudo apt-get install jenkins
 &lt;p&gt;Go to Jenkins interface &amp;gt; manage jenkins &amp;gt; manage plugins, and install Git Plugin. After installing, you can configure your job. Here are the settings I use:
 - Repository URL is a path passed to &lt;code&gt;git clone&lt;/code&gt;, and my project is mounted onto &lt;code&gt;/vagrant&lt;/code&gt;
 - Shallow clone, I don't need the full history of the repository, so this should make things speedier&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Git configuration" src="{filename}/images/jenkins-git.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Git configuration" src="http://ngzhian.com/blog/images/jenkins-git.png" /&gt;&lt;/p&gt;
 &lt;p&gt;The setup for the Git means that your local git repo will be cloned down to Jenkin's &lt;em&gt;workspace&lt;/em&gt; before each build. A workspace is the directory Jenkins is processing the build in, and for me it is &lt;code&gt;/var/lib/jenkins/jobs/project/workspace&lt;/code&gt; where project is the name of the Jenkin's job. More information on the folder structure used by Jenkins can be found &lt;a href="https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins"&gt;here&lt;/a&gt;&lt;/p&gt;
 &lt;h1&gt;The first build!&lt;/h1&gt;
 &lt;p&gt;Next up we need to actually run the tests. This can be configured in the &lt;em&gt;Build&lt;/em&gt; section further down the page. Before Jenkins, how I was running my tests was just a shellscript, which is a simple wrapper around &lt;code&gt;manage.py test&lt;/code&gt; to pass in the right parameters. So for Jenkins, all I needed to do was to call the shell script.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Build" src="{filename}/images/jenkins-build.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Build" src="http://ngzhian.com/blog/images/jenkins-build.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Click Build Now, and then navigate to the console output to enjoy your success! I hope. That's your first Jenkin's build :)&lt;/p&gt;
 &lt;h1&gt;Report coverage with Cobertura&lt;/h1&gt;
 &lt;p&gt;I use &lt;code&gt;coverage.py&lt;/code&gt; to generate reports for my tests, and it also has &lt;a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting"&gt;the ability&lt;/a&gt; to generate XML file that Cobertura can regonize.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Cobertura" src="{filename}/images/jenkins-cobertura.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Cobertura" src="http://ngzhian.com/blog/images/jenkins-cobertura.png" /&gt;&lt;/p&gt;
 &lt;p&gt;So again install Cobertura, and set it up by pointing it to the name of your coverage file. After this, click Build Now and you should be able to view the report from your build's status page.&lt;/p&gt;
 &lt;h1&gt;Automate!&lt;/h1&gt;
 &lt;p&gt;The final step is to set it up such that any changes you make (commit) will cause a build. We can do this is to set up a Build Trigger to Poll SCM (Git), on a 5 min schedule. So every 5 minutes, if Jenkins detects a change to the Git repository, it will run a new build.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Build Triggers" src="{filename}/images/jenkins-build-trigger.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Build Triggers" src="http://ngzhian.com/blog/images/jenkins-build-trigger.png" /&gt;&lt;/p&gt;
 &lt;p&gt;setup a local jenkins&lt;/p&gt;
 &lt;h1&gt;References&lt;/h1&gt;
 &lt;ul&gt;
