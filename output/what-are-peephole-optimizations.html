@@ -4,20 +4,18 @@
           <title>Zhi An</title>
         <meta charset="utf-8" />
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-        <link href="http://ngzhian.com/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Full Atom Feed" />
-        <link href="http://ngzhian.com/blog/feeds/code-compiler.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Categories Atom Feed" />
 
 
 
 
-        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/styles.css">
-        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/github.css">
+        <link rel="stylesheet" href="./theme/css/styles.css">
+        <link rel="stylesheet" href="./theme/css/github.css">
 </head>
 
 <body id="index" class="home">
     <div class="content">
         <header id="banner" class="body">
-                <a href="http://ngzhian.com/blog/">
+                <a href="./">
                     <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
                 </a>
         </header><!-- /#banner -->
@@ -29,12 +27,12 @@
       Tue 28 April 2015
     </time>
     <h2 class="entry-title">
-      <a href="http://ngzhian.com/blog/what-are-peephole-optimizations.html" rel="bookmark"
+      <a href="./what-are-peephole-optimizations.html" rel="bookmark"
          title="Permalink to What are Peephole Optimizations?">What are Peephole Optimizations?</a></h2>
  
   </header>
   <div class="entry-content">
-    <p>As part of <a href="http://ngzhian.com/blog/what-the-heck-is-google-closure-compiler.html">the series</a> exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.</p>
+    <p>As part of <a href="./what-the-heck-is-google-closure-compiler.html">the series</a> exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.</p>
 <p>The <a href="https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28">code itself</a> describes peephole optimizations as:</p>
 <blockquote>
 <p>optimizations that look at a small section of code and either remove
@@ -120,6 +118,9 @@ that code (if it is not needed) or replaces it with smaller code.</p>
 </section>
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
+                    <p>
+                    <a href="/archives.html">Archives</a>
+                    </p>
                 Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
                 which takes great advantage of <a href="http://python.org">Python</a>.
                 </address><!-- /#about -->
