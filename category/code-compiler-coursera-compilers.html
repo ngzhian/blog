@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
         <link href="http://ngzhian.com/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Full Atom Feed" />
-        <link href="http://ngzhian.com/blog/feeds/code-vagrant.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Categories Atom Feed" />
+        <link href="http://ngzhian.com/blog/feeds/code-compiler-coursera-compilers.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Categories Atom Feed" />
         <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/styles.css">
         <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/github.css">
 </head>
@@ -20,32 +20,20 @@
         <nav id="menu"><ul>
         </ul></nav><!-- /#menu -->
 <section id="content">
-<h2>Articles in the code, vagrant category</h2>
+<h2>Articles in the code, compiler, coursera-compilers category</h2>
 
 <ul id="post-list">
         <li><article class="hentry">
                 <footer class="post-info">
-                    <time class="published" title="2015-05-08T19:00:00-04:00"> Fri 08 May 2015 </time>
+                    <time class="published" title="2015-05-25T14:00:00-04:00"> Mon 25 May 2015 </time>
                 </footer><!-- /.post-info -->
-                <header> <h2 class="entry-title"><a href="http://ngzhian.com/blog/common-problems-i-faced-with-vagrant-and-virtualbox.html" rel="bookmark" title="Permalink to Common problems I faced with Vagrant and VirtualBox">Common problems I faced with Vagrant and VirtualBox</a></h2> </header>
-                <div class="entry-content"> <p>Sometimes I have a little bit of trouble getting my development setup to work properly.</p>
-<p>My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
-I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.</p>
-<h2>Vagrant lost my old development environment omgomgomg!</h2>
-<p>Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox.
-Vagrant stores this UUID in a file called <code>id</code> and this file is located in the <code>.vagrant</code> directory which is located beside the <code>Vagrantfile</code>.</p>
-<p>Specifically for me, it is located</p>
-<div class="highlight"><pre>|-- .vagrant
- |-- machines
-  |-- default
-   |-- virtualbox
-    |-- id
-|-- Vagrantfile
-</pre></div>
-
-
-<p>Your layout may look ...</p> </div><!-- /.entry-content -->
-                <a href="http://ngzhian.com/blog/common-problems-i-faced-with-vagrant-and-virtualbox.html" title="Permalink to Common problems I faced with Vagrant and VirtualBox">More</a>
+                <header> <h2 class="entry-title"><a href="http://ngzhian.com/blog/lexing-cool-coursera-compilers-course-assignment-1.html" rel="bookmark" title="Permalink to Lexing COOL - Coursera Compilers Course Assignment 1">Lexing COOL - Coursera Compilers Course Assignment 1</a></h2> </header>
+                <div class="entry-content"> <p>This post is about Assignment 1 on on the <a href="https://www.coursera.org/course/compilers">Coursera Compilers course</a>, which is to write a flex specification for lexing COOL.</p>
+<p>This was pretty challenging for me, I took about 4 hours in total, spread over a couple of nights to complete this.</p>
+<p>The challenging part was handling edge cases, and thinking about how the lexer will match strings. For example, because the lexer matches greedily, an over-optimistic regex will cause group that you won't think of capturing to be captured.</p>
+<p>The really helpful part was running the grading script, and checking the differences between the reference lexer and my lexer. This allowed me to drill down to specific portions of my regex or code, such as areas I should be increasing the line count.</p>
+<p>Matching operators and ...</p> </div><!-- /.entry-content -->
+                <a href="http://ngzhian.com/blog/lexing-cool-coursera-compilers-course-assignment-1.html" title="Permalink to Lexing COOL - Coursera Compilers Course Assignment 1">More</a>
         </article></li>
 </ol><!-- /#posts-list -->
 </section><!-- /#content -->

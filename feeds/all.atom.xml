@@ -1,5 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-05-17T09:30:00-04:00</updated><entry><title>ffmpeg to make gifs</title><link href="http://ngzhian.com/blog/ffmpeg-to-make-gifs.html" rel="alternate"></link><updated>2015-05-17T09:30:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-17:blog/ffmpeg-to-make-gifs.html</id><summary type="html">&lt;p&gt;Over the weekend I was working on a little hack called &lt;a href="https://github.com/ngzhian/help-me-man/"&gt;Help me man!&lt;/a&gt;, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Zhi An</title><link href="http://ngzhian.com/blog/" rel="alternate"></link><link href="http://ngzhian.com/blog/feeds/all.atom.xml" rel="self"></link><id>http://ngzhian.com/blog/</id><updated>2015-05-25T14:00:00-04:00</updated><entry><title>Lexing COOL - Coursera Compilers Course Assignment 1</title><link href="http://ngzhian.com/blog/lexing-cool-coursera-compilers-course-assignment-1.html" rel="alternate"></link><updated>2015-05-25T14:00:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-25:blog/lexing-cool-coursera-compilers-course-assignment-1.html</id><summary type="html">&lt;p&gt;This post is about Assignment 1 on on the &lt;a href="https://www.coursera.org/course/compilers"&gt;Coursera Compilers course&lt;/a&gt;, which is to write a flex specification for lexing COOL.&lt;/p&gt;
+&lt;p&gt;This was pretty challenging for me, I took about 4 hours in total, spread over a couple of nights to complete this.&lt;/p&gt;
+&lt;p&gt;The challenging part was handling edge cases, and thinking about how the lexer will match strings. For example, because the lexer matches greedily, an over-optimistic regex will cause group that you won't think of capturing to be captured.&lt;/p&gt;
+&lt;p&gt;The really helpful part was running the grading script, and checking the differences between the reference lexer and my lexer. This allowed me to drill down to specific portions of my regex or code, such as areas I should be increasing the line count.&lt;/p&gt;
+&lt;p&gt;Matching operators and keywords are not difficult, the most tedious part was matching multiline nested comments and also string constants.&lt;/p&gt;
+&lt;p&gt;To match nested comments, for every "&lt;em&gt;)" matched, we need to determine if this is matching a opening "(&lt;/em&gt;", or if it is a stray closing comment and hence an error. This can be done using a start condition.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&amp;quot;(*&amp;quot; { BEGIN(comment);}
+&amp;lt;comment&amp;gt;&amp;quot;*)&amp;quot; {}
+&amp;quot;*)&amp;quot; { return ERROR; }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The last rule for matching "*)" feels pretty unintuitive, but it works!&lt;/p&gt;
+&lt;p&gt;Matching string constants is even more complicated. We need to handle all the valid escaped sequences, &lt;code&gt;\b&lt;/code&gt;, &lt;code&gt;\t&lt;/code&gt;, &lt;code&gt;\n&lt;/code&gt;, &lt;code&gt;\f&lt;/code&gt;, &lt;code&gt;\"&lt;/code&gt;, transform non escaped sequences with a slash into it's normal counter part, e.g. &lt;code&gt;\a&lt;/code&gt; will be transformed into &lt;code&gt;a&lt;/code&gt;. Also, &lt;code&gt;null&lt;/code&gt; characters are illegal within string constants, the same for &lt;code&gt;EOF&lt;/code&gt;. And any new lines need to be escaped first. It becomes unobvious how to match certain sequences, for example, how do you match a new line in a string?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&amp;lt;str&amp;gt;\n { return ERROR; }
+&amp;lt;str&amp;gt;\\n { /* matches a slash followed by a &amp;#39;n&amp;#39; in the input */ }
+&amp;lt;str&amp;gt;\\\n { /* matches a slash followed by a new line character */ }
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The first line matches a new line while reading a string constant. The second line is a slash followed by a character 'n'. Finally, the third line matches an escaped new line. &lt;code&gt;\\&lt;/code&gt; is an escaped &lt;code&gt;\&lt;/code&gt;, and hence matches a literal &lt;code&gt;\&lt;/code&gt; within the input, followed by &lt;code&gt;\n&lt;/code&gt;, which matches a new line character.&lt;/p&gt;
+&lt;p&gt;Here's other tips that may come in helpful:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;curr_lineno&lt;/code&gt; indicates the current line in the source file, this needs to be updated in multiple places, for example, in string constants, in comments, in general source code definition.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;yyinput()&lt;/code&gt; reads one character from the stream&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;&amp;lt;EOF&amp;gt;&amp;gt;&lt;/code&gt; matches EOF, this is useful when scanning for string constants as an EOF while in string is an error. However &lt;code&gt;&amp;lt;&amp;lt;EOF&amp;gt;&amp;gt;&lt;/code&gt; only works on the pattern, as in &lt;code&gt;&amp;lt;str&amp;gt;&amp;lt;&amp;lt;EOF&amp;gt;&amp;gt;&lt;/code&gt;, when in the &lt;code&gt;&amp;lt;str&amp;gt;&lt;/code&gt; context.&lt;/p&gt;
+&lt;p&gt;Useful links:&lt;/p&gt;
+&lt;p&gt;A quick introductin to flex:
+&lt;a href="http://dinosaur.compilertools.net/lex/index.html"&gt;http://dinosaur.compilertools.net/lex/index.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Good sample lex file for ANSI C grammar:
+&lt;a href="http://www.lysator.liu.se/c/ANSI-C-grammar-l.html#count"&gt;http://www.lysator.liu.se/c/ANSI-C-grammar-l.html#count&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;How to match EOF:
+&lt;a href="http://flex.sourceforge.net/manual/EOF.html"&gt;http://flex.sourceforge.net/manual/EOF.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Might be helpful, flex description for C/C++ scanner:
+&lt;a href="http://scottmcpeak.com/elkhound/sources/elsa/cc.lex"&gt;http://scottmcpeak.com/elkhound/sources/elsa/cc.lex&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The coursera forums are helpful as well.&lt;/p&gt;</summary></entry><entry><title>ffmpeg to make gifs</title><link href="http://ngzhian.com/blog/ffmpeg-to-make-gifs.html" rel="alternate"></link><updated>2015-05-17T09:30:00-04:00</updated><author><name>Ng Zhi An</name></author><id>tag:ngzhian.com,2015-05-17:blog/ffmpeg-to-make-gifs.html</id><summary type="html">&lt;p&gt;Over the weekend I was working on a little hack called &lt;a href="https://github.com/ngzhian/help-me-man/"&gt;Help me man!&lt;/a&gt;, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.&lt;/p&gt;
 &lt;p&gt;I've heard quite a bit about &lt;code&gt;ffmpeg&lt;/code&gt; as a swiss army knife for manipulating videos, so I decided to try it out.&lt;/p&gt;
 &lt;p&gt;ffmpeg can be downloaded from its &lt;a href="http://ffmpeg.org/"&gt;homepage&lt;/a&gt;, and the documentation is available &lt;a href="http://ffmpeg.org/ffmpeg.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;blockquote&gt;
