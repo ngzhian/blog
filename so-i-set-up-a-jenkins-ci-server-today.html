@@ -4,22 +4,20 @@
           <title>Zhi An</title>
         <meta charset="utf-8" />
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-        <link href="http://ngzhian.com/blog/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Full Atom Feed" />
-        <link href="http://ngzhian.com/blog/feeds/python.atom.xml" type="application/atom+xml" rel="alternate" title="Zhi An Categories Atom Feed" />
 
 
 
     <meta name="tags" contents="jenkins" />
     <meta name="tags" contents="tests" />
 
-        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/styles.css">
-        <link rel="stylesheet" href="http://ngzhian.com/blog/theme/css/github.css">
+        <link rel="stylesheet" href="./theme/css/styles.css">
+        <link rel="stylesheet" href="./theme/css/github.css">
 </head>
 
 <body id="index" class="home">
     <div class="content">
         <header id="banner" class="body">
-                <a href="http://ngzhian.com/blog/">
+                <a href="./">
                     <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
                 </a>
         </header><!-- /#banner -->
@@ -31,7 +29,7 @@
       Sun 18 January 2015
     </time>
     <h2 class="entry-title">
-      <a href="http://ngzhian.com/blog/so-i-set-up-a-jenkins-ci-server-today.html" rel="bookmark"
+      <a href="./so-i-set-up-a-jenkins-ci-server-today.html" rel="bookmark"
          title="Permalink to So I set up a Jenkins CI server today">So I set up a Jenkins CI server today</a></h2>
  
   </header>
@@ -62,19 +60,19 @@ sudo apt-get install jenkins
 <p>Go to Jenkins interface &gt; manage jenkins &gt; manage plugins, and install Git Plugin. After installing, you can configure your job. Here are the settings I use:
 - Repository URL is a path passed to <code>git clone</code>, and my project is mounted onto <code>/vagrant</code>
 - Shallow clone, I don't need the full history of the repository, so this should make things speedier</p>
-<p><img alt="Git configuration" src="http://ngzhian.com/blog/images/jenkins-git.png" /></p>
+<p><img alt="Git configuration" src="./images/jenkins-git.png" /></p>
 <p>The setup for the Git means that your local git repo will be cloned down to Jenkin's <em>workspace</em> before each build. A workspace is the directory Jenkins is processing the build in, and for me it is <code>/var/lib/jenkins/jobs/project/workspace</code> where project is the name of the Jenkin's job. More information on the folder structure used by Jenkins can be found <a href="https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins">here</a></p>
 <h1>The first build!</h1>
 <p>Next up we need to actually run the tests. This can be configured in the <em>Build</em> section further down the page. Before Jenkins, how I was running my tests was just a shellscript, which is a simple wrapper around <code>manage.py test</code> to pass in the right parameters. So for Jenkins, all I needed to do was to call the shell script.</p>
-<p><img alt="Build" src="http://ngzhian.com/blog/images/jenkins-build.png" /></p>
+<p><img alt="Build" src="./images/jenkins-build.png" /></p>
 <p>Click Build Now, and then navigate to the console output to enjoy your success! I hope. That's your first Jenkin's build :)</p>
 <h1>Report coverage with Cobertura</h1>
 <p>I use <code>coverage.py</code> to generate reports for my tests, and it also has <a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting">the ability</a> to generate XML file that Cobertura can regonize.</p>
-<p><img alt="Cobertura" src="http://ngzhian.com/blog/images/jenkins-cobertura.png" /></p>
+<p><img alt="Cobertura" src="./images/jenkins-cobertura.png" /></p>
 <p>So again install Cobertura, and set it up by pointing it to the name of your coverage file. After this, click Build Now and you should be able to view the report from your build's status page.</p>
 <h1>Automate!</h1>
 <p>The final step is to set it up such that any changes you make (commit) will cause a build. We can do this is to set up a Build Trigger to Poll SCM (Git), on a 5 min schedule. So every 5 minutes, if Jenkins detects a change to the Git repository, it will run a new build.</p>
-<p><img alt="Build Triggers" src="http://ngzhian.com/blog/images/jenkins-build-trigger.png" /></p>
+<p><img alt="Build Triggers" src="./images/jenkins-build-trigger.png" /></p>
 <p>setup a local jenkins</p>
 <h1>References</h1>
 <ul>
