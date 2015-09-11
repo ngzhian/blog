@@ -1,0 +1,67 @@
+Title: Haskell's powerful pattern matching
+Date: 2015-09-11 14:05
+Category: haskell, pattern-matching, codeforces
+
+Recently I've been trying out problems on [codeforces](codeforces.com) to practice my algorithms and data structure problem solving skills.
+
+This is a good chance to revise a language I know but haven't used for a while, or to pick up a new language.
+For me it was a chance to write some [Haskell](https://www.haskell.org).
+
+The particular problem I was working on is [1B](http://codeforces.com/problemset/problem/1/B).
+Take a minute to read it, it's an interesting problem.
+
+In summary, there are 2 numeration systems, and if we are given *system A*, we need to translate it to *system B*, and vice versa.
+
+I chose to write a function that decides if a given string belongs to system A.
+The function signature is simple.
+
+```haskell
+isA :: String -> Bool
+```
+
+In short, *system A* is where you have:
+
+1. the letter 'R',
+2. followed by the row number,
+3. the letter 'C',
+4. finally the column number.
+
+For example, these strings belong to *system A*:
+
+```
+R23C55
+R4C8
+```
+
+My implementation looks something like this:
+
+```haskell
+isA :: String -> Bool
+isA ('R':ss) = hasNumbersThenC
+    where hasNumbersThenC = nums /= []
+         (nums, row) = splitAt posnC ss
+         posnC = case elemIndex 'C' ss of
+           Just n -> n
+           Nothing -> 0
+isA _ = False
+```
+
+So this isn't really idiomatic Haskell (I'm still learning), but the general idea is this:
+
+1. Use pattern matching to catch the first 'R'.
+2. Try to find a 'C' in the rest of the string (`ss` in the code)
+3. Split the remaining string (without 'R') by the position of 'C'
+   So [splitAt](https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-List.html#v:splitAt) will return a tuple, with the first element having a length of `posnC`.
+4. Check that `nums` is not an empty list `[]`. This check takes care that there is a 'C' in the string, and that there are letters before the 'C'.
+
+This sounds like a pretty involved process and the code I wrote still feels imperative even though I'm using a functional language, so I thought a little bit about how to make it better.
+
+And then it hit me, if I can pattern match on the 'R', can I pattern match on the 'C' as well?
+
+```haskell
+isA :: String -> Bool
+isA ('R':rs:'C':cs) = True
+isA _ = False
+```
+
+And that's it!
