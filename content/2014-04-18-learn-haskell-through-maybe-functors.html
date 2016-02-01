@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Ng Zhi An - Learning Haskell through Maybe - Functors</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+        <link rel="stylesheet" type="text/css" href="../css/syntax.css" />
+        <link href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="../">$fancy-logo$</a>
+            </div>
+            <div id="navigation">
+                <a href="../about.html">About</a>
+                <a href="../contact.html">Contact</a>
+                <a href="../archive.html">Archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            <h1>Learning Haskell through Maybe - Functors</h1>
+
+            <div class="info">
+    Posted on April 18, 2014
+    
+</div>
+
+<h2 id="types">Types</h2>
+<p>You have a <code>Type</code>, <code>Integer</code>. <code>Integer</code> is an integer, representing intergers, just like real life.</p>
+<p>Other types are <code>Char</code>, which are characters such as <code>'a'</code>, <code>'b'</code> etc. The one we will look at in detail is <code>Maybe</code>.</p>
+<h2 id="type-variable-constructors">Type variable, constructors</h2>
+<p>A data of type <code>Maybe</code> can only be made if a <em>type variable</em> is specified. This means that you can make a <code>Maybe Integer</code>, <code>Maybe Char</code>, but a <code>Maybe</code> isn’t a complete type.</p>
+<p>The way to make a data of type <code>Maybe</code> is to use a <em>type constructor</em>. <code>Maybe</code> has two type constructors, <code>Just</code> and <code>Nothing</code>. <code>Just</code> is like <code>Maybe</code>, it can only be made if a type variable is specified. <code>Nothing</code> can be made simply on its own, it is a complete type.</p>
+<p>Let’s try making <code>Maybe</code>s in GHCI:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> best_friends <span class="fu">=</span> <span class="dt">Just</span> <span class="dv">1</span>
+<span class="fu">&gt;</span> best_friends
+<span class="dt">Just</span> <span class="dv">1</span></code></pre>
+<p>You have just used the type constructor <code>Just</code>, passed in the <code>Int</code> 1, to make a type of <code>Maybe Int</code>. To verify the type of <code>best_friends</code>:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>t best_friends
+<span class="ot">best_friends ::</span> <span class="dt">Maybe</span> <span class="dt">Integer</span></code></pre>
+<p><code>::</code> can be read as <strong>is of type</strong>. How about make a <code>Maybe</code> using <code>Nothing</code>?</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> girlfriend <span class="fu">=</span> <span class="dt">Nothing</span>
+<span class="fu">&gt;</span> girlfriend
+<span class="dt">Nothing</span></code></pre>
+<h2 id="functor">Functor</h2>
+<p>Suppose you have twice as many best friends as I do, how can I find out how many best friends you have?</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> <span class="dv">1</span> <span class="fu">*</span> <span class="dv">2</span> <span class="co">--hard coded value for the number best friends I have</span>
+<span class="fu">&gt;</span> your_best_friends
+<span class="dv">2</span>
+<span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> best_friends <span class="fu">*</span> <span class="dv">2</span> <span class="co">--fails terribly</span></code></pre>
+<p>You get a crazy error message. It means that you cannot multiply 2 with <code>best_friends</code>, because <code>best_friends</code> is not a type that can be multiplied with 2. Clearly there is something going on here, because <code>best_friends</code> can contain an <code>Integer</code>, and we can definitely multiply <code>Integer</code>s, what we can do is to define a function that helps us do so.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>{
+<span class="fu">|</span> <span class="kw">let</span><span class="ot"> calc_friends ::</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span>
+<span class="fu">|</span> 		calc_friends <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+<span class="fu">|</span>			calc_friends (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (x <span class="fu">*</span> <span class="dv">2</span>)
+<span class="fu">&gt;</span> <span class="fu">:</span>}
+<span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> calc_friends best_friends
+<span class="fu">&gt;</span> your_best_friends
+<span class="dt">Just</span> <span class="dv">2</span></code></pre>
+<p>What we did was to define a function that can calculate the number of best friends you have, given the number of best friends I have. By applying this function to <code>best_friends</code>, you get the number of best friends you have, wrapped in a <code>Just</code>. What if I told you that you had twice as many girlfriends as I do?</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> your_girlfriends <span class="fu">=</span> calc_friends girlfriend
+<span class="fu">&gt;</span> your_girlfriends
+<span class="dt">Nothing</span></code></pre>
+<p>Hahaha.</p>
+<p>Perhaps you grow more popular, and you actually had 3 times more friends than I do. Since we hard coded the value <code>2</code>, we have to make another function with the value <code>3</code>, or we can actually generalize the function as such.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>{
+<span class="fu">|</span> <span class="kw">let</span><span class="ot"> calc_friends ::</span> (<span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span>
+<span class="fu">|</span>     calc_friends _ <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+<span class="fu">|</span>     calc_friends f (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (f x)
+<span class="fu">&gt;</span> <span class="fu">:</span>}
+<span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> calc_friends (<span class="fu">*</span> <span class="dv">3</span>) best_friends
+<span class="fu">&gt;</span> your_best_friends
+<span class="dt">Just</span> <span class="dv">3</span>
+<span class="fu">&gt;</span> <span class="kw">let</span> your_girlfriends <span class="fu">=</span> calc_friends (<span class="fu">*</span> <span class="dv">2</span>) girlfriend
+<span class="fu">&gt;</span> your_girlfriends
+<span class="dt">Nothing</span></code></pre>
+<p>We define <code>calc_friends</code> as a function that takes in another function, <code>f</code>, and this function <code>f</code> takes in an <code>Integer</code> and returns another <code>Integer</code>. An example of this function would be <code>(* 3)</code>. <code>calc_friends</code> also takes in a <code>Maybe Integer</code>, which it will apply the function <code>f</code> to, and returning a resut of type <code>Maybe Integer</code></p>
+<p>What if instead of number of best friends, an <code>Integer</code>, we wanted to compare height, a <code>Double</code>, and you are 1 metre taller than me, this looks pretty similar to calc_friends, so let’s reuse that:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> height <span class="fu">=</span> <span class="dt">Just</span> <span class="dv">1</span><span class="fu">.</span><span class="dv">7</span>
+<span class="fu">&gt;</span> <span class="kw">let</span> calc_height <span class="fu">=</span> calc_friends (<span class="fu">+</span> <span class="dv">1</span>)
+<span class="fu">&gt;</span> calc_height height</code></pre>
+<p>Throws you an error about incompatible types. This is becase we defined <code>calc_height</code> in terms of <code>calc_friends</code>, which only worked with <code>Maybe Integer</code>, but our height was a <code>Maybe Double</code>. So let’s generalize our function using <em>type variables</em>, just like how <code>Maybe</code> is defined.</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>{
+<span class="fu">|</span> <span class="kw">let</span><span class="ot"> calc_stuff ::</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+<span class="fu">|</span>     calc_stuff _ <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+<span class="fu">|</span>     calc_stuff f (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (f x)
+<span class="fu">&gt;</span> <span class="fu">:</span>}
+<span class="fu">&gt;</span> calc_stuff (<span class="fu">*</span> <span class="dv">3</span>) best_friends
+<span class="dt">Just</span> <span class="dv">9</span>
+<span class="fu">&gt;</span> calc_stuff (<span class="fu">+</span> <span class="dv">1</span>) height
+<span class="dt">Just</span> <span class="dv">2</span><span class="fu">.</span><span class="dv">7</span>
+<span class="fu">&gt;</span> calc_stuff (<span class="fu">*</span> <span class="dv">2</span>) girlfriend
+<span class="dt">Nothing</span></code></pre>
+<p>The last bit to understanding <code>Functor</code> is a method called <code>fmap</code>, all types that are instances of the <em>typeclass</em> <code>Functor</code> have to implement a method called <code>fmap</code>, which has the signature:</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">fmap<span class="ot"> 			 ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b 
+<span class="ot">calc_stuff ::</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</code></pre>
+<p>I’m putting them one above the other to let you see how similar they are. <code>fmap</code> is just <code>calc_stuff</code> generalized - generalizing the function that <code>calc_stuff</code> takes in and - generaizing the type <code>Maybe</code> to other types that take in a single type variable</p>
+<p>And the <code>f</code> we see in the <code>fmap</code> is the Functor, a typeclass of which <code>Maybe</code> is an instance of.</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
