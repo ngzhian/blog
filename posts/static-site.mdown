@@ -1,0 +1,63 @@
+Title: How various static site generators work
+Date: 2016-04-24
+
+I'm trying to build my own [static site generator](https://github.com/ngzhian/ocs)
+for learning purposes, and got curious about how other site generators work.
+This post looks at a 2 popular static site generators and look at their inner workings.
+If you're interested in static site generators, look at 
+[staticgen.com](https://www.staticgen.com/).
+
+## Jekyll
+
+Jekyll is really easy to use, from its [homepage](https://jekyllrb.com/docs/usage/),
+you install the gem and run Jekyll from the command line to generate your site into
+the `_site` folder.
+
+```
+$ jekyll build
+```
+
+The `build` command is found in [`build.rb`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/commands/build.rb).
+There are 3 top level steps are:
+
+  1. Builds a [`Configuration`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/configuration.rb)
+  2. Initialize a `Jekyll::Site` with configuration
+  3. Calls `process` on `Jekyll::Site` object
+
+In this single command we see the 2 most important objects in Jekyll: `Configuration` and `Site`.
+
+A `Configuration` specifies where to find your files, plugins, layouts, data, where to write output, etc.
+
+A `Site` is the orchestrator object that knows how to call other objects to build a site.
+The *main* method of `Site` is `process`, and it shows clearly the steps taken.
+
+  1. `reset`
+  2. `read`
+  3. `generate`
+  4. `render`
+  5. `cleanup`
+  6. `write`
+  7. `print_stats`
+
+Let's dive deeper in to some of the more interesting methods.
+
+### `read`
+
+Jekyll knows about different kinds of files, such as layout, data, collections, posts, pages.
+The class that does this work is [`Reader`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/reader.rb).
+Each of this file has a specialized class to take care of finding the file and reading it,
+for example `PostReader`, `DataReader`, `PageReader`, etc. They can be found in [`readers`](https://github.com/jekyll/jekyll/tree/master/lib/jekyll/readers)
+File contents are read into attributes on the `Site` object.
+
+### `render`
+
+[`Jekyll::Renderer`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/renderer.rb)
+takes the file contents read in by the readers and run them through converters.
+Converters can do things like convert markdown to html, or render templates using liquid renderer.
+
+### Plugins
+
+[`Jekyll::PluginManager`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/plugin_manager.rb)
+uses ruby's require feature to load plugins from `_plugins`, as gems specified in `_config.yml`, or gems specified in `Gemfile`. Plugins are initialized when initializing `Site`.
+
+To write a plugin, you can extend various Jekyll base classes, such as `Jekyll::Generator`, `Jekyll::Convertor`, and implementing some methods.

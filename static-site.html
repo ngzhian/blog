@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <a href="./index.html">&lt;&lt;</a>
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <time class="published">
+        2016-04-24
+        </time>
+        <h1>
+        How various static site generators work
+	</h1>
+        <div class="entry-content">
+        <p>I&#39;m trying to build my own <a href='https://github.com/ngzhian/ocs'>static site generator</a>
+for learning purposes, and got curious about how other site generators work.
+This post looks at a 2 popular static site generators and look at their inner workings.
+If you&#39;re interested in static site generators, look at 
+<a href='https://www.staticgen.com/'>staticgen.com</a>.</p>
+<h2 id="Jekyll">Jekyll</h2>
+
+<p>Jekyll is really easy to use, from its <a href='https://jekyllrb.com/docs/usage/'>homepage</a>,
+you install the gem and run Jekyll from the command line to generate your site into
+the <code>_site</code> folder.</p>
+<pre><code>$ jekyll build</code></pre>
+
+<p>The <code>build</code> command is found in <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/commands/build.rb'><code>build.rb</code></a>.
+There are 3 top level steps are:</p>
+<ol><li>Builds a <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/configuration.rb'><code>Configuration</code></a></li><li>Initialize a <code>Jekyll::Site</code> with configuration</li><li>Calls <code>process</code> on <code>Jekyll::Site</code> object</li></ol>
+
+<p>In this single command we see the 2 most important objects in Jekyll: <code>Configuration</code> and <code>Site</code>.</p>
+<p>A <code>Configuration</code> specifies where to find your files, plugins, layouts, data, where to write output, etc.</p>
+<p>A <code>Site</code> is the orchestrator object that knows how to call other objects to build a site.
+The <em>main</em> method of <code>Site</code> is <code>process</code>, and it shows clearly the steps taken.</p>
+<ol><li><code>reset</code></li><li><code>read</code></li><li><code>generate</code></li><li><code>render</code></li><li><code>cleanup</code></li><li><code>write</code></li><li><code>print_stats</code></li></ol>
+
+<p>Let&#39;s dive deeper in to some of the more interesting methods.</p>
+<h3 id="read"><code>read</code></h3>
+
+<p>Jekyll knows about different kinds of files, such as layout, data, collections, posts, pages.
+The class that does this work is <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/reader.rb'><code>Reader</code></a>.
+Each of this file has a specialized class to take care of finding the file and reading it,
+for example <code>PostReader</code>, <code>DataReader</code>, <code>PageReader</code>, etc. They can be found in <a href='https://github.com/jekyll/jekyll/tree/master/lib/jekyll/readers'><code>readers</code></a>
+File contents are read into attributes on the <code>Site</code> object.</p>
+<h3 id="render"><code>render</code></h3>
+
+<p><a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/renderer.rb'><code>Jekyll::Renderer</code></a>
+takes the file contents read in by the readers and run them through converters.
+Converters can do things like convert markdown to html, or render templates using liquid renderer.</p>
+<h3 id="Plugins">Plugins</h3>
+
+<p><a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/plugin_manager.rb'><code>Jekyll::PluginManager</code></a>
+uses ruby&#39;s require feature to load plugins from <code>_plugins</code>, as gems specified in <code>_config.yml</code>, or gems specified in <code>Gemfile</code>. Plugins are initialized when initializing <code>Site</code>.</p>
+<p>To write a plugin, you can extend various Jekyll base classes, such as <code>Jekyll::Generator</code>, <code>Jekyll::Convertor</code>, and implementing some methods.</p>
+
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
