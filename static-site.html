@@ -20,30 +20,37 @@
         The magic of static
 	</h1>
         <div class="entry-content">
-        <p>I&#39;m trying to build my own <a href='https://github.com/ngzhian/ocs'>static site generator</a>
-for learning purposes, and got curious about how other site generators work.
-This post looks at a 2 popular static site generators,
+        <p>How do static site generators work?
+That&#39;s the question I had when I began building my own
+<a href='https://github.com/ngzhian/ocs'>static site generator</a>
+for learning purposes.</p>
+<p>With over 100 static site generatores listed on 
+<a href='https://www.staticgen.com/'>staticgen.com</a>,
+there must be something interesting going on there.</p>
+<p>This post looks at a 2 popular static site generators,
 <a href='https://jekyllrb.com/'>Jekyll</a> and <a href='https://jaspervdj.be/hakyll/'>Hakyll</a>,
-and look at their inner workings.
-If you&#39;re interested in static site generators, look at 
-<a href='https://www.staticgen.com/'>staticgen.com</a> for a list of the most popular ones.</p>
+and dig into their inner workings.</p>
 <h2 id="Jekyll">Jekyll</h2>
 
+<blockquote><p>Build a <code>Configuration</code>, create a <code>Site</code>, call <code>Reader</code>, run <code>Generator</code>, run <code>Converter</code>, write to disk.</p>
+</blockquote>
+
 <p>Jekyll is really easy to use,
-you install the gem and run Jekyll from the command line and it will generate your site into
+you install the gem, run Jekyll from the command line,
+and it will generate your site into
 the <code>_site</code> folder.</p>
 <pre><code>$ jekyll build</code></pre>
 
 <p>The <code>build</code> command is found in <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/commands/build.rb'><code>build.rb</code></a>.
 There are 3 top level steps are:</p>
-<ol><li>Builds a <code>Configuration</code></li><li>Initialize a <code>Site</code> with configuration</li><li>Calls <code>process</code> on <code>Site</code> object</li></ol>
+<ol><li>Build a <code>Configuration</code></li><li>Initialize a <code>Site</code> with configuration</li><li>Calls <code>process</code> on <code>Site</code> object</li></ol>
 
-<p>In this single command we see the 2 most important objects in Jekyll:
+<p>In this single command we see the 2 most important classes in Jekyll:
 <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/configuration.rb'><code>Configuration</code></a>
 and
 <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/site.rb'><code>Site</code></a>.</p>
 <p>A <code>Configuration</code> specifies where to find your files, plugins, layouts, data, where to write output, etc.</p>
-<p>A <code>Site</code> is the orchestrator object that knows how to call other objects to build a site.
+<p>A <code>Site</code> is the orchestrator object that knows how to call other classes to build a site.
 The <em>main</em> method of <code>Site</code> is <code>process</code>, and it shows clearly the steps taken.</p>
 <ol><li><code>reset</code></li><li><code>read</code></li><li><code>generate</code></li><li><code>render</code></li><li><code>cleanup</code></li><li><code>write</code></li><li><code>print_stats</code></li></ol>
 

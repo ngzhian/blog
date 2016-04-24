@@ -65,7 +65,7 @@ pre {
     overflow-x: auto;
 }
 
-p code {
+li code, p code {
     background: #edf6ea;
     border: 1px solid #e3edf3;
     border-radius: 2px;

@@ -1,18 +1,27 @@
 Title: The magic of static
 Date: 2016-04-24
 
-I'm trying to build my own [static site generator](https://github.com/ngzhian/ocs)
-for learning purposes, and got curious about how other site generators work.
+How do static site generators work?
+That's the question I had when I began building my own
+[static site generator](https://github.com/ngzhian/ocs)
+for learning purposes.
+
+With over 100 static site generatores listed on 
+[staticgen.com](https://www.staticgen.com/),
+there must be something interesting going on there.
+
 This post looks at a 2 popular static site generators,
 [Jekyll](https://jekyllrb.com/) and [Hakyll](https://jaspervdj.be/hakyll/),
-and look at their inner workings.
-If you're interested in static site generators, look at 
-[staticgen.com](https://www.staticgen.com/) for a list of the most popular ones.
+and dig into their inner workings.
 
 ## Jekyll
 
+
+> Build a `Configuration`, create a `Site`, call `Reader`, run `Generator`, run `Converter`, write to disk.
+
 Jekyll is really easy to use,
-you install the gem and run Jekyll from the command line and it will generate your site into
+you install the gem, run Jekyll from the command line,
+and it will generate your site into
 the `_site` folder.
 
 ```
@@ -22,18 +31,18 @@ $ jekyll build
 The `build` command is found in [`build.rb`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/commands/build.rb).
 There are 3 top level steps are:
 
-  1. Builds a `Configuration`
+  1. Build a `Configuration`
   2. Initialize a `Site` with configuration
   3. Calls `process` on `Site` object
 
-In this single command we see the 2 most important objects in Jekyll:
+In this single command we see the 2 most important classes in Jekyll:
 [`Configuration`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/configuration.rb)
 and
 [`Site`](https://github.com/jekyll/jekyll/blob/master/lib/jekyll/site.rb).
 
 A `Configuration` specifies where to find your files, plugins, layouts, data, where to write output, etc.
 
-A `Site` is the orchestrator object that knows how to call other objects to build a site.
+A `Site` is the orchestrator object that knows how to call other classes to build a site.
 The *main* method of `Site` is `process`, and it shows clearly the steps taken.
 
   1. `reset`
