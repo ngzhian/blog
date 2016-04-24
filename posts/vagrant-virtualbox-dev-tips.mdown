@@ -1,0 +1,79 @@
+Title: Common problems I faced with Vagrant and VirtualBox
+Date: 2015-05-08 19:00
+Category: code, vagrant
+
+Sometimes I have a little bit of trouble getting my development setup to work properly.
+
+My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
+I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.
+
+Vagrant lost my old development environment omgomgomg!
+-----------------------------------------------------
+
+Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox.
+Vagrant stores this UUID in a file called `id` and this file is located in the `.vagrant` directory which is located beside the `Vagrantfile`.
+
+Specifically for me, it is located
+
+```
+|-- .vagrant
+ |-- machines
+  |-- default
+   |-- virtualbox
+    |-- id
+|-- Vagrantfile
+```
+
+Your layout may look different depending on your `Vagrantfile` config.
+
+Usually, when the `id` file is messed up, either its contents has been corrupted or the file deleted, Vagrant will be unable to find the VirtualBox that is backing this.
+
+The fix is simple, create the `id` file in the place that it should be located (and this isn't difficult to find because those directories will not be removed even if the file was deleted), with the contents being the UUID of the original VirtualBox. The trouble is finding the UUID.
+
+You will not be able to find the UUID from the VirtualBox GUI. I found the best way to find the UUID is through the `VBoxManage` command that comes with the VirtualBox installation. Here's how (in powershell):
+
+```powershell
+PS C:\Users\ZhiAn> & 'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe' list vms
+"stuff-dev_default_1430843699366_68732" {4ba4dec6-7f96-4185-bf64-97bb6334c090}
+"morestuff_default_1430602346381_75524" {3eb30515-6eac-472c-87bd-9abc3503031b}
+"yetmorestuff_default_1430751792081_54559" {e35079c1-387e-4bbe-ac0e-47ce139fee7d}
+```
+
+The UUID is the string within the curly braces `{}`.
+
+I upgraded VirtualBox and it lost all my VMs, HELP!!!
+-----------------------------------------------------
+
+I encountered this problem because (I think):
+
+1. I created those VirtualBox boxes via vagrant while in cygwin drive, e.g. `C:\cygwin\home\ZhiAn`
+2. Vagrant created a folder called `VirtualBox VMs` inside `~`, which in the cygwin drive meant `C:\cygwin\home\ZhiAn`
+3. I upgraded my VirtualBox in host machine, and it registered all the VMs that were in `~`, which meant `C:\Users\ZhiAn\VirtualBox VMs`.
+4. Poof, old boxes gone!
+
+This isn't too difficult to solve, we just had to register those VMs that lived inside cygwin, and let VirtualBox know about them.
+
+I found that a `VBoxManage` command is helpful here.
+
+```powershell
+PS C:\Users\ZhiAn> & 'C:\Program Files\Oracle\VirtualBox\VBoxManage.exe' registervm 'C:\cygwin\home\ZhiAn\VirtualBox VMs\box\box.vbox'
+```
+
+So just call the `registervm` subcommand and pass in the path to a `.vbox` file, which lived my cygwin drive.
+
+VirtualBox Guest Additions version don't match! What is that???
+---------------------------------------------------------------
+
+The Guest Additions is installed on the guest OS to enable cool stuff, like mouse pointer integration etc. Don't know too much about it, I just don't like the warnings.
+
+I had some trouble finding instructions to upgrade this, and after some digging through old forum posts, issues on vagrant's GitHub issue tracker, and Oracle's documentation on VirtualBox, I believe I have the solution. But only if you're on a Windows host and trying to run a Linux guest.
+
+1. Get the Guest Additions iso from here [http://dlc-cdn.sun.com/virtualbox/4.3.26/index.html]().
+2. Open up your VirtualBox GUI, start the box you want to update the Guest Additions.
+3. In the open window for the box, select 'Insert Guest Additions'
+4. Now in the guest OS execute these commands:
+
+    cd ~ && mkdir vbox
+    mount /dev/sr0 vbox/
+    ./VBoxLinuxAdditions
+
