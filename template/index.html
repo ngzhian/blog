@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <table id="post-list">
+        {% for post in posts %}
+          <tr>
+            <td>
+              <span class="published">{{ post.date }}</span>
+            </td>
+            <td>
+              <a class="entry-title" href="{{ post.html_path }}">
+                {{ post.title|safe }}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+        </table>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>
