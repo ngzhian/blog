@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <a href="./index.html">&lt;&lt;</a>
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <time class="published">
+        2015-05-17
+        </time>
+        <h1>
+        ffmpeg to make gifs
+	</h1>
+        <div class="entry-content">
+        <p>Over the weekend I was working on a little hack called <a href='https://github.com/ngzhian/help-me-man/'>Help me man!</a>, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.</p>
+<p>I&#39;ve heard quite a bit about <code>ffmpeg</code> as a swiss army knife for manipulating videos, so I decided to try it out.</p>
+<p>ffmpeg can be downloaded from its <a href='http://ffmpeg.org/'>homepage</a>, and the documentation is available <a href='http://ffmpeg.org/ffmpeg.html'>here</a>.</p>
+<blockquote><p>I couldn&#39;t find a package for it on Ubuntu, so I downloaded the binary file and it ran fine</p>
+</blockquote>
+
+<p>There are so many command line parameters available that it can be daunting to use this tool. But since my use cases were pretty common, a quick search online turned out the right commands to run.</p>
+<p>The simplest command here is this:</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 demo.gif</code></pre>
+
+<p>This converts a video file to a gif. The <code>-i</code> parameter specifies the input file, and the last argument is the name of the output file. <code>ffmpeg</code> will look at the name of the output file and determine what is the type of the file it will write to.</p>
+<p>However, the gif turned out to be too huge.</p>
+<p>One way to reduce the size of the gif is to reduce the screen resolution:</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -vf scale=320x260 demo.gif</code></pre>
+
+<p>The <code>-vf</code> argument takes a scale in the format of <code>WIDTHxHEIGHT</code>. This requires us to calculate both the height and width of the output we want, but there is a better way:</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -vf scale=320:-1 demo.gif</code></pre>
+
+<p>By writing <code>:-1</code>, <code>ffmpeg</code> will automatically scale the video to fit!</p>
+<p>We can also crop the video using ffmpeg:</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -ss 00:00:04 demo.gif</code></pre>
+
+<p>The <code>-ss</code> paramter specifies the time you want the video to crop to.</p>
+<p>To specify the end time, there are a couple of ways</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -ss 4 -t 10 demo.gif</code></pre>
+
+<p>Note that you can specify the number of seconds as well, so you don&#39;t have to keep typing <code>00:00:04</code>.</p>
+<p>The <code>-t</code> paramter specifics the duration of the video to run, so in the above example, we start from 4 seconds into the video, and run for 10 seconds. Our resulting gif is then 10 seconds long.</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -ss 4 -to 10 demo.gif</code></pre>
+
+<p>If you instead use <code>-to</code>, it will seek to 4 seconds and stop at 10 seconds, the resulting gif is then 6 seconds (10 - 4) long.</p>
+<p>The last thing I did to reduce the file size was to reduce the frame rate of the resulting video.</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4  -r 6 demo.gif</code></pre>
+
+<p>The <code>-r</code> parameter specifies the frame rate of the output file, in this case we set the output frame rate to 6 frames per second.</p>
+<p>One last helpful thing, if you call <code>ffmpeg</code> without an output file name, it will print out the info of the input file.</p>
+<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4</code></pre>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

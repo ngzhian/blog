@@ -12,12 +12,12 @@
         <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
       </header>
       <section id="content" class="body">
+        <time class="published">
+        {{ post.date }}
+        </time>
         <h1>
         {{ post.title }}
 	</h1>
-        <h2>
-        {{ post.date }}
-	</h2>
         <div class="entry-content">
         {{ post.content|safe }}
         </div>

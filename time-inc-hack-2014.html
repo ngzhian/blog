@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <a href="./index.html">&lt;&lt;</a>
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <time class="published">
+        2014-11-20
+        </time>
+        <h1>
+        Suggest - My Hack for TimeIncHack2014
+	</h1>
+        <div class="entry-content">
+        <p>Over the weekend of 15-16 Nov, I took part in TimeIncHack2014, organized by Time Inc. The theme was about getting millenials to consume content, but I took off on a tangent right after hearing the problem description by the organizers: instead of building applications or services that media consumers will use, I was interested in making an internal tool for content creators to write articles that are more relevant.</p>
+<p>Born out of around 20 hours of hacking (18 of which was while standing), I built <a href='http://128.199.204.208/'>Suggest</a>, a tool that analyzes what has been written so far and tries to grab articles that are relevant.</p>
+<p>It begins with a simple textarea where you can type (or just copy and paste an article to test it out) into.</p>
+<p><img src='http://i.imgur.com/JH2FObx.png?1' alt='simple textarea for your content' /></p>
+<p>It will perform entity recognition on the content, grabbing <em>Nouns</em>, such as people, organizations, places, and list them at the bottom.</p>
+<p><img src='http://i.imgur.com/lctBs56.png?1' alt='live entity recognition' /></p>
+<p>When you press the <code>Suggest</code> button, it will perform a keyword analysis on your content, pull from new sources other articles that are relevant based on the keywords, and show them by the side, under the <code>Relevant</code> tab.</p>
+<p><img src='http://i.imgur.com/FGlk8Vo.png?1' alt='related articles' /></p>
+<p>The <code>Tag</code> tab suggests articles from Time Inc that are tagged under the same category as what Suggest thinks the current content should be under.</p>
+<p><img src='http://i.imgur.com/gjaboQT.png?1' alt='tags' /></p>
+<p>All of the hard work (keyword analysis and entity extraction) is powered by <a href='http://www.alchemyapi.com/'>AlchemyAPI</a>, which has a super simple way (and easy to use python sdk) to do all these. Thanks to them for the wonderful work and increasing my API calls limit for the hackathon! The articles are pulled from <a href='http://developer.nytimes.com/'>New York Times</a>, who have a superb restful developers endpoint, and also <a href='http://time.com/'>Time Inc</a>, lovely organizers of this hackathon.</p>
+<p>The code is <a href='https://github.com/ngzhian/suggest'>open source</a>, feel free to check it out and throw suggestions at me. For the code to run you basically need to register with AlchemyAPI and New York Times for api keys - which is a super simple process.</p>
+
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

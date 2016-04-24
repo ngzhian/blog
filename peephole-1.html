@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <a href="./index.html">&lt;&lt;</a>
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <time class="published">
+        2015-04-28
+        </time>
+        <h1>
+        What are Peephole Optimizations?
+	</h1>
+        <div class="entry-content">
+        <p>As part of <a href='{filename}/closure-compiler-1.mdown'>the series</a> exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.</p>
+<p>The <a href='https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28'>code itself</a> describes peephole optimizations as:</p>
+<blockquote><p>optimizations that look at a small section of code and either remove
+that code (if it is not needed) or replaces it with smaller code.</p>
+</blockquote>
+
+<p>And from <a href='https://en.wikipedia.org/wiki/Peephole_optimization'>Wikipedia</a></p>
+<blockquote><p>In compiler theory, peephole optimization is a kind of optimization performed over a very small set of instructions in a segment of generated code. The set is called a &gt; &quot;peephole&quot; or a &quot;window&quot;. It works by recognising sets of instructions that can be replaced by shorter or faster sets of instructions.</p>
+</blockquote>
+
+<p>Let&#39;s try an example:</p>
+<pre class='javascript'><code class='javascript'>var x = 1 + 2;</code></pre>
+
+<p>This would be completely correct if it were written as</p>
+<pre class='javascript'><code class='javascript'> var x = 3;</code></pre>
+
+<p>And it&#39;s easy to verify so!</p>
+<p>This is a particular kind of peephole optimization that known as &quot;contant folding&quot;, which has an <a href='https://en.wikipedia.org/wiki/Constant_folding'>entire wiki page</a> dedicated.</p>
+<p>To quote what Wikipedia has to say about constant folding:</p>
+<blockquote><p>Constant folding is the process of recognizing and evaluating constant expressions at compile time rather than computing them at runtime.</p>
+</blockquote>
+
+<p>It&#39;s about getting results event before running any code! I think of it as being similar to static typing, where you can prove correctness without running the code.</p>
+<p>The Wiki page gives more examples of constant folding that a compiler may do, including:</p>
+<ul><li>fold <code>0 * x</code> to <code>0</code></li><li>fold <code>&quot;abc&quot; + &quot;def&quot;</code> to <code>&quot;abcdef&quot;</code></li></ul>
+
+<p>We can find out if the closure compiler does such folding:</p>
+<p><code>var z = 0 * 10;</code> gets compiled to <code>var z = 0</code>.</p>
+<p>And, probably unsurprisingly, <code>var s = &quot;abc&quot; + &quot;def&quot;</code> gets compiled to <code>var s = &quot;abcdefg&quot;</code>.</p>
+<p>A more advanced optimization is <em>Constant Propagation</em>. This is when values of expressions are known during the compilation stage, because they are constant, and can be substituted.</p>
+<p>For example, this code:</p>
+<pre class='javascript'><code class='javascript'>var x = 10;
+var z = x * 2;</code></pre>
+
+<p>will be compiled down to</p>
+<pre class='javascript'><code class='javascript'>var x=10,z=20;</code></pre>
+
+<p>However to get this using the closure compiler, you have to turn on advanced optimizations, the instructions are <a href='https://developers.google.com/closure/compiler/docs/api-tutorial3#enable-app'>here</a>.</p>
+<p>If you tried this and got and empty file, chances are that the compiler eliminated all code in the <em>dead code elimination</em> pass, where unused code is just thrown away. This is another compilation pass that is enabled when you turn on advanced optimizations.</p>
+<p>In this case you can just add a stray log statement to ensure that the variable is used, like so:</p>
+<pre class='javascript'><code class='javascript'>var x = 10;
+var z = x * 2;
+console.log(z);</code></pre>
+
+<p>and you should see, <code>console.log(20)</code>. Pretty crazy optimizations huh?</p>
+<p>Here are the peephole optimizations that the closure compiler has:</p>
+<p><img src='http://i.imgur.com/dhRAzCX.png' alt='List of peephole optimizations in closure compiler' /></p>
+<h1 id="Whywouldanyonewritecodelikethis">Why would anyone write code like this?</h1>
+
+<p>When I first saw this example, I was thinking to myself, would people even write such code? And almost immediately I realized that I was guilty of this!</p>
+<p>When building websites, I often use the <code>setInterval</code> and <code>setTimeout</code> functions. Both of these functions take as their first argument a callback function, and the second argument is a time duration in milliseconds. For example,</p>
+<pre class='javascript'><code class='javascript'>setInterval(function() {
+    alert(&#39;Hi!&#39;);
+}, 5000);</code></pre>
+
+<p>Would set off an alert saying &#39;Hi!&#39; every 5 seconds. It isn&#39;t that hard seeing that 5000ms is 5 seconds... Or you could write it like this:</p>
+<pre class='javascript'><code class='javascript'>setInterval(function() {
+    alert(&#39;Hi!&#39;);
+}, 5 * 1000);</code></pre>
+
+<p>This makes the 5 extremely obvious.</p>
+<p>When more complicated calculations are involved:</p>
+<pre class='javascript'><code class='javascript'>SECONDS_IN_DAY = 24 * 60 * 60</code></pre>
+
+<p>It&#39;s nice knowing that it will be compiled down to <code>SECONDS_IN_DAY=86400</code>.</p>
+
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

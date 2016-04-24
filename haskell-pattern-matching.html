@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <a href="./index.html">&lt;&lt;</a>
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <time class="published">
+        2015-09-11
+        </time>
+        <h1>
+        Haskell's powerful pattern matching
+	</h1>
+        <div class="entry-content">
+        <p>Recently I&#39;ve been trying out problems on <a href='codeforces.com'>codeforces</a> to practice my algorithms and data structure problem solving skills.</p>
+<p>This is a good chance to revise a language I know but haven&#39;t used for a while, or to pick up a new language.
+For me it was a chance to write some <a href='https://www.haskell.org'>Haskell</a>.</p>
+<p>The particular problem I was working on is <a href='http://codeforces.com/problemset/problem/1/B'>1B</a>.
+Take a minute to read it, it&#39;s an interesting problem.</p>
+<p>In summary, there are 2 numeration systems, and if we are given <em>system A</em>, we need to translate it to <em>system B</em>, and vice versa.</p>
+<p>I chose to write a function that decides if a given string belongs to system A.
+The function signature is simple.</p>
+<pre class='haskell'><code class='haskell'>isA :: String -&gt; Bool</code></pre>
+
+<p>In short, <em>system A</em> is where you have:</p>
+<ol><li>the letter &#39;R&#39;,</li><li>followed by the row number,</li><li>the letter &#39;C&#39;,</li><li>finally the column number.</li></ol>
+
+<p>For example, these strings belong to <em>system A</em>:</p>
+<pre><code>R23C55
+R4C8</code></pre>
+
+<p>My implementation looks something like this:</p>
+<pre class='haskell'><code class='haskell'>isA :: String -&gt; Bool
+isA (&#39;R&#39;:ss) = hasNumbersThenC
+    where hasNumbersThenC = nums /= []
+         (nums, row) = splitAt posnC ss
+         posnC = case elemIndex &#39;C&#39; ss of
+           Just n -&gt; n
+           Nothing -&gt; 0
+isA _ = False</code></pre>
+
+<p>So this isn&#39;t really idiomatic Haskell (I&#39;m still learning), but the general idea is this:</p>
+<ol><li>Use pattern matching to catch the first &#39;R&#39;.</li><li>Try to find a &#39;C&#39; in the rest of the string (<code>ss</code> in the code)</li><li>Split the remaining string (without &#39;R&#39;) by the position of &#39;C&#39;
+ So <a href='https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-List.html#v:splitAt'>splitAt</a> will return a tuple, with the first element having a length of <code>posnC</code>.</li><li>Check that <code>nums</code> is not an empty list <code>[]</code>. This check takes care that there is a &#39;C&#39; in the string, and that there are letters before the &#39;C&#39;.</li></ol>
+
+<p>This sounds like a pretty involved process and the code I wrote still feels imperative even though I&#39;m using a functional language, so I thought a little bit about how to make it better.</p>
+<p>And then it hit me, if I can pattern match on the &#39;R&#39;, can I pattern match on the &#39;C&#39; as well?</p>
+<pre class='haskell'><code class='haskell'>isA :: String -&gt; Bool
+isA (&#39;R&#39;:rs:&#39;C&#39;:cs) = True
+isA _ = False</code></pre>
+
+<p>And that&#39;s it!</p>
+
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

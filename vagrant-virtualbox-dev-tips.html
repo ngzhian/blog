@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <a href="./index.html">&lt;&lt;</a>
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <time class="published">
+        2015-05-08
+        </time>
+        <h1>
+        Common problems I faced with Vagrant and VirtualBox
+	</h1>
+        <div class="entry-content">
+        <p>Sometimes I have a little bit of trouble getting my development setup to work properly.</p>
+<p>My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
+I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.</p>
+<h2 id="Vagrantlostmyolddevelopmentenvironmentomgomgomg">Vagrant lost my old development environment omgomgomg!</h2>
+
+<p>Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox.
+Vagrant stores this UUID in a file called <code>id</code> and this file is located in the <code>.vagrant</code> directory which is located beside the <code>Vagrantfile</code>.</p>
+<p>Specifically for me, it is located</p>
+<pre><code>|-- .vagrant
+ |-- machines
+  |-- default
+   |-- virtualbox
+    |-- id
+|-- Vagrantfile</code></pre>
+
+<p>Your layout may look different depending on your <code>Vagrantfile</code> config.</p>
+<p>Usually, when the <code>id</code> file is messed up, either its contents has been corrupted or the file deleted, Vagrant will be unable to find the VirtualBox that is backing this.</p>
+<p>The fix is simple, create the <code>id</code> file in the place that it should be located (and this isn&#39;t difficult to find because those directories will not be removed even if the file was deleted), with the contents being the UUID of the original VirtualBox. The trouble is finding the UUID.</p>
+<p>You will not be able to find the UUID from the VirtualBox GUI. I found the best way to find the UUID is through the <code>VBoxManage</code> command that comes with the VirtualBox installation. Here&#39;s how (in powershell):</p>
+<pre class='powershell'><code class='powershell'>PS C:\Users\ZhiAn&gt; &amp; &#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39; list vms
+&quot;stuff-dev_default_1430843699366_68732&quot; {4ba4dec6-7f96-4185-bf64-97bb6334c090}
+&quot;morestuff_default_1430602346381_75524&quot; {3eb30515-6eac-472c-87bd-9abc3503031b}
+&quot;yetmorestuff_default_1430751792081_54559&quot; {e35079c1-387e-4bbe-ac0e-47ce139fee7d}</code></pre>
+
+<p>The UUID is the string within the curly braces <code>{}</code>.</p>
+<h2 id="IupgradedVirtualBoxanditlostallmyVMsHELP">I upgraded VirtualBox and it lost all my VMs, HELP!!!</h2>
+
+<p>I encountered this problem because (I think):</p>
+<ol><li>I created those VirtualBox boxes via vagrant while in cygwin drive, e.g. <code>C:\cygwin\home\ZhiAn</code></li><li>Vagrant created a folder called <code>VirtualBox VMs</code> inside <code>~</code>, which in the cygwin drive meant <code>C:\cygwin\home\ZhiAn</code></li><li>I upgraded my VirtualBox in host machine, and it registered all the VMs that were in <code>~</code>, which meant <code>C:\Users\ZhiAn\VirtualBox VMs</code>.</li><li>Poof, old boxes gone!</li></ol>
+
+<p>This isn&#39;t too difficult to solve, we just had to register those VMs that lived inside cygwin, and let VirtualBox know about them.</p>
+<p>I found that a <code>VBoxManage</code> command is helpful here.</p>
+<pre class='powershell'><code class='powershell'>PS C:\Users\ZhiAn&gt; &amp; &#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39; registervm &#39;C:\cygwin\home\ZhiAn\VirtualBox VMs\box\box.vbox&#39;</code></pre>
+
+<p>So just call the <code>registervm</code> subcommand and pass in the path to a <code>.vbox</code> file, which lived my cygwin drive.</p>
+<h2 id="VirtualBoxGuestAdditionsversiondon39tmatchWhatisthat">VirtualBox Guest Additions version don&#39;t match! What is that???</h2>
+
+<p>The Guest Additions is installed on the guest OS to enable cool stuff, like mouse pointer integration etc. Don&#39;t know too much about it, I just don&#39;t like the warnings.</p>
+<p>I had some trouble finding instructions to upgrade this, and after some digging through old forum posts, issues on vagrant&#39;s GitHub issue tracker, and Oracle&#39;s documentation on VirtualBox, I believe I have the solution. But only if you&#39;re on a Windows host and trying to run a Linux guest.</p>
+<ol><li><p>Get the Guest Additions iso from here <a href=''>http://dlc-cdn.sun.com/virtualbox/4.3.26/index.html</a>.</p>
+</li><li><p>Open up your VirtualBox GUI, start the box you want to update the Guest Additions.</p>
+</li><li><p>In the open window for the box, select &#39;Insert Guest Additions&#39;</p>
+</li><li><p>Now in the guest OS execute these commands:</p>
+<p>cd ~ &amp;&amp; mkdir vbox
+mount /dev/sr0 vbox/
+./VBoxLinuxAdditions</p>
+</li></ol>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
