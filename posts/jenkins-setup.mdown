@@ -46,7 +46,7 @@ Go to Jenkins interface > manage jenkins > manage plugins, and install Git Plugi
 - Repository URL is a path passed to `git clone`, and my project is mounted onto `/vagrant`
 - Shallow clone, I don't need the full history of the repository, so this should make things speedier
 
-![Git configuration]({filename}/images/jenkins-git.png)
+![Git configuration](images/jenkins-git.png)
 
 The setup for the Git means that your local git repo will be cloned down to Jenkin's *workspace* before each build. A workspace is the directory Jenkins is processing the build in, and for me it is `/var/lib/jenkins/jobs/project/workspace` where project is the name of the Jenkin's job. More information on the folder structure used by Jenkins can be found [here](https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins)
 
@@ -54,7 +54,7 @@ The first build!
 ===
 Next up we need to actually run the tests. This can be configured in the *Build* section further down the page. Before Jenkins, how I was running my tests was just a shellscript, which is a simple wrapper around `manage.py test` to pass in the right parameters. So for Jenkins, all I needed to do was to call the shell script.
 
-![Build]({filename}/images/jenkins-build.png)
+![Build](images/jenkins-build.png)
 
 Click Build Now, and then navigate to the console output to enjoy your success! I hope. That's your first Jenkin's build :)
 
@@ -62,7 +62,7 @@ Report coverage with Cobertura
 ===
 I use `coverage.py` to generate reports for my tests, and it also has [the ability](http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting) to generate XML file that Cobertura can regonize.
 
-![Cobertura]({filename}/images/jenkins-cobertura.png)
+![Cobertura](images/jenkins-cobertura.png)
 
 So again install Cobertura, and set it up by pointing it to the name of your coverage file. After this, click Build Now and you should be able to view the report from your build's status page.
 
@@ -70,7 +70,7 @@ Automate!
 ===
 The final step is to set it up such that any changes you make (commit) will cause a build. We can do this is to set up a Build Trigger to Poll SCM (Git), on a 5 min schedule. So every 5 minutes, if Jenkins detects a change to the Git repository, it will run a new build.
 
-![Build Triggers]({filename}/images/jenkins-build-trigger.png)
+![Build Triggers](images/jenkins-build-trigger.png)
 
 setup a local jenkins
 
