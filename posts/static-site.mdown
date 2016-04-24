@@ -66,3 +66,7 @@ Converters can do things like convert markdown to html, or render templates usin
 uses ruby's require feature to load plugins from `_plugins`, as gems specified in `_config.yml`, or gems specified in `Gemfile`. Plugins are initialized when initializing `Site`.
 
 To write a plugin, you can extend various Jekyll base classes, such as `Generator`, `Converter`, and implementing some methods.
+
+## Hakyll
+
+*coming soon*
