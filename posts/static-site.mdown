@@ -78,4 +78,88 @@ To write a plugin, you can extend various Jekyll base classes, such as `Generato
 
 ## Hakyll
 
-*coming soon*
+> Hakyll relies heavily on the Haskell type system, if you are not familiar with Haskell at all,
+  this might be a difficult read. I try to describe things without talking too much about
+  types, so I hope it is still understandable.
+
+Hakyll takes a different approach of building your site.
+
+You first install Hakyll using stack,
+and use `hakyll` to initialize a site, which will generate a simple `site.hs`.
+
+This file is the entry point for configuring your build.
+You write haskell, calling classes and functions provided by the Hakyll library,
+but it looks like you're configuring because Hakyll provides a DSL that makes it look like
+you're configuring your build.
+Finally, to build your file, you *run* that configuration using stack.
+
+By default, files are read from current directory and written to `_site/`.
+
+Again, we'll take a top down approach.
+
+In haskell, the main function is called `main`, and in this case it is calling `hakyllWith`
+with a `Configuration` and `Rules`.
+
+> If you are unfamiliar with haskell, the `$` basically means, "evaluate everything to my right first"
+
+If we trace `hakyllWith`, we find that it eventually calls `Runtime.run` with a `Configuration`,
+`Logger`, and `Rules`.
+
+We can think of `Rules` as a set of rules, which is made up of
+
+  1. Match pattern (`match`),
+  2. Route (`route`), and
+  3. Compiler (`compile`)
+
+A match pattern specifies glob expressions to match file paths.
+
+A route specifies where to write output to.
+
+A compiler specifies what to do to the input before writing it out.
+
+These 3 functions are defined in [`Core/Rules.hs`](https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules.hs).
+
+If we look at the types of these 3 functions, they all return `Rules ()`.
+You can find the definition of `Rules` in [`Core/Rules/Internal.hs`](https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules/Internal.hs)>
+
+The definition looks strange, but I think of `Rules` as an abstract data type that
+contains computation.
+
+All computations can read from a shared enviroment, output to a shared space, and share state.
+
+In that way, `Rules` is a composite data structure, made up of 3 other types:
+
+  1. `RulesRead` - shared environment that values can be read from
+  2. `RuleSet` - place where computation can write output
+  3. `RulesState` - the current status of computation
+
+`route` and `compile` set the state (`RulesState`), setting the current route and compiler to use.
+
+`match` fills up the `RuleSet` structure, which is made up of routes, compilers, resources and pattern,
+then clears the state (`RulesState`).
+A list of matched `Identifiers` is retrieved from the environment.
+A route is retrieved from `RulesState` that `route` set up, and added to the `RuleSet`.
+The compiler is retrieved from the `RulesState` that `compile` set up, and a compiler is assigned
+to each matched `Identifier`. This mapping is set on `RuleSet`.
+
+The multiple `match` expressions all return `Rules`, and I like to think that all the `Rules`
+are squashed into a single `Rules`, like how many `Int` can be summed into a single `Int`.
+
+Finally after all this explanation, we return to the `run` function.
+At this point we have a `RuleSet` to work with, and using that we build a `Runtime`.
+
+`Runtime` is similar to `Rules` in that it has 3 components:
+
+  1. `RuntimeRead` - shared environment
+  2. `()` - place to output to, in this case this means that we don't save the output
+  2. `RuntimeState` - current status of computation
+
+`run` eventually calls `build` which calls `pickAndChase`.
+
+`chase` will pick from a list of `Identifier` that represents todos,
+and try to run the compiler on it.
+A compilation can be successful, in that case the we can write routes, save to store (cache), and
+update states.
+If this compilation requires some dependency, then run the dependencies first.
+
+
