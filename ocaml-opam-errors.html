@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <a href="./index.html">&lt;</a>
+        <time class="published">
+        2016-05-03
+        </time>
+        <h1>
+        Error messages from opam when installing packages
+        </h1>
+        <div class="entry-content">
+        <p>I was trying to install <code>jingoo</code> from opam, but met with some error,
+and the message wasn&#39;t clear about what was causing it.</p>
+<pre><code>$ opam install jingoo
+Your request can&#39;t be satisfied:
+  - No package matches jingoo.
+
+  No solution found, exiting</code></pre>
+
+<p>So opam reports that there is no such package,
+but if we try searching for it</p>
+<pre><code>$ opam search jingoo
+# Existing packages for 4.03.0:
+jingoo  --  Template engine almost compatible with Jinja2(python template engine)</code></pre>
+
+<p>it&#39;s there!</p>
+<p>Time to dig deeper, a helpful command line parameter is <code>--debug</code></p>
+<pre><code>$ opam install --debug jingoo
+...
+00:01.741  HEURISTIC               state-of-request: install:(base-bigarray &amp; base-bigarray (= 1) &amp; base-threads &amp; base-threads (= 1) &amp; base-unix &amp; base-unix (= 1)) remove:() upgrade:(jingoo) criteria:&quot;-removed,-notuptodate,-changed&quot; CONFLICT!
+00:01.741  CUDF                    resolve request=install:(base-bigarray &amp; base-bigarray (= 1) &amp; base-threads &amp; base-threads (= 1) &amp; base-unix &amp; base-unix (= 1)) remove:() upgrade:(jingoo) criteria:&quot;-removed,-notuptodate,-changed&quot;
+00:01.741  CLIENT                  conflict!
+Your request can&#39;t be satisfied:
+  - No package matches jingoo.
+
+  No solution found, exiting
+...</code></pre>
+
+<p>My first try searching for this error turned up an
+<a href='https://github.com/ocaml/opam/issues/2010'>issue</a>
+that mentioned <code>aspcud</code>, which is a constraint solver
+that opam uses to decide the versions of dependencies to install.</p>
+<p>So I tried to install it (I&#39;m on Ubuntu 16.04)</p>
+<pre><code>$ sudo apt install aspcud</code></pre>
+
+<p>and then tried installing <code>jingoo</code> again</p>
+<pre><code>$ opam install jingoo
+The following dependencies couldn&#39;t be met:
+  - jingoo -&gt; batteries
+  Your request can&#39;t be satisfied:
+    - batteries is not available because your system doesn&#39;t comply with ocaml-version &gt;= &quot;3.12.1&quot; &amp; ocaml-version &lt; &quot;4.03.0&quot;.
+
+    No solution found, exiting</code></pre>
+
+<p>This gives a different error message.</p>
+<p>So if you faced this particular problem of
+not being able to install a package via <code>opam install</code>,
+reporting package as not found,
+even though <code>opam search</code> lists the package, you should try this.</p>
+<p>This issue is already report on opam
+<a href='https://github.com/ocaml/opam/issues/2526'>here</a>.</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

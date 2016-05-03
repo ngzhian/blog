@@ -1,0 +1,35 @@
+Title: Installing OCaml from source on Ubuntu
+Date: 2016-05-02 22:32
+
+Detailed steps to build OCaml can be found
+[here](http://caml.inria.fr/pub/distrib/ocaml-4.03/notes/INSTALL.adoc).
+
+The text might scare some, but the steps for Ubuntu are fairly straightforward.
+Here are the steps:
+
+First, download a version from the [release page](https://ocaml.org/releases/)
+
+Then...
+
+```
+$ tar -xf ocaml-4.03.0.tar.xz
+$ cd ocaml-4.03.0
+$ ./configure
+$ make world
+$ make opt
+$ sudo su
+# umask 022
+# make install
+# make clean
+# exit
+$ wget https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh -O - | sh -s /usr/local/bin
+```
+
+The explanation for the above commands are:
+
+1. extract the archive file
+2. configure
+3. build the OCaml compiler (bytecode and native code)
+4. become root and install to binary directory
+5. clean up
+6. Install opam

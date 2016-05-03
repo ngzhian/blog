@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div class="content">
+      <header id="banner">
+        <img class="avatar" src="http://i.imgur.com/r3v4S9O.jpg">
+      </header>
+      <section id="content" class="body">
+        <a href="./index.html">&lt;</a>
+        <time class="published">
+        2016-05-02
+        </time>
+        <h1>
+        Installing OCaml from source on Ubuntu
+        </h1>
+        <div class="entry-content">
+        <p>Detailed steps to build OCaml can be found
+<a href='http://caml.inria.fr/pub/distrib/ocaml-4.03/notes/INSTALL.adoc'>here</a>.</p>
+<p>The text might scare some, but the steps for Ubuntu are fairly straightforward.
+Here are the steps:</p>
+<p>First, download a version from the <a href='https://ocaml.org/releases/'>release page</a></p>
+<p>Then...</p>
+<pre><code>$ tar -xf ocaml-4.03.0.tar.xz
+$ cd ocaml-4.03.0
+$ ./configure
+$ make world
+$ make opt
+$ sudo su
+# umask 022
+# make install
+# make clean
+# exit
+$ wget https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh -O - | sh -s /usr/local/bin</code></pre>
+
+<p>The explanation for the above commands are:</p>
+<ol><li>extract the archive file</li><li>configure</li><li>build the OCaml compiler (bytecode and native code)</li><li>become root and install to binary directory</li><li>clean up</li><li>Install opam</li></ol>
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

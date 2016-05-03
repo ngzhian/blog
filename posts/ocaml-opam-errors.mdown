@@ -1,0 +1,76 @@
+Title: Error messages from opam when installing packages
+Date: 2016-05-03 12:24
+
+I was trying to install `jingoo` from opam, but met with some error,
+and the message wasn't clear about what was causing it.
+
+```
+$ opam install jingoo
+Your request can't be satisfied:
+  - No package matches jingoo.
+
+  No solution found, exiting
+```
+
+So opam reports that there is no such package,
+but if we try searching for it
+
+```
+$ opam search jingoo
+# Existing packages for 4.03.0:
+jingoo  --  Template engine almost compatible with Jinja2(python template engine)
+```
+
+it's there!
+
+Time to dig deeper, a helpful command line parameter is `--debug`
+
+
+```
+$ opam install --debug jingoo
+...
+00:01.741  HEURISTIC               state-of-request: install:(base-bigarray & base-bigarray (= 1) & base-threads & base-threads (= 1) & base-unix & base-unix (= 1)) remove:() upgrade:(jingoo) criteria:"-removed,-notuptodate,-changed" CONFLICT!
+00:01.741  CUDF                    resolve request=install:(base-bigarray & base-bigarray (= 1) & base-threads & base-threads (= 1) & base-unix & base-unix (= 1)) remove:() upgrade:(jingoo) criteria:"-removed,-notuptodate,-changed"
+00:01.741  CLIENT                  conflict!
+Your request can't be satisfied:
+  - No package matches jingoo.
+
+  No solution found, exiting
+...
+```
+
+My first try searching for this error turned up an
+[issue](https://github.com/ocaml/opam/issues/2010)
+that mentioned `aspcud`, which is a constraint solver
+that opam uses to decide the versions of dependencies to install.
+
+So I tried to install it (I'm on Ubuntu 16.04)
+
+```
+$ sudo apt install aspcud
+```
+
+and then tried installing `jingoo` again
+
+```
+$ opam install jingoo
+The following dependencies couldn't be met:
+  - jingoo -> batteries
+  Your request can't be satisfied:
+    - batteries is not available because your system doesn't comply with ocaml-version >= "3.12.1" & ocaml-version < "4.03.0".
+
+    No solution found, exiting
+```
+
+This gives a different error message.
+
+So if you faced this particular problem of
+not being able to install a package via `opam install`,
+reporting package as not found,
+even though `opam search` lists the package, you should try this.
+
+This issue is already report on opam
+[here](https://github.com/ocaml/opam/issues/2526).
+
+
+
