@@ -13,18 +13,18 @@
       </header>
       <section id="content" class="body">
         <table id="post-list">
-        {% for post in posts %}
+        {{#posts}}
           <tr>
             <td>
-              <span class="published">{{ post.date }}</span>
+              <span class="published">{{ date }}</span>
             </td>
             <td>
-              <a class="entry-title" href="{{ post.html_path }}">
-                {{ post.title|safe }}
+              <a class="entry-title" href="{{ html_path }}">
+                {{{ title }}}
               </a>
             </td>
           </tr>
-        {% endfor %}
+        {{/posts}}
         </table>
       </section>
       <footer>
