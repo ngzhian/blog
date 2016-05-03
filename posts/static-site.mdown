@@ -158,8 +158,10 @@ At this point we have a `RuleSet` to work with, and using that we build a `Runti
 
 `chase` will pick from a list of `Identifier` that represents todos,
 and try to run the compiler on it.
+
 A compilation can be successful, in that case the we can write routes, save to store (cache), and
 update states.
 If this compilation requires some dependency, then run the dependencies first.
 
-
+When all this completes running, you'll have your input files transformed
+by the specified compilers, and written to paths specified by your route!

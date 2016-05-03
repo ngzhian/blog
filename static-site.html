@@ -74,7 +74,65 @@ uses ruby&#39;s require feature to load plugins from <code>_plugins</code>, as g
 <p>To write a plugin, you can extend various Jekyll base classes, such as <code>Generator</code>, <code>Converter</code>, and implementing some methods.</p>
 <h2 id="Hakyll">Hakyll</h2>
 
-<p><em>coming soon</em></p>
+<blockquote><p>Hakyll relies heavily on the Haskell type system, if you are not familiar with Haskell at all,
+ this might be a difficult read. I try to describe things without talking too much about
+ types, so I hope it is still understandable.</p>
+</blockquote>
+
+<p>Hakyll takes a different approach of building your site.</p>
+<p>You first install Hakyll using stack,
+and use <code>hakyll</code> to initialize a site, which will generate a simple <code>site.hs</code>.</p>
+<p>This file is the entry point for configuring your build.
+You write haskell, calling classes and functions provided by the Hakyll library,
+but it looks like you&#39;re configuring because Hakyll provides a DSL that makes it look like
+you&#39;re configuring your build.
+Finally, to build your file, you <em>run</em> that configuration using stack.</p>
+<p>By default, files are read from current directory and written to <code>_site/</code>.</p>
+<p>Again, we&#39;ll take a top down approach.</p>
+<p>In haskell, the main function is called <code>main</code>, and in this case it is calling <code>hakyllWith</code>
+with a <code>Configuration</code> and <code>Rules</code>.</p>
+<blockquote><p>If you are unfamiliar with haskell, the <code>$</code> basically means, &quot;evaluate everything to my right first&quot;</p>
+</blockquote>
+
+<p>If we trace <code>hakyllWith</code>, we find that it eventually calls <code>Runtime.run</code> with a <code>Configuration</code>,
+<code>Logger</code>, and <code>Rules</code>.</p>
+<p>We can think of <code>Rules</code> as a set of rules, which is made up of</p>
+<ol><li>Match pattern (<code>match</code>),</li><li>Route (<code>route</code>), and</li><li>Compiler (<code>compile</code>)</li></ol>
+
+<p>A match pattern specifies glob expressions to match file paths.</p>
+<p>A route specifies where to write output to.</p>
+<p>A compiler specifies what to do to the input before writing it out.</p>
+<p>These 3 functions are defined in <a href='https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules.hs'><code>Core/Rules.hs</code></a>.</p>
+<p>If we look at the types of these 3 functions, they all return <code>Rules ()</code>.
+You can find the definition of <code>Rules</code> in <a href='https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules/Internal.hs'><code>Core/Rules/Internal.hs</code></a>&gt;</p>
+<p>The definition looks strange, but I think of <code>Rules</code> as an abstract data type that
+contains computation.</p>
+<p>All computations can read from a shared enviroment, output to a shared space, and share state.</p>
+<p>In that way, <code>Rules</code> is a composite data structure, made up of 3 other types:</p>
+<ol><li><code>RulesRead</code> - shared environment that values can be read from</li><li><code>RuleSet</code> - place where computation can write output</li><li><code>RulesState</code> - the current status of computation</li></ol>
+
+<p><code>route</code> and <code>compile</code> set the state (<code>RulesState</code>), setting the current route and compiler to use.</p>
+<p><code>match</code> fills up the <code>RuleSet</code> structure, which is made up of routes, compilers, resources and pattern,
+then clears the state (<code>RulesState</code>).
+A list of matched <code>Identifiers</code> is retrieved from the environment.
+A route is retrieved from <code>RulesState</code> that <code>route</code> set up, and added to the <code>RuleSet</code>.
+The compiler is retrieved from the <code>RulesState</code> that <code>compile</code> set up, and a compiler is assigned
+to each matched <code>Identifier</code>. This mapping is set on <code>RuleSet</code>.</p>
+<p>The multiple <code>match</code> expressions all return <code>Rules</code>, and I like to think that all the <code>Rules</code>
+are squashed into a single <code>Rules</code>, like how many <code>Int</code> can be summed into a single <code>Int</code>.</p>
+<p>Finally after all this explanation, we return to the <code>run</code> function.
+At this point we have a <code>RuleSet</code> to work with, and using that we build a <code>Runtime</code>.</p>
+<p><code>Runtime</code> is similar to <code>Rules</code> in that it has 3 components:</p>
+<ol><li><code>RuntimeRead</code> - shared environment</li><li><code>()</code> - place to output to, in this case this means that we don&#39;t save the output</li><li><code>RuntimeState</code> - current status of computation</li></ol>
+
+<p><code>run</code> eventually calls <code>build</code> which calls <code>pickAndChase</code>.</p>
+<p><code>chase</code> will pick from a list of <code>Identifier</code> that represents todos,
+and try to run the compiler on it.</p>
+<p>A compilation can be successful, in that case the we can write routes, save to store (cache), and
+update states.
+If this compilation requires some dependency, then run the dependencies first.</p>
+<p>When all this completes running, you&#39;ll have your input files transformed
+by the specified compilers, and written to paths specified by your route!</p>
 
         </div>
       </section>
