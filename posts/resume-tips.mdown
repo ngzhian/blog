@@ -1,0 +1,48 @@
+Title: Resume tips
+Date: 2016-05-04 13:35
+
+These tips are targeted towards college students looking for internships/jobs in the tech sector.
+It probably is still useful for anyone writing a resume.
+
+## Length
+
+Keep it short, 1 page is good, 2 is a stretch.
+
+Write concise points, 2 - 3 bullet points for each paragraph, please don't write essays.
+
+## Content
+
+Keep things relevant, they don't need to know everything about you.
+Discard information that is not related to the role you are applying for.
+
+Use numbers to quantify and highlight your accomplishments,
+for example, 2x speed improvement, 10 hours saved.
+
+Include a line that lists technology that you are knowledgeable in -
+if this was buzzword scrabble this line would have over 9000 points.
+
+## Format
+
+Include context, link to your social profiles (GitHub, LinkedIN), projects, websites -
+it makes it easier, or even encourages, the recruiter to browse.
+
+Format things properly, be consistent,
+but don't **go** *crazy* with DIFFERENT styles that makes things unreadable
+
+## Check
+
+Read through your resume many times, make sure there are no errors.
+
+Pretend you're the recruiter, will you accept this applicant?
+
+Keep updating your resume!
+For example when you first graduate you probably won't have a lot of work experience,
+so you can talk more about your education, co-curricular activities, side projects, etc.
+But replace them as you gain more internship/work experience.
+
+## Submit
+
+Actually send your resume.
+This is probably the hardest step.
+It's scary, but hey, if you want the job, you have to do it.
+The more you do it, the less scary it becomes, so here's [mine](resume.ngzhian.com).
