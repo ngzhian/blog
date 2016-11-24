@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a href="./index.html">&lt;</a>
+        <time class="published">
+        2016-11-12
+        </time>
+        <h1>
+        How we deploy
+        </h1>
+        <div class="entry-content">
+        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/how-we-deploy-4a43a2cb7f45#.wbq5pkezp'>here</a>.</p>
+</blockquote>
+
+<p>Bubble is made up of 4 main components:</p>
+<ol><li>Backend, this handles all the chat connections, i.e. socket.io connections, database</li><li>Web app, this is <a href='https://app.getbubblechat.com'>https://app.getbubblechat.com</a></li><li>Landing page, <a href='https://getbubblechat.com'>https://getbubblechat.com</a></li><li>Android app</li></ol>
+
+<p>All these components have a separate repository and can be deployed individually.</p>
+<p>I work primarily on the backend, and early on in the development I decided to host the backend online in an EC2 instance. This has various advantages: my team mates can now develop the front end without running the back end server, and can also interact with an instance already populated with dummy data.</p>
+<p>During peak development periods, I would deploy the backend multiple times a day — as my team mates develop, they find bugs or have suggestions on how to improve the back end, and I would code it up and deploy. This motivated me to come up with a deployment strategy that is, in my opinion: simple and easy.</p>
+<p>Here is the current iteration of my deployment script that lives in the production box. (Unfortunately I did not check this into version control, so I cannot share how this script evolved from a simple 2 liner into the 10 lines, which still isn’t that much that has primitive supports for backup.) The deploy script is relatively straightforward, and I have annotated this script heavily for the purpose of this post.</p>
+<pre><code># deploy.sh
+# goes into the right directory, and pwd for sanity checking
+cd bubble
+pwd
+# pull master (we also have travis-ci set up for master)
+# https://travis-ci.org/CS3216-Bubble/bubble
+# and install any new deps (npm-shrinkwrap to lock deps)
+# https://docs.npmjs.com/cli/shrinkwrap
+git pull
+npm install --no-progress
+# remove any old backups lying around
+if [ -f ./dist-prev ]; then
+  rm -rf ./dist-prev
+fi
+# build fails when we lock fsevents
+# the problem occurs because I develop on a mac,
+# and shrinkwrap generates a fsevents version for mac
+# but our prod instance is a fedora, and it grabs the wrong
+# version of fsevents.
+# since npm-shrinkwrap.json doesn&#39;t change much, I manually edit it.
+# https://github.com/npm/npm/issues/2679
+grep &#39;fsevents&#39; npm-shrinkwrap.json &amp;&amp; (echo &quot;remove fsevents from shrinkwrap&quot; &amp;&amp; exit 1)
+# back up current working dist, allows for easy recovery
+# in case the new build causes problems
+cp -r dist/ dist-prev/
+# finally build, this will compile our app into dist/
+npm run build
+# reserve and serve are npm run scripts that call into forever,
+# it restarts a script if running, else it starts it
+# https://github.com/foreverjs/forever
+npm run reserve || npm run serve</code></pre>
+
+<p>My deployment step is then:</p>
+<pre><code>ssh bubble # ssh into production box, set this up in .ssh/config
+./deploy.sh # the same script as above</code></pre>
+
+<p>I could have added a script to do automatic rollback as well, but I figured I don’t do rollbacks often enough (have only done it once so far). Besides, we have travis-ci set up anyway so we will know when master is broken.</p>
+<p>This deployment strategy is simple, easy to understand, and has worked really well for my team. I use the same strategy for the other components as well, a simple script that does <code>git pull</code>, runs any build step, and optionally copies built files into another directory (such as the landing page so nginx can serve those files). How does your team do deployment?</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

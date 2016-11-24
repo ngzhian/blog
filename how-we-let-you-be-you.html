@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a href="./index.html">&lt;</a>
+        <time class="published">
+        2016-11-16
+        </time>
+        <h1>
+        How we let you be you without knowing you
+        </h1>
+        <div class="entry-content">
+        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/how-we-let-you-be-you-without-knowing-you-274d12bac70e#.1pibslcfd'>here</a>.</p>
+</blockquote>
+
+<p><a href='http://getbubblechat.com/'>Bubble</a> is an <strong>anonymous chat app</strong>. And we make sure you are as anonymous as you can be while still having a pleasant and functional chat experience.</p>
+<p>This means that when you use Bubble:</p>
+<ol><li>No register, no login. Open the webpage or download the app and you’re in, start chatting!</li><li>No personal information required, we don’t ask for your name, email, age, nothing.</li><li>Names are randomly generated, which can lead to hilarious result.</li><li>We do not track you, no IP, no cookies from Bubble.</li></ol>
+
+<p>Bubble is not the first anonymous chat app (and definitely not the last), but the first 2 points are quite novel, and lead to interesting technical challenges.</p>
+<p>First, imagine this scenario: you’re chatting on Bubble. You power down your laptop for the day, and the next day you visit Bubble again. As you scroll through the message history of a room you were on, you realise that some of the messages you sent are no longer attributed to you. Surprise! Your randomly generated name is different too. You seem to be a different person now.</p>
+<p>Bubble worked like this originally (and in fact you were a different person in every room you joined). This was quite confusing for us when we used it. So we decided: identity should to persist across sessions, and in a manner that works on both the web and in the Android application.</p>
+<p>When dealing with persistent user sessions, cookies are the first thing that comes to mind. That’s how most web logins work — you authenticate with a username and password, the server saves a session id in a cookie, and every request you make afterwards, this session id can be checked by the server. There is a problem though. Cookies are not completely supported in our react-native Android app. For some reason, cookies aren’t sent for the initial WebSocket connection request. And theres more. Our framework of choice, socket.io, does not send cookies on reconnect. This means that if we chose cookies as our way of authentication, whenever you disconnect and reconnect, you will be a different person.</p>
+<p>In order to send cookies when making a WebSocket connection, you can specify additional headers using the <code>opts</code> argument when opening the connection:</p>
+<pre class='javascript'><code class='javascript'>Manager.prototype.open = function (fn, opts) {...}</code></pre>
+
+<p><a href='https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L208'>https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L208</a></p>
+<p>However, when reconnecting, there is not way to specify it (as can be seen by the lack of an <code>opts</code> argument passed to <code>self.open</code>:</p>
+<pre class='javascript'><code class='javascript'>self.open(function (err) {...})</code></pre>
+
+<p><a href='https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L527'>https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L527</a></p>
+<p>This is probably a feature because reconnect is handled automatically by socket.io, and is not something called by users. However I feel like reconnect should respect the original <code>opts</code> object passed to the very first <code>self.open</code> call.</p>
+<p>So instead of cookies, we decided to roll our own.</p>
+<p>If you inspect the packets sent by our web client, you can notice that one of the requests look something like this:</p>
+<pre><code>ws://localhost:3000/socket.io/?bubble=6337955e-04f4-4fc3-8526-26a3520731d5&amp;EIO=3&amp;transport=websocket&amp;sid=rDBpnAlgTS-V0g5VAAAA`</code></pre>
+
+<p>We make the initial WebSocket connection with a query parameter <code>bubble</code>. This is what we call a state. A state is a uuid that is used to uniquely identify a client, and is persisted client side. Internally, the server maintains a mapping of state to bubble user. When a connection is made, the server looks up this mapping to check if this state is known, i.e. an existing bubble user owns this state. If so, that socket connection is associated with the bubble user it maps to.</p>
+<p>Think of opening up multiple tabs in a browser. Because state is stored locally (for web browsers its in localstorage), each tab will make the initial connection with the same state, and will thus resolve to the same bubble user.</p>
+<p>This sounds a bit like authentication with just a username, or just a password. It does sound very scary, because an attacker can pretend to be you just by knowing your state. However we weighed the risks the decided that this was something that we accepted because:</p>
+<ol><li>We use a uuid.v4 which is unique enough for us not to worry about accidents/malicious users at this stage</li><li>Everything happens via HTTPS so we are not as vulnerable to URL snooping</li><li>It doesn’t matter too much if your identity got spoofed, everyone is anonymous anyway!</li></ol>
+
+<p>This does not solve the problem of a single real person having 2 identities on Bubble when using 2 different devices, and this cannot be solve without some sort of sign in. We think what we can do is to provide a form of anonymous sign in, for the user to input their state id. However this is probably very tedious and prone to error. We can instead generate QR code representing the state, and allow users to scan the code to authenticate. Or we could use a magic link sent to an email, like Slack, but that will require you divulging your email, which we do not want.</p>
+<p>Implementing Bubble presented very interesting challenges, and forced us to think of authentication and identity in a new way. We think the way we have decided to implement can be improved in many ways, and would love to hear your thoughts on what you think we did is totally stupid, and what you think is a pretty smart hack.</p>
+<p>If you have not tried Bubble, try it out! We are both on the <a href='http://app.bubble.com/'>web</a>, and on the <a href='https://play.google.com/store/apps/details?id=com.bubblers.bubble'>Play Store</a>.</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

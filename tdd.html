@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a href="./index.html">&lt;</a>
+        <time class="published">
+        2016-10-28
+        </time>
+        <h1>
+        TDD
+        </h1>
+        <div class="entry-content">
+        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/tdd-f82c796a4331#.ps4iq3myl'>here</a>.</p>
+</blockquote>
+
+<p>If you’re a CS3216 student reading this post, your first thought might be “TDD, are you insane? No one’s got time for that!”</p>
+<p>If you are a TA for CS3216, you might be laughing at me: “This guy wasted his time writing tests?”</p>
+<p>Or maybe I’m being overly skeptical. But it’s hard not to incite strong opinions when talking about a topic as <a href='https://news.ycombinator.com/item?id=12740456'>controversial as TDD</a>.</p>
+<p>First, some stats:</p>
+<pre><code>$ find src -name &#39;*.js&#39; | xargs wc -l
+...
+1006 total
+$ find test -name &#39;*.js&#39; | xargs wc -l
+...
+1423 total</code></pre>
+
+<p>I actually have more lines of test code than actual code!</p>
+<p>And if you actually clone the repo and run tests, you can see that some tests are not even implemented…</p>
+<p>So why test? Is it worth the time? For me, it’s a clear yes, but let me try to convince you.</p>
+<h2 id="Showthatthingswork">Show that things work</h2>
+
+<p>When your tests are green, it means that your code works according to your expectation.</p>
+<blockquote><p>Note that this is different from saying that your code is correct, tests only ensure that your code works according to what your tests says.</p>
+</blockquote>
+
+<p>And it’s easy for you to run tests! For me it’s just a single command:</p>
+<pre><code>npm run test</code></pre>
+
+<h2 id="TestsasTODO">Tests as TODO</h2>
+
+<p>The test runner I am using, mocha, allows test to be defined and marked as pending, which shows up differently in your tests results and will not fail your entire test suite:</p>
+<p><img src='images/tests-as-todo.png' alt='example of pending tests' /></p>
+<p>This serves as a good reminder of what I need to implement, and conveniently breaks down the <code>join_room</code> feature into small, manageable chunks, that can be implemented one at a time.</p>
+<h2 id="Confidentiteration">Confident iteration</h2>
+
+<p>CS3216 gives you very little time to do your project. You have not much time to think, very little time to execute, and a lot of pressure to build something usable.</p>
+<p>Given such constraints, it is easy to make mistakes. And what do you do when you make mistakes? You fix them. You change things. You edit code.</p>
+<p>How do you make sure that your mistakes are fixed once and for all? You document them with code, with tests, with regression tests.</p>
+<p><strong>Testing gives you confidence that you won’t repeat the mistakes, won’t fix bugs that you have fixed before.</strong></p>
+<p>This is especially useful when you separate the front and back end code base. I’m working on the back-end and I have team mates working on the front-end, and our API is unofficially defined in a <a href='https://github.com/CS3216-Bubble/bubble'>README</a>. So I write tests that follows the API I specified, and if I update my code so that it doesn’t fit the API, my tests will fail. This reduces the chance of angry team mates :)</p>
+<h2 id="Fasteriteration">Faster iteration</h2>
+
+<p>If I want to test that the room creation and room joining functionality works, I could</p>
+<ol><li>open up a new tab, creating a room, open another tab and join that room (~20s), or</li><li>run tests (~1s to enter command and ~2s for tests related to room creation and joining room to run).</li></ol>
+
+<p>Note that this is just for 2 functionality of the app, we have more than 10 different functionalities!</p>
+<p>So this scales up to:</p>
+<ol><li>10 x 20s = 200s</li><li>~1s to enter command + ~10s for the whole test suit = ~11s</li></ol>
+
+<p>Clearly one is better than the other.</p>
+<p>Coupled with mocha’s watch mode, which automatically re-runs tests when files are changed, and mocha’s <code>.only</code> method, tests run automatically and really quickly.</p>
+<h2 id="Sugarontop">Sugar on top</h2>
+
+<p>Oh and besides, with tests, you get a pretty little badge :)</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

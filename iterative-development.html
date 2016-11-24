@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a href="./index.html">&lt;</a>
+        <time class="published">
+        2016-10-18
+        </time>
+        <h1>
+        Iterative Development
+        </h1>
+        <div class="entry-content">
+        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/iterative-development-89937674d779#.ou4ht6'>here</a>.</p>
+</blockquote>
+
+<p>Easy to <a href='https://medium.com/@rdsubhas/10-modern-software-engineering-mistakes-bc67fbef4fc8#.txrola3hf'>over-enginner things</a>, try and make things abstract/generic.</p>
+<p>The process I’ve adopted for final project is to start with the most hacky way to do things — pretend this code is read-only. Besides, the module is so frantic that you barely have time to refine your code…</p>
+<p>We are writing a chat app, and our choice of backend framework is <a href='http://socket.io/'>Socket.io</a>. It works by attaching event handlers to events, for example:</p>
+<pre class='javascript'><code class='javascript'>io.on(&#39;connect&#39;, socket =&gt; {
+  socket.on(&#39;add&#39;, data =&gt; { console.log(data); });
+});</code></pre>
+
+<p>This means that when the client (browser) sends an <code>add</code> message to the backend, the <code>data</code> associated with the event will be logged.</p>
+<p>An example client call is:</p>
+<pre class='javascript'><code class='javascript'>io.emit(&#39;add&#39;, { hi: &#39;there&#39;});</code></pre>
+
+<p>For certain events, such as adding a message, we needed to have a <code>roomId</code>. It is easy to add in this check:</p>
+<pre class='javascript'><code class='javascript'>io.on(&#39;connect&#39;, socket =&gt; {
+  socket.on(&#39;add&#39;, data =&gt; {
+    if (!data.roomId) { console.error(&#39;No Room Id&#39;); }
+    else { /* something else */ }
+  });
+});</code></pre>
+
+<p>However, this gets unwieldy fast, because there are multiple events that will require a <code>roomId</code>, such as adding a reaction, sending typing and stop typing indicators, reporting a user, etc.</p>
+<p>As I started to implement more events, I found myself copy-pasting code, specifically the checks for <code>data.roomId</code>.</p>
+<p><strong>Copy-pasting is a smell that we have reusable code — DRY.</strong></p>
+<p>So I began to think of ways to extract this logic into a common, reusable piece of code.</p>
+<p>1 way is to extract this into a common function:</p>
+<pre class='javascript'><code class='javascript'>function ensureRoomId(data) {
+  if (!data.roomId) { throw Exception(&#39;No room id&#39;); }
+}</code></pre>
+
+<p>But this doesn’t really save much code, it’s still 1 line of code, and now I have to handle an exception.</p>
+<p>I eventually settled on a more functional way.</p>
+<pre class='javascript'><code class='javascript'>function ensureRoomId(socket, fn) {
+  return function(data) {
+    if (!data.roomId) {
+      socket.emit(&#39;error_room_id&#39;, &#39;No room id specified&#39;);
+    } else {
+      fn(data);
+    }
+  }
+}
+
+socket.on(&#39;add&#39;, ensureRoomId(socket, data =&gt; {
+  // data is guaranteed to have roomId!
+}));</code></pre>
+
+<p>Now every event handler that requires a <code>roomId</code> can wrap itself with <code>ensureRoomId</code>, and as a result, we get a single place to define a <code>error_room_id</code> error! This helps a lot of consistency of error code and messages.</p>
+<p>A little ugliness there is that we have to pass in <code>socket</code> into <code>ensureRoomId</code> because it needs to be able to emit an event to that <code>socket</code> but I find that pretty bearable for now (and don’t have a good way to solve it).</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

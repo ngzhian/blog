@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a href="./index.html">&lt;</a>
+        <time class="published">
+        2016-08-27
+        </time>
+        <h1>
+        Framework v.s. Library
+        </h1>
+        <div class="entry-content">
+        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/framework-v-s-library-e802db791eea#.tn9lrcxc6'>here</a>.</p>
+</blockquote>
+
+<p>So we settled on using React for the front-end. It seemed destined that https://github.com/facebookincubator/create-react-app was released a week before we got our assignment 1. It helped us get a React app started in as long as it took to <code>npm install</code> the package.</p>
+<p>It’s nice that a lot of boilerplate set up got done, but it also is doing a bunch of stuff under the hood, so when things (eventually) don’t work that well we probably have to spend a bit of time debugging.</p>
+<p>I guess that’s the core argument behind big frameworks v.s. small libraries glued together, Django v.s. Flask, Rails v.s. Sinatra. With frameworks you get a lot of stuff decided and hooked in for you, but without digging in you won’t understand what’s going on under the hood. With small libraries you’re involved every step of the way, and you tend to write a bunch of glue code to piece everything together.</p>
+<p>I really like the convenience that well thought-out frameworks provide (I’ve worked with Django for a year and really like that time), but it feels like I don’t learn much — all I’m doing is searching the documentation for paragraphs that describe what I want to achieve and then copying and modifying some example code.</p>
+<p>But that was really helpful for me as a beginner. By following what the framework suggests, I learn more about how to properly architect my app, MVC, asynchronous tasks, authentication, logging, etc. — so when eventually I start my own app from scratch, I have a better intuition on what will work an what doesn’t!</p>
+<p>So to beginners, start with an opinionated framework, learn about all it’s opinions, and be critical about which of those opinions are useful, and which ones are questionable.</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>
