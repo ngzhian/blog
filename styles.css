@@ -12,8 +12,18 @@ a {
     color: #4A4A4A;
 }
 
+blockquote {
+    border-left: 2px solid #eee;
+    padding-left: 1rem;
+}
+
 a:hover {
     color: #7A7A7A;
+}
+
+.home {
+    font-size: 0.8em;
+    color: #888;
 }
 
 .content {
