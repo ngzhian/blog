@@ -1,0 +1,85 @@
+Title: Environment
+Date: 2016-10-23 22:32
+
+> This is a series of posts for my CS3216 project, you can find the original post [here](https://medium.com/@ngzhian/environment-972258cf184d#.1domgml64).
+
+Work has been progressing pretty well for our final project, Bubble. I have been working on a [simple demo app](http://ec2-52-77-222-46.ap-southeast-1.compute.amazonaws.com/) that serves as an example for the rest of the team on how to interact with the back-end via Socket.io.
+
+Things are working fairly well on a local development box (of course it would because that’s what I use day to day), but I would like to provide a staging environment on the Internet for my teammates so they don’t have to spin up a local back-end.
+
+That led me into thinking of how best to deploy the back-end, store secrets, separate configuration etc. In this post I’ll talk about secrets and configuration.
+
+
+> A lot of these ideas are from [The Twelve-Factor App](https://12factor.net/), an excellent guide on how to build modern web applications.
+
+## Configuration and Secrets as environment variables
+
+This is probably the simplest way to initialize the database (I’m using an ORM for node called [sequelize](https://github.com/sequelize/sequelize)):
+
+```javascript
+const database = new Sequelize('database', 'user', 'password');
+```
+
+But this is exposing my database username and password, and is obviously not a good idea.
+
+A better way is to define these secrets somewhere else. A suggested (and popular) method is to put them in the environment.
+
+```javascript
+import 'process' from process;
+const database = new Sequelize(
+  process.env.DATABASE_NAME,
+  process.env.DATABASE_USER,
+  process.env.DATABASE_PASS);
+```
+
+This is much better, because we are no longer putting our secrets in code.
+
+To run commands with environment variables set, you can:
+
+```
+DATABASE_NAME=database DATABASE_USER=user DATABASE_PASS=pass node index.js
+```
+
+This also means that we can have different database name, user and passwords in development versus production — which is a good idea because if your local credentials get compromised, it doesn’t leak your production credentials.
+
+## Too many variables
+
+This is only for database. In our app we have integrations with [Loggly](https://www.loggly.com/) for logs viewing, and [Sentry](https://sentry.io/) for exception tracking, and your app might have many more. These applications require some sort of secret key, and it’s not a good idea to let anyone else know this because it could lead to them exhausting your free quota or even raking up a huge bill.
+
+All these environment variables can add up really quickly, especially if you are defining them on the command line:
+
+```
+DATABASE_NAME=database DATABASE_USER=user DATABASE_PASS=pass LOGGLY_KEY=loggly_key SENTRY_KEY=sentry_key node index.js
+```
+
+## Managing your environment variables
+I ended up doing a bit of research and found [dotenv](https://www.npmjs.com/package/dotenv).
+
+With dotenv, you can define environment variables in a file, and when your app starts up, you call `dotenv.config()` and it will add all your variables to the current node.js’ `process.env` variable.
+
+Here’s an example of how I used to use it in Bubble:
+
+```javascript
+switch (process.env.NODE_ENV) {
+  case 'prod':
+    dotenv.config({ path: './prod.env' });
+    break;
+  case 'development':
+  case 'test':
+  default:
+    dotenv.config({ path: './dev.env' });
+    break;
+}
+```
+
+I define my prod and dev/test environment into two different files, and for `dev.env` I do not have the secret keys defined (so I don’t accidentally make calls to our third party integrations). I then `scp` my `prod.env` file into the box every time there are changes (primitive, but the secrets don’t change often, so everything is cool).
+
+## Small problem
+
+The above code was defined in a `database.js` file, which is used to initialize the database. However I wanted to extend this dotenv pattern across my app. So what I really needed is to call `dotenv.config()` as early as I can in my app initialization. But there’s some issue with the way babel transpiles ES6 module imports that is described [here](https://github.com/motdotla/dotenv/issues/133#issue-145471155).
+
+In summary, babel lifts ES6 imports to the top, so when code is run, node does a depth-first traversal into the imported modules (which may use dotenv), before dotenv gets a chance to run, so `process.env` isn’t populated. I eventually figured a workaround and posted my solution as a [comment to the same issue](https://github.com/motdotla/dotenv/issues/133#issuecomment-255298822). The solution is pretty simple, move the `dotenv.config()` call into a [separate file](https://github.com/CS3216-Bubble/bubble/blob/master/src/env.js), and [import it before any modules](https://github.com/CS3216-Bubble/bubble/blob/master/src/index.js) that needs `process.env` to be set.
+
+## Populating your environment
+
+This is post is about how I use environment variables and dotenv to help manage them. This definitely isn’t the correct way or the only way, there has been ink spilled over this. One article I like is [Twelve-Factor Config: Misunderstandings and Advice](http://blog.doismellburning.co.uk/twelve-factor-config-misunderstandings-and-advice/), which discusses more about Twelve-Factor and its recommendation on configuration, and how you can populate your app environment in whatever way pleases you.

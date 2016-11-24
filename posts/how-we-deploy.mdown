@@ -1,0 +1,64 @@
+Title: How we deploy
+Date: 2016-11-12 09:37
+
+> This is a series of posts for my CS3216 project, you can find the original post [here](https://medium.com/@ngzhian/how-we-deploy-4a43a2cb7f45#.wbq5pkezp).
+
+Bubble is made up of 4 main components:
+
+1. Backend, this handles all the chat connections, i.e. socket.io connections, database
+2. Web app, this is [https://app.getbubblechat.com](https://app.getbubblechat.com)
+3. Landing page, [https://getbubblechat.com](https://getbubblechat.com)
+4. Android app
+
+All these components have a separate repository and can be deployed individually.
+
+I work primarily on the backend, and early on in the development I decided to host the backend online in an EC2 instance. This has various advantages: my team mates can now develop the front end without running the back end server, and can also interact with an instance already populated with dummy data.
+
+During peak development periods, I would deploy the backend multiple times a day — as my team mates develop, they find bugs or have suggestions on how to improve the back end, and I would code it up and deploy. This motivated me to come up with a deployment strategy that is, in my opinion: simple and easy.
+
+Here is the current iteration of my deployment script that lives in the production box. (Unfortunately I did not check this into version control, so I cannot share how this script evolved from a simple 2 liner into the 10 lines, which still isn’t that much that has primitive supports for backup.) The deploy script is relatively straightforward, and I have annotated this script heavily for the purpose of this post.
+
+```
+# deploy.sh
+# goes into the right directory, and pwd for sanity checking
+cd bubble
+pwd
+# pull master (we also have travis-ci set up for master)
+# https://travis-ci.org/CS3216-Bubble/bubble
+# and install any new deps (npm-shrinkwrap to lock deps)
+# https://docs.npmjs.com/cli/shrinkwrap
+git pull
+npm install --no-progress
+# remove any old backups lying around
+if [ -f ./dist-prev ]; then
+  rm -rf ./dist-prev
+fi
+# build fails when we lock fsevents
+# the problem occurs because I develop on a mac,
+# and shrinkwrap generates a fsevents version for mac
+# but our prod instance is a fedora, and it grabs the wrong
+# version of fsevents.
+# since npm-shrinkwrap.json doesn't change much, I manually edit it.
+# https://github.com/npm/npm/issues/2679
+grep 'fsevents' npm-shrinkwrap.json && (echo "remove fsevents from shrinkwrap" && exit 1)
+# back up current working dist, allows for easy recovery
+# in case the new build causes problems
+cp -r dist/ dist-prev/
+# finally build, this will compile our app into dist/
+npm run build
+# reserve and serve are npm run scripts that call into forever,
+# it restarts a script if running, else it starts it
+# https://github.com/foreverjs/forever
+npm run reserve || npm run serve
+```
+
+My deployment step is then:
+
+```
+ssh bubble # ssh into production box, set this up in .ssh/config
+./deploy.sh # the same script as above
+```
+
+I could have added a script to do automatic rollback as well, but I figured I don’t do rollbacks often enough (have only done it once so far). Besides, we have travis-ci set up anyway so we will know when master is broken.
+
+This deployment strategy is simple, easy to understand, and has worked really well for my team. I use the same strategy for the other components as well, a simple script that does `git pull`, runs any build step, and optionally copies built files into another directory (such as the landing page so nginx can serve those files). How does your team do deployment?

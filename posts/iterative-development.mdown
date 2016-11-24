@@ -1,0 +1,75 @@
+Title: Iterative Development
+Date: 2016-10-18 21:54
+
+> This is a series of posts for my CS3216 project, you can find the original post [here](https://medium.com/@ngzhian/iterative-development-89937674d779#.ou4ht6).
+
+Easy to [over-enginner things](https://medium.com/@rdsubhas/10-modern-software-engineering-mistakes-bc67fbef4fc8#.txrola3hf), try and make things abstract/generic.
+
+The process I’ve adopted for final project is to start with the most hacky way to do things — pretend this code is read-only. Besides, the module is so frantic that you barely have time to refine your code…
+
+We are writing a chat app, and our choice of backend framework is [Socket.io](http://socket.io/). It works by attaching event handlers to events, for example:
+
+```javascript
+io.on('connect', socket => {
+  socket.on('add', data => { console.log(data); });
+});
+```
+
+This means that when the client (browser) sends an `add` message to the backend, the `data` associated with the event will be logged.
+
+An example client call is:
+
+```javascript
+io.emit('add', { hi: 'there'});
+```
+
+For certain events, such as adding a message, we needed to have a `roomId`. It is easy to add in this check:
+
+```javascript
+io.on('connect', socket => {
+  socket.on('add', data => {
+    if (!data.roomId) { console.error('No Room Id'); }
+    else { /* something else */ }
+  });
+});
+```
+
+However, this gets unwieldy fast, because there are multiple events that will require a `roomId`, such as adding a reaction, sending typing and stop typing indicators, reporting a user, etc.
+
+As I started to implement more events, I found myself copy-pasting code, specifically the checks for `data.roomId`.
+
+**Copy-pasting is a smell that we have reusable code — DRY.**
+
+So I began to think of ways to extract this logic into a common, reusable piece of code.
+
+1 way is to extract this into a common function:
+
+```javascript
+function ensureRoomId(data) {
+  if (!data.roomId) { throw Exception('No room id'); }
+}
+```
+
+But this doesn’t really save much code, it’s still 1 line of code, and now I have to handle an exception.
+
+I eventually settled on a more functional way.
+
+```javascript
+function ensureRoomId(socket, fn) {
+  return function(data) {
+    if (!data.roomId) {
+      socket.emit('error_room_id', 'No room id specified');
+    } else {
+      fn(data);
+    }
+  }
+}
+
+socket.on('add', ensureRoomId(socket, data => {
+  // data is guaranteed to have roomId!
+}));
+```
+
+Now every event handler that requires a `roomId` can wrap itself with `ensureRoomId`, and as a result, we get a single place to define a `error_room_id` error! This helps a lot of consistency of error code and messages.
+
+A little ugliness there is that we have to pass in `socket` into `ensureRoomId` because it needs to be able to emit an event to that `socket` but I find that pretty bearable for now (and don’t have a good way to solve it).
