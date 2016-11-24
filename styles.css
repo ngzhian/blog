@@ -1,7 +1,9 @@
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Pt Sans', 'Open Sans', sans-serif;
     font-size: 20px;
     line-height: 1.6;
+    background: #fcfcfc;
+    color: #333;
 }
 
 ul {
@@ -10,6 +12,10 @@ ul {
 
 a {
     color: #4A4A4A;
+}
+
+.entry-content a {
+    color: #9FBF2E;
 }
 
 blockquote {
@@ -21,20 +27,14 @@ a:hover {
     color: #7A7A7A;
 }
 
+/* link to home at the top of each post */
 .home {
     font-size: 0.8em;
     color: #888;
 }
 
 .content {
-  padding: 10px;
-}
-
-.avatar {
-    height: 75px;
-}
-
-.content {
+    padding: 30px;
     max-width: 768px;
     margin: auto auto;
 }
@@ -53,9 +53,10 @@ a:hover {
   white-space: nowrap;
 }
 
+/* date published on index page */
 .published {
     font-weight: normal;
-    font-size: 16px;
+    font-size: 0.9rem;
     color: #aaa;
 }
 
