@@ -1,0 +1,65 @@
+Title: An Axiomatic Basis for Computer Programming
+Date: 2016-12-04 21:45
+
+> This is a series of posts where I jot down my learnings from computer science papers I've read
+
+[Paper (pdf)](https://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf) 
+[40th anniversary retrospective](http://cacm.acm.org/magazines/2009/10/42360-retrospective-an-axiomatic-basis-for-computer-programming/fulltext)
+
+In this paper, C. A. R. Hoare explores the mathematical logic underlying computer programming.
+
+All state and results of running programs should be informed by *deductive reasoning*.
+Deductive reasoning consists of *axioms*, and *rules of inferences* on this set of axioms.
+
+Some axioms that he lays out include the rules of arithmetic: commutativity of addition and multiplication etc.
+
+Computers have certain limitations, such as not being able to represent infinitely many numbers (which mathematics can).
+An example is overflow, it could result in one of three cases:
+
+1. Strict - a program that overflows never completes
+2. Boundary - represent by the maximum value
+3. Modulo - modulo the representable set of integers
+
+By choosing one of these overflow technique and representing it as an axiom will allow us to continue using deductive reasoning.
+
+To represent the connection between a precondition, a program, and the resulting state of execution, he introduces:
+
+```
+P { Q } R
+```
+
+where P is the precondition, Q is the program, and R is the resulting state (Hoare triples).
+
+Then, an axiom and three inference rules are laid down so as to apply deductive reasoning to program execution.
+
+The axiom "Axiom of Assignment" represents variable assignments that we commonly use in programming languages.
+
+The "Rule of Consequence" is logical implication:
+
+1. if `P { Q } R` and `R -> S`, then `P { Q } S`
+2. if `P { Q } R` and `S -> P`, then `S { Q } R`
+
+The "Rule of Composition" allows for composing two triples by sequencing program execution:
+
+1. if `P { Q1 } R1` and `Rr { Q2 } R`, then `P { Q1; Q2 } R`
+
+The "Rule of Iteration" states that the test condition will not be true after the while loop is completed, and any other precondition remains true:
+
+1. if `P and B { S } P` then `P { while B do S } not B and P`
+
+In general, these inference rules assume that execution is side effect free.
+
+Also, the axioms and rules do not guarantee successful termination of the program, e.g. you can have an infinite loop in the iteration rule.
+
+He notes that:
+
+> "the practice of supplying proofs for nontrivial programs will not become widespread until considerably more powerful proof techniques become available".
+
+I think right now we are in a period where proof assistants are becoming much more accessible, and companies generally use formal verification methods
+on critical software.
+
+Some notes on how testing is done, which is manual testing by a programmer on subset of cases (poor man unit testing).
+Notes that errors discovered at this stage costs a lot, and even more when errors are discovered after the program is in use (shipped).
+
+Proving programs can also help with documentation. A proof will describe accurately the preconditions and postconditions, so any caller can rely on this as a lemma.
+Also, you get *referential transparency*, where two programs that are provably correct and satisfy the same interface (preconditions and postconditions).

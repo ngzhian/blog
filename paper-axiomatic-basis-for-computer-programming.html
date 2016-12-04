@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Ng Zhi An">
+    <title>An Axiomatic Basis for Computer Programming</title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a class="home" href="./index.html">Home</a>
+        <h1>
+        An Axiomatic Basis for Computer Programming
+        </h1>
+        <time class="published">
+        2016-12-04
+        </time>
+        <div class="entry-content">
+        <blockquote><p>This is a series of posts where I jot down my learnings from computer science papers I&#39;ve read</p>
+</blockquote>
+
+<p><a href='https://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf'>Paper (pdf)</a> 
+<a href='http://cacm.acm.org/magazines/2009/10/42360-retrospective-an-axiomatic-basis-for-computer-programming/fulltext'>40th anniversary retrospective</a></p>
+<p>In this paper, C. A. R. Hoare explores the mathematical logic underlying computer programming.</p>
+<p>All state and results of running programs should be informed by <em>deductive reasoning</em>.
+Deductive reasoning consists of <em>axioms</em>, and <em>rules of inferences</em> on this set of axioms.</p>
+<p>Some axioms that he lays out include the rules of arithmetic: commutativity of addition and multiplication etc.</p>
+<p>Computers have certain limitations, such as not being able to represent infinitely many numbers (which mathematics can).
+An example is overflow, it could result in one of three cases:</p>
+<ol><li>Strict - a program that overflows never completes</li><li>Boundary - represent by the maximum value</li><li>Modulo - modulo the representable set of integers</li></ol>
+
+<p>By choosing one of these overflow technique and representing it as an axiom will allow us to continue using deductive reasoning.</p>
+<p>To represent the connection between a precondition, a program, and the resulting state of execution, he introduces:</p>
+<pre><code>P { Q } R</code></pre>
+
+<p>where P is the precondition, Q is the program, and R is the resulting state (Hoare triples).</p>
+<p>Then, an axiom and three inference rules are laid down so as to apply deductive reasoning to program execution.</p>
+<p>The axiom &quot;Axiom of Assignment&quot; represents variable assignments that we commonly use in programming languages.</p>
+<p>The &quot;Rule of Consequence&quot; is logical implication:</p>
+<ol><li>if <code>P { Q } R</code> and <code>R -&gt; S</code>, then <code>P { Q } S</code></li><li>if <code>P { Q } R</code> and <code>S -&gt; P</code>, then <code>S { Q } R</code></li></ol>
+
+<p>The &quot;Rule of Composition&quot; allows for composing two triples by sequencing program execution:</p>
+<ol><li>if <code>P { Q1 } R1</code> and <code>Rr { Q2 } R</code>, then <code>P { Q1; Q2 } R</code></li></ol>
+
+<p>The &quot;Rule of Iteration&quot; states that the test condition will not be true after the while loop is completed, and any other precondition remains true:</p>
+<ol><li>if <code>P and B { S } P</code> then <code>P { while B do S } not B and P</code></li></ol>
+
+<p>In general, these inference rules assume that execution is side effect free.</p>
+<p>Also, the axioms and rules do not guarantee successful termination of the program, e.g. you can have an infinite loop in the iteration rule.</p>
+<p>He notes that:</p>
+<blockquote><p>&quot;the practice of supplying proofs for nontrivial programs will not become widespread until considerably more powerful proof techniques become available&quot;.</p>
+</blockquote>
+
+<p>I think right now we are in a period where proof assistants are becoming much more accessible, and companies generally use formal verification methods
+on critical software.</p>
+<p>Some notes on how testing is done, which is manual testing by a programmer on subset of cases (poor man unit testing).
+Notes that errors discovered at this stage costs a lot, and even more when errors are discovered after the program is in use (shipped).</p>
+<p>Proving programs can also help with documentation. A proof will describe accurately the preconditions and postconditions, so any caller can rely on this as a lemma.
+Also, you get <em>referential transparency</em>, where two programs that are provably correct and satisfy the same interface (preconditions and postconditions).</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>
