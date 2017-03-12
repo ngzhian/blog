@@ -1,0 +1,88 @@
+Title: I will never be able to log in to Flickr again
+Date: 2014-05-24 18:00
+
+I will never be able to log in to Flickr again
+==============================================
+
+I’m not a big user of Flickr, but some time last year I heard that they
+were offering 1TB of free storage and was amazed. So I decided to use
+their service to archive some photos.
+
+This afternoon, I wanted to show a friend this Flickr account. I was
+surprised to find out that Flickr now requires a Yahoo account to log
+in. I’m not sure when this was implemented, because previously I have
+been signing in using a Gmail account, and it has been a while since I
+logged on.
+
+I thought it wasn’t a big deal to sign up for Yahoo account, sure it’s
+one more account to maintain, but we don’t use this often so it wouldn’t
+be a hassle. But nope, I was wrong. The Yahoo account registration
+process was extremely painful.
+
+Besides the requirement on the user name, which must begin with a letter
+and be 8 to 32 characters long, there were passwords requirements as
+well.
+
+*edit* They seem to accept usernames that are shorter than 8 characters,
+as long as it is unique. That just makes it even more confusing. Thanks
+EJ for pointing that out!
+
+<div class="figure">
+
+![The various conditions](../images/yahoo-wat-1.png)
+The various conditions
+
+</div>
+
+First, the password field has 3 conditions.
+
+1.  8-24 characters
+2.  upper and lower case
+3.  at least a number
+
+Sure, the green arrows that appear beside these conditions serves as a
+pretty guide to the user as to when these conditions have been
+satisfied, but these conditions are unnecessary in my opinion. If my
+password of choice does not satisfy these criteria, I am forced to think
+of and remember something new. Maybe Yahoo is trying to push people to
+use a password manager, but I really don’t think so. The net effect of
+this is frustration to the user - or me at least - resulting in me just
+randomly smashing the laptop to find out if *that* was acceptable.
+
+Finally I’ve managed to get a good pass phrase that I wanted to use,
+more on pass phrase
+http://blog.codinghorror.com/passwords-vs-pass-phrases/ - but no, there
+was 1 more hidden criteria, or rather, restriction
+
+<div class="figure">
+
+![I can’t use spaces?](../images/yahoo-wat-2.png)
+I can’t use spaces?
+
+</div>
+
+Okay. I’m so close to giving up at this point, if not for the hundres of
+pictures I have lying in Flickr. Why am I not allowed to use spaces in
+my password? I honestly cannot think of any reason. This just spoils the
+whole plan of using pass phrases.
+
+This is a pretty easy problem to solve, but wait for it. The next screen
+is a funky looking animated CAPTCHA. But seriously, after that painful
+process of registering, I think even bots will give up signing up for
+Yahoo accounts.
+
+<div class="figure">
+
+![Animated CAPTCHA](../images/yahoo-wat-3.png)
+Animated CAPTCHA
+
+</div>
+
+Oh wait there’s more, the next screen asks for a phone number to send a
+verification code to. And it’s been 30 mins, and my verification code
+has not arrive. Yahoo!
+
+*Update* Even signing to Yahoo is broken, clicking on “Sign In” just
+clears the password fields and indicates an error, askign me to “Please
+enter your password”. At this point I’m pretty tired of whining already,
+so that’s all.

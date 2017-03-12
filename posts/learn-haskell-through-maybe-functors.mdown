@@ -1,0 +1,167 @@
+Title: Learning Haskell through Maybe - Functors
+Date: 2014-04-18 18:00
+
+Learning Haskell through Maybe - Functors
+=========================================
+
+Types
+-----
+
+You have a `Type`, `Integer`. `Integer` is an integer, representing
+intergers, just like real life.
+
+Other types are `Char`, which are characters such as `'a'`, `'b'` etc.
+The one we will look at in detail is `Maybe`.
+
+Type variable, constructors
+---------------------------
+
+A data of type `Maybe` can only be made if a *type variable* is
+specified. This means that you can make a `Maybe Integer`, `Maybe Char`,
+but a `Maybe` isn’t a complete type.
+
+The way to make a data of type `Maybe` is to use a *type constructor*.
+`Maybe` has two type constructors, `Just` and `Nothing`. `Just` is like
+`Maybe`, it can only be made if a type variable is specified. `Nothing`
+can be made simply on its own, it is a complete type.
+
+Let’s try making `Maybe`s in GHCI:
+
+``` {.sourceCode .haskell}
+> let best_friends = Just 1
+> best_friends
+Just 1
+```
+
+You have just used the type constructor `Just`, passed in the `Int` 1,
+to make a type of `Maybe Int`. To verify the type of `best_friends`:
+
+``` {.sourceCode .haskell}
+> :t best_friends
+best_friends :: Maybe Integer
+```
+
+`::` can be read as **is of type**. How about make a `Maybe` using
+`Nothing`?
+
+``` {.sourceCode .haskell}
+> let girlfriend = Nothing
+> girlfriend
+Nothing
+```
+
+Functor
+-------
+
+Suppose you have twice as many best friends as I do, how can I find out
+how many best friends you have?
+
+``` {.sourceCode .haskell}
+> let your_best_friends = 1 * 2 --hard coded value for the number best friends I have
+> your_best_friends
+2
+> let your_best_friends = best_friends * 2 --fails terribly
+```
+
+You get a crazy error message. It means that you cannot multiply 2 with
+`best_friends`, because `best_friends` is not a type that can be
+multiplied with 2. Clearly there is something going on here, because
+`best_friends` can contain an `Integer`, and we can definitely multiply
+`Integer`s, what we can do is to define a function that helps us do so.
+
+``` {.sourceCode .haskell}
+> :{
+| let calc_friends :: Maybe Integer -> Maybe Integer
+|       calc_friends Nothing = Nothing
+|           calc_friends (Just x) = Just (x * 2)
+> :}
+> let your_best_friends = calc_friends best_friends
+> your_best_friends
+Just 2
+```
+
+What we did was to define a function that can calculate the number of
+best friends you have, given the number of best friends I have. By
+applying this function to `best_friends`, you get the number of best
+friends you have, wrapped in a `Just`. What if I told you that you had
+twice as many girlfriends as I do?
+
+``` {.sourceCode .haskell}
+> let your_girlfriends = calc_friends girlfriend
+> your_girlfriends
+Nothing
+```
+
+Hahaha.
+
+Perhaps you grow more popular, and you actually had 3 times more friends
+than I do. Since we hard coded the value `2`, we have to make another
+function with the value `3`, or we can actually generalize the function
+as such.
+
+``` {.sourceCode .haskell}
+> :{
+| let calc_friends :: (Integer -> Integer) -> Maybe Integer -> Maybe Integer
+|     calc_friends _ Nothing = Nothing
+|     calc_friends f (Just x) = Just (f x)
+> :}
+> let your_best_friends = calc_friends (* 3) best_friends
+> your_best_friends
+Just 3
+> let your_girlfriends = calc_friends (* 2) girlfriend
+> your_girlfriends
+Nothing
+```
+
+We define `calc_friends` as a function that takes in another function,
+`f`, and this function `f` takes in an `Integer` and returns another
+`Integer`. An example of this function would be `(* 3)`. `calc_friends`
+also takes in a `Maybe Integer`, which it will apply the function `f`
+to, and returning a resut of type `Maybe Integer`
+
+What if instead of number of best friends, an `Integer`, we wanted to
+compare height, a `Double`, and you are 1 metre taller than me, this
+looks pretty similar to calc\_friends, so let’s reuse that:
+
+``` {.sourceCode .haskell}
+> let height = Just 1.7
+> let calc_height = calc_friends (+ 1)
+> calc_height height
+```
+
+Throws you an error about incompatible types. This is becase we defined
+`calc_height` in terms of `calc_friends`, which only worked with
+`Maybe Integer`, but our height was a `Maybe Double`. So let’s
+generalize our function using *type variables*, just like how `Maybe` is
+defined.
+
+``` {.sourceCode .haskell}
+> :{
+| let calc_stuff :: (a -> a) -> Maybe a -> Maybe a
+|     calc_stuff _ Nothing = Nothing
+|     calc_stuff f (Just x) = Just (f x)
+> :}
+> calc_stuff (* 3) best_friends
+Just 9
+> calc_stuff (+ 1) height
+Just 2.7
+> calc_stuff (* 2) girlfriend
+Nothing
+```
+
+The last bit to understanding `Functor` is a method called `fmap`, all
+types that are instances of the *typeclass* `Functor` have to implement
+a method called `fmap`, which has the signature:
+
+``` {.sourceCode .haskell}
+fmap              :: (a -> b) -> f a -> f b 
+calc_stuff :: (a -> a) -> Maybe a -> Maybe a
+```
+
+I’m putting them one above the other to let you see how similar they
+are. `fmap` is just `calc_stuff` generalized - generalizing the function
+that `calc_stuff` takes in and - generaizing the type `Maybe` to other
+types that take in a single type variable
+
+And the `f` we see in the `fmap` is the Functor, a typeclass of which
+`Maybe` is an instance of.

@@ -1,0 +1,110 @@
+Title: Default value of ATTLIST, attributes of an XML Element, XML Doctype
+Date: 2014-05-10 18:00
+
+Default value of ATTLIST, attributes of an XML Element, XML Doctype
+===================================================================
+
+The problem
+-----------
+
+It started with a failing test that complained about
+`NumberFormatException` because an empty string was passed in to
+`Integer.parseInt`. I decided to file [an
+issue](https://github.com/ganglia/jmxetric/issues/22) and went on to
+investigate.
+
+Investigation
+-------------
+
+I started by adding breakpoint on the [method which returned the
+string](https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L103)
+to be passed into `Integer.parseInt`. But this was problematic because
+the method was called multiple times, within nested loops. So I decided
+to tackle this in another way.
+
+I called the method on a bogus attribute that I knew for sure would not
+exist:
+
+``` {.sourceCode .java}
+String testNonValidAttri = selectParameterFromNode(sample, "asdfasdf", "1");
+System.out.println("testnonvalid: " + testNonValidAttri);
+```
+
+and sure enough the string returned was `1`. This meant that the method
+`selectParameterFromNode` was working fine, and so I shifted my focus
+somewhere else.
+
+Next I wanted to check out exactly what attributes the `sample` node
+contained. The [configuration
+file](https://github.com/ganglia/jmxetric/blob/master/src/test/resources/jmxetric_test.xml#L35)
+showed that there is only 1: `delay`.
+
+``` {.sourceCode .xml}
+<sample delay="3">
+```
+
+So if I print out all the names of the attributes, I should only have 1
+name appear. I consulted the [xpath
+docs](http://docs.oracle.com/javase/7/docs/api/javax/xml/xpath/package-summary.html)
+to find out how to get the list of attributes and print them, this is
+the code:
+
+``` {.sourceCode .java}
+NamedNodeMap samplemap = sample.getAttributes();
+System.out.println(samplemap.getLength());
+for (int j = 0; i < samplemap.getLength(); j++) {
+  System.out.println(samplemap.item(j).getNodeName());
+}
+```
+
+I was surprised to see the output:
+
+    delay
+    dmax
+
+What was the `dmax` attribute doing there? I could see the `delay`
+attribute defined, but I didn’t know where `dmax` came from. My
+intuition was there `dmax` seems to be a default attribute that is
+specified somewhere.
+
+Right at the top of the configuration file is the XML doctype, and even
+though I didn’t know anything about that, I could identify the culprit
+
+``` {.sourceCode .xml}
+<!ELEMENT sample (mbean)*>
+  <!ATTLIST sample delay CDATA #REQUIRED>
+  <!ATTLIST sample dmax CDATA "" >
+```
+
+So I noticed that `delay` and `dmax` are defined there, so I went to
+research a bit about [XML doctypes and
+ATTLIST](http://xmlwriter.net/xml_guide/attlist_declaration.shtml). I
+learned that the definition `<!ATTLIST sample dmax CDATA "" >` meant
+that `dmax` was not a *required* attribute, the XML does not have to
+specify this attribute. And if `dmax` is not specified, it will have the
+value of `""`, the empty string!
+
+So basically the empty string came from the doctype!
+[All](https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L207)
+[the](https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L227)
+[checks](https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L242)
+trying to make the default value of `dmax` `"0"` wasn’t working because
+of the doctype, resulting in the `NumberFormatException` when [trying to
+parse](https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L249)
+
+Resolution
+----------
+
+I have [suggested two
+ways](https://github.com/ganglia/jmxetric/issues/22) to fix this,
+
+1.  Remove this attribute from the doctype. I’m not sure what impact
+    this would have, because I don’t know if the `sample` requires a
+    `dmax` to be declared at that level. The `mbean`, `attribute`, and
+    `composite` nodes all have the `dmax` attribute as well
+2.  Add the default value of `"0"` to the doctype. This seems to be a
+    better way, referring to the [default configuration
+    file](http://github.com/ganglia/jmxetric/blob/master/etc/jmxetric.xml#L6),
+    the attribute `initialdelay` is given the default value of `"0"`
+    simplifying the processing.
+

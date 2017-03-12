@@ -1,0 +1,110 @@
+Title: How Java sorts Objects
+Date: 2014-04-28 18:00
+
+How Java sorts Objects
+======================
+
+It started with an experiment on sorting…
+-----------------------------------------
+
+The reason why I had this question in my head was because I was
+wondering [how sorting would look like for Scissors, Paper, Stone
+objects](../posts/2014-04-28-scissors-paper-stone-and-ordering.html),
+since they have a [cyclic
+ordering](https://en.wikipedia.org/wiki/Cyclic_order). And in that
+little experiment I used Java’s `Collections.sort` method, which is
+really useful if the class you wish to sort implements
+[`Comparable`](http://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html),
+and that just requires you to define a single method `compareTo`. So I
+went ahead to investigate how Java implements this method. My initial
+guess was that for small collections, insertion sort would be used,
+because it’s actually more efficient. But for larger collections,
+mergesort/quicksort would be used. Eventually I found out I was wrong,
+here’s why.
+
+Grep that method
+----------------
+
+[GrepCode](grepcode.com) is a wonderful resource. It lets you search the
+code bases of many open source projects including Java and Eclipse, and
+there’s so much to learn from robust code that is being used by so many
+people.
+
+A simple search for `Collections.sort` took me
+[here](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/Collections.java#Collections.sort%28java.util.List%29).
+
+``` {.sourceCode .java}
+public static <T extends Comparable<? super T>> void  [More ...] sort(List<T> list) {
+  Object[] a = list.toArray();
+  Arrays.sort(a);
+  ListIterator<T> i = list.listIterator();
+  for (int j=0; j<a.length; j++) {
+    i.next();
+    i.set((T)a[j]);
+  }
+}
+```
+
+So actually `Collections.sort` converts the collection of objects into
+an `Array` internally, and uses `Arrays.sort`. Sounds like a simple way
+to [reduce duplication of
+code](http://www.c2.com/cgi/wiki?DontRepeatYourself)!
+
+Digging deeper into `Arrays.sort`
+---------------------------------
+
+So I looked into
+[`Array.sort`](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/Arrays.java#Arrays.sort%28java.lang.Object%5B%5D%29)
+and see that `Arrays.sort` uses either `legacyMergeSort` or something
+called `ComparableTimSort`.
+
+``` {.sourceCode .java}
+public static void  [More ...] sort(Object[] a) {
+  if (LegacyMergeSort.userRequested)
+    legacyMergeSort(a);
+  else
+    ComparableTimSort.sort(a);
+}
+```
+
+Well I know [mergesort](https://en.wikipedia.org/wiki/Mergesort), and it
+seems like you need to set some system parameter to use it, so my guess
+is that it isn’t used most of the time. How about the other one,
+`ComparableTimSort`?
+
+Tim’s sort
+----------
+
+I’ve never heard of such a sort before, so I continued investigating and
+reached the [method
+definition](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/ComparableTimSort.java#ComparableTimSort.sort%28java.lang.Object%5B%5D%29),
+which said this was just like
+[TimSort](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/TimSort.java#TimSort).
+
+The comments for the `TimSort` class actually describes the history of
+[TimSort](https://en.wikipedia.org/wiki/Timsort), which was first used
+by Python!
+
+``` {.sourceCode .java}
+// A stable, adaptive, iterative mergesort that requires far fewer than n lg(n)
+// comparisons when running on partially sorted arrays, while offering
+// performance comparable to a traditional mergesort when run on random arrays.
+// Like all proper mergesorts, this sort is stable and runs O(n log n) time (worst case).
+```
+
+I haven’t completely figured out how it works, but it has `O(n)` best
+case performance, and performs very well on real world data. Here’s a
+[description of the
+algorithm](https://svn.python.org/projects/python/trunk/Objects/listsort.txt)
+by its author Tim Peters, and a [cool
+visualization](http://sortvis.org/algorithms/timsort.html) of the
+process. Oh by the way that previous website,
+[sortvis](http://sortvis.org) has visualizations of other sorting
+algorithms as well, check it out!
+
+So…
+---
+
+I don’t really understand Tim’s sort as for now, and I think this won’t
+be the last time I’ll see it, but at least know I know how Java sorts
+stuff :)

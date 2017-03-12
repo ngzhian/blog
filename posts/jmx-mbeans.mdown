@@ -1,0 +1,53 @@
+Title: JMX and MBeans
+Date: 2014-05-07 18:00
+
+JMX and MBeans
+==============
+
+The first thing was to understand a bit more about what jmxetric does.
+But before that we have to lay the foundation first, let’s talk about
+JMX and MBean.
+
+JMX is a technology that lets you monitor resources easily
+----------------------------------------------------------
+
+JMX stands for Java Management Extension. Resources can be applications,
+devices, services, etc. By monitoring, it means that you can 1. consult
+and change configuration, 2. view statistics of the application 3. be
+notified of changes and/or erros
+
+How can you make use of this JMX technology? You follow the patterns and
+interfaces defined in this specification. And one of it is MBean
+
+MBean, or *Managed Bean*
+------------------------
+
+A MBean, is a Java object that is associated with a resource that you
+want to monitor. All MBeans expose an interface that has 1. set of
+readable and/or writable attributes 2. set of invokable operations 3.
+self-description
+
+You can make an MBean by making a Java interface called `FooMBean`, and
+a class `Foo` that implements that interface.
+
+You can manage MBeans using a JMX agent
+---------------------------------------
+
+It’s strange that you still need to *manage* a *managed bean*, but
+that’s just how it goes. A JMX agent is the manager of all these MBeans
+and the resources instrumented by the MBeans. The agent consists of a
+MBean server, which is where MBeans are registered. I think of the MBean
+server as a manager that overseas the registered MBeans.
+
+How does jmxetric fit in here?
+------------------------------
+
+The role of jmxetric is then to pool these MBeans, and pass on the
+attributes to Ganglia.
+
+References
+----------
+
+[Oracle’s tutorial trail on
+JMX](docs.oracle.com/javase/tutorial/jmx/index.html) [Oracle’s tutorial
+on MBeans](docs.oracle.com/javase/tutorial/jmx/mbeans/standard.html)

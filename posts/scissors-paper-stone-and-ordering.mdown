@@ -1,0 +1,220 @@
+Title: Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)
+Date: 2014-04-28 18:00
+
+Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)
+=======================================================================
+
+Inspiration
+-----------
+
+I was in the bathroom, after watching a [video on
+Kata](https://www.youtube.com/watch?v=WBJ3hdcM7G8), and fiddling with
+the thought of doing a Kata using Haskell. So I thought of what Kata I
+could try, and figured that a Scissors Paper Stone kata would be cool. I
+would have a chance to practice IO, hence Monads, and also some simple
+logic. So that led to the thought of how a game of SPS may work out…
+
+Scissors Paper Stone
+--------------------
+
+Now you probably know the game and [how it’s
+played](http://worldrps.com/game-basics). Scissors beats Paper, Paper
+beats Stone, Stone beats Scissors. Hmm what? If we plot how powerful
+each Move is, we see this:
+
+    > Stone
+    >>> Paper
+    >>>>> Scissors
+    >>>>>>> Stone   // what???
+
+This is interesting because, given a list of Scissors, Paper, and Stone,
+how would the result look like?
+
+Eventually I went to research a bit more, sometimes you just got to know
+what search terms to type, and I found [cyclic
+ordering](https://en.wikipedia.org/wiki/Cyclic_order). It even
+classifies Scissors Paper Stone as a Discrete Cycle. But that didn’t
+stop me from wondering what sorting them will look like!
+
+Code
+----
+
+So I went ahead to explore. Code given is in Java, my most familiar
+lanugage. Code is ugly because, well its ugly. Maybe I should try to use
+polymorphism to clean it up… hm… Anyway, the [gist is
+here](https://gist.github.com/ngzhian/11373536 "GitHub Gist for this experiment")
+
+``` {.sourceCode .java}
+static class Move implements Comparable<Move> {
+  public enum TYPE {
+    SCISSORS, PAPER, STONE
+  };
+
+  public static int COUNT = 0;
+  private TYPE type;
+  private int count;
+
+  private static Move paper() {
+    Move move = new Move();
+    move.type = TYPE.PAPER;
+    move.count = COUNT++;
+    return move;
+  }
+
+  private static Move scissors() {
+    Move move = new Move();
+    move.type = TYPE.SCISSORS;
+    move.count = COUNT++;
+    return move;
+  }
+
+  private static Move stone() {
+    Move move = new Move();
+    move.type = TYPE.STONE;
+    move.count = COUNT++;
+    return move;
+  }
+
+  public String toString() {
+    switch (type) {
+      case SCISSORS:
+        return "Scissors [" + count + "]";
+      case PAPER:
+        return "Paper [" + count + "]";
+      case STONE:
+        return "Stone [" + count + "]";
+    }
+    return "";
+  }
+
+  @Override
+  public int compareTo(Move o) {
+    switch (this.type) {
+      case SCISSORS:
+        switch (o.type) {
+          case SCISSORS:
+            return 0;
+          case PAPER:
+            return 1;
+          case STONE:
+            return -1;
+        }
+      case PAPER:
+        switch (o.type) {
+          case SCISSORS:
+            return -1;
+          case PAPER:
+            return 0;
+          case STONE:
+            return 1;
+        }
+      case STONE:
+        switch (o.type) {
+          case SCISSORS:
+            return 1;
+          case PAPER:
+            return -1;
+          case STONE:
+            return 0;
+        }
+  }
+  return 0;
+  }
+}
+```
+
+This is how the `Move` class looks like, and `compareTo` basically has
+the rules for the entire game. After this it was just making an outer
+class to add `Move`s to a list and to use `Collections.sort` on them:
+
+``` {.sourceCode .java}
+public class ScissorsPaperStone {
+  public static void main(String[] args) {
+    List<Move> list = new Vector<Move>();
+
+    for (Move move : list) {
+      System.out.print(move + ", ");
+    }
+    System.out.println();
+
+    Collections.sort(list);
+
+    for (Move move : list) {
+      System.out.print(move + ", ");
+    }
+    System.out.println();
+    }
+}
+```
+
+Results - everything is sorted
+------------------------------
+
+The results are as such:
+
+### Moves added are: (Scissors-Paper-Stone) 3 times
+
+    Original:
+    Scissors [0], Paper [1], Stone [2], Scissors [3], Paper [4], Stone [5], Scissors [6], Paper [7], Stone [8], 
+    Sorted:
+    Stone [8], Paper [7], Scissors [6], Stone [5], Paper [4], Scissors [3], Stone [2], Paper [1], Scissors [0], 
+
+### (Scissors-Stone-Paper) 3 times
+
+    Original:
+    Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], 
+    Sorted:
+    Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], 
+
+### (Stone-Paper-Scissors) 3 times
+
+    Original:
+    Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], 
+    Sorted:
+    Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], 
+
+### (Stone-Scissors-Paper) 3 times
+
+    Original:
+    Stone [0], Scissors [1], Paper [2], Stone [3], Scissors [4], Paper [5], Stone [6], Scissors [7], Paper [8], 
+    Sorted:
+    Paper [8], Scissors [7], Stone [6], Paper [5], Scissors [4], Stone [3], Paper [2], Scissors [1], Stone [0], 
+
+### (Paper-Scissors-Stone) 3 times
+
+    Original:
+    Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], 
+    Sorted:
+    Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], 
+
+### (Paper-Stone-Scissors) 3 times
+
+    Original:
+    Paper [0], Stone [1], Scissors [2], Paper [3], Stone [4], Scissors [5], Paper [6], Stone [7], Scissors [8], 
+    Sorted:
+    Scissors [8], Stone [7], Paper [6], Scissors [5], Stone [4], Paper [3], Scissors [2], Stone [1], Paper [0], 
+
+### Somewhat random sequence
+
+    Original:
+    Paper [0], Scissors [1], Scissors [2], Stone [3], Paper [4], Stone [5], Paper [6], Scissors [7], Paper [8], Scissors [9], Stone [10], Stone [11], 
+    Sorted:
+    Paper [0], Scissors [1], Scissors [2], Scissors [7], Scissors [9], Stone [3], Stone [5], Stone [10], Stone [11], Paper [4], Paper [6], Paper [8], 
+
+Observations?? I don’t really know…
+-----------------------------------
+
+The results are definitely sorted, if we look at them pairwise. For
+example in the somehwat random sequence, every pair of `Move`s is sored,
+but we can see that the 2nd element is `Scissors`, but the last element
+is a `Paper`, and clearly Paper does not beat Scissors.
+
+Another observation is that, sequences that are already sorted don’t
+change. For example, Paper-Scissors-Stone is already in order, so the
+whole sequence is sorted, and hence doesn’t change. But I’m not sure how
+to explain the resuts for the rest, especially for the somewhat random
+sequence.
+
+But I wanted to know a bit more about how Java does sorting, and so I
+went to a bit of digging and jotted my discoveries
+[here](../posts/2014-04-28-how-java-sorts-objects.html "A journey to discover how Java sorts objects").

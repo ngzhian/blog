@@ -1,0 +1,115 @@
+Title: Configuring XMonad
+Date: 2014-04-25 18:00
+
+Configuring XMonad
+==================
+
+I have been setting up XMonad on my Debian box, partially because I am
+kinda hooked on [Haskell](www.haskell.org) right now, and so far it has
+been a prety fun adventure. Just wish to share some thoughts here.
+
+Getting XMonad
+--------------
+
+Being on Debian has its perks, a `aptitude install xmonad` simply works,
+else just head to [XMonad](www.xmonad.org/download.html) to get the
+suitable package.
+
+Running XMonad
+--------------
+
+I’m using `startx` to run XMonad, so all I have to do is to edit
+`~/.xinitrc`, and add the line
+
+``` {.sourceCode .bash}
+exec xmonad
+```
+
+If you’re using a display manager such as KDM, GDM, slim, lightdm etc,
+there’s probably a way to select which which session you want to run, or
+you can edit your `~/.xsession` file. You can probably get more
+information [here](xmonad.org/documentation.html).
+
+Configuring XMonad {#configuring-xmonad}
+------------------
+
+This is the really fun part. I’ve tried finding *good* configurations I
+can immediately copy and use, and actually found
+[this](github.com/vicfryzel/xmonad-config), but when it comes to
+configuring your window manager, everyone is heavily opiniated. After
+spending some time on it, I found that the best way to configure XMonad
+is to do it in small steps.
+
+I think the most efficient way to figure things out is to learn the
+defaults first, by looking at the [tour](xmonad.org/tour.html) from the
+official pages. This will give you a feel of how to do things. The most
+important takeaway is: - `Mod + Shift + Enter` fires up a terminal, and
+by default `Mod` is `Left-Alt` - `Mod-Q` restarts xmonad, this allows
+you to see changes you have made to the config file quickly -
+`~/.xmonad/xmonad.hs` is the default configuration file
+
+Then move on to the actual configuration, and a gentleman has wrote a
+extremely easy to follow step-wise
+\[guide\](www.haskell.org/haskellwiki/Xmonad/Config\_archive/John\_Goerzen’s\_Configuration)
+on configuring XMonad. Follow this guide to the end, and you should have
+a simple yet efficient XMonad up and running.
+
+Caveats
+-------
+
+I faced one small issue, which was the loading of xmobar configuration
+file. Particularly the line
+
+``` {.sourceCode .haskell}
+xmproc <- spawnPipe "xmobar /home/ngzhian/.xmonad/.xmobarrc"
+```
+
+For some reason xmobar didn’t manage to load the file that I passed in.
+I solved it by not passing in a filename, and just creating the config
+file at the default location, which is `~/.xmobarrc`. So that line
+simply became
+
+``` {.sourceCode .haskell}
+xmproc <- spawnPipe "xmobar"
+```
+
+I’ll write about xmobar soon, it’s fun to configure it as well, but for
+now here’s what I have
+
+[![How my XMonad looks like
+now](../images/xmonad-thumbnail.png)](../images/xmonad.png)
+
+``` {.sourceCode .haskell}
+-- /home/ngzhian/.xmonad/xmonad.sh
+import XMonad
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.ManageDocks
+import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.EZConfig(additionalKeys)
+import System.IO
+
+main = do
+  xmproc <- spawnPipe "xmobar"
+  xmonad $ defaultConfig
+    { manageHook = manageDocks <+> myManageHook <+> manageHook defaultConfig
+    , layoutHook = avoidStruts  $  layoutHook defaultConfig
+    , logHook    = dynamicLogWithPP xmobarPP
+                       { ppOutput = hPutStrLn xmproc
+                       , ppTitle  = xmobarColor "#021030" "" . shorten 100
+                       }
+    , modMask = mod4Mask    -- Rebind Mod to Windows key
+    , terminal = myTerminal -- set terminal
+    } `additionalKeys`
+    [ ((mod4Mask .|. shiftMask,    xK_l),     spawn "xscreensaver-command -lock")
+    , ((controlMask,               xK_Print), spawn "sleep 0.2; scrot -s")
+    , ((0,                         xK_Print), spawn "scrot")
+    ]
+
+-- Preferred terminal
+myTerminal = "/usr/bin/urxvt"
+
+-- Managing hooks when windows are created
+myManageHook = composeAll
+  [ className =? "Gimp" --> doFloat
+  ]
+```

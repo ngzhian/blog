@@ -1,0 +1,108 @@
+Title: Notes on "Thinking Forth"
+Date: 2013-03-03 18:00
+
+Notes on "Thinking Forth"
+=========================
+
+I saw a mention of [Thinking
+Forth](http://thinking-forth.sourceforge.net/) online sometime back, and
+downloaded it. I finally got down to reading it this lazy Sunday
+afternoon, and made some notes. To quote from the homepage &gt; Thinking
+Forth is a book about the philosophy of problem solving &gt; and
+programming style, applied to the unique programming &gt; language
+[Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)).
+What I feel after reading this book is that many concepts and tips
+taught in the book can actually be applied to which ever programming
+langugage you are using now. Here are some general notes that I have
+made.
+
+Component Programming
+---------------------
+
+**Component programming** is about *minimizing* the impact of any
+change. A component is a resource, which can be a piece of hardware or a
+software resource (such as a queue or stack). This idea is in contrast
+to Sequential or Hierachical Design. An example was given by the author:
+updating a record. However when designing by components, we think in
+terms of the components which describe the structure of the records,
+provide a set of editing commands, and provide read/write methods to
+storage.
+
+Analysis
+--------
+
+Thinking Forth talks about the **Nine Phases of the Programming Cycle**,
+I took special note of the first two: discovering requirements and
+constraints, and building a conceptual model of the solution. To build a
+conceptual model, we can follow these steps: 1. Define interfaces By
+using Data Flow Diagrams for example. 2. Define rules By using English,
+Decision Tree, Tables. And subsequentlhy simplify the rules so that it
+can be easily understood and coded 3. Define data structures. This is a
+description of the structures’ conceptual model, i.e. what attributes to
+keep.
+
+Problem Solving
+---------------
+
+These are general ways we can use to approach problem solving. -
+Determine you goal - Picture the problem as a whole - Develop a plan
+(e.g. work backwards) - Step back from the problem - Believe
+
+I found **Believe** to be exceptionally inspiring. To achieve success
+you first need to believe you can succeed.
+
+Naming
+------
+
+As a pretty well-known quote goes &gt; The 2 hardest things in Computer
+Science are naming things, &gt; cache-invalidation, and off-by-one
+errors. Thinking Forth gives some tips on naming things, though some may
+actually be more relevant for the Forth language itself. - Choose names
+according to “what”, not “how” - Choose names that work in phrases -
+Spell names in full - Favour shorter words
+
+I feel that naming is a *balancing act*. On one hand you want the names
+to be *expressive*, but you also want them to be *concise*. For certain
+local variables, especially array indices, it makes sense not to give
+them long names; you will be typing them a lot, and they will not matter
+once you return from the function, so naming them `i` is fine. For
+variables with a bigger scope, the name `data` could mean a lot of
+different things.
+
+Factoring
+---------
+
+Factoring is about organizing code into useful fragments by separating
+reusable parts from non-reusable parts. We can work to factor out: -
+Data - Functions - Code within Control Structures - Names After
+factoring, make sure that the factored code serves a single purpose, if
+not the refactoring might just have made things worse.
+
+Minimizing Control Structures
+-----------------------------
+
+The rationale behind this is that control structures introduce
+complexity into the code, and makes it harder to read and maintain. This
+rationale is clearly demonstrated in an example given by the author,
+where there is a *heptly-nested* (6 levels) `if-else` flow. The author
+suggests a few ways to minimize control structures: - Do not test for
+something that has already executed - Combine booleans of similar weight
+- When conditions do not share similar weight, place conditions that are
+easier to calculate, or least likely to be true on the outside. - Choose
+control structures that closely matches the control-flow
+
+Closing Thoughts
+----------------
+
+I read through the book quite quickly, and skipped the parts which I
+felt was about Forth, because I was more interested in the concepts
+taught than the language. However many concepts introduced are based on
+what Forth provides, and how Forth works. As such, I think that learning
+Forth while you are going through this book will greatly increase the
+value gained from reading. Nonetheless, I gained a lot of valuable
+insights from Thinking Forth, all of which I shared above, which will
+definitely help me in being a better programmer. I would like to thank
+the author, [Leo Brodie](http://punchandbrodie.com/leo/), and [Thinking
+Forth Project](http://thinking-forth.sourceforge.net/), for taking time
+time and effort to make the book available for free, and in high-quality
+format.

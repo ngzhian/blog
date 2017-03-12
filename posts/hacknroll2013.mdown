@@ -1,0 +1,69 @@
+Title: Hack&Roll 2013
+Date: 2013-02-03 18:00
+
+Hack&Roll 2013
+==============
+
+Our experience at Hack&Roll 2013
+================================
+
+What we built
+-------------
+
+Our team (Nange) built [NUSMorge](http://morge.nuscomputing.com/) , a
+simple way for NUS students to visualize multiple time tables together.
+Check out our [intro page](http://yjyao.com/NUSMorge/) too!
+
+The Stack
+---------
+
+NUSMorge is built on [Node.js](www.nodejs.org) with
+[Express](www.expressjs.com) serving our requests,
+[mongoDB](http://www.mongodb.org/) taking care of unique links, with
+[mongojs](https://github.com/gett/mongojs) as the glue. The rest of it
+(creating the table, merging the table, parsing the input url etc.) is
+Javascript, with help from [jQuery](http://jquery.com/).
+
+NUSMorge also makes use of the json file crawled by
+[NUSMods](http://nusmods.com/). NUSMods is a timetable builder which
+many NUSStudents use. We take in a long url from NUSMods, and parse it
+into our own representation, and displays it in the our timetable.
+
+Challenges
+----------
+
+For most of us, hacking on something was a relatively new experience,
+what more having to work together as a team and come up with something
+at the end of 24 hours.
+
+Communication is vital, stating clearly the route endpoints you expect
+to get, the object representation, error handling etc. All these were
+essential for your code to work together, and for the application to
+even work at all. It was hard to get the message across just by talking,
+so we drew and scribbled, and that really helped in our understanding.
+
+Fatigue started to dawn upon us three quarters of the way through, but
+with the help of snacks and sugar, we managed to complete our
+application before some of us took a snooze.
+
+Encouragement from each other helps a lot too!
+
+Learning Points
+---------------
+
+Stay focused, stay motivated. 24 hours isn’t a long time, to be able to
+ship something that works, it takes hard work. What is important is to
+get things working, then start adding features in if you have time.
+
+Learn to distribute work, and learn the strengths of each member.
+Everyone will have an easier time this way.
+
+Keep updating each other. Everyone should know what everyone else is
+working on this time. There needs to discussion and communication, so
+that members don’t go working on the same thing (like writing two
+different ways of parsing), or working on wildly different things.
+
+Source
+------
+
+Our [project](https://github.com/yyjhao/NUSMorge) is on Github.

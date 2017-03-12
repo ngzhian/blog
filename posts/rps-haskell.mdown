@@ -1,0 +1,171 @@
+Title: Rock Paper Scissors in Haskell
+Date: 2014-05-01 18:00
+
+Rock Paper Scissors in Haskell
+==============================
+
+This is a simple [Rock Paper
+Scissors](www.github.com/ngzhian/rcp-haskell) game in Haskell, it was
+made as an exercise in learning Haskell, especially the syntax, data
+constructors, and IO.
+
+<div class="figure">
+
+![How the game looks like now](../images/rcp-haskell.png)
+How the game looks like now
+
+</div>
+
+Program Design
+--------------
+
+This is a very simple program. The parts of the code that has to do with
+the logic is actually very short and simple, because RPS has very simple
+rules:
+
+``` {.sourceCode .haskell}
+-- Player or AI can make any of these moves each turn
+data Move = Rock | Paper | Scissors deriving (Show)
+
+-- Player is the current person playing, and AI is our intelligent program!
+data Winner = Player | AI | Draw deriving (Show)
+
+-- use a throwaway function getWinner' because
+-- we want to be clear that `user' is the first parameter
+getWinner :: Move -> Move -> Winner
+getWinner user ai = getWinner' user ai
+  where getWinner' Rock Paper     = AI
+        getWinner' Rock Scissors  = Player
+        getWinner' Paper Scissors = AI
+        getWinner' Paper Rock     = Player
+        getWinner' Scissors Rock  = AI
+        getWinner' Scissors Paper = Player
+        getWinner' _        _     = Draw
+
+-- a heuristics
+makeAIMove :: Move
+makeAIMove = Paper
+```
+
+I think the `getWinner` method is quite ugly, but I haven’t thought of a
+good way to write it. Maybe I can differentiate the `Move` to `UserMove`
+or `AIMove`, something along those lines, so I can make use of the type
+checker to ensure what that the arguments are fed correctly.
+
+The AI is currently really *smart*, reason is that I’m not concerned
+with learning about random numbers now, I just want this to be an
+exercise in writing Haskell, doing IO and some other stuff.
+
+Interaction with User
+---------------------
+
+This is a text-based game, so there are quite a few instances where the
+program prints a line, and gets another line of input from the user,
+which resulted in me writing this helper:
+
+``` {.sourceCode .haskell}
+getResponse :: String -> IO String
+getResponse s = putStrLn s >> getLine
+```
+
+The `>>` operator basically discards whatever output `putStrLn s` gives.
+This is required because `getLine` does not take any arguments.
+
+Initially I wanted to define all the interaction strings else where,
+thereby removing *magic constants*, and also stick to the DRY principle:
+
+``` {.sourceCode .haskell}
+welcomeMessage :: String
+welcomeMessage = "Lets play Rock Paper Scissors"
+```
+
+But I found this to be too verbose and distracting. I decided that
+instead of doing this, I should refactor it such that a string is only
+used at a single place. I made good progress with that, and the only
+String that is repeated is the prompt/insructions.
+
+Handling invalid input
+----------------------
+
+I handled invalid input using `Either` and recursion. `Either` allows me
+to determine if the user’s input was valid or not, and this check is
+done by `convertToMove`:
+
+``` {.sourceCode .haskell}
+-- handle invalid cases
+convertToMove :: String -> Either String Move
+convertToMove input = convert $ map toLower input
+  where convert "r" = Right Rock
+        convert "s" = Right Scissors
+        convert "p" = Right Paper
+        convert _   = Left "I don't know that move!"
+```
+
+The above function is called by another function, `getValidMove`, whos
+job is to get a valid move from the user. By pattern matching against
+the value of `convertToMove`, it can either display the error message
+when it is a `Left`, and recursively call itself, or it will return the
+`Move`.
+
+``` {.sourceCode .haskell}
+getValidMove :: IO Move
+getValidMove = do
+  userMove <- convertToMove <$> getResponse "What's your move?"
+  case userMove of
+    Left msg -> do
+      putStrLn msg
+      putStrLn "R for rock, P for paper, S for scissors."
+      getValidMove
+    Right m  -> return m
+```
+
+This is called from within the `game` function. `game` runs a single
+round of RPS, which is marked by an outcome, or a `Winner`.
+
+``` {.sourceCode .haskell}
+game :: IO ()
+game = do
+  userMove <- getValidMove
+  play userMove makeAIMove
+  choice <- getResponse "Continue? Y/N"
+  continue choice
+    where play m ai = putStrLn $ announceWinner $ getWinner m ai
+          continue "y" = game
+          continue _ = do putStrLn "Thanks for playing!"
+```
+
+`announceWinner`’s role is to give the correct String output given an
+outcome of a game. This is to showcase how creative I can be with
+messages :P
+
+``` {.sourceCode .haskell}
+-- Gives the correct anouncement String for different outcomes of the game
+announceWinner :: Winner -> String
+announceWinner AI     = "The AI won :)"
+announceWinner Draw   = "It was a draw!"
+announceWinner Player = "Yay you won!"
+```
+
+As explained above, `getValidMove` will always give a `IO Move`, so the
+value of `userMove` is always a `Move`. This delegation of retrieving
+and validating the user’s input for a move simplifies this function. I
+should adopt this way of building and composing functions more.
+
+The entire program runs in the `main` function:
+
+``` {.sourceCode .haskell}
+main :: IO ()
+main = do
+  -- Message to user when the user first runs this program
+  putStrLn "Lets play Rock Paper Scissors"
+  -- Instructions on ohw to play this game
+  putStrLn "R for rock, P for paper, S for scissors."
+  game
+```
+
+This function is extremely simple, it just prints a welcome message and
+instructions for new players.
+
+So that’s it, my first haskell program from scratch! Pretty happy with
+it now, next idea I will try is probably another simple game, like tic
+tac toe or some.

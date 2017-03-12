@@ -1,0 +1,119 @@
+Title: Don't waste their time!
+Date: 2014-04-26 18:00
+
+Don't waste their time!
+=======================
+
+In [this
+article](http://www.smashingmagazine.com/2014/04/25/stop-wasting-users-time/)
+on Smashing Magazine, [Paul
+Boag](http://www.smashingmagazine.com/author/paul-boag/?rel=author)
+talks about not wasting users’ time. This resonated well with me,
+considering I just completed the module CS2103T, Software Engineering
+(exam was this noon), and in that module our lecturer actually gave us
+some advice on usability.
+
+Key idea: time is precious
+--------------------------
+
+The key idea of the article is that time is precious to users, and also
+developers. But as developers it is our responsibility to spend more
+time our on work so that users don’t have to. He brought up excellent
+examples which almost anyone on the Internet would have encountered:
+CAPTCHA, and Country Selector in forms. This is a worthwhile read, as he
+points to various other posts that tackles those examples, or talk about
+usability. His conclusion is simple, constantly ask “Can I save the user
+time?”.
+
+CS2103T: adding tasks
+---------------------
+
+To link it back to CS2103T, the task tracker we were asked to implement
+was pretty simple, but there are many design issues to consider while
+building the application. For example, what are the commands we should
+support? We could be rigid and say that the user must use the “add”
+keyword to add a task. But if we consider the common use case for a task
+tracker, the user will probably be adding tasks *a lot*. Hence it makes
+sense to make adding, simpler. So we could reduce the size of the
+keyword to just “a”. Can we go a step further though?
+
+Does the user even have to specify a keyword? Can we just let the user
+type the task title, and add it in? Our eventual decision was no. Our
+implementation became as such:
+
+> when the user enters an invalid command, we suggest some valid
+> commands for them
+
+Hm… This actually feels a bit like filling in bank account numbers
+**without** the hyphens, or the postal-code example brought up by Boag.
+Why are we making the user type the same command again, when she
+probably just misspelled it by a single character? I can actually think
+of a few ways to tackle this issue:
+
+Ways to solve it
+----------------
+
+1.  *guess* what the user wants to do, and execute
+2.  feedback that the result was invalid, and repopulate the input, with
+    the caret positioned at where the problem lies
+3.  treat it as an add command
+4.  treat it as a search
+
+### Guess
+
+This seems to be a good solution, considering that the user probably
+made a typo, like “ad” instead of “add”, so we can just execute the
+closest valid command, saving the user some time time. However, in this
+case we will definitely need an “undo” function in case the user does
+not intend to do that.
+
+### Feedback and repopulate
+
+Say the user enters commands via an input field. An invalid command
+shall lead to the field being repopulated, with the problematic part
+highlighted. By ‘highlighted’ I mean, ‘made obvious’. This can be in the
+form of a red wiggly underline, like in Word, or font with red fill.
+This is useful because the user does not have to retype the entire
+command. She gets feedback that the command is not recognized, and can
+verify what she wants to do exactly, before trying again.
+
+### Search
+
+I think this is an apt solution as most input fields that we face
+nowadays are actually search boxes. But there is a slight issue if our
+search is done as the user type - aka live search. Imagine the user
+typing a sequece ‘a’, ‘d’, ‘d’. Having live search will mean that
+results matching “add” will be shown, but if the user meant to add a
+task, surely she doesn’t want to see all these unrelated tasks? What if
+we recognized “add” as a keyword and stopped trying to search, this
+becomes a problem if the user wishes to search for tasks with the word
+“add” in it.
+
+Retrospective
+-------------
+
+If I were to reimplement this, I would do a combination of “Guess” and
+“Feedback and repopulate”. Assuming that we treat the first word of the
+user input as a keyword, we can attempt to first “Guess”, but trying to
+match the invalid keyword with a valid one, which we are actually doing
+already when we provide “did you mean” suggestions. This can be done
+using [Levenshtein
+distance](https://en.wikipedia.org/wiki/Levenshtein_distance). If there
+is no good match, we feedback to the user, highlight the problematic
+part, and allow them to easily fix those errors.
+
+The last mile?
+--------------
+
+Let’s go one step further. Why not parse the user input on the fly. As
+the user type, we parse the input to see if it is valid or not. So when
+typing the keyword, an invalid command will immediately give a red
+wiggly line, so the user knows something is wrong. This could be
+implemented on top of the 2 suggestions, because the user might just go
+ahead and press enter despite the errors anyway.
+
+An article on saving users’ time actually sparked that much thought into
+a simple problem for my project module! Though I wish these thoughts
+came earlier, I’m still glad because the article brought about such
+thoughts and ideas, and really showed out CS2103T has huge relevance to
+the industry.

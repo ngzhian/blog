@@ -1,0 +1,221 @@
+Title: Using JConsole to look at MBeans
+Date: 2014-05-08 18:00
+
+Using JConsole to look at MBeans
+================================
+
+What is JConsole
+----------------
+
+JConsole is a GUI tool that monitors and display information about
+performance, usage, and other statistics of applications running on the
+JVM. It is useful in this case because it lets you monitor and manage
+all MBeans registered with the platform MBean server.
+
+Running JConsole
+----------------
+
+To start JConsole, simply run the executable, for me it was at
+`C:\Program Files\Java\jdk1.7.0_45\bin\jconsole.exe`
+
+You will then be presented with a dialog to set up a new connection.
+With JConsole is run with no arguments, this dialog will pop up, and it
+will detect any Java applications that is running currently. We will
+just select the JConsole process itself, to just get a feel of how
+JConsole looks like.
+
+<div class="figure">
+
+![New connection dialog when you first start
+jconsole](../images/jconsole-new-dialog.png)
+New connection dialog when you first start jconsole
+
+</div>
+
+The first tab is the *Overview*, which shows the heap memory usage,
+thread count, classes loaded and CPU usage for the monitored process.
+The other threads provides more details in these particular fields, but
+what I am interested in here is the MBeans tab.
+
+<div class="figure">
+
+![Overview tab after you connect to a process to
+monitor](../images/jconsole-overview-tab.png)
+Overview tab after you connect to a process to monitor
+
+</div>
+
+Poking at MBeans
+----------------
+
+The MBeans tab displays all MBeans registered with the platform MBeans
+server. And all Java applications have a number of MBeans that will be
+registered by default. Of particular interest to me are the MBeans that
+are read by jmxetric currently, and these can be found in the
+configuration file
+[here](https://github.com/ganglia/jmxetric/blob/master/etc/jmxetric.xml).
+
+<div class="figure">
+
+![MBeans tab in JConsole shows you all registered
+MBeans](../images/jconsole-mbeans-tab.png)
+MBeans tab in JConsole shows you all registered MBeans
+
+</div>
+
+Those MBeans include `java.lang:type=Memory`,
+`java.lang:type=Threading`, and `java.lang:type=OperatingSystem`. If we
+look at the configuration file, we can notice 2 different kinds of
+MBeans.
+
+1.  MBeans with `attribute` with `composite`s:
+
+    ``` {.sourceCode .java}
+    <mbean name="java.lang:type=Memory" pname="Memory">
+        <attribute name="HeapMemoryUsage">
+            <composite name="init" pname="Heap_init" type="int32" units="bytes"/>
+            <composite name="committed" pname="Heap_committed" type="int32" units="bytes"/>
+            <composite name="used" pname="Heap_used" type="int32" units="bytes" />
+            <composite name="max" pname="Heap_max" type="int32" units="bytes" />
+        </attribute>
+        <attribute name="NonHeapMemoryUsage" >
+            <composite name="init" pname="NonHeap_init" type="int32" units="bytes" />
+            <composite name="committed" pname="NonHeap_committed" type="int32" units="bytes" />
+            <composite name="used" pname="NonHeap_used" type="int32" units="bytes" />
+            <composite name="max" pname="NonHeap_max" type="int32" units="bytes" />
+        </attribute>
+    </mbean>
+    ```
+
+2.  MBeans with `attributes`
+
+    ``` {.sourceCode .java}
+    <mbean name="java.lang:type=Threading" pname="Threading" >
+        <attribute name="ThreadCount" type="int16" />
+        <attribute name="DaemonThreadCount" type="int16" />
+    </mbean>
+    ```
+
+This is because these 2 MBeans are different. The first, `Memory` is a
+MXBean, which allows for composite attributes, the second `Threading` is
+a simple MBean. The difference are explained briefly in an [Oracle
+tutorial](http://docs.oracle.com/javase/tutorial/jmx/mbeans/mxbeans.html).
+
+We can take a look at the mapping between the configuration in jmxetric
+and the data shown in JConsole.
+
+Each of the *folder* on the left in JConsole is a collection of MBeans,
+grouped by the package name. If we click on `java.lang`, it is expanded
+to show the MBeans we see in the jmxetric configuration. Clicking on
+each of them, `Memory`, `OperatingSystem`, and `Threading` will bring up
+the MBean information and descriptor on the right.
+
+<div class="figure">
+
+![MBeans tab in JConsole shows you all registered
+MBeans](../images/jconsole-mbeans-info.png)
+MBeans tab in JConsole shows you all registered MBeans
+
+</div>
+
+The `Threading` MBean
+---------------------
+
+We can see that the `ObjectName` under the `MBeanInfo` pane maps
+directly to the `name` attribute of the `mbean` tag in the xml. For
+example, `java.lang:type=Threading`.
+
+If we expand the `Threading` MBean on the left pane, we can view it’s
+attributes and operations. As discussed in a previous blog post, MBeans
+can expose attributes that are readable and/or writable, and also a set
+of operations that can be invoked.
+
+For `Threading`, if we select the `ThreadAllocatedMemoryEnabled`
+attribute, we can see that its `Writable` field is set to true. Hence we
+can actually double click and edit the value of this attribute!
+
+<div class="figure">
+
+![Writable attribute of the Threading
+MBean](../images/jconsole-threading-mbean-writable.png)
+Writable attribute of the Threading MBean
+
+</div>
+
+However if we select `ThreadAllocatedMemorySupported`, its `Writable`
+field is set to false, hence double clicking on the value doesn’t let us
+change anything.
+
+If we look further down, we can see the attributes specified by
+jxmetric, `ThreadCount` and `DaemonThreadCount`, both of which are
+**not** `Writable` and are `int`s.
+
+<div class="figure">
+
+![ThreadCount attribute of the Threading
+MBean](../images/jconsole-threading-mbean-threadcount.png)
+ThreadCount attribute of the Threading MBean
+
+</div>
+
+<div class="figure">
+
+![DaemonThreadCount attribute of the Threading
+MBean](../images/jconsole-threading-mbean-daemonthreadcount.png)
+DaemonThreadCount attribute of the Threading MBean
+
+</div>
+
+The `Memory` MBean
+------------------
+
+Let’s take a look at the more complicated `Memory` MBean. First, we
+check out the attribute `NonHeapMemoryUsage`. The jmxetric configuration
+file tells us that this attribute is made up of a few *sub-attributes*,
+or composite. And under the attribute value we can see that the value of
+this MBean is `javax.management.openmbean.CompositeDataSupport` and it
+has a type `javax.management.composite.CompositeData`. What this means
+is that Java helps us to manage this composite data, taking care of the
+translation process on its own. Again this can be contrasted to the
+`ThreadCount` attribute of the `Threading` MBean, which in my case had a
+value of `38` and a type of `int`.
+
+<div class="figure">
+
+![NonHeapMemoryUsage attribute of Memory
+MBean](../images/jconsole-memory-mbean-nonheapmemoryusage.png)
+NonHeapMemoryUsage attribute of Memory MBean
+
+</div>
+
+So where are the composites `init`, `committed`, `used`, and `max`? We
+have to look at the *Descriptor* pane at the bottom, and check out the
+attribute `openType`, which has the value
+`javax.management.openmbean.CompositeType(name=java.lang.management.MemoryUsage,items=((itemName=committed,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long)),(itemName=init,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long)),(itemName=max,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long)),(itemName=used,itemType=javax.management.openmbean.SimpleType(name=java.lang.Long))))`.
+
+This really long type basically describes the whole composite data. Each
+of its component has an `itemName` - which matches the `name` field of
+the `composite` tag in jmxetric), `itemType` - which in this case are
+all `javax.management.openmbean.SimpleType(name=java.lang.Long)`.
+
+And the same can be said for the `NonHeapMemoryUsage` attribute, which
+is again a composite data type having the same composites as
+`HeapMemoryUsage`.
+
+<div class="figure">
+
+![HeapMemoryUsage attribute of Memory
+MBean](../images/jconsole-memory-mbean-heapmemoryusage.png)
+HeapMemoryUsage attribute of Memory MBean
+
+</div>
+
+In my next few blog posts, I will be using JConsole to look at other
+Java applications, namely HornetQ, Karaf, Wildfly, and Tomcat, as
+suggested by my mentor.
+
+References
+----------
+
+[Guide to using
+jconsole](http://docs.oracle.com/javase/7/docs/technotes/guides/management/jconsole.html)

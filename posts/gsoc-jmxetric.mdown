@@ -1,0 +1,44 @@
+Title: GSOC 2014, jmxetric
+Date: 2014-05-07 18:00
+
+GSOC 2014, jmxetric
+===================
+
+Couple of weeks ago, I received great news that my project with
+[Ganglia](http://ganglia.sourceforge.net) has been accepted into GSOC.
+I’m extremely glad to be given this opportunity to participate in open
+source, it’s a dream come true for me.
+
+jmxetric is…
+------------
+
+My project is on [jmxetric](http://github.com/ganglia/jmxetric), which
+is a jvm instrumentation to ganglia.
+
+The plans
+---------
+
+A rough overview of my plan is to improve the current current
+implementation, fix outstanding issues, and implement more features. The
+*more features* part include support for popular Java software, such as
+HornetQ, Karaf, Tomcat, and Wildfly.
+
+This is quite a challenge for me because I’ve not been exposed to Java
+EE technologies, and most of these buzzwords are foreign to me. But I’m
+confident that I will pick them up pretty fast, and am very fortunate to
+have an extremely patient mentor, Daniel to guide me.
+
+This series
+-----------
+
+I’ve decided, having been inspired by other GSOC students, to document
+this entire journey in a series of blog posts tagged **gsoc**. This
+series will chronicle every detail of this experience, including what I
+learn, pitfalls, reflections.
+
+Thank you
+---------
+
+Once again, thank you Google, Ganglia, and Daniel for this extremely
+rare chance. I’ll work hard and do my best for this project! Here’s to a
+fantastic summer :)

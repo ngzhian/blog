@@ -1,0 +1,222 @@
+Title: MBeanScanner a utility class to generate sample configuration file for JMXetric
+Date: 2014-05-19 18:00
+
+MBeanScanner a utility class to generate sample configuration file for JMXetric
+===============================================================================
+
+MBeanScanner generates a XML configuration file for JMXetric
+============================================================
+
+MBeanScanner is a utility that scans the platform MBean server for
+information about registered MBeans and generates a XML file that can be
+used by JMXetric.
+
+It is motivated by [this issue on
+GitHub](https://github.com/ganglia/jmxetric/issues/10)
+
+Code is available here:
+
+How it works
+============
+
+This utility can be divided into two parts, the *scanning MBeans* role,
+and the *writting configuration* role. It queries the MBean server for
+MBeans, and constructs a representation of the configuration available
+for each MBean using private classes - these will be described below.
+These configurations are then written to a `PrintStream`, `System.out`
+for testing, or any specified file.
+
+Scanning MBeans and constructing a configuration for each MBean
+===============================================================
+
+Scanning the MBeans result in a list of `Config` objects.
+
+``` {.sourceCode .java}
+List<Config> configs = mBeanScanner.scan();
+```
+
+`Config` is a super class that represents a configuration item for each
+MBean. This is tied to the XML specification that JMXetric expects. This
+mapping is described more below.
+
+### `Config` and its subclasses: `MBeanConfig`, `MBeanAttributeConfig`, `MBeanCompositeConfig`
+
+A sample XML configuration file that JMXetric reads in is:
+
+``` {.sourceCode .xml}
+<jmxetric-config>
+ <jvm process="ProcessName"/>
+ <sample delay="3">
+  <mbean name="java.lang:type=Memory" pname="Memory">
+   <attribute name="HeapMemoryUsage">
+    <composite name="init" pname="Heap_init" type="int32" units="bytes"/>
+    <composite name="committed" pname="Heap_committed" type="int32" units="bytes"/>
+    <composite name="used" pname="Heap_used" type="int32" units="bytes" />
+    <composite name="max" pname="Heap_max" type="int32" units="bytes" />
+   </attribute>
+   <attribute name="NonHeapMemoryUsage" >
+    <composite name="init" pname="NonHeap_init" type="int32"  units="bytes" />
+    <composite name="committed" pname="NonHeap_committed" type="int32" units="bytes" />
+    <composite name="used" pname="NonHeap_used" type="int32" units="bytes" />
+    <composite name="max" pname="NonHeap_max" type="int32" units="bytes" />
+   </attribute>
+  </mbean>
+ </sample>
+</jmxetric-config>
+```
+
+`Config`
+
+  --------------- ------------------------
+  XML Tag         Config sublass
+  `<mbean>`       `MBeanConfig`
+  `<attribute>`   `MBeanAttributeConfig`
+  `<composite>`   `MBeanCompositeConfig`
+  --------------- ------------------------
+
+Each `Config` object has a name, which is the name of the tag, a list of
+`KeyValue` which are the attributes in each tag, and a list of `Config`,
+which are the inner configurations.
+
+``` {.sourceCode .java}
+Map<String, String> fields = new HashMap<>();
+List<Config> children = new Vector<Config>();
+```
+
+The name `fields` was chosen to represent the attributes in the XML tag
+because of the potential confusion between attributes of the XML tags
+and the attribute XML tags.
+
+The `Config` class allows us to extract a lot of common methods
+
+``` {.sourceCode .java}
+void addField(String key, String val)
+void addChild(Config config)
+public String fieldsToString()
+```
+
+### Scanning for MBeans information
+
+First, the platform MBean server is queried, using `null` parameters.
+This will return `ObjectInstance`s for all the MBeans in a `Set`.
+
+``` {.sourceCode .java}
+Set<ObjectInstance> mBeanObjects = mBeanServer.queryMBeans(null, null);
+```
+
+Each `ObjectInstance` in the `Set` is then used to construct a
+`MBeanConfig`:
+
+``` {.sourceCode .java}
+private Config scanOneMBeanObject(ObjectInstance objectInstance) {
+  MBeanConfig mBeanConfig = new MBeanConfig();
+  ObjectName objectName = objectInstance.getObjectName();
+  mBeanConfig.addField("name", objectName.getCanonicalName());
+  scanMBeanAttributes(mBeanConfig, objectName);
+  return mBeanConfig;
+}
+```
+
+As each `MBean` can have multiple attributes, the `scanMBeanAttributes`
+method retrieves information on all the attributes for 1 MBean, and
+populates the `mBeanConfig` object associated with that MBean with the
+scanned attributes.
+
+The information regarding the attributes of one MBean is retrieved
+using:
+
+``` {.sourceCode .java}
+mBeanInfo = mBeanServer.getMBeanInfo(mBeanName);
+MBeanAttributeInfo[] infos = mBeanInfo.getAttributes();
+```
+
+As each MBean can have multiple attributes, the `mBeanConfig` is
+populated in a `for` loop. The construction of a `MBeanAttributeConfig`,
+which represents the configuration of a `<attribute>` is delgated to the
+method `makeConfigMBeanAttribute`.
+
+The body of `makeConfigMBeanAttribute` is long because it has to take
+care of 2 different kinds of attributes: 1. attributes of the simple
+type such as `<attribute name="MemoryManagerNames" type="string"/>`, and
+2. attributes of the composite type, as shown in the sample XMl above.
+Also, many kinds of exceptions can be thrown when retrieving the
+attributes of an MBean.
+
+In short,if the attribute is a simple type, `makeConfigMBeanAttribute`
+constructs the `MBeanAttributeConfig`. If the attribute is a
+`CompositeData`, it delegates the construction to `addComposites`.
+
+``` {.sourceCode .java}
+if (attr == null) {
+  return null;
+} else if (attr instanceof CompositeData) {
+  addComposites(config, (CompositeData) attr);
+} else {
+  config.addField("type", translateDataType(attributeInfo.getType()));
+}
+```
+
+`addComposites` delegates the construction of a `MBeanCompositeConfig`
+for each data in the composite, to `makeComposite`, and adds each
+`MBeanCompositeConfig` into the `MBeanAttributeConfig`
+
+``` {.sourceCode .java}
+CompositeType compositeType = compositeData.getCompositeType();
+for (String key : compositeType.keySet()) {
+    config.addChild(makeComposite(compositeType, key));
+}
+```
+
+The type of each data in the composite can be discovered using
+`compositeType.getType(name).toString()`. However this is not the same
+as the type that is recognized by JMXetric and Ganglia. Hence the
+translation is provied by `translateDataType`.
+
+``` {.sourceCode .java}
+if (possibleData.contains("java.lang.Long")) {
+    return "int8";
+```
+
+This method is currently incomplete and should be updated so the
+translation is accurate.
+
+Writing the configurations out
+==============================
+
+The writing of `Config`s is handled by the `ConfigWriter` class. The
+constant strings defined by `ConfigWriter` are the declarations and
+doctype that a XML configuration file for JMXetric requires.
+
+A public method `write()` writes the declaration and doctype, as well as
+wrapping the configurations in the `<jmxetric-config>` tags. It builds
+up a `StringBuilder` representing the contents of the file to be
+written, and writes everying in a single `print`.
+
+``` {.sourceCode .java}
+sb.append(XML_DECL + NL);
+sb.append(XML_DOCTYPE + NL);
+sb.append("<jmxetric-config>" + NL);
+
+out.print(sb.toString());
+```
+
+The mutually recursive methods `buildXmlTagsFromList` and `buildXmlTag`
+does the actual building of the tags to be written. The method
+`buildXmlTagsFromList` writes a list of configuration to the
+`PrintStream`. `buildXmlTag` then does the actual writing of the XML.
+`buildXmlTag` can take care of self-closing XML tags by checking if the
+`Config` has any children. If it doesn’t, a self-closing tag is written.
+
+Improvements
+============
+
+I feel that `ConfigWriter` isn’t written in a good manner. Since the
+configuration file is an XML, I can probably use an XML writer instead
+of constructing the tags manually. However this works very well now -
+the code is pretty simple and is easy to read, so I will stick to this
+and submit a pull request based on the current code.
+
+The only kinds of datatype that we are taking care of are the simple
+type and `CompositeData`. There are other kinds of complex MXBeans type,
+such as the tabular. The support for these tyeps will be added as
+needed.
