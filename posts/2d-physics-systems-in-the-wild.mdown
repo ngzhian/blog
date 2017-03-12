@@ -1,0 +1,80 @@
+Title: 2D physics systems in the wild
+Date: 2017-03-12 18:01
+
+For an assignment in school we were tasked to build a simple 2D physics engine for a Bubble-Bobble like game.
+We were also encouraged to check out other physics engine to see how it works.
+I looked at
+[PhysicsJS](https://github.com/wellcaffeinated/PhysicsJS/),
+[UIDynamicAnimator](https://developer.apple.com/reference/uikit/uidynamicanimator),
+and [Box2D](http://box2d.org/).
+This blog post is a clean up and rearrangement of
+[notes](https://docs.google.com/document/d/1_NFbaDp5kqZgqGW7xJxd7juTEXcyjYtQMf1VR1DBdcs/edit?usp=sharing)
+I took when I went on that exploration.
+
+## What's in a 2D Physics System
+
+In general I found that a system will have the following items:
+
+1. World
+2. Body and Shape
+3. Behavior
+4. Notification
+5. Tick/Step/Integrate
+
+### World
+
+A world is a **frame of reference**, it defines the **physical bounds** of the system. You add physic bodies to a world, and only bodies in the same world can react to each other.
+
+### Body
+
+A body is a *thing* in the system. It has a shape. A body can have position, velocity, acceleration, friction, restitution (bounciness).
+
+An example of a shape is circle. It is used to calculate the bounds of a body to determine collisions. For example, 2 circles are considered to have collided if the distance between their center is less than or equals to the sum of their radius.
+
+### Behavior
+
+A behavior describes **what bodies will do** when simulated. Common behaviors are gravity (so objects will fall), collision with edges (bounce), collision with other bodies (push each other away).
+
+### Notification
+
+The user of a physics system might want to **know or react** when events happen in the physics system. For example, the user might want to play a sound when two circles collide. A notification is a way to get information from inside the system to outside the system.
+
+### Tick/Step/Integrator
+
+After the bodies and behaviors have been defined, the physics system can be simulated. This is done **stepwise**, by telling all bodies that a certain **delta of time** has passed, and running behaviors over all physics bodies. This is usually done in two steps:
+
+1. Integrate velocities, which calculates the new velocity of an object. For example, if an object has acceleration, its velocity should increase based on how much time has passed
+2. Integrate positions, which positions the body. For example, if an object has velocity, then the object will shift to a new position based on the time that has passed
+
+These two steps are done via the **integrator**. In the real world, time is continuous. However, our simulated physics systems cannot be. Therefore we try to **use discrete steps to simulate the continuous real world** as closely as possible. The integrator is a way of doing so.
+
+Behaviors are simulated via internal notifications. When velocity integration is completed, an internal notification is sent, and behaviors that are added to the world can react to this, and update bodies. The same happens after position integration.
+
+## PhysicsJS
+
+This library was the most helpful in my understanding of a 2D physics system. The code is neatly organized, and quite easy to understand.
+
+In general the components of PhysicsJS are what I described above. It also has the ability to render the physics world. You pass it a renderer that conforms to the required interface, and the entire physics world can be displayed on a canvas, on the DOM, or using WebGL.
+
+## UIDynamicAnimator
+
+This is probably the first tool iOS developers will reach for when physics is required in an app. And I can understand why: the usage is very simple. I would have really liked to reach the source for this, to see what it does to provide such a clean API.
+
+The `UIDynamicAnimator` allows very simple animation of `UIView` via the `UIDynamicItem` protocol. It is quite tied to `UIView`, you cannot initialize an animator without a view.
+
+An animator is equivalent to a physics world. You add behaviors to the world just as described above. Items must be added to the behaviors, and only items in the same behavior will interact with one another.
+
+Instead of using notifications (events), the animator uses a delegate for the behavior. A delegate will be informed of events via a method call.
+
+## Box2D
+
+This is probably the most well known, featured, and robust 2D physics system around. I didn't explore the source code because I am not familiar with C++. However I did look around at the manual and learned something about its implementation.
+
+Box2D is much more modular in the data structures it uses. In Box2D, a body has position, velocity, and fixture(s). A fixture has density, friction, and restitution. Fixtures attach shapes to bodies, which can be used independently, and body can have multiple fixtures (called a compound body).
+
+## Thoughts
+
+I enjoyed this assignment a lot, and also enjoyed reading the source of existing 2D engines.
+Even though there are well known equations behind behaviors of physical objects in the real world, simulating the real world via discrete time delta presents its own set of problems.
+For example, if the time delta is too large, and the velocity of two objects are large, objects and *pass through* one another (the calculated position based on the time delta skips the collision).
+There are techniques to mitigate this, such as by playing back the route that an object has taken to see if there is an intersection with a route another object has taken.
