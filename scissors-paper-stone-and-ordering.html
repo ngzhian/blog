@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Ng Zhi An">
+    <title>Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a class="home" href="./index.html">Home</a>
+        <h1>
+        Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)
+        </h1>
+        <time class="published">
+        2014-04-28
+        </time>
+        <div class="entry-content">
+        <h1 id="ScissorsPaperStoneandtheirorderingOrisitRockPaperScissors">Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</h1>
+
+<h2 id="Inspiration">Inspiration</h2>
+
+<p>I was in the bathroom, after watching a <a href='https://www.youtube.com/watch?v=WBJ3hdcM7G8'>video on
+Kata</a>, and fiddling with
+the thought of doing a Kata using Haskell. So I thought of what Kata I
+could try, and figured that a Scissors Paper Stone kata would be cool. I
+would have a chance to practice IO, hence Monads, and also some simple
+logic. So that led to the thought of how a game of SPS may work out…</p>
+<h2 id="ScissorsPaperStone">Scissors Paper Stone</h2>
+
+<p>Now you probably know the game and <a href='http://worldrps.com/game-basics'>how it’s
+played</a>. Scissors beats Paper, Paper
+beats Stone, Stone beats Scissors. Hmm what? If we plot how powerful
+each Move is, we see this:</p>
+<pre><code>&gt; Stone
+&gt;&gt;&gt; Paper
+&gt;&gt;&gt;&gt;&gt; Scissors
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; Stone   // what???</code></pre><p>This is interesting because, given a list of Scissors, Paper, and Stone,
+how would the result look like?</p>
+<p>Eventually I went to research a bit more, sometimes you just got to know
+what search terms to type, and I found <a href='https://en.wikipedia.org/wiki/Cyclic_order'>cyclic
+ordering</a>. It even
+classifies Scissors Paper Stone as a Discrete Cycle. But that didn’t
+stop me from wondering what sorting them will look like!</p>
+<h2 id="Code">Code</h2>
+
+<p>So I went ahead to explore. Code given is in Java, my most familiar
+lanugage. Code is ugly because, well its ugly. Maybe I should try to use
+polymorphism to clean it up… hm… Anyway, the <a href='https://gist.github.com/ngzhian/11373536' title='GitHub Gist for this experiment'>gist is
+here</a></p>
+<pre><code> {.sourceCode .java}
+static class Move implements Comparable&lt;Move&gt; {
+  public enum TYPE {
+    SCISSORS, PAPER, STONE
+  };
+
+  public static int COUNT = 0;
+  private TYPE type;
+  private int count;
+
+  private static Move paper() {
+    Move move = new Move();
+    move.type = TYPE.PAPER;
+    move.count = COUNT++;
+    return move;
+  }
+
+  private static Move scissors() {
+    Move move = new Move();
+    move.type = TYPE.SCISSORS;
+    move.count = COUNT++;
+    return move;
+  }
+
+  private static Move stone() {
+    Move move = new Move();
+    move.type = TYPE.STONE;
+    move.count = COUNT++;
+    return move;
+  }
+
+  public String toString() {
+    switch (type) {
+      case SCISSORS:
+        return &quot;Scissors [&quot; + count + &quot;]&quot;;
+      case PAPER:
+        return &quot;Paper [&quot; + count + &quot;]&quot;;
+      case STONE:
+        return &quot;Stone [&quot; + count + &quot;]&quot;;
+    }
+    return &quot;&quot;;
+  }
+
+  @Override
+  public int compareTo(Move o) {
+    switch (this.type) {
+      case SCISSORS:
+        switch (o.type) {
+          case SCISSORS:
+            return 0;
+          case PAPER:
+            return 1;
+          case STONE:
+            return -1;
+        }
+      case PAPER:
+        switch (o.type) {
+          case SCISSORS:
+            return -1;
+          case PAPER:
+            return 0;
+          case STONE:
+            return 1;
+        }
+      case STONE:
+        switch (o.type) {
+          case SCISSORS:
+            return 1;
+          case PAPER:
+            return -1;
+          case STONE:
+            return 0;
+        }
+  }
+  return 0;
+  }
+}</code></pre>
+
+<p>This is how the <code>Move</code> class looks like, and <code>compareTo</code> basically has
+the rules for the entire game. After this it was just making an outer
+class to add <code>Move</code>s to a list and to use <code>Collections.sort</code> on them:</p>
+<pre><code> {.sourceCode .java}
+public class ScissorsPaperStone {
+  public static void main(String[] args) {
+    List&lt;Move&gt; list = new Vector&lt;Move&gt;();
+
+    for (Move move : list) {
+      System.out.print(move + &quot;, &quot;);
+    }
+    System.out.println();
+
+    Collections.sort(list);
+
+    for (Move move : list) {
+      System.out.print(move + &quot;, &quot;);
+    }
+    System.out.println();
+    }
+}</code></pre>
+
+<h2 id="Resultseverythingissorted">Results - everything is sorted</h2>
+
+<p>The results are as such:</p>
+<h3 id="MovesaddedareScissorsPaperStone3times">Moves added are: (Scissors-Paper-Stone) 3 times</h3>
+
+<pre><code>Original:
+Scissors [0], Paper [1], Stone [2], Scissors [3], Paper [4], Stone [5], Scissors [6], Paper [7], Stone [8], 
+Sorted:
+Stone [8], Paper [7], Scissors [6], Stone [5], Paper [4], Scissors [3], Stone [2], Paper [1], Scissors [0], </code></pre><h3 id="ScissorsStonePaper3times">(Scissors-Stone-Paper) 3 times</h3>
+
+<pre><code>Original:
+Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], 
+Sorted:
+Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], </code></pre><h3 id="StonePaperScissors3times">(Stone-Paper-Scissors) 3 times</h3>
+
+<pre><code>Original:
+Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], 
+Sorted:
+Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], </code></pre><h3 id="StoneScissorsPaper3times">(Stone-Scissors-Paper) 3 times</h3>
+
+<pre><code>Original:
+Stone [0], Scissors [1], Paper [2], Stone [3], Scissors [4], Paper [5], Stone [6], Scissors [7], Paper [8], 
+Sorted:
+Paper [8], Scissors [7], Stone [6], Paper [5], Scissors [4], Stone [3], Paper [2], Scissors [1], Stone [0], </code></pre><h3 id="PaperScissorsStone3times">(Paper-Scissors-Stone) 3 times</h3>
+
+<pre><code>Original:
+Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], 
+Sorted:
+Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], </code></pre><h3 id="PaperStoneScissors3times">(Paper-Stone-Scissors) 3 times</h3>
+
+<pre><code>Original:
+Paper [0], Stone [1], Scissors [2], Paper [3], Stone [4], Scissors [5], Paper [6], Stone [7], Scissors [8], 
+Sorted:
+Scissors [8], Stone [7], Paper [6], Scissors [5], Stone [4], Paper [3], Scissors [2], Stone [1], Paper [0], </code></pre><h3 id="Somewhatrandomsequence">Somewhat random sequence</h3>
+
+<pre><code>Original:
+Paper [0], Scissors [1], Scissors [2], Stone [3], Paper [4], Stone [5], Paper [6], Scissors [7], Paper [8], Scissors [9], Stone [10], Stone [11], 
+Sorted:
+Paper [0], Scissors [1], Scissors [2], Scissors [7], Scissors [9], Stone [3], Stone [5], Stone [10], Stone [11], Paper [4], Paper [6], Paper [8], </code></pre><h2 id="ObservationsIdontreallyknow">Observations?? I don’t really know…</h2>
+
+<p>The results are definitely sorted, if we look at them pairwise. For
+example in the somehwat random sequence, every pair of <code>Move</code>s is sored,
+but we can see that the 2nd element is <code>Scissors</code>, but the last element
+is a <code>Paper</code>, and clearly Paper does not beat Scissors.</p>
+<p>Another observation is that, sequences that are already sorted don’t
+change. For example, Paper-Scissors-Stone is already in order, so the
+whole sequence is sorted, and hence doesn’t change. But I’m not sure how
+to explain the resuts for the rest, especially for the somewhat random
+sequence.</p>
+<p>But I wanted to know a bit more about how Java does sorting, and so I
+went to a bit of digging and jotted my discoveries
+<a href='../posts/2014-04-28-how-java-sorts-objects.html' title='A journey to discover how Java sorts objects'>here</a>.</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

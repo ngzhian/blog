@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Ng Zhi An">
+    <title>Learning Haskell through Maybe - Functors</title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a class="home" href="./index.html">Home</a>
+        <h1>
+        Learning Haskell through Maybe - Functors
+        </h1>
+        <time class="published">
+        2014-04-18
+        </time>
+        <div class="entry-content">
+        <h1 id="LearningHaskellthroughMaybeFunctors">Learning Haskell through Maybe - Functors</h1>
+
+<h2 id="Types">Types</h2>
+
+<p>You have a <code>Type</code>, <code>Integer</code>. <code>Integer</code> is an integer, representing
+intergers, just like real life.</p>
+<p>Other types are <code>Char</code>, which are characters such as <code>&#39;a&#39;</code>, <code>&#39;b&#39;</code> etc.
+The one we will look at in detail is <code>Maybe</code>.</p>
+<h2 id="Typevariableconstructors">Type variable, constructors</h2>
+
+<p>A data of type <code>Maybe</code> can only be made if a <em>type variable</em> is
+specified. This means that you can make a <code>Maybe Integer</code>, <code>Maybe Char</code>,
+but a <code>Maybe</code> isn’t a complete type.</p>
+<p>The way to make a data of type <code>Maybe</code> is to use a <em>type constructor</em>.
+<code>Maybe</code> has two type constructors, <code>Just</code> and <code>Nothing</code>. <code>Just</code> is like
+<code>Maybe</code>, it can only be made if a type variable is specified. <code>Nothing</code>
+can be made simply on its own, it is a complete type.</p>
+<p>Let’s try making <code>Maybe</code>s in GHCI:</p>
+<pre><code> {.sourceCode .haskell}
+&gt; let best_friends = Just 1
+&gt; best_friends
+Just 1</code></pre>
+
+<p>You have just used the type constructor <code>Just</code>, passed in the <code>Int</code> 1,
+to make a type of <code>Maybe Int</code>. To verify the type of <code>best_friends</code>:</p>
+<pre><code> {.sourceCode .haskell}
+&gt; :t best_friends
+best_friends :: Maybe Integer</code></pre>
+
+<p><code>::</code> can be read as <strong>is of type</strong>. How about make a <code>Maybe</code> using
+<code>Nothing</code>?</p>
+<pre><code> {.sourceCode .haskell}
+&gt; let girlfriend = Nothing
+&gt; girlfriend
+Nothing</code></pre>
+
+<h2 id="Functor">Functor</h2>
+
+<p>Suppose you have twice as many best friends as I do, how can I find out
+how many best friends you have?</p>
+<pre><code> {.sourceCode .haskell}
+&gt; let your_best_friends = 1 * 2 --hard coded value for the number best friends I have
+&gt; your_best_friends
+2
+&gt; let your_best_friends = best_friends * 2 --fails terribly</code></pre>
+
+<p>You get a crazy error message. It means that you cannot multiply 2 with
+<code>best_friends</code>, because <code>best_friends</code> is not a type that can be
+multiplied with 2. Clearly there is something going on here, because
+<code>best_friends</code> can contain an <code>Integer</code>, and we can definitely multiply
+<code>Integer</code>s, what we can do is to define a function that helps us do so.</p>
+<pre><code> {.sourceCode .haskell}
+&gt; :{
+| let calc_friends :: Maybe Integer -&gt; Maybe Integer
+|       calc_friends Nothing = Nothing
+|           calc_friends (Just x) = Just (x * 2)
+&gt; :}
+&gt; let your_best_friends = calc_friends best_friends
+&gt; your_best_friends
+Just 2</code></pre>
+
+<p>What we did was to define a function that can calculate the number of
+best friends you have, given the number of best friends I have. By
+applying this function to <code>best_friends</code>, you get the number of best
+friends you have, wrapped in a <code>Just</code>. What if I told you that you had
+twice as many girlfriends as I do?</p>
+<pre><code> {.sourceCode .haskell}
+&gt; let your_girlfriends = calc_friends girlfriend
+&gt; your_girlfriends
+Nothing</code></pre>
+
+<p>Hahaha.</p>
+<p>Perhaps you grow more popular, and you actually had 3 times more friends
+than I do. Since we hard coded the value <code>2</code>, we have to make another
+function with the value <code>3</code>, or we can actually generalize the function
+as such.</p>
+<pre><code> {.sourceCode .haskell}
+&gt; :{
+| let calc_friends :: (Integer -&gt; Integer) -&gt; Maybe Integer -&gt; Maybe Integer
+|     calc_friends _ Nothing = Nothing
+|     calc_friends f (Just x) = Just (f x)
+&gt; :}
+&gt; let your_best_friends = calc_friends (* 3) best_friends
+&gt; your_best_friends
+Just 3
+&gt; let your_girlfriends = calc_friends (* 2) girlfriend
+&gt; your_girlfriends
+Nothing</code></pre>
+
+<p>We define <code>calc_friends</code> as a function that takes in another function,
+<code>f</code>, and this function <code>f</code> takes in an <code>Integer</code> and returns another
+<code>Integer</code>. An example of this function would be <code>(* 3)</code>. <code>calc_friends</code>
+also takes in a <code>Maybe Integer</code>, which it will apply the function <code>f</code>
+to, and returning a resut of type <code>Maybe Integer</code></p>
+<p>What if instead of number of best friends, an <code>Integer</code>, we wanted to
+compare height, a <code>Double</code>, and you are 1 metre taller than me, this
+looks pretty similar to calc_friends, so let’s reuse that:</p>
+<pre><code> {.sourceCode .haskell}
+&gt; let height = Just 1.7
+&gt; let calc_height = calc_friends (+ 1)
+&gt; calc_height height</code></pre>
+
+<p>Throws you an error about incompatible types. This is becase we defined
+<code>calc_height</code> in terms of <code>calc_friends</code>, which only worked with
+<code>Maybe Integer</code>, but our height was a <code>Maybe Double</code>. So let’s
+generalize our function using <em>type variables</em>, just like how <code>Maybe</code> is
+defined.</p>
+<pre><code> {.sourceCode .haskell}
+&gt; :{
+| let calc_stuff :: (a -&gt; a) -&gt; Maybe a -&gt; Maybe a
+|     calc_stuff _ Nothing = Nothing
+|     calc_stuff f (Just x) = Just (f x)
+&gt; :}
+&gt; calc_stuff (* 3) best_friends
+Just 9
+&gt; calc_stuff (+ 1) height
+Just 2.7
+&gt; calc_stuff (* 2) girlfriend
+Nothing</code></pre>
+
+<p>The last bit to understanding <code>Functor</code> is a method called <code>fmap</code>, all
+types that are instances of the <em>typeclass</em> <code>Functor</code> have to implement
+a method called <code>fmap</code>, which has the signature:</p>
+<pre><code> {.sourceCode .haskell}
+fmap              :: (a -&gt; b) -&gt; f a -&gt; f b 
+calc_stuff :: (a -&gt; a) -&gt; Maybe a -&gt; Maybe a</code></pre>
+
+<p>I’m putting them one above the other to let you see how similar they
+are. <code>fmap</code> is just <code>calc_stuff</code> generalized - generalizing the function
+that <code>calc_stuff</code> takes in and - generaizing the type <code>Maybe</code> to other
+types that take in a single type variable</p>
+<p>And the <code>f</code> we see in the <code>fmap</code> is the Functor, a typeclass of which
+<code>Maybe</code> is an instance of.</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

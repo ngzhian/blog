@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Ng Zhi An">
+    <title>Rock Paper Scissors in Haskell</title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a class="home" href="./index.html">Home</a>
+        <h1>
+        Rock Paper Scissors in Haskell
+        </h1>
+        <time class="published">
+        2014-05-01
+        </time>
+        <div class="entry-content">
+        <h1 id="RockPaperScissorsinHaskell">Rock Paper Scissors in Haskell</h1>
+
+<p>This is a simple <a href='www.github.com/ngzhian/rcp-haskell'>Rock Paper
+Scissors</a> game in Haskell, it was
+made as an exercise in learning Haskell, especially the syntax, data
+constructors, and IO.</p>
+<div class='figure'>
+
+![How the game looks like now](../images/rcp-haskell.png)
+How the game looks like now
+
+</div>
+
+<h2 id="ProgramDesign">Program Design</h2>
+
+<p>This is a very simple program. The parts of the code that has to do with
+the logic is actually very short and simple, because RPS has very simple
+rules:</p>
+<pre><code> {.sourceCode .haskell}
+-- Player or AI can make any of these moves each turn
+data Move = Rock | Paper | Scissors deriving (Show)
+
+-- Player is the current person playing, and AI is our intelligent program!
+data Winner = Player | AI | Draw deriving (Show)
+
+-- use a throwaway function getWinner&#39; because
+-- we want to be clear that `user&#39; is the first parameter
+getWinner :: Move -&gt; Move -&gt; Winner
+getWinner user ai = getWinner&#39; user ai
+  where getWinner&#39; Rock Paper     = AI
+        getWinner&#39; Rock Scissors  = Player
+        getWinner&#39; Paper Scissors = AI
+        getWinner&#39; Paper Rock     = Player
+        getWinner&#39; Scissors Rock  = AI
+        getWinner&#39; Scissors Paper = Player
+        getWinner&#39; _        _     = Draw
+
+-- a heuristics
+makeAIMove :: Move
+makeAIMove = Paper</code></pre>
+
+<p>I think the <code>getWinner</code> method is quite ugly, but I haven’t thought of a
+good way to write it. Maybe I can differentiate the <code>Move</code> to <code>UserMove</code>
+or <code>AIMove</code>, something along those lines, so I can make use of the type
+checker to ensure what that the arguments are fed correctly.</p>
+<p>The AI is currently really <em>smart</em>, reason is that I’m not concerned
+with learning about random numbers now, I just want this to be an
+exercise in writing Haskell, doing IO and some other stuff.</p>
+<h2 id="InteractionwithUser">Interaction with User</h2>
+
+<p>This is a text-based game, so there are quite a few instances where the
+program prints a line, and gets another line of input from the user,
+which resulted in me writing this helper:</p>
+<pre><code> {.sourceCode .haskell}
+getResponse :: String -&gt; IO String
+getResponse s = putStrLn s &gt;&gt; getLine</code></pre>
+
+<p>The <code>&gt;&gt;</code> operator basically discards whatever output <code>putStrLn s</code> gives.
+This is required because <code>getLine</code> does not take any arguments.</p>
+<p>Initially I wanted to define all the interaction strings else where,
+thereby removing <em>magic constants</em>, and also stick to the DRY principle:</p>
+<pre><code> {.sourceCode .haskell}
+welcomeMessage :: String
+welcomeMessage = &quot;Lets play Rock Paper Scissors&quot;</code></pre>
+
+<p>But I found this to be too verbose and distracting. I decided that
+instead of doing this, I should refactor it such that a string is only
+used at a single place. I made good progress with that, and the only
+String that is repeated is the prompt/insructions.</p>
+<h2 id="Handlinginvalidinput">Handling invalid input</h2>
+
+<p>I handled invalid input using <code>Either</code> and recursion. <code>Either</code> allows me
+to determine if the user’s input was valid or not, and this check is
+done by <code>convertToMove</code>:</p>
+<pre><code> {.sourceCode .haskell}
+-- handle invalid cases
+convertToMove :: String -&gt; Either String Move
+convertToMove input = convert $ map toLower input
+  where convert &quot;r&quot; = Right Rock
+        convert &quot;s&quot; = Right Scissors
+        convert &quot;p&quot; = Right Paper
+        convert _   = Left &quot;I don&#39;t know that move!&quot;</code></pre>
+
+<p>The above function is called by another function, <code>getValidMove</code>, whos
+job is to get a valid move from the user. By pattern matching against
+the value of <code>convertToMove</code>, it can either display the error message
+when it is a <code>Left</code>, and recursively call itself, or it will return the
+<code>Move</code>.</p>
+<pre><code> {.sourceCode .haskell}
+getValidMove :: IO Move
+getValidMove = do
+  userMove &lt;- convertToMove &lt;$&gt; getResponse &quot;What&#39;s your move?&quot;
+  case userMove of
+    Left msg -&gt; do
+      putStrLn msg
+      putStrLn &quot;R for rock, P for paper, S for scissors.&quot;
+      getValidMove
+    Right m  -&gt; return m</code></pre>
+
+<p>This is called from within the <code>game</code> function. <code>game</code> runs a single
+round of RPS, which is marked by an outcome, or a <code>Winner</code>.</p>
+<pre><code> {.sourceCode .haskell}
+game :: IO ()
+game = do
+  userMove &lt;- getValidMove
+  play userMove makeAIMove
+  choice &lt;- getResponse &quot;Continue? Y/N&quot;
+  continue choice
+    where play m ai = putStrLn $ announceWinner $ getWinner m ai
+          continue &quot;y&quot; = game
+          continue _ = do putStrLn &quot;Thanks for playing!&quot;</code></pre>
+
+<p><code>announceWinner</code>’s role is to give the correct String output given an
+outcome of a game. This is to showcase how creative I can be with
+messages :P</p>
+<pre><code> {.sourceCode .haskell}
+-- Gives the correct anouncement String for different outcomes of the game
+announceWinner :: Winner -&gt; String
+announceWinner AI     = &quot;The AI won :)&quot;
+announceWinner Draw   = &quot;It was a draw!&quot;
+announceWinner Player = &quot;Yay you won!&quot;</code></pre>
+
+<p>As explained above, <code>getValidMove</code> will always give a <code>IO Move</code>, so the
+value of <code>userMove</code> is always a <code>Move</code>. This delegation of retrieving
+and validating the user’s input for a move simplifies this function. I
+should adopt this way of building and composing functions more.</p>
+<p>The entire program runs in the <code>main</code> function:</p>
+<pre><code> {.sourceCode .haskell}
+main :: IO ()
+main = do
+  -- Message to user when the user first runs this program
+  putStrLn &quot;Lets play Rock Paper Scissors&quot;
+  -- Instructions on ohw to play this game
+  putStrLn &quot;R for rock, P for paper, S for scissors.&quot;
+  game</code></pre>
+
+<p>This function is extremely simple, it just prints a welcome message and
+instructions for new players.</p>
+<p>So that’s it, my first haskell program from scratch! Pretty happy with
+it now, next idea I will try is probably another simple game, like tic
+tac toe or some.</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>

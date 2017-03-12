@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Ng Zhi An">
+    <title>How Java sorts Objects</title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a class="home" href="./index.html">Home</a>
+        <h1>
+        How Java sorts Objects
+        </h1>
+        <time class="published">
+        2014-04-28
+        </time>
+        <div class="entry-content">
+        <h1 id="HowJavasortsObjects">How Java sorts Objects</h1>
+
+<h2 id="Itstartedwithanexperimentonsorting">It started with an experiment on sorting…</h2>
+
+<p>The reason why I had this question in my head was because I was
+wondering <a href='../posts/2014-04-28-scissors-paper-stone-and-ordering.html'>how sorting would look like for Scissors, Paper, Stone
+objects</a>,
+since they have a <a href='https://en.wikipedia.org/wiki/Cyclic_order'>cyclic
+ordering</a>. And in that
+little experiment I used Java’s <code>Collections.sort</code> method, which is
+really useful if the class you wish to sort implements
+<a href='http://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html'><code>Comparable</code></a>,
+and that just requires you to define a single method <code>compareTo</code>. So I
+went ahead to investigate how Java implements this method. My initial
+guess was that for small collections, insertion sort would be used,
+because it’s actually more efficient. But for larger collections,
+mergesort/quicksort would be used. Eventually I found out I was wrong,
+here’s why.</p>
+<h2 id="Grepthatmethod">Grep that method</h2>
+
+<p><a href='grepcode.com'>GrepCode</a> is a wonderful resource. It lets you search the
+code bases of many open source projects including Java and Eclipse, and
+there’s so much to learn from robust code that is being used by so many
+people.</p>
+<p>A simple search for <code>Collections.sort</code> took me
+<a href='http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/Collections.java#Collections.sort%28java.util.List%29'>here</a>.</p>
+<pre><code> {.sourceCode .java}
+public static &lt;T extends Comparable&lt;? super T&gt;&gt; void  [More ...] sort(List&lt;T&gt; list) {
+  Object[] a = list.toArray();
+  Arrays.sort(a);
+  ListIterator&lt;T&gt; i = list.listIterator();
+  for (int j=0; j&lt;a.length; j++) {
+    i.next();
+    i.set((T)a[j]);
+  }
+}</code></pre>
+
+<p>So actually <code>Collections.sort</code> converts the collection of objects into
+an <code>Array</code> internally, and uses <code>Arrays.sort</code>. Sounds like a simple way
+to <a href='http://www.c2.com/cgi/wiki?DontRepeatYourself'>reduce duplication of
+code</a>!</p>
+<h2 id="DiggingdeeperintosortArrays">Digging deeper into `sort.Arrays</h2>
+
+<p>So I looked into
+<a href='http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/Arrays.java#Arrays.sort%28java.lang.Object%5B%5D%29'><code>Array.sort</code></a>
+and see that <code>Arrays.sort</code> uses either <code>legacyMergeSort</code> or something
+called <code>ComparableTimSort</code>.</p>
+<pre><code> {.sourceCode .java}
+public static void  [More ...] sort(Object[] a) {
+  if (LegacyMergeSort.userRequested)
+    legacyMergeSort(a);
+  else
+    ComparableTimSort.sort(a);
+}</code></pre>
+
+<p>Well I know <a href='https://en.wikipedia.org/wiki/Mergesort'>mergesort</a>, and it
+seems like you need to set some system parameter to use it, so my guess
+is that it isn’t used most of the time. How about the other one,
+<code>ComparableTimSort</code>?</p>
+<h2 id="Timssort">Tim’s sort</h2>
+
+<p>I’ve never heard of such a sort before, so I continued investigating and
+reached the <a href='http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/ComparableTimSort.java#ComparableTimSort.sort%28java.lang.Object%5B%5D%29'>method
+definition</a>,
+which said this was just like
+<a href='http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/7u40-b43/java/util/TimSort.java#TimSort'>TimSort</a>.</p>
+<p>The comments for the <code>TimSort</code> class actually describes the history of
+<a href='https://en.wikipedia.org/wiki/Timsort'>TimSort</a>, which was first used
+by Python!</p>
+<pre><code> {.sourceCode .java}
+// A stable, adaptive, iterative mergesort that requires far fewer than n lg(n)
+// comparisons when running on partially sorted arrays, while offering
+// performance comparable to a traditional mergesort when run on random arrays.
+// Like all proper mergesorts, this sort is stable and runs O(n log n) time (worst case).</code></pre>
+
+<p>I haven’t completely figured out how it works, but it has <code>O(n)</code> best
+case performance, and performs very well on real world data. Here’s a
+<a href='https://svn.python.org/projects/python/trunk/Objects/listsort.txt'>description of the
+algorithm</a>
+by its author Tim Peters, and a <a href='http://sortvis.org/algorithms/timsort.html'>cool
+visualization</a> of the
+process. Oh by the way that previous website,
+<a href='http://sortvis.org'>sortvis</a> has visualizations of other sorting
+algorithms as well, check it out!</p>
+<h2 id="So">So…</h2>
+
+<p>I don’t really understand Tim’s sort as for now, and I think this won’t
+be the last time I’ll see it, but at least know I know how Java sorts
+stuff :)</p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>
