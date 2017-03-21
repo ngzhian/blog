@@ -7,10 +7,12 @@ Notes on "Thinking Forth"
 I saw a mention of [Thinking
 Forth](http://thinking-forth.sourceforge.net/) online sometime back, and
 downloaded it. I finally got down to reading it this lazy Sunday
-afternoon, and made some notes. To quote from the homepage &gt; Thinking
-Forth is a book about the philosophy of problem solving &gt; and
-programming style, applied to the unique programming &gt; language
-[Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)).
+afternoon, and made some notes. To quote from the homepage
+
+> Thinking Forth is a book about the philosophy of problem solving
+> and programming style, applied to the unique programming language
+> [Forth](https://en.wikipedia.org/wiki/Forth_(programming_language)).
+
 What I feel after reading this book is that many concepts and tips
 taught in the book can actually be applied to which ever programming
 langugage you are using now. Here are some general notes that I have
@@ -34,10 +36,14 @@ Analysis
 Thinking Forth talks about the **Nine Phases of the Programming Cycle**,
 I took special note of the first two: discovering requirements and
 constraints, and building a conceptual model of the solution. To build a
-conceptual model, we can follow these steps: 1. Define interfaces By
-using Data Flow Diagrams for example. 2. Define rules By using English,
-Decision Tree, Tables. And subsequentlhy simplify the rules so that it
-can be easily understood and coded 3. Define data structures. This is a
+conceptual model, we can follow these steps:
+
+1. Define interfaces By
+using Data Flow Diagrams for example.
+2. Define rules By using English,
+Decision Tree, Tables. And subsequently simplify the rules so that it
+can be easily understood and coded
+3. Define data structures. This is a
 description of the structures’ conceptual model, i.e. what attributes to
 keep.
 
@@ -54,9 +60,12 @@ you first need to believe you can succeed.
 Naming
 ------
 
-As a pretty well-known quote goes &gt; The 2 hardest things in Computer
-Science are naming things, &gt; cache-invalidation, and off-by-one
-errors. Thinking Forth gives some tips on naming things, though some may
+As a pretty well-known quote goes
+
+> The 2 hardest things in Computer Science are naming things,
+> cache-invalidation, and off-by-one errors.
+
+Thinking Forth gives some tips on naming things, though some may
 actually be more relevant for the Forth language itself. - Choose names
 according to “what”, not “how” - Choose names that work in phrases -
 Spell names in full - Favour shorter words
@@ -73,9 +82,11 @@ Factoring
 ---------
 
 Factoring is about organizing code into useful fragments by separating
-reusable parts from non-reusable parts. We can work to factor out: -
-Data - Functions - Code within Control Structures - Names After
-factoring, make sure that the factored code serves a single purpose, if
+reusable parts from non-reusable parts. We can work to factor out:
+- Data
+- Functions
+- Code within Control Structures
+- Names After factoring, make sure that the factored code serves a single purpose, if
 not the refactoring might just have made things worse.
 
 Minimizing Control Structures
@@ -85,11 +96,13 @@ The rationale behind this is that control structures introduce
 complexity into the code, and makes it harder to read and maintain. This
 rationale is clearly demonstrated in an example given by the author,
 where there is a *heptly-nested* (6 levels) `if-else` flow. The author
-suggests a few ways to minimize control structures: - Do not test for
-something that has already executed - Combine booleans of similar weight
+suggests a few ways to minimize control structures:
+
+- Do not test for something that has already executed
+- Combine booleans of similar weight
 - When conditions do not share similar weight, place conditions that are
-easier to calculate, or least likely to be true on the outside. - Choose
-control structures that closely matches the control-flow
+easier to calculate, or least likely to be true on the outside.
+- Choose control structures that closely matches the control-flow
 
 Closing Thoughts
 ----------------
