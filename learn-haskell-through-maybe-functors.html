@@ -38,21 +38,18 @@ but a <code>Maybe</code> isn’t a complete type.</p>
 <code>Maybe</code>, it can only be made if a type variable is specified. <code>Nothing</code>
 can be made simply on its own, it is a complete type.</p>
 <p>Let’s try making <code>Maybe</code>s in GHCI:</p>
-<pre><code> {.sourceCode .haskell}
-&gt; let best_friends = Just 1
+<pre class='haskell'><code class='haskell'>&gt; let best_friends = Just 1
 &gt; best_friends
 Just 1</code></pre>
 
 <p>You have just used the type constructor <code>Just</code>, passed in the <code>Int</code> 1,
 to make a type of <code>Maybe Int</code>. To verify the type of <code>best_friends</code>:</p>
-<pre><code> {.sourceCode .haskell}
-&gt; :t best_friends
+<pre class='haskell'><code class='haskell'>&gt; :t best_friends
 best_friends :: Maybe Integer</code></pre>
 
 <p><code>::</code> can be read as <strong>is of type</strong>. How about make a <code>Maybe</code> using
 <code>Nothing</code>?</p>
-<pre><code> {.sourceCode .haskell}
-&gt; let girlfriend = Nothing
+<pre class='haskell'><code class='haskell'>&gt; let girlfriend = Nothing
 &gt; girlfriend
 Nothing</code></pre>
 
@@ -60,8 +57,7 @@ Nothing</code></pre>
 
 <p>Suppose you have twice as many best friends as I do, how can I find out
 how many best friends you have?</p>
-<pre><code> {.sourceCode .haskell}
-&gt; let your_best_friends = 1 * 2 --hard coded value for the number best friends I have
+<pre class='haskell'><code class='haskell'>&gt; let your_best_friends = 1 * 2 --hard coded value for the number best friends I have
 &gt; your_best_friends
 2
 &gt; let your_best_friends = best_friends * 2 --fails terribly</code></pre>
@@ -71,8 +67,7 @@ how many best friends you have?</p>
 multiplied with 2. Clearly there is something going on here, because
 <code>best_friends</code> can contain an <code>Integer</code>, and we can definitely multiply
 <code>Integer</code>s, what we can do is to define a function that helps us do so.</p>
-<pre><code> {.sourceCode .haskell}
-&gt; :{
+<pre class='haskell'><code class='haskell'>&gt; :{
 | let calc_friends :: Maybe Integer -&gt; Maybe Integer
 |       calc_friends Nothing = Nothing
 |           calc_friends (Just x) = Just (x * 2)
@@ -86,8 +81,7 @@ best friends you have, given the number of best friends I have. By
 applying this function to <code>best_friends</code>, you get the number of best
 friends you have, wrapped in a <code>Just</code>. What if I told you that you had
 twice as many girlfriends as I do?</p>
-<pre><code> {.sourceCode .haskell}
-&gt; let your_girlfriends = calc_friends girlfriend
+<pre class='haskell'><code class='haskell'>&gt; let your_girlfriends = calc_friends girlfriend
 &gt; your_girlfriends
 Nothing</code></pre>
 
@@ -96,8 +90,7 @@ Nothing</code></pre>
 than I do. Since we hard coded the value <code>2</code>, we have to make another
 function with the value <code>3</code>, or we can actually generalize the function
 as such.</p>
-<pre><code> {.sourceCode .haskell}
-&gt; :{
+<pre class='haskell'><code class='haskell'>&gt; :{
 | let calc_friends :: (Integer -&gt; Integer) -&gt; Maybe Integer -&gt; Maybe Integer
 |     calc_friends _ Nothing = Nothing
 |     calc_friends f (Just x) = Just (f x)
@@ -117,8 +110,7 @@ to, and returning a resut of type <code>Maybe Integer</code></p>
 <p>What if instead of number of best friends, an <code>Integer</code>, we wanted to
 compare height, a <code>Double</code>, and you are 1 metre taller than me, this
 looks pretty similar to calc_friends, so let’s reuse that:</p>
-<pre><code> {.sourceCode .haskell}
-&gt; let height = Just 1.7
+<pre class='haskell'><code class='haskell'>&gt; let height = Just 1.7
 &gt; let calc_height = calc_friends (+ 1)
 &gt; calc_height height</code></pre>
 
@@ -127,8 +119,7 @@ looks pretty similar to calc_friends, so let’s reuse that:</p>
 <code>Maybe Integer</code>, but our height was a <code>Maybe Double</code>. So let’s
 generalize our function using <em>type variables</em>, just like how <code>Maybe</code> is
 defined.</p>
-<pre><code> {.sourceCode .haskell}
-&gt; :{
+<pre class='haskell'><code class='haskell'>&gt; :{
 | let calc_stuff :: (a -&gt; a) -&gt; Maybe a -&gt; Maybe a
 |     calc_stuff _ Nothing = Nothing
 |     calc_stuff f (Just x) = Just (f x)
@@ -143,8 +134,7 @@ Nothing</code></pre>
 <p>The last bit to understanding <code>Functor</code> is a method called <code>fmap</code>, all
 types that are instances of the <em>typeclass</em> <code>Functor</code> have to implement
 a method called <code>fmap</code>, which has the signature:</p>
-<pre><code> {.sourceCode .haskell}
-fmap              :: (a -&gt; b) -&gt; f a -&gt; f b 
+<pre class='haskell'><code class='haskell'>fmap              :: (a -&gt; b) -&gt; f a -&gt; f b 
 calc_stuff :: (a -&gt; a) -&gt; Maybe a -&gt; Maybe a</code></pre>
 
 <p>I’m putting them one above the other to let you see how similar they
