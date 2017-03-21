@@ -1,0 +1,30 @@
+Title: Bookmarks for a programming language enthusiast
+Date: 2017-03-21 10:00
+
+This is a list of people/things I follow for programming language related stuff.
+It will be updated as I encounter new (to me) ideas.
+
+## Conferences
+
+- [POPL](https://www.sigplan.org/Conferences/POPL/) (this currently gives a cert error in Chrome, so here's the [POPL 2017 page](http://conf.researchr.org/home/POPL-2017))
+- [ICFP](http://icfpconference.org/) ([YouTube channel](https://www.youtube.com/channel/UCwRL68qZFfub1Ep1EScfmBw))
+- [Curry On](http://www.curry-on.org/)
+- [Lambda Conf](http://lambdaconf.us/)
+
+## Books
+
+- [Types and Programming Languages, Benjamin C. Pierce](http://robotics.upenn.edu/~bcpierce/tapl/)
+
+## People
+
+- [Philip Wadler](http://homepages.inf.ed.ac.uk/wadler/) (Propositions as Types, Monads, FP, ...)
+- [John Hughes](http://www.cse.chalmers.se/~rjmh/) (QuickCheck, ...)
+- [Conor McBride](strictlypositive.org) (Types, Algebraic effects, ...)
+- Simon Peyton Jones (Haskell, ...)
+- Matthias Felleisan (Racket, Hygienic Macros, ...)
+- [Oleg Kiselyov](okmij.org/ftp/) (Haskell, OCaml)
+
+## YouTube channels
+
+- [Curry On](https://www.youtube.com/channel/UC-WICcSW1k3HsScuXxDrp0w)
+- [Erlang Solutions](https://www.youtube.com/channel/UCKrD_GYN3iDpG_uMmADPzJQ)
