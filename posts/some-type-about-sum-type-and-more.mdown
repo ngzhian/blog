@@ -1,4 +1,4 @@
-Title: Some type about Sum Types (and more)
+Title: Some type about Sum types (and more)
 Date: 2017-03-22 19:00
 
 A computer stores bits, and 8 bits make a byte.
