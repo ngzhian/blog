@@ -1,0 +1,140 @@
+Title: Some type about Sum Types (and more)
+Date: 2017-03-22 19:00
+
+A computer stores bits, and 8 bits make a byte.
+
+Some bytes are not like other bytes -- bytes can mean different things.
+
+Some bytes mean an integer, some bytes mean a list; we say that they have different types.
+
+## A type is a group of things
+
+An `integer` is a group of integers, like 1, 2, 3, and so on, and so forth.
+
+A `boolean` is a group that has 2 members, True and False.
+
+But we're getting ahead of ourselves, so let's start from 0.
+
+A `void` type has no members. It is void.
+
+A `unit` type has only 1 member, and the member is called `unit`. You see it as `()` in many places.
+
+What type has 2 members?
+
+Perhaps a `boolean`!
+
+`True` and `False` are both members of `boolean`. `True` is not `False`, and `False` is not `True`. But they are both `boolean`.
+
+We can write it as such
+
+```
+type boolean = True | False
+```
+
+This reads as: "The type boolean has 2 members, it can either be True or False".
+
+(In OCaml, the type `boolean` is actually spelled `bool`.)
+
+## Sum types
+
+Suppose you're deciding if you should continue reading.
+
+```
+type decision =
+  | Decided of boolean
+  | Undecided
+```
+
+We can make a decision
+
+- do (`Decided True`), or
+- do not (`Decided False`), or
+- be `Undecided` (there is no try).
+
+We observe that the type `decision` has 3 members.
+
+In the `Decided` case, there are 2 members.
+
+The number of members is the same as the number of members in a `boolean`, because the `Decided` case is made up entirely of `boolean`.
+
+In the `Undecided` case, there is 1 member, similar to `Unit`.
+
+How did we get 3? A `decision` can be `Decided` (2) **or** `Undecided` (1).  2 **+** 1 = 3.
+
+See how **or** and `+` works in similar ways.
+
+That's why they call it a sum type!
+
+
+## Product types
+
+Let's make a `Pair` of `boolean`s.
+
+```
+type Pair = boolean * boolean;
+```
+
+How many members are in this type? 4!
+
+```
+True * True
+True * False
+False * True
+False * False
+```
+
+How did we get 4?
+
+For the first boolean, there are 2 members, True and False.
+
+And for each of these 2 members, the second boolean can be True or False.
+
+2 * 2 = 4
+
+And that's where the name **product** comes from.
+
+(Notice how the OCaml syntax for defining a product type, or a tuple, is using the `*` operator, which in many cases mean product)
+
+## Exponential types
+
+You've made a decision, and depending on the decision you should should continue reading, or not.
+
+```
+let continue = function
+    | Decided True -> True
+    | Decided False -> False
+    | Undecided -> True
+```
+
+If you have decided, you follow your decision. If you are undecided, you continue reading and see what happens.
+
+`continue` is a function, its type is `decision -> boolean`.
+
+Let's ask the same question: how many members are there in the `decision -> boolean` type?
+
+A function of this type has to, for each member of the input type, `decision` with 3 members, give a member of the output type, `boolean` with 2 members.
+
+So the total number of unique functions of this type is 2 * 2 * 2 = 9, or equivalently, 2 ^ 3!
+
+So you see, function types are also called **exponential** types.
+
+## Dependent types / Pi types
+
+TBC
+
+## Some theory behind this
+
+We can think of types as a set of things.
+We say that some value is of that type when it is a member in that set.
+
+For example, `boolean` is the set of things, which contains `True` and `False`.
+
+A sum type is a *disjoint union*, or *tagged union*.
+
+A product type is a *cartesian product*.
+
+## Notes
+
+I chose to say that a type has 2 members to invoke the idea of thinking about types as sets. Other words that can be used include value (rejected because it means too many things).
+
+The real reason why the words `sum`, `product`, etc are used probably has less to do with counting members, and more to do with category theory. But it works well enough if you are trying to get an intuition about the meaning.
