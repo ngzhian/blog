@@ -97,7 +97,9 @@ And that's where the name **product** comes from.
 
 ## Exponential types
 
-You've made a decision, and depending on the decision you should should continue reading, or not.
+You've made a decision, and depending on the decision you will either continue reading, or not.
+
+Here's one particular way to encode this decision-to-action process.
 
 ```
 let continue = function
@@ -114,7 +116,16 @@ Let's ask the same question: how many members are there in the `decision -> bool
 
 A function of this type has to, for each member of the input type, `decision` with 3 members, give a member of the output type, `boolean` with 2 members.
 
-So the total number of unique functions of this type is 2 * 2 * 2 = 9, or equivalently, 2 ^ 3!
+So the total number of unique functions of this type is 2 * 2 * 2 = 8, or equivalently, 2 ^ 3!
+
+1. Decided True -> True, Decided False -> True, Undecided -> True
+2. Decided True -> True, Decided False -> True, Undecided -> False
+3. Decided True -> True, Decided False -> False, Undecided -> True
+4. Decided True -> True, Decided False -> False, Undecided -> False
+5. Decided True -> False, Decided False -> True, Undecided -> True
+6. Decided True -> False, Decided False -> True, Undecided -> False
+7. Decided True -> False, Decided False -> False, Undecided -> True
+8. Decided True -> False, Decided False -> False, Undecided -> False
 
 So you see, function types are also called **exponential** types.
 

@@ -74,7 +74,8 @@ False * False</code></pre>
 <p>(Notice how the OCaml syntax for defining a product type, or a tuple, is using the <code>*</code> operator, which in many cases mean product)</p>
 <h2 id="Exponentialtypes">Exponential types</h2>
 
-<p>You&#39;ve made a decision, and depending on the decision you should should continue reading, or not.</p>
+<p>You&#39;ve made a decision, and depending on the decision you will either continue reading, or not.</p>
+<p>Here&#39;s one particular way to encode this decision-to-action process.</p>
 <pre><code>let continue = function
     | Decided True -&gt; True
     | Decided False -&gt; False
@@ -84,7 +85,9 @@ False * False</code></pre>
 <p><code>continue</code> is a function, its type is <code>decision -&gt; boolean</code>.</p>
 <p>Let&#39;s ask the same question: how many members are there in the <code>decision -&gt; boolean</code> type?</p>
 <p>A function of this type has to, for each member of the input type, <code>decision</code> with 3 members, give a member of the output type, <code>boolean</code> with 2 members.</p>
-<p>So the total number of unique functions of this type is 2 * 2 * 2 = 9, or equivalently, 2 ^ 3!</p>
+<p>So the total number of unique functions of this type is 2 * 2 * 2 = 8, or equivalently, 2 ^ 3!</p>
+<ol><li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; True</li><li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; False</li><li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; True</li><li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; False</li><li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; True</li><li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; False</li><li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; True</li><li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; False</li></ol>
+
 <p>So you see, function types are also called <strong>exponential</strong> types.</p>
 <h2 id="DependenttypesPitypes">Dependent types / Pi types</h2>
 
