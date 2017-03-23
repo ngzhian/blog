@@ -58,7 +58,7 @@
 <h2 id="Producttypes">Product types</h2>
 
 <p>Let&#39;s make a <code>Pair</code> of <code>boolean</code>s.</p>
-<pre><code>type Pair = boolean * boolean;</code></pre>
+<pre><code>type pair = Pair of boolean * boolean;</code></pre>
 
 <p>How many members are in this type? 4!</p>
 <pre><code>True * True
@@ -89,16 +89,45 @@ False * False</code></pre>
 <ol><li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; True</li><li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; False</li><li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; True</li><li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; False</li><li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; True</li><li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; False</li><li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; True</li><li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; False</li></ol>
 
 <p>So you see, function types are also called <strong>exponential</strong> types.</p>
-<h2 id="DependenttypesPitypes">Dependent types / Pi types</h2>
+<h2 id="DependentsumtypesSigmatype">Dependent sum types / Sigma type</h2>
 
-<p>TBC</p>
-<h2 id="Sometheorybehindthis">Some theory behind this</h2>
+<p>A <code>Pair boolean integer</code> is a type, but a <code>Pair boolean a&#39;</code>, where <code>a&#39;</code> depends on what <code>boolean</code> actually is, <code>True</code> or <code>False</code>, is called a dependent sum type.</p>
+<p>Here&#39;s an example (not actual valid OCaml code):</p>
+<pre><code>type pair = Pair of (b : boolean) * a&#39;
+where Pair of True * boolean
+      Pair of False * integer</code></pre>
+
+<p>It says that that the <code>pair</code> depends on the first item in the pair, if it is <code>True</code>, we have a <code>Pair of boolean * boolean</code>, but if it is <code>False</code>, we have a <code>Pair of boolean * integer</code>.</p>
+<p>To count how many members there are in this type <code>pair</code>, we can treat it like a sum type.</p>
+<p>The first item in the pair can have 2 possible values</p>
+<ul><li>when <code>True</code>, the second item has to be a <code>boolean</code>, which has 2 possible value.</li><li>when <code>False</code>, the second item has to be a <code>integer</code>, which for simplicity sake, can have 256 values.</li></ul>
+
+<p>Therefore, the total number of members is 2 <strong>+</strong> 256 = 258.</p>
+<p>Why is this called sigma? Because you are taking the sum of all possible types across all values of the type being depended on (first item in the pair).</p>
+<h2 id="DependentproducttypesPitype">Dependent product types / Pi type</h2>
+
+<p>A <code>decision -&gt; boolean</code> is a function type, with an argument of type <code>decision</code>, and a return type <code>boolean</code>.</p>
+<p>But a function <code>decision -&gt; a&#39;</code>, where <code>a&#39;</code> depends on what <code>decision</code> actually is, <code>True</code> or <code>False</code>, is called a dependent product type.</p>
+<pre><code>type continue = decision -&gt; a&#39;
+where continue Decided True : integer
+      continue Decided False : boolean
+      continue Undecided : boolean</code></pre>
+
+<p>This says that when the type of <code>continue</code> depends on the value of the argument.</p>
+<p>When <code>decision</code> is <code>Decided True</code>, <code>continue</code> returns an integer, when <code>Decided False</code> or <code>Undecided</code>, it returns a boolean.</p>
+<p>Let&#39;s count how many members type has. Recall how we counted the number of members a function type has previously, we multiplied the number of members in the output type n times, where n is the number of member in the input type.</p>
+<p>In this case, since the number of members in the output type changes, we have to multiply them one by one instead of taking an exponent, to get 256 * 2 * 2 = 1024.</p>
+<p>Why is this called pi? Because you are taking the product of all possible types across all values of the type being depended on (argument of the function).</p>
+<h2 id="Alittletheorybehindthis">A little theory behind this</h2>
 
 <p>We can think of types as a set of things.
 We say that some value is of that type when it is a member in that set.</p>
 <p>For example, <code>boolean</code> is the set of things, which contains <code>True</code> and <code>False</code>.</p>
 <p>A sum type is a <em>disjoint union</em>, or <em>tagged union</em>.</p>
 <p>A product type is a <em>cartesian product</em>.</p>
+<p>A sigma is the symbol to do a sum over a sequence.</p>
+<p>A pi is the symbol to do a product over a sequence.</p>
+<p>A lot of this comes from, or is related, to <a href='https://ncatlab.org/nlab/show/category+theory'>category theory</a>.</p>
 <h2 id="Notes">Notes</h2>
 
 <p>I chose to say that a type has 2 members to invoke the idea of thinking about types as sets. Other words that can be used include value (rejected because it means too many things).</p>
@@ -106,7 +135,7 @@ We say that some value is of that type when it is a member in that set.</p>
 <h2 id="References">References</h2>
 
 <p>I found a lot of relevant and helpful resources while researching on sum types:</p>
-<ul><li>Manis Goregaokar. <a href='http://manishearth.github.io/blog/2017/03/04/what-are-sum-product-and-pi-types/'>What Are Sum, Product, and Pi Types?</a></li><li>Chris Taylor. <a href='http://chris-taylor.github.io/blog/2013/02/10/the-algebra-of-algebraic-data-types/'>The Algebra of Algebraic Data Types, Part 1</a> (he goes into recursive types in the next post, check it out!)</li></ul>
+<ul><li>Manis Goregaokar. <a href='http://manishearth.github.io/blog/2017/03/04/what-are-sum-product-and-pi-types/'>What Are Sum, Product, and Pi Types?</a></li><li>Chris Taylor. <a href='http://chris-taylor.github.io/blog/2013/02/10/the-algebra-of-algebraic-data-types/'>The Algebra of Algebraic Data Types, Part 1</a> (he goes into recursive types in the next post, check it out!)</li><li>Wikipedia page on <a href='https://en.wikipedia.org/wiki/Dependent_type'>Dependent Type</a></li><li>Idris, which has <a href='http://docs.idris-lang.org/en/latest/tutorial/typesfuns.html?highlight=dependent'>dependent types</a>, for tips on the made up syntax.</li></ul>
         </div>
       </section>
       <footer>
