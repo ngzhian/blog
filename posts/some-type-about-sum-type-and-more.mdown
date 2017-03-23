@@ -149,3 +149,10 @@ A product type is a *cartesian product*.
 I chose to say that a type has 2 members to invoke the idea of thinking about types as sets. Other words that can be used include value (rejected because it means too many things).
 
 The real reason why the words `sum`, `product`, etc are used probably has less to do with counting members, and more to do with category theory. But it works well enough if you are trying to get an intuition about the meaning.
+
+## References
+
+I found a lot of relevant and helpful resources while researching on sum types:
+
+- Manis Goregaokar. [What Are Sum, Product, and Pi Types?](http://manishearth.github.io/blog/2017/03/04/what-are-sum-product-and-pi-types/)
+- Chris Taylor. [The Algebra of Algebraic Data Types, Part 1](http://chris-taylor.github.io/blog/2013/02/10/the-algebra-of-algebraic-data-types/) (he goes into recursive types in the next post, check it out!)
