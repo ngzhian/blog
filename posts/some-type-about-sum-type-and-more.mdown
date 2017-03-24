@@ -210,3 +210,4 @@ I found a lot of relevant and helpful resources while researching on sum types:
 - Chris Taylor. [The Algebra of Algebraic Data Types, Part 1](http://chris-taylor.github.io/blog/2013/02/10/the-algebra-of-algebraic-data-types/) (he goes into recursive types in the next post, check it out!)
 - Wikipedia page on [Dependent Type](https://en.wikipedia.org/wiki/Dependent_type)
 - Idris, which has [dependent types](http://docs.idris-lang.org/en/latest/tutorial/typesfuns.html?highlight=dependent), for tips on the made up syntax.
+- [Intuitionistic type theory](https://en.wikipedia.org/wiki/Intuitionistic_type_theory)
