@@ -118,6 +118,7 @@ where continue Decided True : integer
 <p>Let&#39;s count how many members type has. Recall how we counted the number of members a function type has previously, we multiplied the number of members in the output type n times, where n is the number of member in the input type.</p>
 <p>In this case, since the number of members in the output type changes, we have to multiply them one by one instead of taking an exponent, to get 256 * 2 * 2 = 1024.</p>
 <p>Why is this called pi? Because you are taking the product of all possible types across all values of the type being depended on (argument of the function).</p>
+<p>And actually, the function space is a special case of the pi type, where the return type is constant, i.e. does not depend on the value of the argument.</p>
 <h2 id="Alittletheorybehindthis">A little theory behind this</h2>
 
 <p>We can think of types as a set of things.

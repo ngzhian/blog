@@ -177,6 +177,8 @@ In this case, since the number of members in the output type changes, we have to
 
 Why is this called pi? Because you are taking the product of all possible types across all values of the type being depended on (argument of the function).
 
+And actually, the function space is a special case of the pi type, where the return type is constant, i.e. does not depend on the value of the argument.
+
 ## A little theory behind this
 
 We can think of types as a set of things.
