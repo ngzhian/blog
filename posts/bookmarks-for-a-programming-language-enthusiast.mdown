@@ -8,6 +8,7 @@ It will be updated as I encounter new (to me) ideas.
 
 - [POPL](https://www.sigplan.org/Conferences/POPL/) (this currently gives a cert error in Chrome, so here's the [POPL 2017 page](http://conf.researchr.org/home/POPL-2017))
 - [ICFP](http://icfpconference.org/) ([YouTube channel](https://www.youtube.com/channel/UCwRL68qZFfub1Ep1EScfmBw))
+- [PLDI](http://www.sigplan.org/Conferences/PLDI/)
 - [Curry On](http://www.curry-on.org/)
 - [Lambda Conf](http://lambdaconf.us/)
 
