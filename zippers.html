@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Ng Zhi An">
+    <title>Zippers</title>
+    <link rel="stylesheet" href="./styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  </head>
+
+  <body>
+    <div class="content">
+      <section id="content" class="body">
+        <a class="home" href="./index.html">Home</a>
+        <h1>
+        Zippers
+        </h1>
+        <time class="published">
+        2017-04-29
+        </time>
+        <div class="entry-content">
+        <p>Zippers are a technique for implementing data structures
+(such as lists and trees)
+with some idea of a focus on one particular element.</p>
+<p>They allows for fast, functional (immutable) updates of a specific point in the structure.</p>
+<p>Let&#39;s try building a list, but with a zipper.</p>
+<p>First we define a data type of for a list zipper.</p>
+<pre class='ocaml'><code class='ocaml'>(** A list zipper.
+    It maintains focus on 1 particular element in the list. *)
+type &#39;a list_zipper = &#39;a list * &#39;a list</code></pre>
+
+<p>Strange enough, a list zipper is made up of 2 lists, let&#39;s call it back and front.
+(This may seem strange, but we can see the benefits soon.)</p>
+<p>Let&#39;s have a convenience function to build a list zipper from a normal list.</p>
+<pre class='ocaml'><code class='ocaml'>(** Builds a list zipper from a list. *)
+let zipper_of_list xs = ([], xs)</code></pre>
+
+<p>The initial focus of the list zipper will be the first element of the front.</p>
+<p>We can move the focus forward on to the next element of the front</p>
+<pre class='ocaml'><code class='ocaml'>(** Move the focus in the list zipper forward *)
+let forward z =
+  match z with
+  | (bs, x::xs) -&gt; Some (x::bs, xs)
+  | (_, []) -&gt; None</code></pre>
+
+<p>The interesting here is that the back list is actually reversed.
+Given a list <code>[1; 2; 3; 4]</code>, if we build a zipper and focused on 3, we would get
+the front and back list:</p>
+<pre><code>front = [2; 1]
+back = [3; 4]</code></pre>
+
+<p>Notice how we cannot concatenate the front and the back list to get the original list.
+In fact, to reconstruct the original list, the easy way is:</p>
+<pre class='ocaml'><code class='ocaml'>(** Converts a list zipper back into a list. *)
+let list_of_zipper (z : &#39;a list_zipper) =
+  match z with
+  | xs, ys -&gt; List.rev xs @ ys</code></pre>
+
+<p>This reversed form is how we get moving focus to be efficient.</p>
+<p>And similarly, we can move the focus backwards.</p>
+<pre class='ocaml'><code class='ocaml'>(** Move the focus in the list zipper backward *)
+let backward z =
+  match z with
+  | (b::bs, xs) -&gt; Some (bs, b::xs)
+  | ([], _) -&gt; None</code></pre>
+
+<p>Here, the <code>::</code> operator (like <code>cons</code>), is fast and we can only do this if the back list is reversed.</p>
+<p>The last operation the list zipper supports is changing the focused element.</p>
+<pre class='ocaml'><code class='ocaml'>(** Set the current focused value in the list to x *)
+let set x z =
+  match z with
+  | (bs, _::xs) -&gt; Some (bs, x::xs)
+  | (_, []) -&gt; None</code></pre>
+
+<p>With this data structure and the operations defined, you can get fast, functional updates on list.</p>
+<pre class='ocaml'><code class='ocaml'>(* construct a simple list zipper *)
+let z = zipper_of_list [1; 2; 3; 4]
+
+let twice_forward_once_backward_and_set =
+  z
+  |&gt; forward
+  |&gt; and_then forward
+  |&gt; and_then backward
+  |&gt; and_then (set 5)
+(* z remains unchanged *)
+(* twice_forward_once_backward_and_set is now [1; 5; 3; 4] *)</code></pre>
+
+<p>Whereas if this was done with a normal cons-nil list,
+you would only be able to get fast updates on the next cons cell
+(instead of the currently focused one),
+or you would have to traverse up till the cell before the current.</p>
+<p>I&#39;ve compiled this example into a little ocaml library
+<a href='https://github.com/ngzhian/zippers'>here</a>. I&#39;ve also played with a tree zipper in the repo.</p>
+<h2 id="References">References</h2>
+
+<p><a href='https://en.wikipedia.org/wiki/Zipper_(data_structure)'>https://en.wikipedia.org/wiki/Zipper_(data_structure)</a></p>
+<p><a href='http://learnyouahaskell.com/zippers'>http://learnyouahaskell.com/zippers</a></p>
+<p><a href='http://conway.rutgers.edu/~ccshan/wiki/blog/posts/WalkZip1/'>http://conway.rutgers.edu/~ccshan/wiki/blog/posts/WalkZip1/</a></p>
+<p><a href='http://okmij.org/ftp/continuations/zipper.html'>http://okmij.org/ftp/continuations/zipper.html</a></p>
+
+        </div>
+      </section>
+      <footer>
+      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
+      </footer>
+    </div>
+  </body>
+</html>
