@@ -1,7 +1,7 @@
 ---
 title: Common problems I faced with Vagrant and VirtualBox
 date: 2015-05-08 19:00
-Category: code, vagrant
+category: code, vagrant
 ...
 
 Sometimes I have a little bit of trouble getting my development setup to work properly.

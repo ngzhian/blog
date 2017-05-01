@@ -1,7 +1,7 @@
 ---
 title: Haskell's powerful pattern matching
 date: 2015-09-11 14:05
-Category: haskell, pattern-matching, codeforces
+category: haskell, pattern-matching, codeforces
 ...
 
 Recently I've been trying out problems on [codeforces](codeforces.com) to practice my algorithms and data structure problem solving skills.

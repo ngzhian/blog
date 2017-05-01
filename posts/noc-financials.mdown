@@ -1,9 +1,9 @@
 ---
 title: NOC New York Financials
 date: 2015-01-09 19:00
-Category: NOC
-Tags: noc, nus, financials
-Slug: noc-financials
+category: NOC
+tags: noc, nus, financials
+slug: noc-financials
 ...
 
 A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:

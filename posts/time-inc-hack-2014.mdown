@@ -1,10 +1,10 @@
 ---
 title: Suggest - My Hack for TimeIncHack2014
 date: 2014-11-20 08:00
-Category: python
-Tags: hackathon
-Slug: time-inc-hack-2014
-Summary: Suggest is a tool for content writers to easily find related content to link to
+category: python
+tags: hackathon
+slug: time-inc-hack-2014
+summary: Suggest is a tool for content writers to easily find related content to link to
 ...
 
 Over the weekend of 15-16 Nov, I took part in TimeIncHack2014, organized by Time Inc. The theme was about getting millenials to consume content, but I took off on a tangent right after hearing the problem description by the organizers: instead of building applications or services that media consumers will use, I was interested in making an internal tool for content creators to write articles that are more relevant.

@@ -1,7 +1,7 @@
 ---
 title: ffmpeg to make gifs
 date: 2015-05-17 09:30
-Category: ffmpeg, gif
+category: ffmpeg, gif
 ...
 
 Over the weekend I was working on a little hack called [Help me man!](https://github.com/ngzhian/help-me-man/), which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.
