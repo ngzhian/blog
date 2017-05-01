@@ -20,24 +20,25 @@
         2017-04-29
         </time>
         <div class="entry-content">
-        <p>Zippers are a technique for implementing data structures
+        <p>A zipper is a technique for implementing data structures
 (such as lists and trees)
-with some idea of a focus on one particular element.</p>
-<p>They allows for fast, functional (immutable) updates of a specific point in the structure.</p>
-<p>Let&#39;s try building a list, but with a zipper.</p>
-<p>First we define a data type of for a list zipper.</p>
+with some idea of a <em>focus</em> on one particular element,
+at the same time allowing for fast, functional (immutable) updates
+of a <em>specific point</em> in the structure.</p>
+<p>Let&#39;s try building a list in the style of a zipper.</p>
+<p>First we define a data type for a list zipper.</p>
 <pre class='ocaml'><code class='ocaml'>(** A list zipper.
     It maintains focus on 1 particular element in the list. *)
 type &#39;a list_zipper = &#39;a list * &#39;a list</code></pre>
 
-<p>Strange enough, a list zipper is made up of 2 lists, let&#39;s call it back and front.
-(This may seem strange, but we can see the benefits soon.)</p>
+<p>Strange enough, a list zipper is made up of 2 lists, let&#39;s call it <em>back</em> and <em>front</em>.
+(This may seem strange, but we will see the benefits soon.)</p>
 <p>Let&#39;s have a convenience function to build a list zipper from a normal list.</p>
 <pre class='ocaml'><code class='ocaml'>(** Builds a list zipper from a list. *)
 let zipper_of_list xs = ([], xs)</code></pre>
 
 <p>The initial focus of the list zipper will be the first element of the front.</p>
-<p>We can move the focus forward on to the next element of the front</p>
+<p>We can move the focus <em>forward</em> on to the next element of the front</p>
 <pre class='ocaml'><code class='ocaml'>(** Move the focus in the list zipper forward *)
 let forward z =
   match z with
@@ -45,8 +46,8 @@ let forward z =
   | (_, []) -&gt; None</code></pre>
 
 <p>The interesting here is that the back list is actually reversed.
-Given a list <code>[1; 2; 3; 4]</code>, if we build a zipper and focused on 3, we would get
-the front and back list:</p>
+Given a list <code>[1; 2; 3; 4]</code>, if we build a zipper and focused on 3,
+the front and back list will look like this:</p>
 <pre><code>front = [2; 1]
 back = [3; 4]</code></pre>
 
@@ -58,7 +59,7 @@ let list_of_zipper (z : &#39;a list_zipper) =
   | xs, ys -&gt; List.rev xs @ ys</code></pre>
 
 <p>This reversed form is how we get moving focus to be efficient.</p>
-<p>And similarly, we can move the focus backwards.</p>
+<p>And similarly, we can move the focus <em>backwards</em>.</p>
 <pre class='ocaml'><code class='ocaml'>(** Move the focus in the list zipper backward *)
 let backward z =
   match z with
@@ -73,7 +74,7 @@ let set x z =
   | (bs, _::xs) -&gt; Some (bs, x::xs)
   | (_, []) -&gt; None</code></pre>
 
-<p>With this data structure and the operations defined, you can get fast, functional updates on list.</p>
+<p>With this data structure and the operations defined, you can get fast, functional updates on a list:</p>
 <pre class='ocaml'><code class='ocaml'>(* construct a simple list zipper *)
 let z = zipper_of_list [1; 2; 3; 4]
 
@@ -86,12 +87,13 @@ let twice_forward_once_backward_and_set =
 (* z remains unchanged *)
 (* twice_forward_once_backward_and_set is now [1; 5; 3; 4] *)</code></pre>
 
-<p>Whereas if this was done with a normal cons-nil list,
+<p>If this was instead performed on a normal cons-nil list,
 you would only be able to get fast updates on the next cons cell
 (instead of the currently focused one),
 or you would have to traverse up till the cell before the current.</p>
-<p>I&#39;ve compiled this example into a little ocaml library
-<a href='https://github.com/ngzhian/zippers'>here</a>. I&#39;ve also played with a tree zipper in the repo.</p>
+<p>The examples in this post have are available
+<a href='https://github.com/ngzhian/zippers'>here</a>.
+You can also find a experimental implementation of a tree with zipper in the repository.</p>
 <h2 id="References">References</h2>
 
 <p><a href='https://en.wikipedia.org/wiki/Zipper_(data_structure)'>https://en.wikipedia.org/wiki/Zipper_(data_structure)</a></p>

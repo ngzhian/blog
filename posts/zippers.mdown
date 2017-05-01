@@ -1,15 +1,15 @@
 Title: Zippers
 Date: 2017-04-29 14:00
 
-Zippers are a technique for implementing data structures
+A zipper is a technique for implementing data structures
 (such as lists and trees)
-with some idea of a focus on one particular element.
+with some idea of a *focus* on one particular element,
+at the same time allowing for fast, functional (immutable) updates
+of a *specific point* in the structure.
 
-They allows for fast, functional (immutable) updates of a specific point in the structure.
+Let's try building a list in the style of a zipper.
 
-Let's try building a list, but with a zipper.
-
-First we define a data type of for a list zipper.
+First we define a data type for a list zipper.
 
 ```ocaml
 (** A list zipper.
@@ -17,8 +17,8 @@ First we define a data type of for a list zipper.
 type 'a list_zipper = 'a list * 'a list
 ```
 
-Strange enough, a list zipper is made up of 2 lists, let's call it back and front.
-(This may seem strange, but we can see the benefits soon.)
+Strange enough, a list zipper is made up of 2 lists, let's call it *back* and *front*.
+(This may seem strange, but we will see the benefits soon.)
 
 Let's have a convenience function to build a list zipper from a normal list.
 
@@ -29,7 +29,7 @@ let zipper_of_list xs = ([], xs)
 
 The initial focus of the list zipper will be the first element of the front.
 
-We can move the focus forward on to the next element of the front
+We can move the focus *forward* on to the next element of the front
 
 ```ocaml
 (** Move the focus in the list zipper forward *)
@@ -40,8 +40,8 @@ let forward z =
 ```
 
 The interesting here is that the back list is actually reversed.
-Given a list `[1; 2; 3; 4]`, if we build a zipper and focused on 3, we would get
-the front and back list:
+Given a list `[1; 2; 3; 4]`, if we build a zipper and focused on 3,
+the front and back list will look like this:
 
 ```
 front = [2; 1]
@@ -50,7 +50,6 @@ back = [3; 4]
 
 Notice how we cannot concatenate the front and the back list to get the original list.
 In fact, to reconstruct the original list, the easy way is:
-
 
 ```ocaml
 (** Converts a list zipper back into a list. *)
@@ -61,7 +60,7 @@ let list_of_zipper (z : 'a list_zipper) =
 
 This reversed form is how we get moving focus to be efficient.
 
-And similarly, we can move the focus backwards.
+And similarly, we can move the focus *backwards*.
 
 ```ocaml
 (** Move the focus in the list zipper backward *)
@@ -83,7 +82,7 @@ let set x z =
   | (_, []) -> None
 ```
 
-With this data structure and the operations defined, you can get fast, functional updates on list.
+With this data structure and the operations defined, you can get fast, functional updates on a list:
 
 ```ocaml
 (* construct a simple list zipper *)
@@ -99,13 +98,14 @@ let twice_forward_once_backward_and_set =
 (* twice_forward_once_backward_and_set is now [1; 5; 3; 4] *)
 ```
 
-Whereas if this was done with a normal cons-nil list,
+If this was instead performed on a normal cons-nil list,
 you would only be able to get fast updates on the next cons cell
 (instead of the currently focused one),
 or you would have to traverse up till the cell before the current.
 
-I've compiled this example into a little ocaml library
-[here](https://github.com/ngzhian/zippers). I've also played with a tree zipper in the repo.
+The examples in this post have are available
+[here](https://github.com/ngzhian/zippers).
+You can also find a experimental implementation of a tree with zipper in the repository.
 
 ## References
 
