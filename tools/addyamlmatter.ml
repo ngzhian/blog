@@ -9,7 +9,9 @@ let back = "..." in
 let empty = "" in
 
 let add_matter header rest =
-  front :: header @ [back; ""] @ rest in
+  match header with
+  | x :: xs when x = front -> header @ [""] @ rest (* already has header *)
+  | header -> front :: header @ [back; ""] @ rest in
 
 let read file =
   let chn = open_in file in
