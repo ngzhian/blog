@@ -1,3 +1,4 @@
+---
 title: The magic of static
 date: 2016-04-24
 
@@ -165,3 +166,5 @@ If this compilation requires some dependency, then run the dependencies first.
 
 When all this completes running, you'll have your input files transformed
 by the specified compilers, and written to paths specified by your route!
+...
+

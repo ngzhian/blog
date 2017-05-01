@@ -1,5 +1,7 @@
+---
 title: GSOC 2014, jmxetric
 date: 2014-05-07 18:00
+...
 
 GSOC 2014, jmxetric
 ===================

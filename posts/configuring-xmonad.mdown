@@ -1,5 +1,7 @@
+---
 title: Configuring XMonad
 date: 2014-04-25 18:00
+...
 
 Configuring XMonad
 ==================

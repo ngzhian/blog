@@ -1,3 +1,4 @@
+---
 title: So I set up a Jenkins CI server today
 date: 2015-01-18 18:00
 Modified: 2015-01-18 18:00
@@ -5,6 +6,7 @@ Category: python
 Tags: jenkins, tests
 Slug: so-i-set-up-a-jenkins-ci-server-today
 Authors: Ng Zhi An
+...
 
 So I set up a local Jenkins CI server today that checks a local Git repository containing a Django project for any changes, runs tests, and reports coverage.
 

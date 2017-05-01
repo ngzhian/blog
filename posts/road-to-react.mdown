@@ -1,5 +1,7 @@
+---
 title: Road to React
 date: 2016-08-27 12:24
+...
 
 > This is a series of posts for my CS3216 project, you can find the original post [here](https://medium.com/@ngzhian/road-to-react-d726435a1421#.wbzdrycc8).
 

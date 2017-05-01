@@ -1,6 +1,8 @@
+---
 title: What are Peephole Optimizations?
 date: 2015-04-28 18:00
 Category: code, compiler
+...
 
 As part of [the series]({filename}/closure-compiler-1.mdown) exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.
 

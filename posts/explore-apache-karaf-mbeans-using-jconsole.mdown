@@ -1,5 +1,7 @@
+---
 title: Exploring Apache Karaf MBeans using JConsole
 date: 2014-05-10 18:00
+...
 
 Exploring Apache Karaf MBeans using JConsole
 ============================================

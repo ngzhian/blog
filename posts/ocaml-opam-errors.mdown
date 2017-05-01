@@ -1,5 +1,7 @@
+---
 title: Error messages from opam when installing packages
 date: 2016-05-03 12:24
+...
 
 I was trying to install `jingoo` from opam, but met with some error,
 and the message wasn't clear about what was causing it.

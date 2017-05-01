@@ -1,5 +1,7 @@
+---
 title: How Java sorts Objects
 date: 2014-04-28 18:00
+...
 
 How Java sorts Objects
 ======================

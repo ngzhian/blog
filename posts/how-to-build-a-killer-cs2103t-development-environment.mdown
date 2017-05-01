@@ -1,5 +1,7 @@
+---
 title: Setting up a killer development environment for CS2103T
 date: 2014-04-27 18:00
+...
 
 Setting up a killer development environment for CS2103T
 =======================================================

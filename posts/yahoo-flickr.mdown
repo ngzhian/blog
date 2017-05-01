@@ -1,5 +1,7 @@
+---
 title: I will never be able to log in to Flickr again
 date: 2014-05-24 18:00
+...
 
 I will never be able to log in to Flickr again
 ==============================================

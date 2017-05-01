@@ -1,5 +1,7 @@
+---
 title: My experience interning at 3 companies
 date: 2016-09-18 21:41
+...
 
 > This post originally appeared as a digest article for NUSHackers (of which I am a core team member). You can find the original post [here](http://nushackers.org/2016/09/digest-three-internships/).
 

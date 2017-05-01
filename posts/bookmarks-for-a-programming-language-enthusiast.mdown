@@ -1,5 +1,7 @@
+---
 title: Bookmarks for a programming language enthusiast
 date: 2017-03-21 10:00
+...
 
 This is a list of people/things I follow for programming language related stuff.
 It will be updated as I encounter new (to me) ideas.

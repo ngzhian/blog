@@ -1,6 +1,8 @@
+---
 title: What the heck is Google Closure Compiler?
 date: 2015-04-20 19:00
 Category: code
+...
 
 It "compiles from JavaScript to better JavaScript", so why would any one want that?
 

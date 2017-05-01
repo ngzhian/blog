@@ -1,5 +1,7 @@
+---
 title: Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)
 date: 2014-04-28 18:00
+...
 
 Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)
 =======================================================================

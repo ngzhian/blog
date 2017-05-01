@@ -1,8 +1,10 @@
+---
 title: NOC New York Module Credits mapping for SoC
 date: 2015-01-02 16:30
 Category: NOC
 Tags: noc, nus, soc
 Slug: noc-soc-mc-mapping
+...
 
 *NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg*
 

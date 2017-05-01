@@ -1,5 +1,7 @@
+---
 title: Thanksgiving 2013
 date: 2013-03-02 18:00
+...
 
 Thanksgiving 2013
 =================

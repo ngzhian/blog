@@ -1,5 +1,7 @@
+---
 title: Framework v.s. Library
 date: 2016-08-27 11:58
+...
 
 > This is a series of posts for my CS3216 project, you can find the original post [here](https://medium.com/@ngzhian/framework-v-s-library-e802db791eea#.tn9lrcxc6).
 

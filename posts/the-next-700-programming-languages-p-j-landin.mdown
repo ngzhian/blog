@@ -1,5 +1,7 @@
+---
 title: The Next 700 Programming Languages by P. J. Landin
 date: 2017-03-11 15:12
+...
 
 > This is a series of posts where I jot down my learnings from computer science papers I've read. Previously, [An Axiomatic Basis for Computer Programming](./paper-axiomatic-basis-for-computer-programming.html)
 

@@ -1,5 +1,7 @@
+---
 title: Installing OCaml from source on Ubuntu
 date: 2016-05-02 22:32
+...
 
 Detailed steps to build OCaml can be found
 [here](http://caml.inria.fr/pub/distrib/ocaml-4.03/notes/INSTALL.adoc).
