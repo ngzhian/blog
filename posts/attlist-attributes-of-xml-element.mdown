@@ -1,5 +1,5 @@
-Title: Default value of ATTLIST, attributes of an XML Element, XML Doctype
-Date: 2014-05-10 18:00
+title: Default value of ATTLIST, attributes of an XML Element, XML Doctype
+date: 2014-05-10 18:00
 
 Default value of ATTLIST, attributes of an XML Element, XML Doctype
 ===================================================================

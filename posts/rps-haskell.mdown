@@ -1,5 +1,5 @@
-Title: Rock Paper Scissors in Haskell
-Date: 2014-05-01 18:00
+title: Rock Paper Scissors in Haskell
+date: 2014-05-01 18:00
 
 Rock Paper Scissors in Haskell
 ==============================

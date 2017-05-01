@@ -1,5 +1,5 @@
-Title: Debian Jessie, Screen resolution, and VirtualBox Guest Additions
-Date: 2014-05-04 18:00
+title: Debian Jessie, Screen resolution, and VirtualBox Guest Additions
+date: 2014-05-04 18:00
 
 Debian Jessie, Screen resolution, and VirtualBox Guest Additions
 ================================================================

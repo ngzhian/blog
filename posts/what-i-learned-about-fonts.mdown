@@ -1,5 +1,5 @@
-Title: What I learned about fonts on Linux
-Date: 2013-01-11 18:00
+title: What I learned about fonts on Linux
+date: 2013-01-11 18:00
 
 What I learned about fonts on Linux
 ===================================

@@ -1,5 +1,5 @@
-Title: NOC New York Module Credits mapping for SoC
-Date: 2015-01-02 16:30
+title: NOC New York Module Credits mapping for SoC
+date: 2015-01-02 16:30
 Category: NOC
 Tags: noc, nus, soc
 Slug: noc-soc-mc-mapping

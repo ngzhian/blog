@@ -1,5 +1,5 @@
-Title: Notes on "Thinking Forth"
-Date: 2013-03-03 18:00
+title: Notes on "Thinking Forth"
+date: 2013-03-03 18:00
 
 Notes on "Thinking Forth"
 =========================

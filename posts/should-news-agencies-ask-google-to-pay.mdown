@@ -1,5 +1,5 @@
-Title: CS2101 - Should news agency ask Google to pay up?
-Date: 2013-03-04 18:00
+title: CS2101 - Should news agency ask Google to pay up?
+date: 2013-03-04 18:00
 
 CS2101 - Should news agency ask Google to pay up?
 =================================================

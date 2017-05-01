@@ -1,5 +1,5 @@
-Title: Resume tips
-Date: 2016-05-04 13:35
+title: Resume tips
+date: 2016-05-04 13:35
 
 These tips are targeted towards college students looking for internships/jobs in the tech sector.
 It probably is still useful for anyone writing a resume.

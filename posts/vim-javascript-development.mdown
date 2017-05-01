@@ -1,5 +1,5 @@
-Title: Set up Vim for JavaScript development
-Date: 2015-04-24 18:00
+title: Set up Vim for JavaScript development
+date: 2015-04-24 18:00
 Category: development environment
 
 A couple of days ago I decided to get my JavaScript development environment in order.

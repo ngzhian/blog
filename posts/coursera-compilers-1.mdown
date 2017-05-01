@@ -1,5 +1,5 @@
-Title: Lexing COOL - Coursera Compilers Course Assignment 1
-Date: 2015-05-25 14:00
+title: Lexing COOL - Coursera Compilers Course Assignment 1
+date: 2015-05-25 14:00
 Category: code, compiler, coursera-compilers
 
 This post is about Assignment 1 on on the [Coursera Compilers course](https://www.coursera.org/course/compilers), which is to write a flex specification for lexing COOL.

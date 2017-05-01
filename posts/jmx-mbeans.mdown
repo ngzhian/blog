@@ -1,5 +1,5 @@
-Title: JMX and MBeans
-Date: 2014-05-07 18:00
+title: JMX and MBeans
+date: 2014-05-07 18:00
 
 JMX and MBeans
 ==============

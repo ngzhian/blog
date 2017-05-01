@@ -1,5 +1,5 @@
-Title: Don't waste their time!
-Date: 2014-04-26 18:00
+title: Don't waste their time!
+date: 2014-04-26 18:00
 
 Don't waste their time!
 =======================

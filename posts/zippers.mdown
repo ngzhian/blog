@@ -1,5 +1,5 @@
-Title: Zippers
-Date: 2017-04-29 14:00
+title: Zippers
+date: 2017-04-29 14:00
 
 A zipper is a technique for implementing data structures
 (such as lists and trees)

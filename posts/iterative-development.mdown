@@ -1,5 +1,5 @@
-Title: Iterative Development
-Date: 2016-10-18 21:54
+title: Iterative Development
+date: 2016-10-18 21:54
 
 > This is a series of posts for my CS3216 project, you can find the original post [here](https://medium.com/@ngzhian/iterative-development-89937674d779#.ou4ht6).
 

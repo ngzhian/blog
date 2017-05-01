@@ -1,5 +1,5 @@
-Title: 2D physics systems in the wild
-Date: 2017-03-12 18:01
+title: 2D physics systems in the wild
+date: 2017-03-12 18:01
 
 For an assignment in school we were tasked to build a simple 2D physics engine for a Bubble-Bobble like game.
 We were also encouraged to check out other physics engine to see how it works.

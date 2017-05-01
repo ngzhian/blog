@@ -1,5 +1,5 @@
-Title: The magic of static
-Date: 2016-04-24
+title: The magic of static
+date: 2016-04-24
 
 How do static site generators work?
 That's the question I had when I began building my own

@@ -1,5 +1,5 @@
-Title: Using JConsole to look at MBeans
-Date: 2014-05-08 18:00
+title: Using JConsole to look at MBeans
+date: 2014-05-08 18:00
 
 Using JConsole to look at MBeans
 ================================

@@ -1,5 +1,5 @@
-Title: Configuring XMonad
-Date: 2014-04-25 18:00
+title: Configuring XMonad
+date: 2014-04-25 18:00
 
 Configuring XMonad
 ==================

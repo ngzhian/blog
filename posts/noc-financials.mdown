@@ -1,5 +1,5 @@
-Title: NOC New York Financials
-Date: 2015-01-09 19:00
+title: NOC New York Financials
+date: 2015-01-09 19:00
 Category: NOC
 Tags: noc, nus, financials
 Slug: noc-financials

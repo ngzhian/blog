@@ -1,5 +1,5 @@
-Title: Dates with JavaScript
-Date: 2017-01-03 13:35
+title: Dates with JavaScript
+date: 2017-01-03 13:35
 
 This post is about the various ways you can create a `Date` in JavaScript,
 both documented and undocumented, how it works under the hood, and the (maybe surprising) results you get.

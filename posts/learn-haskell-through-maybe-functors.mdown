@@ -1,5 +1,5 @@
-Title: Learning Haskell through Maybe - Functors
-Date: 2014-04-18 18:00
+title: Learning Haskell through Maybe - Functors
+date: 2014-04-18 18:00
 
 Learning Haskell through Maybe - Functors
 =========================================

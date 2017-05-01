@@ -1,5 +1,5 @@
-Title: So I set up a Jenkins CI server today
-Date: 2015-01-18 18:00
+title: So I set up a Jenkins CI server today
+date: 2015-01-18 18:00
 Modified: 2015-01-18 18:00
 Category: python
 Tags: jenkins, tests

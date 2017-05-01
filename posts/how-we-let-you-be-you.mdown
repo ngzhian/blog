@@ -1,5 +1,5 @@
-Title: How we let you be you without knowing you
-Date: 2016-11-16 00:30
+title: How we let you be you without knowing you
+date: 2016-11-16 00:30
 
 > This is a series of posts for my CS3216 project, you can find the original post [here](https://medium.com/@ngzhian/how-we-let-you-be-you-without-knowing-you-274d12bac70e#.1pibslcfd).
 

@@ -1,5 +1,5 @@
-Title: An Axiomatic Basis for Computer Programming by C. A. R. Hoare
-Date: 2016-12-04 21:45
+title: An Axiomatic Basis for Computer Programming by C. A. R. Hoare
+date: 2016-12-04 21:45
 
 > This is a series of posts where I jot down my learnings from computer science papers I've read. Next, [The Next 700 Programming Languages](./the-next-700-programming-languages-p-j-landin.html)
 
