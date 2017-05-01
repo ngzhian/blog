@@ -1,6 +1,7 @@
 ---
 title: The magic of static
 date: 2016-04-24
+...
 
 How do static site generators work?
 That's the question I had when I began building my own
@@ -166,5 +167,3 @@ If this compilation requires some dependency, then run the dependencies first.
 
 When all this completes running, you'll have your input files transformed
 by the specified compilers, and written to paths specified by your route!
-...
-
