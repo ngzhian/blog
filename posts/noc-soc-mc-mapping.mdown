@@ -6,8 +6,8 @@ Slug: noc-soc-mc-mapping
 
 *NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg*
 
-In one year, you should be able to clear 40 MCs in order to be MC-neutral<sup>*</sup>.
-For my batch we are able to clear up to **32 MCs** because we do not have discipline-based module<sup>#</sup>
+In one year, you should be able to clear 40 MCs in order to be MC-neutral<sup>1</sup>.
+For my batch we are able to clear up to **32 MCs** because we do not have discipline-based module<sup>2</sup>
 
 Here's how I allocated my MCs (Computer Science):
 
@@ -18,7 +18,7 @@ Here's how I allocated my MCs (Computer Science):
 |	TR3103	|	Start up Business case				|	8	|	ULR |
 |	TR3002	|	New Venture Creation				|	4 	|	UEM |
 |	MG2304	|	Marketing							|	4 	|	UEM |
-|	TRXXXX	|	TBC<sup>?</sup>						|	4 	|	UEM |
+|	TRXXXX	|	TBC<sup>3</sup>						|	4 	|	UEM |
 
 For **CS** students, <code>TR3101</code> and <code>TR3102</code> can go towards clearing our [program requirements](http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html)
 
@@ -50,8 +50,8 @@ In my case, I haven't taken a single UE yet, so this 8 MCs will be used on UEs. 
 ## Need more info?
 Shoot me a question ngzhian@nus.edu.sg
 
-<sup>*</sup> this means to not take more modules than necessary
+<sup>1</sup> this means to not take more modules than necessary
 
-<sup>#</sup> reasons are not easy to explain, and this might change for your batch
+<sup>2</sup> reasons are not easy to explain, and this might change for your batch
 
-<sup>?</sup> module not confirmed but can definitely map it to UE
+<sup>3</sup> module not confirmed but can definitely map it to UE
