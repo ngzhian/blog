@@ -1,125 +1,141 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Notes on &quot;Thinking Forth&quot;</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Notes on &quot;Thinking Forth&quot;</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Notes on &quot;Thinking Forth&quot;
-        </h1>
-        <time class="published">
-        2013-03-03
-        </time>
-        <div class="entry-content">
-        <h1 id="NotesonquotThinkingForthquot">Notes on &quot;Thinking Forth&quot;</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>I saw a mention of <a href='http://thinking-forth.sourceforge.net/'>Thinking
-Forth</a> online sometime back, and
-downloaded it. I finally got down to reading it this lazy Sunday
-afternoon, and made some notes. To quote from the homepage</p>
-<blockquote><p>Thinking Forth is a book about the philosophy of problem solving
-and programming style, applied to the unique programming language
-<a href='https://en.wikipedia.org/wiki/Forth_(programming_language)'>Forth</a>.</p>
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Notes on &quot;Thinking Forth&quot;</h1>
+<h3 class="date">2013-03-03 18:00</h3>
+</div>
+<h1 id="notes-on-thinking-forth">Notes on &quot;Thinking Forth&quot;</h1>
+<p>I saw a mention of <a href="http://thinking-forth.sourceforge.net/">Thinking Forth</a> online sometime back, and downloaded it. I finally got down to reading it this lazy Sunday afternoon, and made some notes. To quote from the homepage</p>
+<blockquote>
+<p>Thinking Forth is a book about the philosophy of problem solving and programming style, applied to the unique programming language <a href="https://en.wikipedia.org/wiki/Forth_(programming_language)">Forth</a>.</p>
 </blockquote>
-
-<p>What I feel after reading this book is that many concepts and tips
-taught in the book can actually be applied to which ever programming
-langugage you are using now. Here are some general notes that I have
-made.</p>
-<h2 id="ComponentProgramming">Component Programming</h2>
-
-<p><strong>Component programming</strong> is about <em>minimizing</em> the impact of any
-change. A component is a resource, which can be a piece of hardware or a
-software resource (such as a queue or stack). This idea is in contrast
-to Sequential or Hierachical Design. An example was given by the author:
-updating a record. However when designing by components, we think in
-terms of the components which describe the structure of the records,
-provide a set of editing commands, and provide read/write methods to
-storage.</p>
-<h2 id="Analysis">Analysis</h2>
-
-<p>Thinking Forth talks about the <strong>Nine Phases of the Programming Cycle</strong>,
-I took special note of the first two: discovering requirements and
-constraints, and building a conceptual model of the solution. To build a
-conceptual model, we can follow these steps:</p>
-<ol><li>Define interfaces By
-using Data Flow Diagrams for example.</li><li>Define rules By using English,
-Decision Tree, Tables. And subsequently simplify the rules so that it
-can be easily understood and coded</li><li>Define data structures. This is a
-description of the structures’ conceptual model, i.e. what attributes to
-keep.</li></ol>
-
-<h2 id="ProblemSolving">Problem Solving</h2>
-
-<p>These are general ways we can use to approach problem solving. -
-Determine you goal - Picture the problem as a whole - Develop a plan
-(e.g. work backwards) - Step back from the problem - Believe</p>
-<p>I found <strong>Believe</strong> to be exceptionally inspiring. To achieve success
-you first need to believe you can succeed.</p>
-<h2 id="Naming">Naming</h2>
-
+<p>What I feel after reading this book is that many concepts and tips taught in the book can actually be applied to which ever programming langugage you are using now. Here are some general notes that I have made.</p>
+<h2 id="component-programming">Component Programming</h2>
+<p><strong>Component programming</strong> is about <em>minimizing</em> the impact of any change. A component is a resource, which can be a piece of hardware or a software resource (such as a queue or stack). This idea is in contrast to Sequential or Hierachical Design. An example was given by the author: updating a record. However when designing by components, we think in terms of the components which describe the structure of the records, provide a set of editing commands, and provide read/write methods to storage.</p>
+<h2 id="analysis">Analysis</h2>
+<p>Thinking Forth talks about the <strong>Nine Phases of the Programming Cycle</strong>, I took special note of the first two: discovering requirements and constraints, and building a conceptual model of the solution. To build a conceptual model, we can follow these steps:</p>
+<ol style="list-style-type: decimal">
+<li>Define interfaces By using Data Flow Diagrams for example.</li>
+<li>Define rules By using English, Decision Tree, Tables. And subsequently simplify the rules so that it can be easily understood and coded</li>
+<li>Define data structures. This is a description of the structures’ conceptual model, i.e. what attributes to keep.</li>
+</ol>
+<h2 id="problem-solving">Problem Solving</h2>
+<p>These are general ways we can use to approach problem solving. - Determine you goal - Picture the problem as a whole - Develop a plan (e.g. work backwards) - Step back from the problem - Believe</p>
+<p>I found <strong>Believe</strong> to be exceptionally inspiring. To achieve success you first need to believe you can succeed.</p>
+<h2 id="naming">Naming</h2>
 <p>As a pretty well-known quote goes</p>
-<blockquote><p>The 2 hardest things in Computer Science are naming things,
-cache-invalidation, and off-by-one errors.</p>
+<blockquote>
+<p>The 2 hardest things in Computer Science are naming things, cache-invalidation, and off-by-one errors.</p>
 </blockquote>
-
-<p>Thinking Forth gives some tips on naming things, though some may
-actually be more relevant for the Forth language itself. - Choose names
-according to “what”, not “how” - Choose names that work in phrases -
-Spell names in full - Favour shorter words</p>
-<p>I feel that naming is a <em>balancing act</em>. On one hand you want the names
-to be <em>expressive</em>, but you also want them to be <em>concise</em>. For certain
-local variables, especially array indices, it makes sense not to give
-them long names; you will be typing them a lot, and they will not matter
-once you return from the function, so naming them <code>i</code> is fine. For
-variables with a bigger scope, the name <code>data</code> could mean a lot of
-different things.</p>
-<h2 id="Factoring">Factoring</h2>
-
-<p>Factoring is about organizing code into useful fragments by separating
-reusable parts from non-reusable parts. We can work to factor out:</p>
-<ul><li>Data</li><li>Functions</li><li>Code within Control Structures</li><li>Names After factoring, make sure that the factored code serves a single purpose, if
-not the refactoring might just have made things worse.</li></ul>
-
-<h2 id="MinimizingControlStructures">Minimizing Control Structures</h2>
-
-<p>The rationale behind this is that control structures introduce
-complexity into the code, and makes it harder to read and maintain. This
-rationale is clearly demonstrated in an example given by the author,
-where there is a <em>heptly-nested</em> (6 levels) <code>if-else</code> flow. The author
-suggests a few ways to minimize control structures:</p>
-<ul><li>Do not test for something that has already executed</li><li>Combine booleans of similar weight</li><li>When conditions do not share similar weight, place conditions that are
-easier to calculate, or least likely to be true on the outside.</li><li>Choose control structures that closely matches the control-flow</li></ul>
-
-<h2 id="ClosingThoughts">Closing Thoughts</h2>
-
-<p>I read through the book quite quickly, and skipped the parts which I
-felt was about Forth, because I was more interested in the concepts
-taught than the language. However many concepts introduced are based on
-what Forth provides, and how Forth works. As such, I think that learning
-Forth while you are going through this book will greatly increase the
-value gained from reading. Nonetheless, I gained a lot of valuable
-insights from Thinking Forth, all of which I shared above, which will
-definitely help me in being a better programmer. I would like to thank
-the author, <a href='http://punchandbrodie.com/leo/'>Leo Brodie</a>, and <a href='http://thinking-forth.sourceforge.net/'>Thinking
-Forth Project</a>, for taking time
-time and effort to make the book available for free, and in high-quality
-format.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p>Thinking Forth gives some tips on naming things, though some may actually be more relevant for the Forth language itself. - Choose names according to “what”, not “how” - Choose names that work in phrases - Spell names in full - Favour shorter words</p>
+<p>I feel that naming is a <em>balancing act</em>. On one hand you want the names to be <em>expressive</em>, but you also want them to be <em>concise</em>. For certain local variables, especially array indices, it makes sense not to give them long names; you will be typing them a lot, and they will not matter once you return from the function, so naming them <code>i</code> is fine. For variables with a bigger scope, the name <code>data</code> could mean a lot of different things.</p>
+<h2 id="factoring">Factoring</h2>
+<p>Factoring is about organizing code into useful fragments by separating reusable parts from non-reusable parts. We can work to factor out: - Data - Functions - Code within Control Structures - Names After factoring, make sure that the factored code serves a single purpose, if not the refactoring might just have made things worse.</p>
+<h2 id="minimizing-control-structures">Minimizing Control Structures</h2>
+<p>The rationale behind this is that control structures introduce complexity into the code, and makes it harder to read and maintain. This rationale is clearly demonstrated in an example given by the author, where there is a <em>heptly-nested</em> (6 levels) <code>if-else</code> flow. The author suggests a few ways to minimize control structures:</p>
+<ul>
+<li>Do not test for something that has already executed</li>
+<li>Combine booleans of similar weight</li>
+<li>When conditions do not share similar weight, place conditions that are easier to calculate, or least likely to be true on the outside.</li>
+<li>Choose control structures that closely matches the control-flow</li>
+</ul>
+<h2 id="closing-thoughts">Closing Thoughts</h2>
+<p>I read through the book quite quickly, and skipped the parts which I felt was about Forth, because I was more interested in the concepts taught than the language. However many concepts introduced are based on what Forth provides, and how Forth works. As such, I think that learning Forth while you are going through this book will greatly increase the value gained from reading. Nonetheless, I gained a lot of valuable insights from Thinking Forth, all of which I shared above, which will definitely help me in being a better programmer. I would like to thank the author, <a href="http://punchandbrodie.com/leo/">Leo Brodie</a>, and <a href="http://thinking-forth.sourceforge.net/">Thinking Forth Project</a>, for taking time time and effort to make the book available for free, and in high-quality format.</p>
+</section>
+</body>
 </html>

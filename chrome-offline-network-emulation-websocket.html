@@ -1,50 +1,122 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Chrome offline network emulation and WebSocket</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Chrome offline network emulation and WebSocket</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Chrome offline network emulation and WebSocket
-        </h1>
-        <time class="published">
-        2016-11-15
-        </time>
-        <div class="entry-content">
-        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/chrome-offline-network-emulation-and-websocket-6ecc914e2308#.xvqzgk53z'>here</a>.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Chrome offline network emulation and WebSocket</h1>
+<h3 class="date">2016-11-15 23:54</h3>
+</div>
+<blockquote>
+<p>This is a series of posts for my CS3216 project, you can find the original post <a href="https://medium.com/@ngzhian/chrome-offline-network-emulation-and-websocket-6ecc914e2308#.xvqzgk53z">here</a>.</p>
 </blockquote>
-
-<p>If you have used <a href='http://getbubblechat.com/'>Bubble</a>, you might have noticed that we rely very heavily on WebSockets. In fact, our entire <a href='https://github.com/CS3216-Bubble/bubble'>API</a> is built on WebSocket (well technically not exactly, because we use <a href='http://socket.io/'>socket.io</a> and they will fallback to long polling on platforms that do not support WebSocket).</p>
+<p>If you have used <a href="http://getbubblechat.com/">Bubble</a>, you might have noticed that we rely very heavily on WebSockets. In fact, our entire <a href="https://github.com/CS3216-Bubble/bubble">API</a> is built on WebSocket (well technically not exactly, because we use <a href="http://socket.io/">socket.io</a> and they will fallback to long polling on platforms that do not support WebSocket).</p>
 <p>Towards the tail end of our sprint, we started to look more into the non-happy path that our users could face. Ideally, our users will be on a stable connection, and the clients will be able to send and receive messages easily. However most of our users on mobile will be on flaky connections, moving in and out of 3G and WiFi, and going into places without any connectivity. Thus we wanted to ensure that when the connection is lost, our app will be able to come recover quickly and flawlessly.</p>
-<p>Any web developer will appreciate the Chrome Dev Tools, to me it is a magical piece of software that provides you super powers to inspect and debug any website (and in it’s recent update it can do <a href='https://www.youtube.com/watch?v=HF1luRD4Qmk'>more than</a> that). I like to use it for its mobile and responsive view, and in my previous project I got to use the Application panel to debug service workers.</p>
+<p>Any web developer will appreciate the Chrome Dev Tools, to me it is a magical piece of software that provides you super powers to inspect and debug any website (and in it’s recent update it can do <a href="https://www.youtube.com/watch?v=HF1luRD4Qmk">more than</a> that). I like to use it for its mobile and responsive view, and in my previous project I got to use the Application panel to debug service workers.</p>
 <p>Experienced developers will know that there is an “Offline” checkbox in the network panel and the Application panel, this was useful to help test service workers — I would turn on offline emulation, reload the page, and see if the service worker has intercepted those fetch requests correctly.</p>
 <p>To me this seemed like a great way to test my WebSocket disconnection. So I decided to try it. I would connect, make an API call to verify that connection worked, check the Offline box, and try to make an API call again (which will fail), then uncheck the Offline box, and finally try to make an API call which will succeed.</p>
 <p>However, offline emulation does not work for WebSocket! I found a chromium bug that tracked this issue:</p>
-<p><a href='https://bugs.chromium.org/p/chromium/issues/detail?id=423246'>423246 - websockets not included when using connection throttling</a></p>
+<p><a href="https://bugs.chromium.org/p/chromium/issues/detail?id=423246">423246 - websockets not included when using connection throttling</a></p>
 <p>In short, most network calls in Chrome goes through a Fetch API, which has throttling capabilities (offline is equivalent full throttle!), but WebSockets, (and WebRTC plus some other kinds of requests), does not go through the same Fetch API. Therefore for throttling to work it requires a bit more thought and work.</p>
-<p>The only other way I could think of to test disconnect was to actually disconnect! So what I did was to fire up a server on my laptop, look up the local ip on my laptop, and on my phone connect to the server (you can probably use something like <a href='https://ngrok.com/'>ngrok</a> too). By default, socket.io sends a ping heartbeat (which determines if a client is still connected) every 25 seconds, which was too long for me to wait. Instead I configured my server to send heartbeats every second, like so:</p>
+<p>The only other way I could think of to test disconnect was to actually disconnect! So what I did was to fire up a server on my laptop, look up the local ip on my laptop, and on my phone connect to the server (you can probably use something like <a href="https://ngrok.com/">ngrok</a> too). By default, socket.io sends a ping heartbeat (which determines if a client is still connected) every 25 seconds, which was too long for me to wait. Instead I configured my server to send heartbeats every second, like so:</p>
 <pre><code>var server = new engine.Server({
   pingInterval: 1000,
   pingTimeout: 1000,
 });</code></pre>
-
 <p>This makes the socket server send ping to the client every second, and if the client doesn’t respond within a second it considers it disconnected. This was fast enough for me to test the reconnect scenario.</p>
-<p>If you have not tried Bubble, try it out! We are both on the <a href='http://app.bubble.com/'>web</a>, and on the <a href='https://play.google.com/store/apps/details?id=com.bubblers.bubble'>Play Store</a>.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p>If you have not tried Bubble, try it out! We are both on the <a href="http://app.bubble.com/">web</a>, and on the <a href="https://play.google.com/store/apps/details?id=com.bubblers.bubble">Play Store</a>.</p>
+</section>
+</body>
 </html>

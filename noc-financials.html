@@ -1,50 +1,160 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>NOC New York Financials</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>NOC New York Financials</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        NOC New York Financials
-        </h1>
-        <time class="published">
-        2015-01-09
-        </time>
-        <div class="entry-content">
-        <p>A couple of the juniors have been asking about living expenses here, so here&#39;s a real honest look at my financials for the past month:</p>
-<p>| Item | Income | Expenditure |
-|:-----------|------------:|:------------:|
-| Take home       |        $1400 |          |
-| Rent     |      | $700 |
-| Phone       |     |   $35 |
-| WiFi         |     |     $14 |
-| Gas &amp; Electricity       | |      $40 |
-| Heat    |     | $20 |
-| Transport    |   |  $112 |</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">NOC New York Financials</h1>
+<h3 class="date">2015-01-09 19:00</h3>
+</div>
+<p>A couple of the juniors have been asking about living expenses here, so here's a real honest look at my financials for the past month:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Item</th>
+<th align="right">Income</th>
+<th align="center">Expenditure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Take home</td>
+<td align="right">$1400</td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="left">Rent</td>
+<td align="right"></td>
+<td align="center">$700</td>
+</tr>
+<tr class="odd">
+<td align="left">Phone</td>
+<td align="right"></td>
+<td align="center">$35</td>
+</tr>
+<tr class="even">
+<td align="left">WiFi</td>
+<td align="right"></td>
+<td align="center">$14</td>
+</tr>
+<tr class="odd">
+<td align="left">Gas &amp; Electricity</td>
+<td align="right"></td>
+<td align="center">$40</td>
+</tr>
+<tr class="even">
+<td align="left">Heat</td>
+<td align="right"></td>
+<td align="center">$20</td>
+</tr>
+<tr class="odd">
+<td align="left">Transport</td>
+<td align="right"></td>
+<td align="center">$112</td>
+</tr>
+</tbody>
+</table>
 <pre><code>(700 + 35 + 14 + 40 + 20 + 112) = $921 monthly essential expenses
 
 $1.4k - $921 = $479 remaining to spend a month
 
 $479 / 30 = $16 for food per day.</code></pre>
-
-<p>If I don&#39;t buy any clothes.<sup>*</sup></p>
-<h2 id="Needmoreinfo">Need more info?</h2><p>Shoot me a question ngzhian@nus.edu.sg</p>
-<p><sup>*</sup> Which I don&#39;t</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p>If I don't buy any clothes.<sup>*</sup></p>
+<h2 id="need-more-info">Need more info?</h2>
+<p>Shoot me a question ngzhian@nus.edu.sg</p>
+<p><sup>*</sup> Which I don't</p>
+</section>
+</body>
 </html>

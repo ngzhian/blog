@@ -1,80 +1,185 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Iterative Development</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Iterative Development</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Iterative Development
-        </h1>
-        <time class="published">
-        2016-10-18
-        </time>
-        <div class="entry-content">
-        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/iterative-development-89937674d779#.ou4ht6'>here</a>.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Iterative Development</h1>
+<h3 class="date">2016-10-18 21:54</h3>
+</div>
+<blockquote>
+<p>This is a series of posts for my CS3216 project, you can find the original post <a href="https://medium.com/@ngzhian/iterative-development-89937674d779#.ou4ht6">here</a>.</p>
 </blockquote>
-
-<p>Easy to <a href='https://medium.com/@rdsubhas/10-modern-software-engineering-mistakes-bc67fbef4fc8#.txrola3hf'>over-enginner things</a>, try and make things abstract/generic.</p>
+<p>Easy to <a href="https://medium.com/@rdsubhas/10-modern-software-engineering-mistakes-bc67fbef4fc8#.txrola3hf">over-enginner things</a>, try and make things abstract/generic.</p>
 <p>The process I’ve adopted for final project is to start with the most hacky way to do things — pretend this code is read-only. Besides, the module is so frantic that you barely have time to refine your code…</p>
-<p>We are writing a chat app, and our choice of backend framework is <a href='http://socket.io/'>Socket.io</a>. It works by attaching event handlers to events, for example:</p>
-<pre class='javascript'><code class='javascript'>io.on(&#39;connect&#39;, socket =&gt; {
-  socket.on(&#39;add&#39;, data =&gt; { console.log(data); });
-});</code></pre>
-
+<p>We are writing a chat app, and our choice of backend framework is <a href="http://socket.io/">Socket.io</a>. It works by attaching event handlers to events, for example:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">io</span>.<span class="at">on</span>(<span class="st">&#39;connect&#39;</span><span class="op">,</span> socket <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="va">socket</span>.<span class="at">on</span>(<span class="st">&#39;add&#39;</span><span class="op">,</span> data <span class="op">=&gt;</span> <span class="op">{</span> <span class="va">console</span>.<span class="at">log</span>(data)<span class="op">;</span> <span class="op">}</span>)<span class="op">;</span>
+<span class="op">}</span>)<span class="op">;</span></code></pre></div>
 <p>This means that when the client (browser) sends an <code>add</code> message to the backend, the <code>data</code> associated with the event will be logged.</p>
 <p>An example client call is:</p>
-<pre class='javascript'><code class='javascript'>io.emit(&#39;add&#39;, { hi: &#39;there&#39;});</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">io</span>.<span class="at">emit</span>(<span class="st">&#39;add&#39;</span><span class="op">,</span> <span class="op">{</span> <span class="dt">hi</span><span class="op">:</span> <span class="st">&#39;there&#39;</span><span class="op">}</span>)<span class="op">;</span></code></pre></div>
 <p>For certain events, such as adding a message, we needed to have a <code>roomId</code>. It is easy to add in this check:</p>
-<pre class='javascript'><code class='javascript'>io.on(&#39;connect&#39;, socket =&gt; {
-  socket.on(&#39;add&#39;, data =&gt; {
-    if (!data.roomId) { console.error(&#39;No Room Id&#39;); }
-    else { /* something else */ }
-  });
-});</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">io</span>.<span class="at">on</span>(<span class="st">&#39;connect&#39;</span><span class="op">,</span> socket <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="va">socket</span>.<span class="at">on</span>(<span class="st">&#39;add&#39;</span><span class="op">,</span> data <span class="op">=&gt;</span> <span class="op">{</span>
+    <span class="cf">if</span> (<span class="op">!</span><span class="va">data</span>.<span class="at">roomId</span>) <span class="op">{</span> <span class="va">console</span>.<span class="at">error</span>(<span class="st">&#39;No Room Id&#39;</span>)<span class="op">;</span> <span class="op">}</span>
+    <span class="cf">else</span> <span class="op">{</span> <span class="co">/* something else */</span> <span class="op">}</span>
+  <span class="op">}</span>)<span class="op">;</span>
+<span class="op">}</span>)<span class="op">;</span></code></pre></div>
 <p>However, this gets unwieldy fast, because there are multiple events that will require a <code>roomId</code>, such as adding a reaction, sending typing and stop typing indicators, reporting a user, etc.</p>
 <p>As I started to implement more events, I found myself copy-pasting code, specifically the checks for <code>data.roomId</code>.</p>
 <p><strong>Copy-pasting is a smell that we have reusable code — DRY.</strong></p>
 <p>So I began to think of ways to extract this logic into a common, reusable piece of code.</p>
 <p>1 way is to extract this into a common function:</p>
-<pre class='javascript'><code class='javascript'>function ensureRoomId(data) {
-  if (!data.roomId) { throw Exception(&#39;No room id&#39;); }
-}</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">ensureRoomId</span>(data) <span class="op">{</span>
+  <span class="cf">if</span> (<span class="op">!</span><span class="va">data</span>.<span class="at">roomId</span>) <span class="op">{</span> <span class="cf">throw</span> <span class="at">Exception</span>(<span class="st">&#39;No room id&#39;</span>)<span class="op">;</span> <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
 <p>But this doesn’t really save much code, it’s still 1 line of code, and now I have to handle an exception.</p>
 <p>I eventually settled on a more functional way.</p>
-<pre class='javascript'><code class='javascript'>function ensureRoomId(socket, fn) {
-  return function(data) {
-    if (!data.roomId) {
-      socket.emit(&#39;error_room_id&#39;, &#39;No room id specified&#39;);
-    } else {
-      fn(data);
-    }
-  }
-}
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">ensureRoomId</span>(socket<span class="op">,</span> fn) <span class="op">{</span>
+  <span class="cf">return</span> <span class="kw">function</span>(data) <span class="op">{</span>
+    <span class="cf">if</span> (<span class="op">!</span><span class="va">data</span>.<span class="at">roomId</span>) <span class="op">{</span>
+      <span class="va">socket</span>.<span class="at">emit</span>(<span class="st">&#39;error_room_id&#39;</span><span class="op">,</span> <span class="st">&#39;No room id specified&#39;</span>)<span class="op">;</span>
+    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+      <span class="at">fn</span>(data)<span class="op">;</span>
+    <span class="op">}</span>
+  <span class="op">}</span>
+<span class="op">}</span>
 
-socket.on(&#39;add&#39;, ensureRoomId(socket, data =&gt; {
-  // data is guaranteed to have roomId!
-}));</code></pre>
-
+<span class="va">socket</span>.<span class="at">on</span>(<span class="st">&#39;add&#39;</span><span class="op">,</span> <span class="at">ensureRoomId</span>(socket<span class="op">,</span> data <span class="op">=&gt;</span> <span class="op">{</span>
+  <span class="co">// data is guaranteed to have roomId!</span>
+<span class="op">}</span>))<span class="op">;</span></code></pre></div>
 <p>Now every event handler that requires a <code>roomId</code> can wrap itself with <code>ensureRoomId</code>, and as a result, we get a single place to define a <code>error_room_id</code> error! This helps a lot of consistency of error code and messages.</p>
 <p>A little ugliness there is that we have to pass in <code>socket</code> into <code>ensureRoomId</code> because it needs to be able to emit an event to that <code>socket</code> but I find that pretty bearable for now (and don’t have a good way to solve it).</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+</section>
+</body>
 </html>

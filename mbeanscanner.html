@@ -1,206 +1,248 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>MBeanScanner a utility class to generate sample configuration file for JMXetric</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>MBeanScanner a utility class to generate sample configuration file for JMXetric</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        MBeanScanner a utility class to generate sample configuration file for JMXetric
-        </h1>
-        <time class="published">
-        2014-05-19
-        </time>
-        <div class="entry-content">
-        <h1 id="MBeanScannerautilityclasstogeneratesampleconfigurationfileforJMXetric">MBeanScanner a utility class to generate sample configuration file for JMXetric</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<h1 id="MBeanScannergeneratesaXMLconfigurationfileforJMXetric">MBeanScanner generates a XML configuration file for JMXetric</h1>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>MBeanScanner is a utility that scans the platform MBean server for
-information about registered MBeans and generates a XML file that can be
-used by JMXetric.</p>
-<p>It is motivated by <a href='https://github.com/ganglia/jmxetric/issues/10'>this issue on
-GitHub</a></p>
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">MBeanScanner a utility class to generate sample configuration file for JMXetric</h1>
+<h3 class="date">2014-05-19 18:00</h3>
+</div>
+<h1 id="mbeanscanner-a-utility-class-to-generate-sample-configuration-file-for-jmxetric">MBeanScanner a utility class to generate sample configuration file for JMXetric</h1>
+<h1 id="mbeanscanner-generates-a-xml-configuration-file-for-jmxetric">MBeanScanner generates a XML configuration file for JMXetric</h1>
+<p>MBeanScanner is a utility that scans the platform MBean server for information about registered MBeans and generates a XML file that can be used by JMXetric.</p>
+<p>It is motivated by <a href="https://github.com/ganglia/jmxetric/issues/10">this issue on GitHub</a></p>
 <p>Code is available here:</p>
-<h1 id="Howitworks">How it works</h1>
-
-<p>This utility can be divided into two parts, the <em>scanning MBeans</em> role,
-and the <em>writting configuration</em> role. It queries the MBean server for
-MBeans, and constructs a representation of the configuration available
-for each MBean using private classes - these will be described below.
-These configurations are then written to a <code>PrintStream</code>, <code>System.out</code>
-for testing, or any specified file.</p>
-<h1 id="ScanningMBeansandconstructingaconfigurationforeachMBean">Scanning MBeans and constructing a configuration for each MBean</h1>
-
+<h1 id="how-it-works">How it works</h1>
+<p>This utility can be divided into two parts, the <em>scanning MBeans</em> role, and the <em>writting configuration</em> role. It queries the MBean server for MBeans, and constructs a representation of the configuration available for each MBean using private classes - these will be described below. These configurations are then written to a <code>PrintStream</code>, <code>System.out</code> for testing, or any specified file.</p>
+<h1 id="scanning-mbeans-and-constructing-a-configuration-for-each-mbean">Scanning MBeans and constructing a configuration for each MBean</h1>
 <p>Scanning the MBeans result in a list of <code>Config</code> objects.</p>
-<pre><code> {.sourceCode .java}
-List&lt;Config&gt; configs = mBeanScanner.scan();</code></pre>
-
-<p><code>Config</code> is a super class that represents a configuration item for each
-MBean. This is tied to the XML specification that JMXetric expects. This
-mapping is described more below.</p>
-<h3 id="ConfiganditssubclassesMBeanConfigMBeanAttributeConfigMBeanCompositeConfig"><code>Config</code> and its subclasses: <code>MBeanConfig</code>, <code>MBeanAttributeConfig</code>, <code>MBeanCompositeConfig</code></h3>
-
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">List</span>&lt;Config&gt; configs = mBeanScanner.<span class="fu">scan</span>();</code></pre></div>
+<p><code>Config</code> is a super class that represents a configuration item for each MBean. This is tied to the XML specification that JMXetric expects. This mapping is described more below.</p>
+<h3 id="config-and-its-subclasses-mbeanconfig-mbeanattributeconfig-mbeancompositeconfig"><code>Config</code> and its subclasses: <code>MBeanConfig</code>, <code>MBeanAttributeConfig</code>, <code>MBeanCompositeConfig</code></h3>
 <p>A sample XML configuration file that JMXetric reads in is:</p>
-<pre><code> {.sourceCode .xml}
-&lt;jmxetric-config&gt;
- &lt;jvm process=&quot;ProcessName&quot;/&gt;
- &lt;sample delay=&quot;3&quot;&gt;
-  &lt;mbean name=&quot;java.lang:type=Memory&quot; pname=&quot;Memory&quot;&gt;
-   &lt;attribute name=&quot;HeapMemoryUsage&quot;&gt;
-    &lt;composite name=&quot;init&quot; pname=&quot;Heap_init&quot; type=&quot;int32&quot; units=&quot;bytes&quot;/&gt;
-    &lt;composite name=&quot;committed&quot; pname=&quot;Heap_committed&quot; type=&quot;int32&quot; units=&quot;bytes&quot;/&gt;
-    &lt;composite name=&quot;used&quot; pname=&quot;Heap_used&quot; type=&quot;int32&quot; units=&quot;bytes&quot; /&gt;
-    &lt;composite name=&quot;max&quot; pname=&quot;Heap_max&quot; type=&quot;int32&quot; units=&quot;bytes&quot; /&gt;
-   &lt;/attribute&gt;
-   &lt;attribute name=&quot;NonHeapMemoryUsage&quot; &gt;
-    &lt;composite name=&quot;init&quot; pname=&quot;NonHeap_init&quot; type=&quot;int32&quot;  units=&quot;bytes&quot; /&gt;
-    &lt;composite name=&quot;committed&quot; pname=&quot;NonHeap_committed&quot; type=&quot;int32&quot; units=&quot;bytes&quot; /&gt;
-    &lt;composite name=&quot;used&quot; pname=&quot;NonHeap_used&quot; type=&quot;int32&quot; units=&quot;bytes&quot; /&gt;
-    &lt;composite name=&quot;max&quot; pname=&quot;NonHeap_max&quot; type=&quot;int32&quot; units=&quot;bytes&quot; /&gt;
-   &lt;/attribute&gt;
-  &lt;/mbean&gt;
- &lt;/sample&gt;
-&lt;/jmxetric-config&gt;</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;jmxetric-config&gt;</span>
+ <span class="kw">&lt;jvm</span><span class="ot"> process=</span><span class="st">&quot;ProcessName&quot;</span><span class="kw">/&gt;</span>
+ <span class="kw">&lt;sample</span><span class="ot"> delay=</span><span class="st">&quot;3&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;mbean</span><span class="ot"> name=</span><span class="st">&quot;java.lang:type=Memory&quot;</span><span class="ot"> pname=</span><span class="st">&quot;Memory&quot;</span><span class="kw">&gt;</span>
+   <span class="kw">&lt;attribute</span><span class="ot"> name=</span><span class="st">&quot;HeapMemoryUsage&quot;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;init&quot;</span><span class="ot"> pname=</span><span class="st">&quot;Heap_init&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot"> units=</span><span class="st">&quot;bytes&quot;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;committed&quot;</span><span class="ot"> pname=</span><span class="st">&quot;Heap_committed&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot"> units=</span><span class="st">&quot;bytes&quot;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;used&quot;</span><span class="ot"> pname=</span><span class="st">&quot;Heap_used&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot"> units=</span><span class="st">&quot;bytes&quot;</span> <span class="kw">/&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;max&quot;</span><span class="ot"> pname=</span><span class="st">&quot;Heap_max&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot"> units=</span><span class="st">&quot;bytes&quot;</span> <span class="kw">/&gt;</span>
+   <span class="kw">&lt;/attribute&gt;</span>
+   <span class="kw">&lt;attribute</span><span class="ot"> name=</span><span class="st">&quot;NonHeapMemoryUsage&quot;</span> <span class="kw">&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;init&quot;</span><span class="ot"> pname=</span><span class="st">&quot;NonHeap_init&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot">  units=</span><span class="st">&quot;bytes&quot;</span> <span class="kw">/&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;committed&quot;</span><span class="ot"> pname=</span><span class="st">&quot;NonHeap_committed&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot"> units=</span><span class="st">&quot;bytes&quot;</span> <span class="kw">/&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;used&quot;</span><span class="ot"> pname=</span><span class="st">&quot;NonHeap_used&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot"> units=</span><span class="st">&quot;bytes&quot;</span> <span class="kw">/&gt;</span>
+    <span class="kw">&lt;composite</span><span class="ot"> name=</span><span class="st">&quot;max&quot;</span><span class="ot"> pname=</span><span class="st">&quot;NonHeap_max&quot;</span><span class="ot"> type=</span><span class="st">&quot;int32&quot;</span><span class="ot"> units=</span><span class="st">&quot;bytes&quot;</span> <span class="kw">/&gt;</span>
+   <span class="kw">&lt;/attribute&gt;</span>
+  <span class="kw">&lt;/mbean&gt;</span>
+ <span class="kw">&lt;/sample&gt;</span>
+<span class="kw">&lt;/jmxetric-config&gt;</span></code></pre></div>
 <p><code>Config</code></p>
-<p><hr/> XML Tag         Config sublass
- <code>&lt;mbean&gt;</code>       <code>MBeanConfig</code>
- <code>&lt;attribute&gt;</code>   <code>MBeanAttributeConfig</code>
- <code>&lt;composite&gt;</code>   <code>MBeanCompositeConfig</code>
-<hr/>Each <code>Config</code> object has a name, which is the name of the tag, a list of
-<code>KeyValue</code> which are the attributes in each tag, and a list of <code>Config</code>,
-which are the inner configurations.</p>
-<pre><code> {.sourceCode .java}
-Map&lt;String, String&gt; fields = new HashMap&lt;&gt;();
-List&lt;Config&gt; children = new Vector&lt;Config&gt;();</code></pre>
-
-<p>The name <code>fields</code> was chosen to represent the attributes in the XML tag
-because of the potential confusion between attributes of the XML tags
-and the attribute XML tags.</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">XML Tag</td>
+<td align="left">Config sublass</td>
+</tr>
+<tr class="even">
+<td align="left"><code>&lt;mbean&gt;</code></td>
+<td align="left"><code>MBeanConfig</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>&lt;attribute&gt;</code></td>
+<td align="left"><code>MBeanAttributeConfig</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>&lt;composite&gt;</code></td>
+<td align="left"><code>MBeanCompositeConfig</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each <code>Config</code> object has a name, which is the name of the tag, a list of <code>KeyValue</code> which are the attributes in each tag, and a list of <code>Config</code>, which are the inner configurations.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">Map</span>&lt;<span class="bu">String</span>, <span class="bu">String</span>&gt; fields = <span class="kw">new</span> <span class="bu">HashMap</span>&lt;&gt;();
+<span class="bu">List</span>&lt;Config&gt; children = <span class="kw">new</span> <span class="bu">Vector</span>&lt;Config&gt;();</code></pre></div>
+<p>The name <code>fields</code> was chosen to represent the attributes in the XML tag because of the potential confusion between attributes of the XML tags and the attribute XML tags.</p>
 <p>The <code>Config</code> class allows us to extract a lot of common methods</p>
-<pre><code> {.sourceCode .java}
-void addField(String key, String val)
-void addChild(Config config)
-public String fieldsToString()</code></pre>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="dt">void</span> <span class="fu">addField</span>(<span class="bu">String</span> key, <span class="bu">String</span> val)
+<span class="dt">void</span> <span class="fu">addChild</span>(Config config)
+<span class="kw">public</span> <span class="bu">String</span> <span class="fu">fieldsToString</span>()</code></pre></div>
+<h3 id="scanning-for-mbeans-information">Scanning for MBeans information</h3>
+<p>First, the platform MBean server is queried, using <code>null</code> parameters. This will return <code>ObjectInstance</code>s for all the MBeans in a <code>Set</code>.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">Set</span>&lt;<span class="bu">ObjectInstance</span>&gt; mBeanObjects = mBeanServer.<span class="fu">queryMBeans</span>(<span class="kw">null</span>, <span class="kw">null</span>);</code></pre></div>
+<p>Each <code>ObjectInstance</code> in the <code>Set</code> is then used to construct a <code>MBeanConfig</code>:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">private</span> Config <span class="fu">scanOneMBeanObject</span>(<span class="bu">ObjectInstance</span> objectInstance) {
+  MBeanConfig mBeanConfig = <span class="kw">new</span> <span class="fu">MBeanConfig</span>();
+  <span class="bu">ObjectName</span> objectName = objectInstance.<span class="fu">getObjectName</span>();
+  mBeanConfig.<span class="fu">addField</span>(<span class="st">&quot;name&quot;</span>, objectName.<span class="fu">getCanonicalName</span>());
+  <span class="fu">scanMBeanAttributes</span>(mBeanConfig, objectName);
+  <span class="kw">return</span> mBeanConfig;
+}</code></pre></div>
+<p>As each <code>MBean</code> can have multiple attributes, the <code>scanMBeanAttributes</code> method retrieves information on all the attributes for 1 MBean, and populates the <code>mBeanConfig</code> object associated with that MBean with the scanned attributes.</p>
+<p>The information regarding the attributes of one MBean is retrieved using:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">mBeanInfo = mBeanServer.<span class="fu">getMBeanInfo</span>(mBeanName);
+<span class="bu">MBeanAttributeInfo</span>[] infos = mBeanInfo.<span class="fu">getAttributes</span>();</code></pre></div>
+<p>As each MBean can have multiple attributes, the <code>mBeanConfig</code> is populated in a <code>for</code> loop. The construction of a <code>MBeanAttributeConfig</code>, which represents the configuration of a <code>&lt;attribute&gt;</code> is delgated to the method <code>makeConfigMBeanAttribute</code>.</p>
+<p>The body of <code>makeConfigMBeanAttribute</code> is long because it has to take care of 2 different kinds of attributes: 1. attributes of the simple type such as <code>&lt;attribute name=&quot;MemoryManagerNames&quot; type=&quot;string&quot;/&gt;</code>, and 2. attributes of the composite type, as shown in the sample XMl above. Also, many kinds of exceptions can be thrown when retrieving the attributes of an MBean.</p>
+<p>In short,if the attribute is a simple type, <code>makeConfigMBeanAttribute</code> constructs the <code>MBeanAttributeConfig</code>. If the attribute is a <code>CompositeData</code>, it delegates the construction to <code>addComposites</code>.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">if</span> (attr == <span class="kw">null</span>) {
+  <span class="kw">return</span> <span class="kw">null</span>;
+} <span class="kw">else</span> <span class="kw">if</span> (attr <span class="kw">instanceof</span> <span class="bu">CompositeData</span>) {
+  <span class="fu">addComposites</span>(config, (<span class="bu">CompositeData</span>) attr);
+} <span class="kw">else</span> {
+  config.<span class="fu">addField</span>(<span class="st">&quot;type&quot;</span>, <span class="fu">translateDataType</span>(attributeInfo.<span class="fu">getType</span>()));
+}</code></pre></div>
+<p><code>addComposites</code> delegates the construction of a <code>MBeanCompositeConfig</code> for each data in the composite, to <code>makeComposite</code>, and adds each <code>MBeanCompositeConfig</code> into the <code>MBeanAttributeConfig</code></p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">CompositeType</span> compositeType = compositeData.<span class="fu">getCompositeType</span>();
+<span class="kw">for</span> (<span class="bu">String</span> key : compositeType.<span class="fu">keySet</span>()) {
+    config.<span class="fu">addChild</span>(<span class="fu">makeComposite</span>(compositeType, key));
+}</code></pre></div>
+<p>The type of each data in the composite can be discovered using <code>compositeType.getType(name).toString()</code>. However this is not the same as the type that is recognized by JMXetric and Ganglia. Hence the translation is provied by <code>translateDataType</code>.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">if</span> (possibleData.<span class="fu">contains</span>(<span class="st">&quot;java.lang.Long&quot;</span>)) {
+    <span class="kw">return</span> <span class="st">&quot;int8&quot;</span>;</code></pre></div>
+<p>This method is currently incomplete and should be updated so the translation is accurate.</p>
+<h1 id="writing-the-configurations-out">Writing the configurations out</h1>
+<p>The writing of <code>Config</code>s is handled by the <code>ConfigWriter</code> class. The constant strings defined by <code>ConfigWriter</code> are the declarations and doctype that a XML configuration file for JMXetric requires.</p>
+<p>A public method <code>write()</code> writes the declaration and doctype, as well as wrapping the configurations in the <code>&lt;jmxetric-config&gt;</code> tags. It builds up a <code>StringBuilder</code> representing the contents of the file to be written, and writes everying in a single <code>print</code>.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">sb.<span class="fu">append</span>(XML_DECL + NL);
+sb.<span class="fu">append</span>(XML_DOCTYPE + NL);
+sb.<span class="fu">append</span>(<span class="st">&quot;&lt;jmxetric-config&gt;&quot;</span> + NL);
 
-<h3 id="ScanningforMBeansinformation">Scanning for MBeans information</h3>
-
-<p>First, the platform MBean server is queried, using <code>null</code> parameters.
-This will return <code>ObjectInstance</code>s for all the MBeans in a <code>Set</code>.</p>
-<pre><code> {.sourceCode .java}
-Set&lt;ObjectInstance&gt; mBeanObjects = mBeanServer.queryMBeans(null, null);</code></pre>
-
-<p>Each <code>ObjectInstance</code> in the <code>Set</code> is then used to construct a
-<code>MBeanConfig</code>:</p>
-<pre><code> {.sourceCode .java}
-private Config scanOneMBeanObject(ObjectInstance objectInstance) {
-  MBeanConfig mBeanConfig = new MBeanConfig();
-  ObjectName objectName = objectInstance.getObjectName();
-  mBeanConfig.addField(&quot;name&quot;, objectName.getCanonicalName());
-  scanMBeanAttributes(mBeanConfig, objectName);
-  return mBeanConfig;
-}</code></pre>
-
-<p>As each <code>MBean</code> can have multiple attributes, the <code>scanMBeanAttributes</code>
-method retrieves information on all the attributes for 1 MBean, and
-populates the <code>mBeanConfig</code> object associated with that MBean with the
-scanned attributes.</p>
-<p>The information regarding the attributes of one MBean is retrieved
-using:</p>
-<pre><code> {.sourceCode .java}
-mBeanInfo = mBeanServer.getMBeanInfo(mBeanName);
-MBeanAttributeInfo[] infos = mBeanInfo.getAttributes();</code></pre>
-
-<p>As each MBean can have multiple attributes, the <code>mBeanConfig</code> is
-populated in a <code>for</code> loop. The construction of a <code>MBeanAttributeConfig</code>,
-which represents the configuration of a <code>&lt;attribute&gt;</code> is delgated to the
-method <code>makeConfigMBeanAttribute</code>.</p>
-<p>The body of <code>makeConfigMBeanAttribute</code> is long because it has to take
-care of 2 different kinds of attributes: 1. attributes of the simple
-type such as <code>&lt;attribute name=&quot;MemoryManagerNames&quot; type=&quot;string&quot;/&gt;</code>, and</p>
-<ol><li>attributes of the composite type, as shown in the sample XMl above.
-Also, many kinds of exceptions can be thrown when retrieving the
-attributes of an MBean.</li></ol>
-
-<p>In short,if the attribute is a simple type, <code>makeConfigMBeanAttribute</code>
-constructs the <code>MBeanAttributeConfig</code>. If the attribute is a
-<code>CompositeData</code>, it delegates the construction to <code>addComposites</code>.</p>
-<pre><code> {.sourceCode .java}
-if (attr == null) {
-  return null;
-} else if (attr instanceof CompositeData) {
-  addComposites(config, (CompositeData) attr);
-} else {
-  config.addField(&quot;type&quot;, translateDataType(attributeInfo.getType()));
-}</code></pre>
-
-<p><code>addComposites</code> delegates the construction of a <code>MBeanCompositeConfig</code>
-for each data in the composite, to <code>makeComposite</code>, and adds each
-<code>MBeanCompositeConfig</code> into the <code>MBeanAttributeConfig</code></p>
-<pre><code> {.sourceCode .java}
-CompositeType compositeType = compositeData.getCompositeType();
-for (String key : compositeType.keySet()) {
-    config.addChild(makeComposite(compositeType, key));
-}</code></pre>
-
-<p>The type of each data in the composite can be discovered using
-<code>compositeType.getType(name).toString()</code>. However this is not the same
-as the type that is recognized by JMXetric and Ganglia. Hence the
-translation is provied by <code>translateDataType</code>.</p>
-<pre><code> {.sourceCode .java}
-if (possibleData.contains(&quot;java.lang.Long&quot;)) {
-    return &quot;int8&quot;;</code></pre>
-
-<p>This method is currently incomplete and should be updated so the
-translation is accurate.</p>
-<h1 id="Writingtheconfigurationsout">Writing the configurations out</h1>
-
-<p>The writing of <code>Config</code>s is handled by the <code>ConfigWriter</code> class. The
-constant strings defined by <code>ConfigWriter</code> are the declarations and
-doctype that a XML configuration file for JMXetric requires.</p>
-<p>A public method <code>write()</code> writes the declaration and doctype, as well as
-wrapping the configurations in the <code>&lt;jmxetric-config&gt;</code> tags. It builds
-up a <code>StringBuilder</code> representing the contents of the file to be
-written, and writes everying in a single <code>print</code>.</p>
-<pre><code> {.sourceCode .java}
-sb.append(XML_DECL + NL);
-sb.append(XML_DOCTYPE + NL);
-sb.append(&quot;&lt;jmxetric-config&gt;&quot; + NL);
-
-out.print(sb.toString());</code></pre>
-
-<p>The mutually recursive methods <code>buildXmlTagsFromList</code> and <code>buildXmlTag</code>
-does the actual building of the tags to be written. The method
-<code>buildXmlTagsFromList</code> writes a list of configuration to the
-<code>PrintStream</code>. <code>buildXmlTag</code> then does the actual writing of the XML.
-<code>buildXmlTag</code> can take care of self-closing XML tags by checking if the
-<code>Config</code> has any children. If it doesn’t, a self-closing tag is written.</p>
-<h1 id="Improvements">Improvements</h1>
-
-<p>I feel that <code>ConfigWriter</code> isn’t written in a good manner. Since the
-configuration file is an XML, I can probably use an XML writer instead
-of constructing the tags manually. However this works very well now -
-the code is pretty simple and is easy to read, so I will stick to this
-and submit a pull request based on the current code.</p>
-<p>The only kinds of datatype that we are taking care of are the simple
-type and <code>CompositeData</code>. There are other kinds of complex MXBeans type,
-such as the tabular. The support for these tyeps will be added as
-needed.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+out.<span class="fu">print</span>(sb.<span class="fu">toString</span>());</code></pre></div>
+<p>The mutually recursive methods <code>buildXmlTagsFromList</code> and <code>buildXmlTag</code> does the actual building of the tags to be written. The method <code>buildXmlTagsFromList</code> writes a list of configuration to the <code>PrintStream</code>. <code>buildXmlTag</code> then does the actual writing of the XML. <code>buildXmlTag</code> can take care of self-closing XML tags by checking if the <code>Config</code> has any children. If it doesn’t, a self-closing tag is written.</p>
+<h1 id="improvements">Improvements</h1>
+<p>I feel that <code>ConfigWriter</code> isn’t written in a good manner. Since the configuration file is an XML, I can probably use an XML writer instead of constructing the tags manually. However this works very well now - the code is pretty simple and is easy to read, so I will stick to this and submit a pull request based on the current code.</p>
+<p>The only kinds of datatype that we are taking care of are the simple type and <code>CompositeData</code>. There are other kinds of complex MXBeans type, such as the tabular. The support for these tyeps will be added as needed.</p>
+</section>
+</body>
 </html>

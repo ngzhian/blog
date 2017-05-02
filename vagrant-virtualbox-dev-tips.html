@@ -1,32 +1,108 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Common problems I faced with Vagrant and VirtualBox</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Common problems I faced with Vagrant and VirtualBox</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Common problems I faced with Vagrant and VirtualBox
-        </h1>
-        <time class="published">
-        2015-05-08
-        </time>
-        <div class="entry-content">
-        <p>Sometimes I have a little bit of trouble getting my development setup to work properly.</p>
-<p>My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider.
-I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.</p>
-<h2 id="Vagrantlostmyolddevelopmentenvironmentomgomgomg">Vagrant lost my old development environment omgomgomg!</h2>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox.
-Vagrant stores this UUID in a file called <code>id</code> and this file is located in the <code>.vagrant</code> directory which is located beside the <code>Vagrantfile</code>.</p>
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Common problems I faced with Vagrant and VirtualBox</h1>
+<h3 class="date">2015-05-08 19:00</h3>
+</div>
+<p>Sometimes I have a little bit of trouble getting my development setup to work properly.</p>
+<p>My laptop runs Windows 8.1 64bit, and I do my development in a Vagrant environment with a VirtualBox provider. I really like this setup, until it craps on me. This post documents some commone error I face and what I did to fix (or maybe not fix) it.</p>
+<h2 id="vagrant-lost-my-old-development-environment-omgomgomg">Vagrant lost my old development environment omgomgomg!</h2>
+<p>Vagrant uses the UUID of a VirtualBox managed box to identify which vagrant environment is tied to which VirtualBox. Vagrant stores this UUID in a file called <code>id</code> and this file is located in the <code>.vagrant</code> directory which is located beside the <code>Vagrantfile</code>.</p>
 <p>Specifically for me, it is located</p>
 <pre><code>|-- .vagrant
  |-- machines
@@ -34,44 +110,37 @@ Vagrant stores this UUID in a file called <code>id</code> and this file is locat
    |-- virtualbox
     |-- id
 |-- Vagrantfile</code></pre>
-
 <p>Your layout may look different depending on your <code>Vagrantfile</code> config.</p>
 <p>Usually, when the <code>id</code> file is messed up, either its contents has been corrupted or the file deleted, Vagrant will be unable to find the VirtualBox that is backing this.</p>
-<p>The fix is simple, create the <code>id</code> file in the place that it should be located (and this isn&#39;t difficult to find because those directories will not be removed even if the file was deleted), with the contents being the UUID of the original VirtualBox. The trouble is finding the UUID.</p>
-<p>You will not be able to find the UUID from the VirtualBox GUI. I found the best way to find the UUID is through the <code>VBoxManage</code> command that comes with the VirtualBox installation. Here&#39;s how (in powershell):</p>
-<pre class='powershell'><code class='powershell'>PS C:\Users\ZhiAn&gt; &amp; &#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39; list vms
+<p>The fix is simple, create the <code>id</code> file in the place that it should be located (and this isn't difficult to find because those directories will not be removed even if the file was deleted), with the contents being the UUID of the original VirtualBox. The trouble is finding the UUID.</p>
+<p>You will not be able to find the UUID from the VirtualBox GUI. I found the best way to find the UUID is through the <code>VBoxManage</code> command that comes with the VirtualBox installation. Here's how (in powershell):</p>
+<pre class="powershell"><code>PS C:\Users\ZhiAn&gt; &amp; &#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39; list vms
 &quot;stuff-dev_default_1430843699366_68732&quot; {4ba4dec6-7f96-4185-bf64-97bb6334c090}
 &quot;morestuff_default_1430602346381_75524&quot; {3eb30515-6eac-472c-87bd-9abc3503031b}
 &quot;yetmorestuff_default_1430751792081_54559&quot; {e35079c1-387e-4bbe-ac0e-47ce139fee7d}</code></pre>
-
 <p>The UUID is the string within the curly braces <code>{}</code>.</p>
-<h2 id="IupgradedVirtualBoxanditlostallmyVMsHELP">I upgraded VirtualBox and it lost all my VMs, HELP!!!</h2>
-
+<h2 id="i-upgraded-virtualbox-and-it-lost-all-my-vms-help">I upgraded VirtualBox and it lost all my VMs, HELP!!!</h2>
 <p>I encountered this problem because (I think):</p>
-<ol><li>I created those VirtualBox boxes via vagrant while in cygwin drive, e.g. <code>C:\cygwin\home\ZhiAn</code></li><li>Vagrant created a folder called <code>VirtualBox VMs</code> inside <code>~</code>, which in the cygwin drive meant <code>C:\cygwin\home\ZhiAn</code></li><li>I upgraded my VirtualBox in host machine, and it registered all the VMs that were in <code>~</code>, which meant <code>C:\Users\ZhiAn\VirtualBox VMs</code>.</li><li>Poof, old boxes gone!</li></ol>
-
-<p>This isn&#39;t too difficult to solve, we just had to register those VMs that lived inside cygwin, and let VirtualBox know about them.</p>
+<ol style="list-style-type: decimal">
+<li>I created those VirtualBox boxes via vagrant while in cygwin drive, e.g. <code>C:\cygwin\home\ZhiAn</code></li>
+<li>Vagrant created a folder called <code>VirtualBox VMs</code> inside <code>~</code>, which in the cygwin drive meant <code>C:\cygwin\home\ZhiAn</code></li>
+<li>I upgraded my VirtualBox in host machine, and it registered all the VMs that were in <code>~</code>, which meant <code>C:\Users\ZhiAn\VirtualBox VMs</code>.</li>
+<li>Poof, old boxes gone!</li>
+</ol>
+<p>This isn't too difficult to solve, we just had to register those VMs that lived inside cygwin, and let VirtualBox know about them.</p>
 <p>I found that a <code>VBoxManage</code> command is helpful here.</p>
-<pre class='powershell'><code class='powershell'>PS C:\Users\ZhiAn&gt; &amp; &#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39; registervm &#39;C:\cygwin\home\ZhiAn\VirtualBox VMs\box\box.vbox&#39;</code></pre>
-
+<pre class="powershell"><code>PS C:\Users\ZhiAn&gt; &amp; &#39;C:\Program Files\Oracle\VirtualBox\VBoxManage.exe&#39; registervm &#39;C:\cygwin\home\ZhiAn\VirtualBox VMs\box\box.vbox&#39;</code></pre>
 <p>So just call the <code>registervm</code> subcommand and pass in the path to a <code>.vbox</code> file, which lived my cygwin drive.</p>
-<h2 id="VirtualBoxGuestAdditionsversiondon39tmatchWhatisthat">VirtualBox Guest Additions version don&#39;t match! What is that???</h2>
-
-<p>The Guest Additions is installed on the guest OS to enable cool stuff, like mouse pointer integration etc. Don&#39;t know too much about it, I just don&#39;t like the warnings.</p>
-<p>I had some trouble finding instructions to upgrade this, and after some digging through old forum posts, issues on vagrant&#39;s GitHub issue tracker, and Oracle&#39;s documentation on VirtualBox, I believe I have the solution. But only if you&#39;re on a Windows host and trying to run a Linux guest.</p>
-<ol><li><p>Get the Guest Additions iso from here <a href=''>http://dlc-cdn.sun.com/virtualbox/4.3.26/index.html</a>.</p>
-</li><li><p>Open up your VirtualBox GUI, start the box you want to update the Guest Additions.</p>
-</li><li><p>In the open window for the box, select &#39;Insert Guest Additions&#39;</p>
-</li><li><p>Now in the guest OS execute these commands:</p>
-<p>cd ~ &amp;&amp; mkdir vbox
-mount /dev/sr0 vbox/
-./VBoxLinuxAdditions</p>
-</li></ol>
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<h2 id="virtualbox-guest-additions-version-dont-match-what-is-that">VirtualBox Guest Additions version don't match! What is that???</h2>
+<p>The Guest Additions is installed on the guest OS to enable cool stuff, like mouse pointer integration etc. Don't know too much about it, I just don't like the warnings.</p>
+<p>I had some trouble finding instructions to upgrade this, and after some digging through old forum posts, issues on vagrant's GitHub issue tracker, and Oracle's documentation on VirtualBox, I believe I have the solution. But only if you're on a Windows host and trying to run a Linux guest.</p>
+<ol style="list-style-type: decimal">
+<li>Get the Guest Additions iso from here <a href="">http://dlc-cdn.sun.com/virtualbox/4.3.26/index.html</a>.</li>
+<li>Open up your VirtualBox GUI, start the box you want to update the Guest Additions.</li>
+<li>In the open window for the box, select 'Insert Guest Additions'</li>
+<li><p>Now in the guest OS execute these commands:</p>
+<p>cd ~ &amp;&amp; mkdir vbox mount /dev/sr0 vbox/ ./VBoxLinuxAdditions</p></li>
+</ol>
+</section>
+</body>
 </html>

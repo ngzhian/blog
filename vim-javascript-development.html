@@ -1,68 +1,175 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Set up Vim for JavaScript development</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Set up Vim for JavaScript development</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Set up Vim for JavaScript development
-        </h1>
-        <time class="published">
-        2015-04-24
-        </time>
-        <div class="entry-content">
-        <p>A couple of days ago I decided to get my JavaScript development environment in order.</p>
-<p>I haven&#39;t been doing much JS dev lately, mostly just tweaking a tiny bit of JS, but I had just received a pure frontend JS task. So I thought it would be a good time to do so!</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Set up Vim for JavaScript development</h1>
+<h3 class="date">2015-04-24 18:00</h3>
+</div>
+<p>A couple of days ago I decided to get my JavaScript development environment in order.</p>
+<p>I haven't been doing much JS dev lately, mostly just tweaking a tiny bit of JS, but I had just received a pure frontend JS task. So I thought it would be a good time to do so!</p>
 <p>I live in Vim world, and these instructions are assembled from various places all over the web.</p>
-<p>Here&#39;s how my setup looks like right now</p>
-<p><img src='http://i.imgur.com/JjT5XW2.png' alt='My Vim JavaScript setup, with d3.js code' /></p>
-<h1 id="Syntaxhighlighting">Syntax highlighting</h1>
-
+<p>Here's how my setup looks like right now</p>
+<div class="figure">
+<img src="http://i.imgur.com/JjT5XW2.png" alt="My Vim JavaScript setup, with d3.js code" />
+<p class="caption">My Vim JavaScript setup, with d3.js code</p>
+</div>
+<h1 id="syntax-highlighting">Syntax highlighting</h1>
 <p>First thing I wanted was syntax highlighting, and I usually just head to GitHub to do a search.</p>
 <p>I found a couple of vim scripts for this, and I chose [this] (https://github.com/pangloss/vim-javascript) because it was the most recently updated, and had the most number of stars.</p>
-<p>As I used <a href='https://github.com/gmarik/Vundle.vim'>Vundle</a>, this was as easy as adding a line to my <code>.vimrc</code></p>
-<pre class='vim'><code class='vim'>Plugin &quot;pangloss/vim-javascript&quot;</code></pre>
-
-<h1 id="Indentation">Indentation</h1>
-
+<p>As I used <a href="https://github.com/gmarik/Vundle.vim">Vundle</a>, this was as easy as adding a line to my <code>.vimrc</code></p>
+<pre class="vim"><code>Plugin &quot;pangloss/vim-javascript&quot;</code></pre>
+<h1 id="indentation">Indentation</h1>
 <p>From my observation, 2 spaces seems to be pretty popular, so I went with that as well.</p>
-<p>This doesn&#39;t require any plugin, Vim has really good support for smart indentations built in, we just need to which command does it!</p>
-<p>In this case refering to <code>.vimrc</code> files of experienced vim users really helps. One notable Vim (and Ruby) expert I really like is <a href='https://github.com/r00k/'>Ben Orenstein</a>. Thanks Ben!</p>
-<p>I went to <a href='https://github.com/r00k/dotfiles/blob/master/vimrc#L59-72'>his dotfiles</a> and found the lines that was releveant, which was the <code>autocmd</code> command, <a href='http://vimdoc.sourceforge.net/htmldoc/autocmd.html#:autocmd'>docs</a></p>
+<p>This doesn't require any plugin, Vim has really good support for smart indentations built in, we just need to which command does it!</p>
+<p>In this case refering to <code>.vimrc</code> files of experienced vim users really helps. One notable Vim (and Ruby) expert I really like is <a href="https://github.com/r00k/">Ben Orenstein</a>. Thanks Ben!</p>
+<p>I went to <a href="https://github.com/r00k/dotfiles/blob/master/vimrc#L59-72">his dotfiles</a> and found the lines that was releveant, which was the <code>autocmd</code> command, <a href="http://vimdoc.sourceforge.net/htmldoc/autocmd.html#:autocmd">docs</a></p>
 <pre><code>autocmd FileType javascript setlocal sw=2</code></pre>
-
 <p><code>autocmd</code> basically sets some settings when you open a file of a specific type.</p>
-<p>So for the setting aove, everytime you open a <code>javascript</code> file, it will set the <code>shiftwidth</code> to 2 locally (i.e. only the current buffer or window), <a href='http://vimdoc.sourceforge.net/htmldoc/options.html#:setlocal'>docs on setlocal</a>, <a href='http://vimdoc.sourceforge.net/htmldoc/options.html#&#39;shiftwidth&#39;'>docs on shiftwidth</a></p>
-<p>Check out my own <code>.vimrc</code> <a href='https://github.com/ngzhian/dotfiles/blob/master/.vimrc'>here</a></p>
-<h1 id="Lintingstylechecks">Linting, style checks</h1>
-
+<p>So for the setting aove, everytime you open a <code>javascript</code> file, it will set the <code>shiftwidth</code> to 2 locally (i.e. only the current buffer or window), <a href="http://vimdoc.sourceforge.net/htmldoc/options.html#:setlocal">docs on setlocal</a>, <a href="http://vimdoc.sourceforge.net/htmldoc/options.html#&#39;shiftwidth&#39;">docs on shiftwidth</a></p>
+<p>Check out my own <code>.vimrc</code> <a href="https://github.com/ngzhian/dotfiles/blob/master/.vimrc">here</a></p>
+<h1 id="linting-style-checks">Linting, style checks</h1>
 <p>Linting is really helpful and we should always have it turned on.</p>
 <p>It helps captures stupid typos which would result in undefined references, breaking the page. It also ensures that you write code that is formatted consistently.</p>
 <p>And there are many other reasons as well!</p>
-<p>A helpful resource was <a href='http://stackoverflow.com/questions/473478/vim-jslint/5893447#5893447'>this stackoverflow question</a>, and I basically followed the instruction on one of those answer.</p>
-<p>First, install <a href='https://github.com/scrooloose/syntastic'>Syntastic</a>, which is an amazing, flexible syntax checker for Vim. It works really well and is extensible, so you can plug in different checkers for each file type.</p>
-<p>For JavaScript, there are multiple checkers available, one that I chose was <a href='http://jshint.com/docs/'>jshint</a></p>
+<p>A helpful resource was <a href="http://stackoverflow.com/questions/473478/vim-jslint/5893447#5893447">this stackoverflow question</a>, and I basically followed the instruction on one of those answer.</p>
+<p>First, install <a href="https://github.com/scrooloose/syntastic">Syntastic</a>, which is an amazing, flexible syntax checker for Vim. It works really well and is extensible, so you can plug in different checkers for each file type.</p>
+<p>For JavaScript, there are multiple checkers available, one that I chose was <a href="http://jshint.com/docs/">jshint</a></p>
 <p>This is easy to install, assuming you have <code>npm</code></p>
-<pre class='sh'><code class='sh'>npm install jshint -g</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">npm</span> install jshint -g</code></pre></div>
 <p>Restart Vim, and Syntastic will automatically pick up jshint.</p>
 <p>Open up a JavaScript file, then use this ex command <code>:SyntasticInfo</code> to verify that <code>jshint</code> is indeed active.</p>
-<p>Another checker worth looking at is Google&#39;s <a href='https://developers.google.com/closure/utilities/docs/linter_howto'>closure library linter</a>. This is particularly interesting because just a couple of days ago I was exploring the Google Closure Compiler, <a href='{filename}/closure-compiler-1.mdown'>here&#39;s my blog post on it.</a></p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p>Another checker worth looking at is Google's <a href="https://developers.google.com/closure/utilities/docs/linter_howto">closure library linter</a>. This is particularly interesting because just a couple of days ago I was exploring the Google Closure Compiler, <a href="%7Bfilename%7D/closure-compiler-1.mdown">here's my blog post on it.</a></p>
+</section>
+</body>
 </html>

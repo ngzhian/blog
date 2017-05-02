@@ -1,129 +1,133 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Don&apos;t waste their time!</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Don't waste their time!</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Don&apos;t waste their time!
-        </h1>
-        <time class="published">
-        2014-04-26
-        </time>
-        <div class="entry-content">
-        <h1 id="Don39twastetheirtime">Don&#39;t waste their time!</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>In <a href='http://www.smashingmagazine.com/2014/04/25/stop-wasting-users-time/'>this
-article</a>
-on Smashing Magazine, <a href='http://www.smashingmagazine.com/author/paul-boag/?rel=author'>Paul
-Boag</a>
-talks about not wasting users’ time. This resonated well with me,
-considering I just completed the module CS2103T, Software Engineering
-(exam was this noon), and in that module our lecturer actually gave us
-some advice on usability.</p>
-<h2 id="Keyideatimeisprecious">Key idea: time is precious</h2>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>The key idea of the article is that time is precious to users, and also
-developers. But as developers it is our responsibility to spend more
-time our on work so that users don’t have to. He brought up excellent
-examples which almost anyone on the Internet would have encountered:
-CAPTCHA, and Country Selector in forms. This is a worthwhile read, as he
-points to various other posts that tackles those examples, or talk about
-usability. His conclusion is simple, constantly ask “Can I save the user
-time?”.</p>
-<h2 id="CS2103Taddingtasks">CS2103T: adding tasks</h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<p>To link it back to CS2103T, the task tracker we were asked to implement
-was pretty simple, but there are many design issues to consider while
-building the application. For example, what are the commands we should
-support? We could be rigid and say that the user must use the “add”
-keyword to add a task. But if we consider the common use case for a task
-tracker, the user will probably be adding tasks <em>a lot</em>. Hence it makes
-sense to make adding, simpler. So we could reduce the size of the
-keyword to just “a”. Can we go a step further though?</p>
-<p>Does the user even have to specify a keyword? Can we just let the user
-type the task title, and add it in? Our eventual decision was no. Our
-implementation became as such:</p>
-<blockquote><p>when the user enters an invalid command, we suggest some valid
-commands for them</p>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Don't waste their time!</h1>
+<h3 class="date">2014-04-26 18:00</h3>
+</div>
+<h1 id="dont-waste-their-time">Don't waste their time!</h1>
+<p>In <a href="http://www.smashingmagazine.com/2014/04/25/stop-wasting-users-time/">this article</a> on Smashing Magazine, <a href="http://www.smashingmagazine.com/author/paul-boag/?rel=author">Paul Boag</a> talks about not wasting users’ time. This resonated well with me, considering I just completed the module CS2103T, Software Engineering (exam was this noon), and in that module our lecturer actually gave us some advice on usability.</p>
+<h2 id="key-idea-time-is-precious">Key idea: time is precious</h2>
+<p>The key idea of the article is that time is precious to users, and also developers. But as developers it is our responsibility to spend more time our on work so that users don’t have to. He brought up excellent examples which almost anyone on the Internet would have encountered: CAPTCHA, and Country Selector in forms. This is a worthwhile read, as he points to various other posts that tackles those examples, or talk about usability. His conclusion is simple, constantly ask “Can I save the user time?”.</p>
+<h2 id="cs2103t-adding-tasks">CS2103T: adding tasks</h2>
+<p>To link it back to CS2103T, the task tracker we were asked to implement was pretty simple, but there are many design issues to consider while building the application. For example, what are the commands we should support? We could be rigid and say that the user must use the “add” keyword to add a task. But if we consider the common use case for a task tracker, the user will probably be adding tasks <em>a lot</em>. Hence it makes sense to make adding, simpler. So we could reduce the size of the keyword to just “a”. Can we go a step further though?</p>
+<p>Does the user even have to specify a keyword? Can we just let the user type the task title, and add it in? Our eventual decision was no. Our implementation became as such:</p>
+<blockquote>
+<p>when the user enters an invalid command, we suggest some valid commands for them</p>
 </blockquote>
-
-<p>Hm… This actually feels a bit like filling in bank account numbers
-<strong>without</strong> the hyphens, or the postal-code example brought up by Boag.
-Why are we making the user type the same command again, when she
-probably just misspelled it by a single character? I can actually think
-of a few ways to tackle this issue:</p>
-<h2 id="Waystosolveit">Ways to solve it</h2>
-
-<ol><li><em>guess</em> what the user wants to do, and execute</li><li>feedback that the result was invalid, and repopulate the input, with
- the caret positioned at where the problem lies</li><li>treat it as an add command</li><li>treat it as a search</li></ol>
-
-<h3 id="Guess">Guess</h3>
-
-<p>This seems to be a good solution, considering that the user probably
-made a typo, like “ad” instead of “add”, so we can just execute the
-closest valid command, saving the user some time time. However, in this
-case we will definitely need an “undo” function in case the user does
-not intend to do that.</p>
-<h3 id="Feedbackandrepopulate">Feedback and repopulate</h3>
-
-<p>Say the user enters commands via an input field. An invalid command
-shall lead to the field being repopulated, with the problematic part
-highlighted. By ‘highlighted’ I mean, ‘made obvious’. This can be in the
-form of a red wiggly underline, like in Word, or font with red fill.
-This is useful because the user does not have to retype the entire
-command. She gets feedback that the command is not recognized, and can
-verify what she wants to do exactly, before trying again.</p>
-<h3 id="Search">Search</h3>
-
-<p>I think this is an apt solution as most input fields that we face
-nowadays are actually search boxes. But there is a slight issue if our
-search is done as the user type - aka live search. Imagine the user
-typing a sequece ‘a’, ‘d’, ‘d’. Having live search will mean that
-results matching “add” will be shown, but if the user meant to add a
-task, surely she doesn’t want to see all these unrelated tasks? What if
-we recognized “add” as a keyword and stopped trying to search, this
-becomes a problem if the user wishes to search for tasks with the word
-“add” in it.</p>
-<h2 id="Retrospective">Retrospective</h2>
-
-<p>If I were to reimplement this, I would do a combination of “Guess” and
-“Feedback and repopulate”. Assuming that we treat the first word of the
-user input as a keyword, we can attempt to first “Guess”, but trying to
-match the invalid keyword with a valid one, which we are actually doing
-already when we provide “did you mean” suggestions. This can be done
-using <a href='https://en.wikipedia.org/wiki/Levenshtein_distance'>Levenshtein
-distance</a>. If there
-is no good match, we feedback to the user, highlight the problematic
-part, and allow them to easily fix those errors.</p>
-<h2 id="Thelastmile">The last mile?</h2>
-
-<p>Let’s go one step further. Why not parse the user input on the fly. As
-the user type, we parse the input to see if it is valid or not. So when
-typing the keyword, an invalid command will immediately give a red
-wiggly line, so the user knows something is wrong. This could be
-implemented on top of the 2 suggestions, because the user might just go
-ahead and press enter despite the errors anyway.</p>
-<p>An article on saving users’ time actually sparked that much thought into
-a simple problem for my project module! Though I wish these thoughts
-came earlier, I’m still glad because the article brought about such
-thoughts and ideas, and really showed out CS2103T has huge relevance to
-the industry.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p>Hm… This actually feels a bit like filling in bank account numbers <strong>without</strong> the hyphens, or the postal-code example brought up by Boag. Why are we making the user type the same command again, when she probably just misspelled it by a single character? I can actually think of a few ways to tackle this issue:</p>
+<h2 id="ways-to-solve-it">Ways to solve it</h2>
+<ol style="list-style-type: decimal">
+<li><em>guess</em> what the user wants to do, and execute</li>
+<li>feedback that the result was invalid, and repopulate the input, with the caret positioned at where the problem lies</li>
+<li>treat it as an add command</li>
+<li>treat it as a search</li>
+</ol>
+<h3 id="guess">Guess</h3>
+<p>This seems to be a good solution, considering that the user probably made a typo, like “ad” instead of “add”, so we can just execute the closest valid command, saving the user some time time. However, in this case we will definitely need an “undo” function in case the user does not intend to do that.</p>
+<h3 id="feedback-and-repopulate">Feedback and repopulate</h3>
+<p>Say the user enters commands via an input field. An invalid command shall lead to the field being repopulated, with the problematic part highlighted. By ‘highlighted’ I mean, ‘made obvious’. This can be in the form of a red wiggly underline, like in Word, or font with red fill. This is useful because the user does not have to retype the entire command. She gets feedback that the command is not recognized, and can verify what she wants to do exactly, before trying again.</p>
+<h3 id="search">Search</h3>
+<p>I think this is an apt solution as most input fields that we face nowadays are actually search boxes. But there is a slight issue if our search is done as the user type - aka live search. Imagine the user typing a sequece ‘a’, ‘d’, ‘d’. Having live search will mean that results matching “add” will be shown, but if the user meant to add a task, surely she doesn’t want to see all these unrelated tasks? What if we recognized “add” as a keyword and stopped trying to search, this becomes a problem if the user wishes to search for tasks with the word “add” in it.</p>
+<h2 id="retrospective">Retrospective</h2>
+<p>If I were to reimplement this, I would do a combination of “Guess” and “Feedback and repopulate”. Assuming that we treat the first word of the user input as a keyword, we can attempt to first “Guess”, but trying to match the invalid keyword with a valid one, which we are actually doing already when we provide “did you mean” suggestions. This can be done using <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein distance</a>. If there is no good match, we feedback to the user, highlight the problematic part, and allow them to easily fix those errors.</p>
+<h2 id="the-last-mile">The last mile?</h2>
+<p>Let’s go one step further. Why not parse the user input on the fly. As the user type, we parse the input to see if it is valid or not. So when typing the keyword, an invalid command will immediately give a red wiggly line, so the user knows something is wrong. This could be implemented on top of the 2 suggestions, because the user might just go ahead and press enter despite the errors anyway.</p>
+<p>An article on saving users’ time actually sparked that much thought into a simple problem for my project module! Though I wish these thoughts came earlier, I’m still glad because the article brought about such thoughts and ideas, and really showed out CS2103T has huge relevance to the industry.</p>
+</section>
+</body>
 </html>

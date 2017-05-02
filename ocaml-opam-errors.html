@@ -1,40 +1,115 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Error messages from opam when installing packages</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Error messages from opam when installing packages</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Error messages from opam when installing packages
-        </h1>
-        <time class="published">
-        2016-05-03
-        </time>
-        <div class="entry-content">
-        <p>I was trying to install <code>jingoo</code> from opam, but met with some error,
-and the message wasn&#39;t clear about what was causing it.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Error messages from opam when installing packages</h1>
+<h3 class="date">2016-05-03 12:24</h3>
+</div>
+<p>I was trying to install <code>jingoo</code> from opam, but met with some error, and the message wasn't clear about what was causing it.</p>
 <pre><code>$ opam install jingoo
 Your request can&#39;t be satisfied:
   - No package matches jingoo.
 
   No solution found, exiting</code></pre>
-
-<p>So opam reports that there is no such package,
-but if we try searching for it</p>
+<p>So opam reports that there is no such package, but if we try searching for it</p>
 <pre><code>$ opam search jingoo
 # Existing packages for 4.03.0:
 jingoo  --  Template engine almost compatible with Jinja2(python template engine)</code></pre>
-
-<p>it&#39;s there!</p>
+<p>it's there!</p>
 <p>Time to dig deeper, a helpful command line parameter is <code>--debug</code></p>
 <pre><code>$ opam install --debug jingoo
 ...
@@ -46,14 +121,9 @@ Your request can&#39;t be satisfied:
 
   No solution found, exiting
 ...</code></pre>
-
-<p>My first try searching for this error turned up an
-<a href='https://github.com/ocaml/opam/issues/2010'>issue</a>
-that mentioned <code>aspcud</code>, which is a constraint solver
-that opam uses to decide the versions of dependencies to install.</p>
-<p>So I tried to install it (I&#39;m on Ubuntu 16.04)</p>
+<p>My first try searching for this error turned up an <a href="https://github.com/ocaml/opam/issues/2010">issue</a> that mentioned <code>aspcud</code>, which is a constraint solver that opam uses to decide the versions of dependencies to install.</p>
+<p>So I tried to install it (I'm on Ubuntu 16.04)</p>
 <pre><code>$ sudo apt install aspcud</code></pre>
-
 <p>and then tried installing <code>jingoo</code> again</p>
 <pre><code>$ opam install jingoo
 The following dependencies couldn&#39;t be met:
@@ -62,20 +132,9 @@ The following dependencies couldn&#39;t be met:
     - batteries is not available because your system doesn&#39;t comply with ocaml-version &gt;= &quot;3.12.1&quot; &amp; ocaml-version &lt; &quot;4.03.0&quot;.
 
     No solution found, exiting</code></pre>
-
 <p>This gives a different error message.</p>
-<p>So if you faced this particular problem of
-not being able to install a package via <code>opam install</code>,
-reporting package as not found,
-even though <code>opam search</code> lists the package, you should try this.</p>
-<p>This issue is already report on opam
-<a href='https://github.com/ocaml/opam/issues/2526'>here</a>.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p>So if you faced this particular problem of not being able to install a package via <code>opam install</code>, reporting package as not found, even though <code>opam search</code> lists the package, you should try this.</p>
+<p>This issue is already report on opam <a href="https://github.com/ocaml/opam/issues/2526">here</a>.</p>
+</section>
+</body>
 </html>

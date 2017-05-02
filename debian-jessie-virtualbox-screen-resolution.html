@@ -1,99 +1,165 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Debian Jessie, Screen resolution, and VirtualBox Guest Additions</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Debian Jessie, Screen resolution, and VirtualBox Guest Additions</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Debian Jessie, Screen resolution, and VirtualBox Guest Additions
-        </h1>
-        <time class="published">
-        2014-05-04
-        </time>
-        <div class="entry-content">
-        <h1 id="DebianJessieScreenresolutionandVirtualBoxGuestAdditions">Debian Jessie, Screen resolution, and VirtualBox Guest Additions</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>I decided to upgrade to Debian Jessie, to take advantage of the newer
-packages available, mainly the new GHC version. Initially I wanted to
-upgrade from my current Wheezy, but I faced problems with the screen
-resolution. I thought that had something to do with a bad upgrade, I did
-something wrong while upgrading, so I decided to do a fresh install. To
-my surprise, I met with the same issue.</p>
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Debian Jessie, Screen resolution, and VirtualBox Guest Additions</h1>
+<h3 class="date">2014-05-04 18:00</h3>
+</div>
+<h1 id="debian-jessie-screen-resolution-and-virtualbox-guest-additions">Debian Jessie, Screen resolution, and VirtualBox Guest Additions</h1>
+<p>I decided to upgrade to Debian Jessie, to take advantage of the newer packages available, mainly the new GHC version. Initially I wanted to upgrade from my current Wheezy, but I faced problems with the screen resolution. I thought that had something to do with a bad upgrade, I did something wrong while upgrading, so I decided to do a fresh install. To my surprise, I met with the same issue.</p>
 <p>For the record this is the system I’m running now:</p>
-<pre><code> {.sourceCode .bash}
-$ uname -a
-Linux debian-gsoc 3.13-1-amd64 #1 SMP Debian 3.13.10-1 (2014-04-15) x86_64 GNU/Linux</code></pre>
-
-<h2 id="Theproblem">The problem</h2>
-
-<p>The issue was that the screen resolution was not right. Previously I
-managed to get 1920x1080, which is my native resolution. But after
-installing Jessie, I could only get 1240x768, that’s not good at all.
-<code>xrandr -q</code> says something like <code>failed to get size of output default</code>.</p>
-<h2 id="Stepstosolving">Steps to solving</h2>
-
-<p>I researched about it, and found many suggested solutions, most had to
-do with editing <code>/etc/X11/xorg.conf</code>. Those didn’t work for me at all,
-and I figure that was because I was running on VirtualBox. The magical
-search term was this</p>
-<blockquote><p>debian wheezy virtualbox resolution</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">uname</span> -a
+<span class="ex">Linux</span> debian-gsoc 3.13-1-amd64 <span class="co">#1 SMP Debian 3.13.10-1 (2014-04-15) x86_64 GNU/Linux</span></code></pre></div>
+<h2 id="the-problem">The problem</h2>
+<p>The issue was that the screen resolution was not right. Previously I managed to get 1920x1080, which is my native resolution. But after installing Jessie, I could only get 1240x768, that’s not good at all. <code>xrandr -q</code> says something like <code>failed to get size of output default</code>.</p>
+<h2 id="steps-to-solving">Steps to solving</h2>
+<p>I researched about it, and found many suggested solutions, most had to do with editing <code>/etc/X11/xorg.conf</code>. Those didn’t work for me at all, and I figure that was because I was running on VirtualBox. The magical search term was this</p>
+<blockquote>
+<p>debian wheezy virtualbox resolution</p>
 </blockquote>
-
-<p>which led me to <a href='https://forums.virtualbox.org/viewtopic.php?f=7&amp;t=44117'>this forum
-post</a>.</p>
-<p>The OP faced a problem with screen resolution on his guest os as well,
-and there are replies that mention an old VirtualBox Guest Additions.
-Apparently Debian Jessie ships with a version of Guest Additions, but it
-isn’t the lastest one.</p>
-<p>My take away was to try to install Guest Additions, and see what
-happens. <a href='www.binarytides.com/virtualbox-guest-additions-debian-wheezy/'>This
-post</a> was
-extremely helpful. I ignored the part on <code>lsmod</code> and skipped straight to
-<code>apt-get install build-essentials module-assistant</code>. I then got stuck at
-running <code>VBoxLinuxAdditions.run</code> - I couldn’t mount the cdrom.</p>
-<h2 id="Moreproblems">More problems</h2>
-
-<p>The simplest way to mount the cdrom onto your guest os is to go to the
-VirtualBox window, click on <code>Devices &gt; Insert Guest Additions CD Image</code>,
-but somehow that didn’t work for me. Click that didn’t see to have any
-effect, my <code>/media/cdrom</code> was still empty. I decided to mount the cdrom
-manually.</p>
-<h2 id="Success">Success!</h2>
-
-<p>I got most of the information from <a href='www.virtualbox.org/manual/ch04.html#idp55231856'>VirtualBox’s official
-manual</a>. Basically it
-involved me going to the VirtualBox window, selecting
-<code>Devices &gt; CD/DVD Devices &gt; Choose a virtual CD/DVD disk file...</code> and
-then navigate to <code>C:\Program Files\Oracle\VirtualBox</code>. Substitute that
-for wherever you installed VirtualBox.</p>
-<p>After that I manually mounted the cdrom, with help from
-<a href='www.cyberciti.biz/faq/mounting-cdrom-in-linux/'>nixcraft</a>, and ran the
-file</p>
+<p>which led me to <a href="https://forums.virtualbox.org/viewtopic.php?f=7&amp;t=44117">this forum post</a>.</p>
+<p>The OP faced a problem with screen resolution on his guest os as well, and there are replies that mention an old VirtualBox Guest Additions. Apparently Debian Jessie ships with a version of Guest Additions, but it isn’t the lastest one.</p>
+<p>My take away was to try to install Guest Additions, and see what happens. <a href="www.binarytides.com/virtualbox-guest-additions-debian-wheezy/">This post</a> was extremely helpful. I ignored the part on <code>lsmod</code> and skipped straight to <code>apt-get install build-essentials module-assistant</code>. I then got stuck at running <code>VBoxLinuxAdditions.run</code> - I couldn’t mount the cdrom.</p>
+<h2 id="more-problems">More problems</h2>
+<p>The simplest way to mount the cdrom onto your guest os is to go to the VirtualBox window, click on <code>Devices &gt; Insert Guest Additions CD Image</code>, but somehow that didn’t work for me. Click that didn’t see to have any effect, my <code>/media/cdrom</code> was still empty. I decided to mount the cdrom manually.</p>
+<h2 id="success">Success!</h2>
+<p>I got most of the information from <a href="www.virtualbox.org/manual/ch04.html#idp55231856">VirtualBox’s official manual</a>. Basically it involved me going to the VirtualBox window, selecting <code>Devices &gt; CD/DVD Devices &gt; Choose a virtual CD/DVD disk file...</code> and then navigate to <code>C:\Program Files\Oracle\VirtualBox</code>. Substitute that for wherever you installed VirtualBox.</p>
+<p>After that I manually mounted the cdrom, with help from <a href="www.cyberciti.biz/faq/mounting-cdrom-in-linux/">nixcraft</a>, and ran the file</p>
 <pre><code># mount /dev/cdrom /media/cdrom
-# /media/cdrom/VBoxLinuxAdditions.run</code></pre><p>Wait a couple of minutes and rebooted, and now everything is fine!
-<code>xrandr -q</code> now gives me many more options, including 1920x1080, and I
-happily selected that using <code>xrandr --output VBOX0 --mode 1920x1080</code>.</p>
-<p>The initial reason why I decided to virtualize was because of UEFI
-issues, and because virtualization has less problems. Today’s challenges
-has made me realize how it is difficult to pinpoint where the problem
-lies, because technology is so complex now. But still, a simple
-installation leading to so much convenience, I’ll definitely remember
-this lesson!</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+# /media/cdrom/VBoxLinuxAdditions.run</code></pre>
+<p>Wait a couple of minutes and rebooted, and now everything is fine! <code>xrandr -q</code> now gives me many more options, including 1920x1080, and I happily selected that using <code>xrandr --output VBOX0 --mode 1920x1080</code>.</p>
+<p>The initial reason why I decided to virtualize was because of UEFI issues, and because virtualization has less problems. Today’s challenges has made me realize how it is difficult to pinpoint where the problem lies, because technology is so complex now. But still, a simple installation leading to so much convenience, I’ll definitely remember this lesson!</p>
+</section>
+</body>
 </html>

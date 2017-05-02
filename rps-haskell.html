@@ -1,172 +1,226 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Rock Paper Scissors in Haskell</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Rock Paper Scissors in Haskell</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Rock Paper Scissors in Haskell
-        </h1>
-        <time class="published">
-        2014-05-01
-        </time>
-        <div class="entry-content">
-        <h1 id="RockPaperScissorsinHaskell">Rock Paper Scissors in Haskell</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>This is a simple <a href='www.github.com/ngzhian/rcp-haskell'>Rock Paper
-Scissors</a> game in Haskell, it was
-made as an exercise in learning Haskell, especially the syntax, data
-constructors, and IO.</p>
-<div class='figure'>
+    a {
+        color: #4A4A4A;
+    }
 
-![How the game looks like now](../images/rcp-haskell.png)
-How the game looks like now
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Rock Paper Scissors in Haskell</h1>
+<h3 class="date">2014-05-01 18:00</h3>
 </div>
+<h1 id="rock-paper-scissors-in-haskell">Rock Paper Scissors in Haskell</h1>
+<p>This is a simple <a href="www.github.com/ngzhian/rcp-haskell">Rock Paper Scissors</a> game in Haskell, it was made as an exercise in learning Haskell, especially the syntax, data constructors, and IO.</p>
+<div class="figure">
+<p><img src="../images/rcp-haskell.png" alt="How the game looks like now" /> How the game looks like now</p>
+</div>
+<h2 id="program-design">Program Design</h2>
+<p>This is a very simple program. The parts of the code that has to do with the logic is actually very short and simple, because RPS has very simple rules:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Player or AI can make any of these moves each turn</span>
+<span class="kw">data</span> <span class="dt">Move</span> <span class="fu">=</span> <span class="dt">Rock</span> <span class="fu">|</span> <span class="dt">Paper</span> <span class="fu">|</span> <span class="dt">Scissors</span> <span class="kw">deriving</span> (<span class="dt">Show</span>)
 
-<h2 id="ProgramDesign">Program Design</h2>
+<span class="co">-- Player is the current person playing, and AI is our intelligent program!</span>
+<span class="kw">data</span> <span class="dt">Winner</span> <span class="fu">=</span> <span class="dt">Player</span> <span class="fu">|</span> <span class="dt">AI</span> <span class="fu">|</span> <span class="dt">Draw</span> <span class="kw">deriving</span> (<span class="dt">Show</span>)
 
-<p>This is a very simple program. The parts of the code that has to do with
-the logic is actually very short and simple, because RPS has very simple
-rules:</p>
-<pre><code> {.sourceCode .haskell}
--- Player or AI can make any of these moves each turn
-data Move = Rock | Paper | Scissors deriving (Show)
+<span class="co">-- use a throwaway function getWinner&#39; because</span>
+<span class="co">-- we want to be clear that `user&#39; is the first parameter</span>
+<span class="ot">getWinner ::</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Winner</span>
+getWinner user ai <span class="fu">=</span> getWinner&#39; user ai
+  <span class="kw">where</span> getWinner&#39; <span class="dt">Rock</span> <span class="dt">Paper</span>     <span class="fu">=</span> <span class="dt">AI</span>
+        getWinner&#39; <span class="dt">Rock</span> <span class="dt">Scissors</span>  <span class="fu">=</span> <span class="dt">Player</span>
+        getWinner&#39; <span class="dt">Paper</span> <span class="dt">Scissors</span> <span class="fu">=</span> <span class="dt">AI</span>
+        getWinner&#39; <span class="dt">Paper</span> <span class="dt">Rock</span>     <span class="fu">=</span> <span class="dt">Player</span>
+        getWinner&#39; <span class="dt">Scissors</span> <span class="dt">Rock</span>  <span class="fu">=</span> <span class="dt">AI</span>
+        getWinner&#39; <span class="dt">Scissors</span> <span class="dt">Paper</span> <span class="fu">=</span> <span class="dt">Player</span>
+        getWinner&#39; _        _     <span class="fu">=</span> <span class="dt">Draw</span>
 
--- Player is the current person playing, and AI is our intelligent program!
-data Winner = Player | AI | Draw deriving (Show)
-
--- use a throwaway function getWinner&#39; because
--- we want to be clear that `user&#39; is the first parameter
-getWinner :: Move -&gt; Move -&gt; Winner
-getWinner user ai = getWinner&#39; user ai
-  where getWinner&#39; Rock Paper     = AI
-        getWinner&#39; Rock Scissors  = Player
-        getWinner&#39; Paper Scissors = AI
-        getWinner&#39; Paper Rock     = Player
-        getWinner&#39; Scissors Rock  = AI
-        getWinner&#39; Scissors Paper = Player
-        getWinner&#39; _        _     = Draw
-
--- a heuristics
-makeAIMove :: Move
-makeAIMove = Paper</code></pre>
-
-<p>I think the <code>getWinner</code> method is quite ugly, but I haven’t thought of a
-good way to write it. Maybe I can differentiate the <code>Move</code> to <code>UserMove</code>
-or <code>AIMove</code>, something along those lines, so I can make use of the type
-checker to ensure what that the arguments are fed correctly.</p>
-<p>The AI is currently really <em>smart</em>, reason is that I’m not concerned
-with learning about random numbers now, I just want this to be an
-exercise in writing Haskell, doing IO and some other stuff.</p>
-<h2 id="InteractionwithUser">Interaction with User</h2>
-
-<p>This is a text-based game, so there are quite a few instances where the
-program prints a line, and gets another line of input from the user,
-which resulted in me writing this helper:</p>
-<pre><code> {.sourceCode .haskell}
-getResponse :: String -&gt; IO String
-getResponse s = putStrLn s &gt;&gt; getLine</code></pre>
-
-<p>The <code>&gt;&gt;</code> operator basically discards whatever output <code>putStrLn s</code> gives.
-This is required because <code>getLine</code> does not take any arguments.</p>
-<p>Initially I wanted to define all the interaction strings else where,
-thereby removing <em>magic constants</em>, and also stick to the DRY principle:</p>
-<pre><code> {.sourceCode .haskell}
-welcomeMessage :: String
-welcomeMessage = &quot;Lets play Rock Paper Scissors&quot;</code></pre>
-
-<p>But I found this to be too verbose and distracting. I decided that
-instead of doing this, I should refactor it such that a string is only
-used at a single place. I made good progress with that, and the only
-String that is repeated is the prompt/insructions.</p>
-<h2 id="Handlinginvalidinput">Handling invalid input</h2>
-
-<p>I handled invalid input using <code>Either</code> and recursion. <code>Either</code> allows me
-to determine if the user’s input was valid or not, and this check is
-done by <code>convertToMove</code>:</p>
-<pre><code> {.sourceCode .haskell}
--- handle invalid cases
-convertToMove :: String -&gt; Either String Move
-convertToMove input = convert $ map toLower input
-  where convert &quot;r&quot; = Right Rock
-        convert &quot;s&quot; = Right Scissors
-        convert &quot;p&quot; = Right Paper
-        convert _   = Left &quot;I don&#39;t know that move!&quot;</code></pre>
-
-<p>The above function is called by another function, <code>getValidMove</code>, whos
-job is to get a valid move from the user. By pattern matching against
-the value of <code>convertToMove</code>, it can either display the error message
-when it is a <code>Left</code>, and recursively call itself, or it will return the
-<code>Move</code>.</p>
-<pre><code> {.sourceCode .haskell}
-getValidMove :: IO Move
-getValidMove = do
-  userMove &lt;- convertToMove &lt;$&gt; getResponse &quot;What&#39;s your move?&quot;
-  case userMove of
-    Left msg -&gt; do
+<span class="co">-- a heuristics</span>
+<span class="ot">makeAIMove ::</span> <span class="dt">Move</span>
+makeAIMove <span class="fu">=</span> <span class="dt">Paper</span></code></pre></div>
+<p>I think the <code>getWinner</code> method is quite ugly, but I haven’t thought of a good way to write it. Maybe I can differentiate the <code>Move</code> to <code>UserMove</code> or <code>AIMove</code>, something along those lines, so I can make use of the type checker to ensure what that the arguments are fed correctly.</p>
+<p>The AI is currently really <em>smart</em>, reason is that I’m not concerned with learning about random numbers now, I just want this to be an exercise in writing Haskell, doing IO and some other stuff.</p>
+<h2 id="interaction-with-user">Interaction with User</h2>
+<p>This is a text-based game, so there are quite a few instances where the program prints a line, and gets another line of input from the user, which resulted in me writing this helper:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getResponse ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span>
+getResponse s <span class="fu">=</span> putStrLn s <span class="fu">&gt;&gt;</span> getLine</code></pre></div>
+<p>The <code>&gt;&gt;</code> operator basically discards whatever output <code>putStrLn s</code> gives. This is required because <code>getLine</code> does not take any arguments.</p>
+<p>Initially I wanted to define all the interaction strings else where, thereby removing <em>magic constants</em>, and also stick to the DRY principle:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">welcomeMessage ::</span> <span class="dt">String</span>
+welcomeMessage <span class="fu">=</span> <span class="st">&quot;Lets play Rock Paper Scissors&quot;</span></code></pre></div>
+<p>But I found this to be too verbose and distracting. I decided that instead of doing this, I should refactor it such that a string is only used at a single place. I made good progress with that, and the only String that is repeated is the prompt/insructions.</p>
+<h2 id="handling-invalid-input">Handling invalid input</h2>
+<p>I handled invalid input using <code>Either</code> and recursion. <code>Either</code> allows me to determine if the user’s input was valid or not, and this check is done by <code>convertToMove</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- handle invalid cases</span>
+<span class="ot">convertToMove ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">String</span> <span class="dt">Move</span>
+convertToMove input <span class="fu">=</span> convert <span class="fu">$</span> map toLower input
+  <span class="kw">where</span> convert <span class="st">&quot;r&quot;</span> <span class="fu">=</span> <span class="dt">Right</span> <span class="dt">Rock</span>
+        convert <span class="st">&quot;s&quot;</span> <span class="fu">=</span> <span class="dt">Right</span> <span class="dt">Scissors</span>
+        convert <span class="st">&quot;p&quot;</span> <span class="fu">=</span> <span class="dt">Right</span> <span class="dt">Paper</span>
+        convert _   <span class="fu">=</span> <span class="dt">Left</span> <span class="st">&quot;I don&#39;t know that move!&quot;</span></code></pre></div>
+<p>The above function is called by another function, <code>getValidMove</code>, whos job is to get a valid move from the user. By pattern matching against the value of <code>convertToMove</code>, it can either display the error message when it is a <code>Left</code>, and recursively call itself, or it will return the <code>Move</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">getValidMove ::</span> <span class="dt">IO</span> <span class="dt">Move</span>
+getValidMove <span class="fu">=</span> <span class="kw">do</span>
+  userMove <span class="ot">&lt;-</span> convertToMove <span class="fu">&lt;$&gt;</span> getResponse <span class="st">&quot;What&#39;s your move?&quot;</span>
+  <span class="kw">case</span> userMove <span class="kw">of</span>
+    <span class="dt">Left</span> msg <span class="ot">-&gt;</span> <span class="kw">do</span>
       putStrLn msg
-      putStrLn &quot;R for rock, P for paper, S for scissors.&quot;
+      putStrLn <span class="st">&quot;R for rock, P for paper, S for scissors.&quot;</span>
       getValidMove
-    Right m  -&gt; return m</code></pre>
-
-<p>This is called from within the <code>game</code> function. <code>game</code> runs a single
-round of RPS, which is marked by an outcome, or a <code>Winner</code>.</p>
-<pre><code> {.sourceCode .haskell}
-game :: IO ()
-game = do
-  userMove &lt;- getValidMove
+    <span class="dt">Right</span> m  <span class="ot">-&gt;</span> return m</code></pre></div>
+<p>This is called from within the <code>game</code> function. <code>game</code> runs a single round of RPS, which is marked by an outcome, or a <code>Winner</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">game ::</span> <span class="dt">IO</span> ()
+game <span class="fu">=</span> <span class="kw">do</span>
+  userMove <span class="ot">&lt;-</span> getValidMove
   play userMove makeAIMove
-  choice &lt;- getResponse &quot;Continue? Y/N&quot;
+  choice <span class="ot">&lt;-</span> getResponse <span class="st">&quot;Continue? Y/N&quot;</span>
   continue choice
-    where play m ai = putStrLn $ announceWinner $ getWinner m ai
-          continue &quot;y&quot; = game
-          continue _ = do putStrLn &quot;Thanks for playing!&quot;</code></pre>
-
-<p><code>announceWinner</code>’s role is to give the correct String output given an
-outcome of a game. This is to showcase how creative I can be with
-messages :P</p>
-<pre><code> {.sourceCode .haskell}
--- Gives the correct anouncement String for different outcomes of the game
-announceWinner :: Winner -&gt; String
-announceWinner AI     = &quot;The AI won :)&quot;
-announceWinner Draw   = &quot;It was a draw!&quot;
-announceWinner Player = &quot;Yay you won!&quot;</code></pre>
-
-<p>As explained above, <code>getValidMove</code> will always give a <code>IO Move</code>, so the
-value of <code>userMove</code> is always a <code>Move</code>. This delegation of retrieving
-and validating the user’s input for a move simplifies this function. I
-should adopt this way of building and composing functions more.</p>
+    <span class="kw">where</span> play m ai <span class="fu">=</span> putStrLn <span class="fu">$</span> announceWinner <span class="fu">$</span> getWinner m ai
+          continue <span class="st">&quot;y&quot;</span> <span class="fu">=</span> game
+          continue _ <span class="fu">=</span> <span class="kw">do</span> putStrLn <span class="st">&quot;Thanks for playing!&quot;</span></code></pre></div>
+<p><code>announceWinner</code>’s role is to give the correct String output given an outcome of a game. This is to showcase how creative I can be with messages :P</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- Gives the correct anouncement String for different outcomes of the game</span>
+<span class="ot">announceWinner ::</span> <span class="dt">Winner</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
+announceWinner <span class="dt">AI</span>     <span class="fu">=</span> <span class="st">&quot;The AI won :)&quot;</span>
+announceWinner <span class="dt">Draw</span>   <span class="fu">=</span> <span class="st">&quot;It was a draw!&quot;</span>
+announceWinner <span class="dt">Player</span> <span class="fu">=</span> <span class="st">&quot;Yay you won!&quot;</span></code></pre></div>
+<p>As explained above, <code>getValidMove</code> will always give a <code>IO Move</code>, so the value of <code>userMove</code> is always a <code>Move</code>. This delegation of retrieving and validating the user’s input for a move simplifies this function. I should adopt this way of building and composing functions more.</p>
 <p>The entire program runs in the <code>main</code> function:</p>
-<pre><code> {.sourceCode .haskell}
-main :: IO ()
-main = do
-  -- Message to user when the user first runs this program
-  putStrLn &quot;Lets play Rock Paper Scissors&quot;
-  -- Instructions on ohw to play this game
-  putStrLn &quot;R for rock, P for paper, S for scissors.&quot;
-  game</code></pre>
-
-<p>This function is extremely simple, it just prints a welcome message and
-instructions for new players.</p>
-<p>So that’s it, my first haskell program from scratch! Pretty happy with
-it now, next idea I will try is probably another simple game, like tic
-tac toe or some.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  <span class="co">-- Message to user when the user first runs this program</span>
+  putStrLn <span class="st">&quot;Lets play Rock Paper Scissors&quot;</span>
+  <span class="co">-- Instructions on ohw to play this game</span>
+  putStrLn <span class="st">&quot;R for rock, P for paper, S for scissors.&quot;</span>
+  game</code></pre></div>
+<p>This function is extremely simple, it just prints a welcome message and instructions for new players.</p>
+<p>So that’s it, my first haskell program from scratch! Pretty happy with it now, next idea I will try is probably another simple game, like tic tac toe or some.</p>
+</section>
+</body>
 </html>

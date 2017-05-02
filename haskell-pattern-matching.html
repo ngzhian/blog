@@ -1,69 +1,179 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Haskell&apos;s powerful pattern matching</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Haskell's powerful pattern matching</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Haskell&apos;s powerful pattern matching
-        </h1>
-        <time class="published">
-        2015-09-11
-        </time>
-        <div class="entry-content">
-        <p>Recently I&#39;ve been trying out problems on <a href='codeforces.com'>codeforces</a> to practice my algorithms and data structure problem solving skills.</p>
-<p>This is a good chance to revise a language I know but haven&#39;t used for a while, or to pick up a new language.
-For me it was a chance to write some <a href='https://www.haskell.org'>Haskell</a>.</p>
-<p>The particular problem I was working on is <a href='http://codeforces.com/problemset/problem/1/B'>1B</a>.
-Take a minute to read it, it&#39;s an interesting problem.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Haskell's powerful pattern matching</h1>
+<h3 class="date">2015-09-11 14:05</h3>
+</div>
+<p>Recently I've been trying out problems on <a href="codeforces.com">codeforces</a> to practice my algorithms and data structure problem solving skills.</p>
+<p>This is a good chance to revise a language I know but haven't used for a while, or to pick up a new language. For me it was a chance to write some <a href="https://www.haskell.org">Haskell</a>.</p>
+<p>The particular problem I was working on is <a href="http://codeforces.com/problemset/problem/1/B">1B</a>. Take a minute to read it, it's an interesting problem.</p>
 <p>In summary, there are 2 numeration systems, and if we are given <em>system A</em>, we need to translate it to <em>system B</em>, and vice versa.</p>
-<p>I chose to write a function that decides if a given string belongs to system A.
-The function signature is simple.</p>
-<pre class='haskell'><code class='haskell'>isA :: String -&gt; Bool</code></pre>
-
+<p>I chose to write a function that decides if a given string belongs to system A. The function signature is simple.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">isA ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></code></pre></div>
 <p>In short, <em>system A</em> is where you have:</p>
-<ol><li>the letter &#39;R&#39;,</li><li>followed by the row number,</li><li>the letter &#39;C&#39;,</li><li>finally the column number.</li></ol>
-
+<ol style="list-style-type: decimal">
+<li>the letter 'R',</li>
+<li>followed by the row number,</li>
+<li>the letter 'C',</li>
+<li>finally the column number.</li>
+</ol>
 <p>For example, these strings belong to <em>system A</em>:</p>
 <pre><code>R23C55
 R4C8</code></pre>
-
 <p>My implementation looks something like this:</p>
-<pre class='haskell'><code class='haskell'>isA :: String -&gt; Bool
-isA (&#39;R&#39;:ss) = hasNumbersThenC
-    where hasNumbersThenC = nums /= []
-         (nums, row) = splitAt posnC ss
-         posnC = case elemIndex &#39;C&#39; ss of
-           Just n -&gt; n
-           Nothing -&gt; 0
-isA _ = False</code></pre>
-
-<p>So this isn&#39;t really idiomatic Haskell (I&#39;m still learning), but the general idea is this:</p>
-<ol><li>Use pattern matching to catch the first &#39;R&#39;.</li><li>Try to find a &#39;C&#39; in the rest of the string (<code>ss</code> in the code)</li><li>Split the remaining string (without &#39;R&#39;) by the position of &#39;C&#39;
- So <a href='https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-List.html#v:splitAt'>splitAt</a> will return a tuple, with the first element having a length of <code>posnC</code>.</li><li>Check that <code>nums</code> is not an empty list <code>[]</code>. This check takes care that there is a &#39;C&#39; in the string, and that there are letters before the &#39;C&#39;.</li></ol>
-
-<p>This sounds like a pretty involved process and the code I wrote still feels imperative even though I&#39;m using a functional language, so I thought a little bit about how to make it better.</p>
-<p>And then it hit me, if I can pattern match on the &#39;R&#39;, can I pattern match on the &#39;C&#39; as well?</p>
-<pre class='haskell'><code class='haskell'>isA :: String -&gt; Bool
-isA (&#39;R&#39;:rs:&#39;C&#39;:cs) = True
-isA _ = False</code></pre>
-
-<p>And that&#39;s it!</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">isA ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+isA (<span class="ch">&#39;R&#39;</span><span class="fu">:</span>ss) <span class="fu">=</span> hasNumbersThenC
+    <span class="kw">where</span> hasNumbersThenC <span class="fu">=</span> nums <span class="fu">/=</span> []
+         (nums, row) <span class="fu">=</span> splitAt posnC ss
+         posnC <span class="fu">=</span> <span class="kw">case</span> elemIndex <span class="ch">&#39;C&#39;</span> ss <span class="kw">of</span>
+           <span class="dt">Just</span> n <span class="ot">-&gt;</span> n
+           <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="dv">0</span>
+isA _ <span class="fu">=</span> <span class="dt">False</span></code></pre></div>
+<p>So this isn't really idiomatic Haskell (I'm still learning), but the general idea is this:</p>
+<ol style="list-style-type: decimal">
+<li>Use pattern matching to catch the first 'R'.</li>
+<li>Try to find a 'C' in the rest of the string (<code>ss</code> in the code)</li>
+<li>Split the remaining string (without 'R') by the position of 'C' So <a href="https://hackage.haskell.org/package/base-4.8.1.0/docs/Data-List.html#v:splitAt">splitAt</a> will return a tuple, with the first element having a length of <code>posnC</code>.</li>
+<li>Check that <code>nums</code> is not an empty list <code>[]</code>. This check takes care that there is a 'C' in the string, and that there are letters before the 'C'.</li>
+</ol>
+<p>This sounds like a pretty involved process and the code I wrote still feels imperative even though I'm using a functional language, so I thought a little bit about how to make it better.</p>
+<p>And then it hit me, if I can pattern match on the 'R', can I pattern match on the 'C' as well?</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">isA ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+isA (<span class="ch">&#39;R&#39;</span><span class="fu">:</span>rs<span class="fu">:</span><span class="ch">&#39;C&#39;</span><span class="fu">:</span>cs) <span class="fu">=</span> <span class="dt">True</span>
+isA _ <span class="fu">=</span> <span class="dt">False</span></code></pre></div>
+<p>And that's it!</p>
+</section>
+</body>
 </html>

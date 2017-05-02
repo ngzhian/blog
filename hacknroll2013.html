@@ -1,80 +1,122 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Hack&amp;Roll 2013</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Hack&amp;Roll 2013</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Hack&amp;Roll 2013
-        </h1>
-        <time class="published">
-        2013-02-03
-        </time>
-        <div class="entry-content">
-        <h1 id="HackampRoll2013">Hack&amp;Roll 2013</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<h1 id="OurexperienceatHackampRoll2013">Our experience at Hack&amp;Roll 2013</h1>
+    a {
+        color: #4A4A4A;
+    }
 
-<h2 id="Whatwebuilt">What we built</h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<p>Our team (Nange) built <a href='http://morge.nuscomputing.com/'>NUSMorge</a> , a
-simple way for NUS students to visualize multiple time tables together.
-Check out our <a href='http://yjyao.com/NUSMorge/'>intro page</a> too!</p>
-<h2 id="TheStack">The Stack</h2>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
 
-<p>NUSMorge is built on <a href='www.nodejs.org'>Node.js</a> with
-<a href='www.expressjs.com'>Express</a> serving our requests,
-<a href='http://www.mongodb.org/'>mongoDB</a> taking care of unique links, with
-<a href='https://github.com/gett/mongojs'>mongojs</a> as the glue. The rest of it
-(creating the table, merging the table, parsing the input url etc.) is
-Javascript, with help from <a href='http://jquery.com/'>jQuery</a>.</p>
-<p>NUSMorge also makes use of the json file crawled by
-<a href='http://nusmods.com/'>NUSMods</a>. NUSMods is a timetable builder which
-many NUSStudents use. We take in a long url from NUSMods, and parse it
-into our own representation, and displays it in the our timetable.</p>
-<h2 id="Challenges">Challenges</h2>
+    a:hover {
+        color: #7A7A7A;
+    }
 
-<p>For most of us, hacking on something was a relatively new experience,
-what more having to work together as a team and come up with something
-at the end of 24 hours.</p>
-<p>Communication is vital, stating clearly the route endpoints you expect
-to get, the object representation, error handling etc. All these were
-essential for your code to work together, and for the application to
-even work at all. It was hard to get the message across just by talking,
-so we drew and scribbled, and that really helped in our understanding.</p>
-<p>Fatigue started to dawn upon us three quarters of the way through, but
-with the help of snacks and sugar, we managed to complete our
-application before some of us took a snooze.</p>
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Hack&amp;Roll 2013</h1>
+<h3 class="date">2013-02-03 18:00</h3>
+</div>
+<h1 id="hackroll-2013">Hack&amp;Roll 2013</h1>
+<h1 id="our-experience-at-hackroll-2013">Our experience at Hack&amp;Roll 2013</h1>
+<h2 id="what-we-built">What we built</h2>
+<p>Our team (Nange) built <a href="http://morge.nuscomputing.com/">NUSMorge</a> , a simple way for NUS students to visualize multiple time tables together. Check out our <a href="http://yjyao.com/NUSMorge/">intro page</a> too!</p>
+<h2 id="the-stack">The Stack</h2>
+<p>NUSMorge is built on <a href="www.nodejs.org">Node.js</a> with <a href="www.expressjs.com">Express</a> serving our requests, <a href="http://www.mongodb.org/">mongoDB</a> taking care of unique links, with <a href="https://github.com/gett/mongojs">mongojs</a> as the glue. The rest of it (creating the table, merging the table, parsing the input url etc.) is Javascript, with help from <a href="http://jquery.com/">jQuery</a>.</p>
+<p>NUSMorge also makes use of the json file crawled by <a href="http://nusmods.com/">NUSMods</a>. NUSMods is a timetable builder which many NUSStudents use. We take in a long url from NUSMods, and parse it into our own representation, and displays it in the our timetable.</p>
+<h2 id="challenges">Challenges</h2>
+<p>For most of us, hacking on something was a relatively new experience, what more having to work together as a team and come up with something at the end of 24 hours.</p>
+<p>Communication is vital, stating clearly the route endpoints you expect to get, the object representation, error handling etc. All these were essential for your code to work together, and for the application to even work at all. It was hard to get the message across just by talking, so we drew and scribbled, and that really helped in our understanding.</p>
+<p>Fatigue started to dawn upon us three quarters of the way through, but with the help of snacks and sugar, we managed to complete our application before some of us took a snooze.</p>
 <p>Encouragement from each other helps a lot too!</p>
-<h2 id="LearningPoints">Learning Points</h2>
-
-<p>Stay focused, stay motivated. 24 hours isn’t a long time, to be able to
-ship something that works, it takes hard work. What is important is to
-get things working, then start adding features in if you have time.</p>
-<p>Learn to distribute work, and learn the strengths of each member.
-Everyone will have an easier time this way.</p>
-<p>Keep updating each other. Everyone should know what everyone else is
-working on this time. There needs to discussion and communication, so
-that members don’t go working on the same thing (like writing two
-different ways of parsing), or working on wildly different things.</p>
-<h2 id="Source">Source</h2>
-
-<p>Our <a href='https://github.com/yyjhao/NUSMorge'>project</a> is on Github.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<h2 id="learning-points">Learning Points</h2>
+<p>Stay focused, stay motivated. 24 hours isn’t a long time, to be able to ship something that works, it takes hard work. What is important is to get things working, then start adding features in if you have time.</p>
+<p>Learn to distribute work, and learn the strengths of each member. Everyone will have an easier time this way.</p>
+<p>Keep updating each other. Everyone should know what everyone else is working on this time. There needs to discussion and communication, so that members don’t go working on the same thing (like writing two different ways of parsing), or working on wildly different things.</p>
+<h2 id="source">Source</h2>
+<p>Our <a href="https://github.com/yyjhao/NUSMorge">project</a> is on Github.</p>
+</section>
+</body>
 </html>

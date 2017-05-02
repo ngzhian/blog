@@ -1,62 +1,115 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>GSOC 2014, jmxetric</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>GSOC 2014, jmxetric</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        GSOC 2014, jmxetric
-        </h1>
-        <time class="published">
-        2014-05-07
-        </time>
-        <div class="entry-content">
-        <h1 id="GSOC2014jmxetric">GSOC 2014, jmxetric</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>Couple of weeks ago, I received great news that my project with
-<a href='http://ganglia.sourceforge.net'>Ganglia</a> has been accepted into GSOC.
-I’m extremely glad to be given this opportunity to participate in open
-source, it’s a dream come true for me.</p>
-<h2 id="jmxetricis">jmxetric is…</h2>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>My project is on <a href='http://github.com/ganglia/jmxetric'>jmxetric</a>, which
-is a jvm instrumentation to ganglia.</p>
-<h2 id="Theplans">The plans</h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<p>A rough overview of my plan is to improve the current current
-implementation, fix outstanding issues, and implement more features. The
-<em>more features</em> part include support for popular Java software, such as
-HornetQ, Karaf, Tomcat, and Wildfly.</p>
-<p>This is quite a challenge for me because I’ve not been exposed to Java
-EE technologies, and most of these buzzwords are foreign to me. But I’m
-confident that I will pick them up pretty fast, and am very fortunate to
-have an extremely patient mentor, Daniel to guide me.</p>
-<h2 id="Thisseries">This series</h2>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
 
-<p>I’ve decided, having been inspired by other GSOC students, to document
-this entire journey in a series of blog posts tagged <strong>gsoc</strong>. This
-series will chronicle every detail of this experience, including what I
-learn, pitfalls, reflections.</p>
-<h2 id="Thankyou">Thank you</h2>
+    a:hover {
+        color: #7A7A7A;
+    }
 
-<p>Once again, thank you Google, Ganglia, and Daniel for this extremely
-rare chance. I’ll work hard and do my best for this project! Here’s to a
-fantastic summer :)</p>
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
 
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">GSOC 2014, jmxetric</h1>
+<h3 class="date">2014-05-07 18:00</h3>
+</div>
+<h1 id="gsoc-2014-jmxetric">GSOC 2014, jmxetric</h1>
+<p>Couple of weeks ago, I received great news that my project with <a href="http://ganglia.sourceforge.net">Ganglia</a> has been accepted into GSOC. I’m extremely glad to be given this opportunity to participate in open source, it’s a dream come true for me.</p>
+<h2 id="jmxetric-is">jmxetric is…</h2>
+<p>My project is on <a href="http://github.com/ganglia/jmxetric">jmxetric</a>, which is a jvm instrumentation to ganglia.</p>
+<h2 id="the-plans">The plans</h2>
+<p>A rough overview of my plan is to improve the current current implementation, fix outstanding issues, and implement more features. The <em>more features</em> part include support for popular Java software, such as HornetQ, Karaf, Tomcat, and Wildfly.</p>
+<p>This is quite a challenge for me because I’ve not been exposed to Java EE technologies, and most of these buzzwords are foreign to me. But I’m confident that I will pick them up pretty fast, and am very fortunate to have an extremely patient mentor, Daniel to guide me.</p>
+<h2 id="this-series">This series</h2>
+<p>I’ve decided, having been inspired by other GSOC students, to document this entire journey in a series of blog posts tagged <strong>gsoc</strong>. This series will chronicle every detail of this experience, including what I learn, pitfalls, reflections.</p>
+<h2 id="thank-you">Thank you</h2>
+<p>Once again, thank you Google, Ganglia, and Daniel for this extremely rare chance. I’ll work hard and do my best for this project! Here’s to a fantastic summer :)</p>
+</section>
+</body>
 </html>

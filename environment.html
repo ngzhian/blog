@@ -1,86 +1,188 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Environment</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Environment</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Environment
-        </h1>
-        <time class="published">
-        2016-10-23
-        </time>
-        <div class="entry-content">
-        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/environment-972258cf184d#.1domgml64'>here</a>.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Environment</h1>
+<h3 class="date">2016-10-23 22:32</h3>
+</div>
+<blockquote>
+<p>This is a series of posts for my CS3216 project, you can find the original post <a href="https://medium.com/@ngzhian/environment-972258cf184d#.1domgml64">here</a>.</p>
 </blockquote>
-
-<p>Work has been progressing pretty well for our final project, Bubble. I have been working on a <a href='http://ec2-52-77-222-46.ap-southeast-1.compute.amazonaws.com/'>simple demo app</a> that serves as an example for the rest of the team on how to interact with the back-end via Socket.io.</p>
+<p>Work has been progressing pretty well for our final project, Bubble. I have been working on a <a href="http://ec2-52-77-222-46.ap-southeast-1.compute.amazonaws.com/">simple demo app</a> that serves as an example for the rest of the team on how to interact with the back-end via Socket.io.</p>
 <p>Things are working fairly well on a local development box (of course it would because that’s what I use day to day), but I would like to provide a staging environment on the Internet for my teammates so they don’t have to spin up a local back-end.</p>
 <p>That led me into thinking of how best to deploy the back-end, store secrets, separate configuration etc. In this post I’ll talk about secrets and configuration.</p>
-<blockquote><p>A lot of these ideas are from <a href='https://12factor.net/'>The Twelve-Factor App</a>, an excellent guide on how to build modern web applications.</p>
+<blockquote>
+<p>A lot of these ideas are from <a href="https://12factor.net/">The Twelve-Factor App</a>, an excellent guide on how to build modern web applications.</p>
 </blockquote>
-
-<h2 id="ConfigurationandSecretsasenvironmentvariables">Configuration and Secrets as environment variables</h2>
-
-<p>This is probably the simplest way to initialize the database (I’m using an ORM for node called <a href='https://github.com/sequelize/sequelize'>sequelize</a>):</p>
-<pre class='javascript'><code class='javascript'>const database = new Sequelize(&#39;database&#39;, &#39;user&#39;, &#39;password&#39;);</code></pre>
-
+<h2 id="configuration-and-secrets-as-environment-variables">Configuration and Secrets as environment variables</h2>
+<p>This is probably the simplest way to initialize the database (I’m using an ORM for node called <a href="https://github.com/sequelize/sequelize">sequelize</a>):</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">const</span> database <span class="op">=</span> <span class="kw">new</span> <span class="at">Sequelize</span>(<span class="st">&#39;database&#39;</span><span class="op">,</span> <span class="st">&#39;user&#39;</span><span class="op">,</span> <span class="st">&#39;password&#39;</span>)<span class="op">;</span></code></pre></div>
 <p>But this is exposing my database username and password, and is obviously not a good idea.</p>
 <p>A better way is to define these secrets somewhere else. A suggested (and popular) method is to put them in the environment.</p>
-<pre class='javascript'><code class='javascript'>import &#39;process&#39; from process;
-const database = new Sequelize(
-  process.env.DATABASE_NAME,
-  process.env.DATABASE_USER,
-  process.env.DATABASE_PASS);</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="im">import</span> <span class="st">&#39;process&#39;</span> <span class="im">from</span> process<span class="op">;</span>
+<span class="kw">const</span> database <span class="op">=</span> <span class="kw">new</span> <span class="at">Sequelize</span>(
+  <span class="va">process</span>.<span class="va">env</span>.<span class="at">DATABASE_NAME</span><span class="op">,</span>
+  <span class="va">process</span>.<span class="va">env</span>.<span class="at">DATABASE_USER</span><span class="op">,</span>
+  <span class="va">process</span>.<span class="va">env</span>.<span class="at">DATABASE_PASS</span>)<span class="op">;</span></code></pre></div>
 <p>This is much better, because we are no longer putting our secrets in code.</p>
 <p>To run commands with environment variables set, you can:</p>
 <pre><code>DATABASE_NAME=database DATABASE_USER=user DATABASE_PASS=pass node index.js</code></pre>
-
 <p>This also means that we can have different database name, user and passwords in development versus production — which is a good idea because if your local credentials get compromised, it doesn’t leak your production credentials.</p>
-<h2 id="Toomanyvariables">Too many variables</h2>
-
-<p>This is only for database. In our app we have integrations with <a href='https://www.loggly.com/'>Loggly</a> for logs viewing, and <a href='https://sentry.io/'>Sentry</a> for exception tracking, and your app might have many more. These applications require some sort of secret key, and it’s not a good idea to let anyone else know this because it could lead to them exhausting your free quota or even raking up a huge bill.</p>
+<h2 id="too-many-variables">Too many variables</h2>
+<p>This is only for database. In our app we have integrations with <a href="https://www.loggly.com/">Loggly</a> for logs viewing, and <a href="https://sentry.io/">Sentry</a> for exception tracking, and your app might have many more. These applications require some sort of secret key, and it’s not a good idea to let anyone else know this because it could lead to them exhausting your free quota or even raking up a huge bill.</p>
 <p>All these environment variables can add up really quickly, especially if you are defining them on the command line:</p>
 <pre><code>DATABASE_NAME=database DATABASE_USER=user DATABASE_PASS=pass LOGGLY_KEY=loggly_key SENTRY_KEY=sentry_key node index.js</code></pre>
-
-<h2 id="Managingyourenvironmentvariables">Managing your environment variables</h2><p>I ended up doing a bit of research and found <a href='https://www.npmjs.com/package/dotenv'>dotenv</a>.</p>
+<h2 id="managing-your-environment-variables">Managing your environment variables</h2>
+<p>I ended up doing a bit of research and found <a href="https://www.npmjs.com/package/dotenv">dotenv</a>.</p>
 <p>With dotenv, you can define environment variables in a file, and when your app starts up, you call <code>dotenv.config()</code> and it will add all your variables to the current node.js’ <code>process.env</code> variable.</p>
 <p>Here’s an example of how I used to use it in Bubble:</p>
-<pre class='javascript'><code class='javascript'>switch (process.env.NODE_ENV) {
-  case &#39;prod&#39;:
-    dotenv.config({ path: &#39;./prod.env&#39; });
-    break;
-  case &#39;development&#39;:
-  case &#39;test&#39;:
-  default:
-    dotenv.config({ path: &#39;./dev.env&#39; });
-    break;
-}</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">switch</span> (<span class="va">process</span>.<span class="va">env</span>.<span class="at">NODE_ENV</span>) <span class="op">{</span>
+  <span class="cf">case</span> <span class="st">&#39;prod&#39;</span><span class="op">:</span>
+    <span class="va">dotenv</span>.<span class="at">config</span>(<span class="op">{</span> <span class="dt">path</span><span class="op">:</span> <span class="st">&#39;./prod.env&#39;</span> <span class="op">}</span>)<span class="op">;</span>
+    <span class="cf">break</span><span class="op">;</span>
+  <span class="cf">case</span> <span class="st">&#39;development&#39;</span><span class="op">:</span>
+  <span class="cf">case</span> <span class="st">&#39;test&#39;</span><span class="op">:</span>
+  <span class="dt">default</span><span class="op">:</span>
+    <span class="va">dotenv</span>.<span class="at">config</span>(<span class="op">{</span> <span class="dt">path</span><span class="op">:</span> <span class="st">&#39;./dev.env&#39;</span> <span class="op">}</span>)<span class="op">;</span>
+    <span class="cf">break</span><span class="op">;</span>
+<span class="op">}</span></code></pre></div>
 <p>I define my prod and dev/test environment into two different files, and for <code>dev.env</code> I do not have the secret keys defined (so I don’t accidentally make calls to our third party integrations). I then <code>scp</code> my <code>prod.env</code> file into the box every time there are changes (primitive, but the secrets don’t change often, so everything is cool).</p>
-<h2 id="Smallproblem">Small problem</h2>
-
-<p>The above code was defined in a <code>database.js</code> file, which is used to initialize the database. However I wanted to extend this dotenv pattern across my app. So what I really needed is to call <code>dotenv.config()</code> as early as I can in my app initialization. But there’s some issue with the way babel transpiles ES6 module imports that is described <a href='https://github.com/motdotla/dotenv/issues/133#issue-145471155'>here</a>.</p>
-<p>In summary, babel lifts ES6 imports to the top, so when code is run, node does a depth-first traversal into the imported modules (which may use dotenv), before dotenv gets a chance to run, so <code>process.env</code> isn’t populated. I eventually figured a workaround and posted my solution as a <a href='https://github.com/motdotla/dotenv/issues/133#issuecomment-255298822'>comment to the same issue</a>. The solution is pretty simple, move the <code>dotenv.config()</code> call into a <a href='https://github.com/CS3216-Bubble/bubble/blob/master/src/env.js'>separate file</a>, and <a href='https://github.com/CS3216-Bubble/bubble/blob/master/src/index.js'>import it before any modules</a> that needs <code>process.env</code> to be set.</p>
-<h2 id="Populatingyourenvironment">Populating your environment</h2>
-
-<p>This is post is about how I use environment variables and dotenv to help manage them. This definitely isn’t the correct way or the only way, there has been ink spilled over this. One article I like is <a href='http://blog.doismellburning.co.uk/twelve-factor-config-misunderstandings-and-advice/'>Twelve-Factor Config: Misunderstandings and Advice</a>, which discusses more about Twelve-Factor and its recommendation on configuration, and how you can populate your app environment in whatever way pleases you.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<h2 id="small-problem">Small problem</h2>
+<p>The above code was defined in a <code>database.js</code> file, which is used to initialize the database. However I wanted to extend this dotenv pattern across my app. So what I really needed is to call <code>dotenv.config()</code> as early as I can in my app initialization. But there’s some issue with the way babel transpiles ES6 module imports that is described <a href="https://github.com/motdotla/dotenv/issues/133#issue-145471155">here</a>.</p>
+<p>In summary, babel lifts ES6 imports to the top, so when code is run, node does a depth-first traversal into the imported modules (which may use dotenv), before dotenv gets a chance to run, so <code>process.env</code> isn’t populated. I eventually figured a workaround and posted my solution as a <a href="https://github.com/motdotla/dotenv/issues/133#issuecomment-255298822">comment to the same issue</a>. The solution is pretty simple, move the <code>dotenv.config()</code> call into a <a href="https://github.com/CS3216-Bubble/bubble/blob/master/src/env.js">separate file</a>, and <a href="https://github.com/CS3216-Bubble/bubble/blob/master/src/index.js">import it before any modules</a> that needs <code>process.env</code> to be set.</p>
+<h2 id="populating-your-environment">Populating your environment</h2>
+<p>This is post is about how I use environment variables and dotenv to help manage them. This definitely isn’t the correct way or the only way, there has been ink spilled over this. One article I like is <a href="http://blog.doismellburning.co.uk/twelve-factor-config-misunderstandings-and-advice/">Twelve-Factor Config: Misunderstandings and Advice</a>, which discusses more about Twelve-Factor and its recommendation on configuration, and how you can populate your app environment in whatever way pleases you.</p>
+</section>
+</body>
 </html>

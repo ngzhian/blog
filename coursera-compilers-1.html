@@ -1,62 +1,129 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Lexing COOL - Coursera Compilers Course Assignment 1</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Lexing COOL - Coursera Compilers Course Assignment 1</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Lexing COOL - Coursera Compilers Course Assignment 1
-        </h1>
-        <time class="published">
-        2015-05-25
-        </time>
-        <div class="entry-content">
-        <p>This post is about Assignment 1 on on the <a href='https://www.coursera.org/course/compilers'>Coursera Compilers course</a>, which is to write a flex specification for lexing COOL.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Lexing COOL - Coursera Compilers Course Assignment 1</h1>
+<h3 class="date">2015-05-25 14:00</h3>
+</div>
+<p>This post is about Assignment 1 on on the <a href="https://www.coursera.org/course/compilers">Coursera Compilers course</a>, which is to write a flex specification for lexing COOL.</p>
 <p>This was pretty challenging for me, I took about 4 hours in total, spread over a couple of nights to complete this.</p>
-<p>The challenging part was handling edge cases, and thinking about how the lexer will match strings. For example, because the lexer matches greedily, an over-optimistic regex will cause group that you won&#39;t think of capturing to be captured.</p>
+<p>The challenging part was handling edge cases, and thinking about how the lexer will match strings. For example, because the lexer matches greedily, an over-optimistic regex will cause group that you won't think of capturing to be captured.</p>
 <p>The really helpful part was running the grading script, and checking the differences between the reference lexer and my lexer. This allowed me to drill down to specific portions of my regex or code, such as areas I should be increasing the line count.</p>
 <p>Matching operators and keywords are not difficult, the most tedious part was matching multiline nested comments and also string constants.</p>
 <p>To match nested comments, for every &quot;<em>)&quot; matched, we need to determine if this is matching a opening &quot;(</em>&quot;, or if it is a stray closing comment and hence an error. This can be done using a start condition.</p>
 <pre><code>&quot;(*&quot; { BEGIN(comment);}
 &lt;comment&gt;&quot;*)&quot; {}
 &quot;*)&quot; { return ERROR; }</code></pre>
-
 <p>The last rule for matching &quot;*)&quot; feels pretty unintuitive, but it works!</p>
-<p>Matching string constants is even more complicated. We need to handle all the valid escaped sequences, <code>\b</code>, <code>\t</code>, <code>\n</code>, <code>\f</code>, <code>\&quot;</code>, transform non escaped sequences with a slash into it&#39;s normal counter part, e.g. <code>\a</code> will be transformed into <code>a</code>. Also, <code>null</code> characters are illegal within string constants, the same for <code>EOF</code>. And any new lines need to be escaped first. It becomes unobvious how to match certain sequences, for example, how do you match a new line in a string?</p>
+<p>Matching string constants is even more complicated. We need to handle all the valid escaped sequences, <code>\b</code>, <code>\t</code>, <code>\n</code>, <code>\f</code>, <code>\&quot;</code>, transform non escaped sequences with a slash into it's normal counter part, e.g. <code>\a</code> will be transformed into <code>a</code>. Also, <code>null</code> characters are illegal within string constants, the same for <code>EOF</code>. And any new lines need to be escaped first. It becomes unobvious how to match certain sequences, for example, how do you match a new line in a string?</p>
 <pre><code>&lt;str&gt;\n { return ERROR; }
 &lt;str&gt;\\n { /* matches a slash followed by a &#39;n&#39; in the input */ }
 &lt;str&gt;\\\n { /* matches a slash followed by a new line character */ }</code></pre>
-
-<p>The first line matches a new line while reading a string constant. The second line is a slash followed by a character &#39;n&#39;. Finally, the third line matches an escaped new line. <code>\\</code> is an escaped <code>\</code>, and hence matches a literal <code>\</code> within the input, followed by <code>\n</code>, which matches a new line character.</p>
-<p>Here&#39;s other tips that may come in helpful:</p>
+<p>The first line matches a new line while reading a string constant. The second line is a slash followed by a character 'n'. Finally, the third line matches an escaped new line. <code>\\</code> is an escaped <code>\</code>, and hence matches a literal <code>\</code> within the input, followed by <code>\n</code>, which matches a new line character.</p>
+<p>Here's other tips that may come in helpful:</p>
 <p><code>curr_lineno</code> indicates the current line in the source file, this needs to be updated in multiple places, for example, in string constants, in comments, in general source code definition.</p>
 <p><code>yyinput()</code> reads one character from the stream</p>
 <p><code>&lt;&lt;EOF&gt;&gt;</code> matches EOF, this is useful when scanning for string constants as an EOF while in string is an error. However <code>&lt;&lt;EOF&gt;&gt;</code> only works on the pattern, as in <code>&lt;str&gt;&lt;&lt;EOF&gt;&gt;</code>, when in the <code>&lt;str&gt;</code> context.</p>
 <p>Useful links:</p>
-<p>A quick introductin to flex:
-<a href='http://dinosaur.compilertools.net/lex/index.html'>http://dinosaur.compilertools.net/lex/index.html</a></p>
-<p>Good sample lex file for ANSI C grammar:
-<a href='http://www.lysator.liu.se/c/ANSI-C-grammar-l.html#count'>http://www.lysator.liu.se/c/ANSI-C-grammar-l.html#count</a></p>
-<p>How to match EOF:
-<a href='http://flex.sourceforge.net/manual/EOF.html'>http://flex.sourceforge.net/manual/EOF.html</a></p>
-<p>Might be helpful, flex description for C/C++ scanner:
-<a href='http://scottmcpeak.com/elkhound/sources/elsa/cc.lex'>http://scottmcpeak.com/elkhound/sources/elsa/cc.lex</a></p>
+<p>A quick introductin to flex: <a href="http://dinosaur.compilertools.net/lex/index.html" class="uri">http://dinosaur.compilertools.net/lex/index.html</a></p>
+<p>Good sample lex file for ANSI C grammar: <a href="http://www.lysator.liu.se/c/ANSI-C-grammar-l.html#count" class="uri">http://www.lysator.liu.se/c/ANSI-C-grammar-l.html#count</a></p>
+<p>How to match EOF: <a href="http://flex.sourceforge.net/manual/EOF.html" class="uri">http://flex.sourceforge.net/manual/EOF.html</a></p>
+<p>Might be helpful, flex description for C/C++ scanner: <a href="http://scottmcpeak.com/elkhound/sources/elsa/cc.lex" class="uri">http://scottmcpeak.com/elkhound/sources/elsa/cc.lex</a></p>
 <p>The coursera forums are helpful as well.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+</section>
+</body>
 </html>

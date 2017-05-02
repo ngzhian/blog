@@ -1,122 +1,192 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Configuring XMonad</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Configuring XMonad</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Configuring XMonad
-        </h1>
-        <time class="published">
-        2014-04-25
-        </time>
-        <div class="entry-content">
-        <h1 id="ConfiguringXMonad">Configuring XMonad</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>I have been setting up XMonad on my Debian box, partially because I am
-kinda hooked on <a href='www.haskell.org'>Haskell</a> right now, and so far it has
-been a prety fun adventure. Just wish to share some thoughts here.</p>
-<h2 id="GettingXMonad">Getting XMonad</h2>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>Being on Debian has its perks, a <code>aptitude install xmonad</code> simply works,
-else just head to <a href='www.xmonad.org/download.html'>XMonad</a> to get the
-suitable package.</p>
-<h2 id="RunningXMonad">Running XMonad</h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<p>I’m using <code>startx</code> to run XMonad, so all I have to do is to edit
-<code>~/.xinitrc</code>, and add the line</p>
-<pre><code> {.sourceCode .bash}
-exec xmonad</code></pre>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
 
-<p>If you’re using a display manager such as KDM, GDM, slim, lightdm etc,
-there’s probably a way to select which which session you want to run, or
-you can edit your <code>~/.xsession</code> file. You can probably get more
-information <a href='xmonad.org/documentation.html'>here</a>.</p>
-<h2 id="ConfiguringXMonadconfiguringxmonad">Configuring XMonad {#configuring-xmonad}</h2>
+    a:hover {
+        color: #7A7A7A;
+    }
 
-<p>This is the really fun part. I’ve tried finding <em>good</em> configurations I
-can immediately copy and use, and actually found
-<a href='github.com/vicfryzel/xmonad-config'>this</a>, but when it comes to
-configuring your window manager, everyone is heavily opiniated. After
-spending some time on it, I found that the best way to configure XMonad
-is to do it in small steps.</p>
-<p>I think the most efficient way to figure things out is to learn the
-defaults first, by looking at the <a href='xmonad.org/tour.html'>tour</a> from the
-official pages. This will give you a feel of how to do things. The most
-important takeaway is: - <code>Mod + Shift + Enter</code> fires up a terminal, and
-by default <code>Mod</code> is <code>Left-Alt</code> - <code>Mod-Q</code> restarts xmonad, this allows
-you to see changes you have made to the config file quickly -
-<code>~/.xmonad/xmonad.hs</code> is the default configuration file</p>
-<p>Then move on to the actual configuration, and a gentleman has wrote a
-extremely easy to follow step-wise
-[guide](www.haskell.org/haskellwiki/Xmonad/Config_archive/John_Goerzen’s_Configuration)
-on configuring XMonad. Follow this guide to the end, and you should have
-a simple yet efficient XMonad up and running.</p>
-<h2 id="Caveats">Caveats</h2>
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
 
-<p>I faced one small issue, which was the loading of xmobar configuration
-file. Particularly the line</p>
-<pre><code> {.sourceCode .haskell}
-xmproc &lt;- spawnPipe &quot;xmobar /home/ngzhian/.xmonad/.xmobarrc&quot;</code></pre>
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
 
-<p>For some reason xmobar didn’t manage to load the file that I passed in.
-I solved it by not passing in a filename, and just creating the config
-file at the default location, which is <code>~/.xmobarrc</code>. So that line
-simply became</p>
-<pre><code> {.sourceCode .haskell}
-xmproc &lt;- spawnPipe &quot;xmobar&quot;</code></pre>
+    #post-list td {
+        padding: 5px;
+    }
 
-<p>I’ll write about xmobar soon, it’s fun to configure it as well, but for
-now here’s what I have</p>
-<p><a href='../images/xmonad.png'><img src='../images/xmonad-thumbnail.png' alt='How my XMonad looks like
-now' /></a></p>
-<pre><code> {.sourceCode .haskell}
--- /home/ngzhian/.xmonad/xmonad.sh
-import XMonad
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
-import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.EZConfig(additionalKeys)
-import System.IO
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
 
-main = do
-  xmproc &lt;- spawnPipe &quot;xmobar&quot;
-  xmonad $ defaultConfig
-    { manageHook = manageDocks &lt;+&gt; myManageHook &lt;+&gt; manageHook defaultConfig
-    , layoutHook = avoidStruts  $  layoutHook defaultConfig
-    , logHook    = dynamicLogWithPP xmobarPP
-                       { ppOutput = hPutStrLn xmproc
-                       , ppTitle  = xmobarColor &quot;#021030&quot; &quot;&quot; . shorten 100
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Configuring XMonad</h1>
+<h3 class="date">2014-04-25 18:00</h3>
+</div>
+<h1 id="configuring-xmonad">Configuring XMonad</h1>
+<p>I have been setting up XMonad on my Debian box, partially because I am kinda hooked on <a href="www.haskell.org">Haskell</a> right now, and so far it has been a prety fun adventure. Just wish to share some thoughts here.</p>
+<h2 id="getting-xmonad">Getting XMonad</h2>
+<p>Being on Debian has its perks, a <code>aptitude install xmonad</code> simply works, else just head to <a href="www.xmonad.org/download.html">XMonad</a> to get the suitable package.</p>
+<h2 id="running-xmonad">Running XMonad</h2>
+<p>I’m using <code>startx</code> to run XMonad, so all I have to do is to edit <code>~/.xinitrc</code>, and add the line</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">exec</span> xmonad</code></pre></div>
+<p>If you’re using a display manager such as KDM, GDM, slim, lightdm etc, there’s probably a way to select which which session you want to run, or you can edit your <code>~/.xsession</code> file. You can probably get more information <a href="xmonad.org/documentation.html">here</a>.</p>
+<h2 id="configuring-xmonad">Configuring XMonad</h2>
+<p>This is the really fun part. I’ve tried finding <em>good</em> configurations I can immediately copy and use, and actually found <a href="github.com/vicfryzel/xmonad-config">this</a>, but when it comes to configuring your window manager, everyone is heavily opiniated. After spending some time on it, I found that the best way to configure XMonad is to do it in small steps.</p>
+<p>I think the most efficient way to figure things out is to learn the defaults first, by looking at the <a href="xmonad.org/tour.html">tour</a> from the official pages. This will give you a feel of how to do things. The most important takeaway is: - <code>Mod + Shift + Enter</code> fires up a terminal, and by default <code>Mod</code> is <code>Left-Alt</code> - <code>Mod-Q</code> restarts xmonad, this allows you to see changes you have made to the config file quickly - <code>~/.xmonad/xmonad.hs</code> is the default configuration file</p>
+<p>Then move on to the actual configuration, and a gentleman has wrote a extremely easy to follow step-wise [guide](www.haskell.org/haskellwiki/Xmonad/Config_archive/John_Goerzen’s_Configuration) on configuring XMonad. Follow this guide to the end, and you should have a simple yet efficient XMonad up and running.</p>
+<h2 id="caveats">Caveats</h2>
+<p>I faced one small issue, which was the loading of xmobar configuration file. Particularly the line</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">xmproc <span class="ot">&lt;-</span> spawnPipe <span class="st">&quot;xmobar /home/ngzhian/.xmonad/.xmobarrc&quot;</span></code></pre></div>
+<p>For some reason xmobar didn’t manage to load the file that I passed in. I solved it by not passing in a filename, and just creating the config file at the default location, which is <code>~/.xmobarrc</code>. So that line simply became</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">xmproc <span class="ot">&lt;-</span> spawnPipe <span class="st">&quot;xmobar&quot;</span></code></pre></div>
+<p>I’ll write about xmobar soon, it’s fun to configure it as well, but for now here’s what I have</p>
+<p><a href="../images/xmonad.png"><img src="../images/xmonad-thumbnail.png" alt="How my XMonad looks like now" /></a></p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- /home/ngzhian/.xmonad/xmonad.sh</span>
+<span class="kw">import </span><span class="dt">XMonad</span>
+<span class="kw">import </span><span class="dt">XMonad.Hooks.DynamicLog</span>
+<span class="kw">import </span><span class="dt">XMonad.Hooks.ManageDocks</span>
+<span class="kw">import </span><span class="dt">XMonad.Util.Run</span>(spawnPipe)
+<span class="kw">import </span><span class="dt">XMonad.Util.EZConfig</span>(additionalKeys)
+<span class="kw">import </span><span class="dt">System.IO</span>
+
+main <span class="fu">=</span> <span class="kw">do</span>
+  xmproc <span class="ot">&lt;-</span> spawnPipe <span class="st">&quot;xmobar&quot;</span>
+  xmonad <span class="fu">$</span> defaultConfig
+    { manageHook <span class="fu">=</span> manageDocks <span class="fu">&lt;+&gt;</span> myManageHook <span class="fu">&lt;+&gt;</span> manageHook defaultConfig
+    , layoutHook <span class="fu">=</span> avoidStruts  <span class="fu">$</span>  layoutHook defaultConfig
+    , logHook    <span class="fu">=</span> dynamicLogWithPP xmobarPP
+                       { ppOutput <span class="fu">=</span> hPutStrLn xmproc
+                       , ppTitle  <span class="fu">=</span> xmobarColor <span class="st">&quot;#021030&quot;</span> <span class="st">&quot;&quot;</span> <span class="fu">.</span> shorten <span class="dv">100</span>
                        }
-    , modMask = mod4Mask    -- Rebind Mod to Windows key
-    , terminal = myTerminal -- set terminal
-    } `additionalKeys`
-    [ ((mod4Mask .|. shiftMask,    xK_l),     spawn &quot;xscreensaver-command -lock&quot;)
-    , ((controlMask,               xK_Print), spawn &quot;sleep 0.2; scrot -s&quot;)
-    , ((0,                         xK_Print), spawn &quot;scrot&quot;)
+    , modMask <span class="fu">=</span> mod4Mask    <span class="co">-- Rebind Mod to Windows key</span>
+    , terminal <span class="fu">=</span> myTerminal <span class="co">-- set terminal</span>
+    } <span class="ot">`additionalKeys`</span>
+    [ ((mod4Mask <span class="fu">.|.</span> shiftMask,    xK_l),     spawn <span class="st">&quot;xscreensaver-command -lock&quot;</span>)
+    , ((controlMask,               xK_Print), spawn <span class="st">&quot;sleep 0.2; scrot -s&quot;</span>)
+    , ((<span class="dv">0</span>,                         xK_Print), spawn <span class="st">&quot;scrot&quot;</span>)
     ]
 
--- Preferred terminal
-myTerminal = &quot;/usr/bin/urxvt&quot;
+<span class="co">-- Preferred terminal</span>
+myTerminal <span class="fu">=</span> <span class="st">&quot;/usr/bin/urxvt&quot;</span>
 
--- Managing hooks when windows are created
-myManageHook = composeAll
-  [ className =? &quot;Gimp&quot; --&gt; doFloat
-  ]</code></pre>
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<span class="co">-- Managing hooks when windows are created</span>
+myManageHook <span class="fu">=</span> composeAll
+  [ className <span class="fu">=?</span> <span class="st">&quot;Gimp&quot;</span> <span class="fu">--&gt;</span> doFloat
+  ]</code></pre></div>
+</section>
+</body>
 </html>

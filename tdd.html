@@ -1,31 +1,110 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>TDD</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>TDD</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        TDD
-        </h1>
-        <time class="published">
-        2016-10-28
-        </time>
-        <div class="entry-content">
-        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/tdd-f82c796a4331#.ps4iq3myl'>here</a>.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">TDD</h1>
+<h3 class="date">2016-10-28 22:54</h3>
+</div>
+<blockquote>
+<p>This is a series of posts for my CS3216 project, you can find the original post <a href="https://medium.com/@ngzhian/tdd-f82c796a4331#.ps4iq3myl">here</a>.</p>
 </blockquote>
-
 <p>If you’re a CS3216 student reading this post, your first thought might be “TDD, are you insane? No one’s got time for that!”</p>
 <p>If you are a TA for CS3216, you might be laughing at me: “This guy wasted his time writing tests?”</p>
-<p>Or maybe I’m being overly skeptical. But it’s hard not to incite strong opinions when talking about a topic as <a href='https://news.ycombinator.com/item?id=12740456'>controversial as TDD</a>.</p>
+<p>Or maybe I’m being overly skeptical. But it’s hard not to incite strong opinions when talking about a topic as <a href="https://news.ycombinator.com/item?id=12740456">controversial as TDD</a>.</p>
 <p>First, some stats:</p>
 <pre><code>$ find src -name &#39;*.js&#39; | xargs wc -l
 ...
@@ -33,51 +112,45 @@
 $ find test -name &#39;*.js&#39; | xargs wc -l
 ...
 1423 total</code></pre>
-
 <p>I actually have more lines of test code than actual code!</p>
 <p>And if you actually clone the repo and run tests, you can see that some tests are not even implemented…</p>
 <p>So why test? Is it worth the time? For me, it’s a clear yes, but let me try to convince you.</p>
-<h2 id="Showthatthingswork">Show that things work</h2>
-
+<h2 id="show-that-things-work">Show that things work</h2>
 <p>When your tests are green, it means that your code works according to your expectation.</p>
-<blockquote><p>Note that this is different from saying that your code is correct, tests only ensure that your code works according to what your tests says.</p>
+<blockquote>
+<p>Note that this is different from saying that your code is correct, tests only ensure that your code works according to what your tests says.</p>
 </blockquote>
-
 <p>And it’s easy for you to run tests! For me it’s just a single command:</p>
 <pre><code>npm run test</code></pre>
-
-<h2 id="TestsasTODO">Tests as TODO</h2>
-
+<h2 id="tests-as-todo">Tests as TODO</h2>
 <p>The test runner I am using, mocha, allows test to be defined and marked as pending, which shows up differently in your tests results and will not fail your entire test suite:</p>
-<p><img src='images/tests-as-todo.png' alt='example of pending tests' /></p>
+<div class="figure">
+<img src="images/tests-as-todo.png" alt="example of pending tests" />
+<p class="caption">example of pending tests</p>
+</div>
 <p>This serves as a good reminder of what I need to implement, and conveniently breaks down the <code>join_room</code> feature into small, manageable chunks, that can be implemented one at a time.</p>
-<h2 id="Confidentiteration">Confident iteration</h2>
-
+<h2 id="confident-iteration">Confident iteration</h2>
 <p>CS3216 gives you very little time to do your project. You have not much time to think, very little time to execute, and a lot of pressure to build something usable.</p>
 <p>Given such constraints, it is easy to make mistakes. And what do you do when you make mistakes? You fix them. You change things. You edit code.</p>
 <p>How do you make sure that your mistakes are fixed once and for all? You document them with code, with tests, with regression tests.</p>
 <p><strong>Testing gives you confidence that you won’t repeat the mistakes, won’t fix bugs that you have fixed before.</strong></p>
-<p>This is especially useful when you separate the front and back end code base. I’m working on the back-end and I have team mates working on the front-end, and our API is unofficially defined in a <a href='https://github.com/CS3216-Bubble/bubble'>README</a>. So I write tests that follows the API I specified, and if I update my code so that it doesn’t fit the API, my tests will fail. This reduces the chance of angry team mates :)</p>
-<h2 id="Fasteriteration">Faster iteration</h2>
-
+<p>This is especially useful when you separate the front and back end code base. I’m working on the back-end and I have team mates working on the front-end, and our API is unofficially defined in a <a href="https://github.com/CS3216-Bubble/bubble">README</a>. So I write tests that follows the API I specified, and if I update my code so that it doesn’t fit the API, my tests will fail. This reduces the chance of angry team mates :)</p>
+<h2 id="faster-iteration">Faster iteration</h2>
 <p>If I want to test that the room creation and room joining functionality works, I could</p>
-<ol><li>open up a new tab, creating a room, open another tab and join that room (~20s), or</li><li>run tests (~1s to enter command and ~2s for tests related to room creation and joining room to run).</li></ol>
-
+<ol style="list-style-type: decimal">
+<li>open up a new tab, creating a room, open another tab and join that room (~20s), or</li>
+<li>run tests (~1s to enter command and ~2s for tests related to room creation and joining room to run).</li>
+</ol>
 <p>Note that this is just for 2 functionality of the app, we have more than 10 different functionalities!</p>
 <p>So this scales up to:</p>
-<ol><li>10 x 20s = 200s</li><li>~1s to enter command + ~10s for the whole test suit = ~11s</li></ol>
-
+<ol style="list-style-type: decimal">
+<li>10 x 20s = 200s</li>
+<li>~1s to enter command + ~10s for the whole test suit = ~11s</li>
+</ol>
 <p>Clearly one is better than the other.</p>
 <p>Coupled with mocha’s watch mode, which automatically re-runs tests when files are changed, and mocha’s <code>.only</code> method, tests run automatically and really quickly.</p>
-<h2 id="Sugarontop">Sugar on top</h2>
-
+<h2 id="sugar-on-top">Sugar on top</h2>
 <p>Oh and besides, with tests, you get a pretty little badge :)</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+</section>
+</body>
 </html>

@@ -1,144 +1,187 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>The magic of static</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="2016-04-24" />
+  <title>The magic of static</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        The magic of static
-        </h1>
-        <time class="published">
-        2016-04-24
-        </time>
-        <div class="entry-content">
-        <p>How do static site generators work?
-That&#39;s the question I had when I began building my own
-<a href='https://github.com/ngzhian/ocs'>static site generator</a>
-for learning purposes.</p>
-<p>With over 100 static site generatores listed on 
-<a href='https://www.staticgen.com/'>staticgen.com</a>,
-there must be something interesting going on there.</p>
-<p>This post looks at a 2 popular static site generators,
-<a href='https://jekyllrb.com/'>Jekyll</a> and <a href='https://jaspervdj.be/hakyll/'>Hakyll</a>,
-and dig into their inner workings.</p>
-<h2 id="Jekyll">Jekyll</h2>
+    ul {
+        list-style-type: circle;
+    }
 
-<blockquote><p>Build a <code>Configuration</code>, create a <code>Site</code>, call <code>Reader</code>, run <code>Generator</code>, run <code>Converter</code>, write to disk.</p>
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">The magic of static</h1>
+<h3 class="date">2016-04-24</h3>
+</div>
+<p>How do static site generators work? That's the question I had when I began building my own <a href="https://github.com/ngzhian/ocs">static site generator</a> for learning purposes.</p>
+<p>With over 100 static site generatores listed on <a href="https://www.staticgen.com/">staticgen.com</a>, there must be something interesting going on there.</p>
+<p>This post looks at a 2 popular static site generators, <a href="https://jekyllrb.com/">Jekyll</a> and <a href="https://jaspervdj.be/hakyll/">Hakyll</a>, and dig into their inner workings.</p>
+<h2 id="jekyll">Jekyll</h2>
+<blockquote>
+<p>Build a <code>Configuration</code>, create a <code>Site</code>, call <code>Reader</code>, run <code>Generator</code>, run <code>Converter</code>, write to disk.</p>
 </blockquote>
-
-<p>Jekyll is really easy to use,
-you install the gem, run Jekyll from the command line,
-and it will generate your site into
-the <code>_site</code> folder.</p>
+<p>Jekyll is really easy to use, you install the gem, run Jekyll from the command line, and it will generate your site into the <code>_site</code> folder.</p>
 <pre><code>$ jekyll build</code></pre>
-
-<p>The <code>build</code> command is found in <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/commands/build.rb'><code>build.rb</code></a>.
-There are 3 top level steps are:</p>
-<ol><li>Build a <code>Configuration</code></li><li>Initialize a <code>Site</code> with configuration</li><li>Calls <code>process</code> on <code>Site</code> object</li></ol>
-
-<p>In this single command we see the 2 most important classes in Jekyll:
-<a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/configuration.rb'><code>Configuration</code></a>
-and
-<a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/site.rb'><code>Site</code></a>.</p>
+<p>The <code>build</code> command is found in <a href="https://github.com/jekyll/jekyll/blob/master/lib/jekyll/commands/build.rb"><code>build.rb</code></a>. There are 3 top level steps are:</p>
+<ol style="list-style-type: decimal">
+<li>Build a <code>Configuration</code></li>
+<li>Initialize a <code>Site</code> with configuration</li>
+<li>Calls <code>process</code> on <code>Site</code> object</li>
+</ol>
+<p>In this single command we see the 2 most important classes in Jekyll: <a href="https://github.com/jekyll/jekyll/blob/master/lib/jekyll/configuration.rb"><code>Configuration</code></a> and <a href="https://github.com/jekyll/jekyll/blob/master/lib/jekyll/site.rb"><code>Site</code></a>.</p>
 <p>A <code>Configuration</code> specifies where to find your files, plugins, layouts, data, where to write output, etc.</p>
-<p>A <code>Site</code> is the orchestrator object that knows how to call other classes to build a site.
-The <em>main</em> method of <code>Site</code> is <code>process</code>, and it shows clearly the steps taken.</p>
-<ol><li><code>reset</code></li><li><code>read</code></li><li><code>generate</code></li><li><code>render</code></li><li><code>cleanup</code></li><li><code>write</code></li><li><code>print_stats</code></li></ol>
-
-<p>Let&#39;s dive deeper in to some of the more interesting methods.</p>
+<p>A <code>Site</code> is the orchestrator object that knows how to call other classes to build a site. The <em>main</em> method of <code>Site</code> is <code>process</code>, and it shows clearly the steps taken.</p>
+<ol style="list-style-type: decimal">
+<li><code>reset</code></li>
+<li><code>read</code></li>
+<li><code>generate</code></li>
+<li><code>render</code></li>
+<li><code>cleanup</code></li>
+<li><code>write</code></li>
+<li><code>print_stats</code></li>
+</ol>
+<p>Let's dive deeper in to some of the more interesting methods.</p>
 <h3 id="read"><code>read</code></h3>
-
-<p>Jekyll knows about different kinds of files, such as layout, data, collections, posts, pages.
-The class that does this work is <a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/reader.rb'><code>Reader</code></a>.
-Each of this file has a specialized class to take care of finding the file and reading it,
-for example <code>PostReader</code>, <code>DataReader</code>, <code>PageReader</code>, etc. They can be found in <a href='https://github.com/jekyll/jekyll/tree/master/lib/jekyll/readers'><code>readers</code></a>.
-File contents are read into attributes on the <code>Site</code> object.</p>
+<p>Jekyll knows about different kinds of files, such as layout, data, collections, posts, pages. The class that does this work is <a href="https://github.com/jekyll/jekyll/blob/master/lib/jekyll/reader.rb"><code>Reader</code></a>. Each of this file has a specialized class to take care of finding the file and reading it, for example <code>PostReader</code>, <code>DataReader</code>, <code>PageReader</code>, etc. They can be found in <a href="https://github.com/jekyll/jekyll/tree/master/lib/jekyll/readers"><code>readers</code></a>. File contents are read into attributes on the <code>Site</code> object.</p>
 <h3 id="render"><code>render</code></h3>
-
-<p><a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/renderer.rb'><code>Renderer</code></a>
-takes the file contents read in by the readers and run them through converters.
-Converters can do things like convert markdown to html, or render templates using liquid renderer.</p>
-<h3 id="Plugins">Plugins</h3>
-
-<p><a href='https://github.com/jekyll/jekyll/blob/master/lib/jekyll/plugin_manager.rb'><code>PluginManager</code></a>
-uses ruby&#39;s require feature to load plugins from <code>_plugins</code>, as gems specified in <code>_config.yml</code>, or gems specified in <code>Gemfile</code>. Plugins are initialized when initializing <code>Site</code>.</p>
+<p><a href="https://github.com/jekyll/jekyll/blob/master/lib/jekyll/renderer.rb"><code>Renderer</code></a> takes the file contents read in by the readers and run them through converters. Converters can do things like convert markdown to html, or render templates using liquid renderer.</p>
+<h3 id="plugins">Plugins</h3>
+<p><a href="https://github.com/jekyll/jekyll/blob/master/lib/jekyll/plugin_manager.rb"><code>PluginManager</code></a> uses ruby's require feature to load plugins from <code>_plugins</code>, as gems specified in <code>_config.yml</code>, or gems specified in <code>Gemfile</code>. Plugins are initialized when initializing <code>Site</code>.</p>
 <p>To write a plugin, you can extend various Jekyll base classes, such as <code>Generator</code>, <code>Converter</code>, and implementing some methods.</p>
-<h2 id="Hakyll">Hakyll</h2>
-
-<blockquote><p>Hakyll relies heavily on the Haskell type system, if you are not familiar with Haskell at all,
- this might be a difficult read. I try to describe things without talking too much about
- types, so I hope it is still understandable.</p>
+<h2 id="hakyll">Hakyll</h2>
+<blockquote>
+<p>Hakyll relies heavily on the Haskell type system, if you are not familiar with Haskell at all, this might be a difficult read. I try to describe things without talking too much about types, so I hope it is still understandable.</p>
 </blockquote>
-
 <p>Hakyll takes a different approach of building your site.</p>
-<p>You first install Hakyll using stack,
-and use <code>hakyll</code> to initialize a site, which will generate a simple <code>site.hs</code>.</p>
-<p>This file is the entry point for configuring your build.
-You write haskell, calling classes and functions provided by the Hakyll library,
-but it looks like you&#39;re configuring because Hakyll provides a DSL that makes it look like
-you&#39;re configuring your build.
-Finally, to build your file, you <em>run</em> that configuration using stack.</p>
+<p>You first install Hakyll using stack, and use <code>hakyll</code> to initialize a site, which will generate a simple <code>site.hs</code>.</p>
+<p>This file is the entry point for configuring your build. You write haskell, calling classes and functions provided by the Hakyll library, but it looks like you're configuring because Hakyll provides a DSL that makes it look like you're configuring your build. Finally, to build your file, you <em>run</em> that configuration using stack.</p>
 <p>By default, files are read from current directory and written to <code>_site/</code>.</p>
-<p>Again, we&#39;ll take a top down approach.</p>
-<p>In haskell, the main function is called <code>main</code>, and in this case it is calling <code>hakyllWith</code>
-with a <code>Configuration</code> and <code>Rules</code>.</p>
-<blockquote><p>If you are unfamiliar with haskell, the <code>$</code> basically means, &quot;evaluate everything to my right first&quot;</p>
+<p>Again, we'll take a top down approach.</p>
+<p>In haskell, the main function is called <code>main</code>, and in this case it is calling <code>hakyllWith</code> with a <code>Configuration</code> and <code>Rules</code>.</p>
+<blockquote>
+<p>If you are unfamiliar with haskell, the <code>$</code> basically means, &quot;evaluate everything to my right first&quot;</p>
 </blockquote>
-
-<p>If we trace <code>hakyllWith</code>, we find that it eventually calls <code>Runtime.run</code> with a <code>Configuration</code>,
-<code>Logger</code>, and <code>Rules</code>.</p>
+<p>If we trace <code>hakyllWith</code>, we find that it eventually calls <code>Runtime.run</code> with a <code>Configuration</code>, <code>Logger</code>, and <code>Rules</code>.</p>
 <p>We can think of <code>Rules</code> as a set of rules, which is made up of</p>
-<ol><li>Match pattern (<code>match</code>),</li><li>Route (<code>route</code>), and</li><li>Compiler (<code>compile</code>)</li></ol>
-
+<ol style="list-style-type: decimal">
+<li>Match pattern (<code>match</code>),</li>
+<li>Route (<code>route</code>), and</li>
+<li>Compiler (<code>compile</code>)</li>
+</ol>
 <p>A match pattern specifies glob expressions to match file paths.</p>
 <p>A route specifies where to write output to.</p>
 <p>A compiler specifies what to do to the input before writing it out.</p>
-<p>These 3 functions are defined in <a href='https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules.hs'><code>Core/Rules.hs</code></a>.</p>
-<p>If we look at the types of these 3 functions, they all return <code>Rules ()</code>.
-You can find the definition of <code>Rules</code> in <a href='https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules/Internal.hs'><code>Core/Rules/Internal.hs</code></a>&gt;</p>
-<p>The definition looks strange, but I think of <code>Rules</code> as an abstract data type that
-contains computation.</p>
+<p>These 3 functions are defined in <a href="https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules.hs"><code>Core/Rules.hs</code></a>.</p>
+<p>If we look at the types of these 3 functions, they all return <code>Rules ()</code>. You can find the definition of <code>Rules</code> in <a href="https://github.com/jaspervdj/hakyll/blob/master/src/Hakyll/Core/Rules/Internal.hs"><code>Core/Rules/Internal.hs</code></a>&gt;</p>
+<p>The definition looks strange, but I think of <code>Rules</code> as an abstract data type that contains computation.</p>
 <p>All computations can read from a shared enviroment, output to a shared space, and share state.</p>
 <p>In that way, <code>Rules</code> is a composite data structure, made up of 3 other types:</p>
-<ol><li><code>RulesRead</code> - shared environment that values can be read from</li><li><code>RuleSet</code> - place where computation can write output</li><li><code>RulesState</code> - the current status of computation</li></ol>
-
+<ol style="list-style-type: decimal">
+<li><code>RulesRead</code> - shared environment that values can be read from</li>
+<li><code>RuleSet</code> - place where computation can write output</li>
+<li><code>RulesState</code> - the current status of computation</li>
+</ol>
 <p><code>route</code> and <code>compile</code> set the state (<code>RulesState</code>), setting the current route and compiler to use.</p>
-<p><code>match</code> fills up the <code>RuleSet</code> structure, which is made up of routes, compilers, resources and pattern,
-then clears the state (<code>RulesState</code>).
-A list of matched <code>Identifiers</code> is retrieved from the environment.
-A route is retrieved from <code>RulesState</code> that <code>route</code> set up, and added to the <code>RuleSet</code>.
-The compiler is retrieved from the <code>RulesState</code> that <code>compile</code> set up, and a compiler is assigned
-to each matched <code>Identifier</code>. This mapping is set on <code>RuleSet</code>.</p>
-<p>The multiple <code>match</code> expressions all return <code>Rules</code>, and I like to think that all the <code>Rules</code>
-are squashed into a single <code>Rules</code>, like how many <code>Int</code> can be summed into a single <code>Int</code>.</p>
-<p>Finally after all this explanation, we return to the <code>run</code> function.
-At this point we have a <code>RuleSet</code> to work with, and using that we build a <code>Runtime</code>.</p>
+<p><code>match</code> fills up the <code>RuleSet</code> structure, which is made up of routes, compilers, resources and pattern, then clears the state (<code>RulesState</code>). A list of matched <code>Identifiers</code> is retrieved from the environment. A route is retrieved from <code>RulesState</code> that <code>route</code> set up, and added to the <code>RuleSet</code>. The compiler is retrieved from the <code>RulesState</code> that <code>compile</code> set up, and a compiler is assigned to each matched <code>Identifier</code>. This mapping is set on <code>RuleSet</code>.</p>
+<p>The multiple <code>match</code> expressions all return <code>Rules</code>, and I like to think that all the <code>Rules</code> are squashed into a single <code>Rules</code>, like how many <code>Int</code> can be summed into a single <code>Int</code>.</p>
+<p>Finally after all this explanation, we return to the <code>run</code> function. At this point we have a <code>RuleSet</code> to work with, and using that we build a <code>Runtime</code>.</p>
 <p><code>Runtime</code> is similar to <code>Rules</code> in that it has 3 components:</p>
-<ol><li><code>RuntimeRead</code> - shared environment</li><li><code>()</code> - place to output to, in this case this means that we don&#39;t save the output</li><li><code>RuntimeState</code> - current status of computation</li></ol>
-
+<ol style="list-style-type: decimal">
+<li><code>RuntimeRead</code> - shared environment</li>
+<li><code>()</code> - place to output to, in this case this means that we don't save the output</li>
+<li><code>RuntimeState</code> - current status of computation</li>
+</ol>
 <p><code>run</code> eventually calls <code>build</code> which calls <code>pickAndChase</code>.</p>
-<p><code>chase</code> will pick from a list of <code>Identifier</code> that represents todos,
-and try to run the compiler on it.</p>
-<p>A compilation can be successful, in that case the we can write routes, save to store (cache), and
-update states.
-If this compilation requires some dependency, then run the dependencies first.</p>
-<p>When all this completes running, you&#39;ll have your input files transformed
-by the specified compilers, and written to paths specified by your route!</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p><code>chase</code> will pick from a list of <code>Identifier</code> that represents todos, and try to run the compiler on it.</p>
+<p>A compilation can be successful, in that case the we can write routes, save to store (cache), and update states. If this compilation requires some dependency, then run the dependencies first.</p>
+<p>When all this completes running, you'll have your input files transformed by the specified compilers, and written to paths specified by your route!</p>
+</section>
+</body>
 </html>

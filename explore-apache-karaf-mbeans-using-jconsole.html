@@ -1,93 +1,130 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Exploring Apache Karaf MBeans using JConsole</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Exploring Apache Karaf MBeans using JConsole</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Exploring Apache Karaf MBeans using JConsole
-        </h1>
-        <time class="published">
-        2014-05-10
-        </time>
-        <div class="entry-content">
-        <h1 id="ExploringApacheKarafMBeansusingJConsole">Exploring Apache Karaf MBeans using JConsole</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>This post will be about using JConsole to explore the MBeans exposed by
-Apache Karaf.
-<a href='http://karaf.apache.org/manual/latest-2.3.x/users-guide/jmx.html'>Here’s</a>
-a list of MBeans that Karaf provides.</p>
-<h2 id="GettingKarafupandrunning">Getting Karaf up and running</h2>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>Karaf provides an extremely clear an concise <a href='http://karaf.apache.org/manual/latest-2.3.x/quick-start.html'>quick start
-guide</a> and
-I was able to up everything up and running by following the
-instructions.</p>
-<h2 id="MonitoringusingJConsole">Monitoring using JConsole</h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<ol><li>Fire up Karaf using <code>$KARAF_INSTALL_LOCATION\bin\start</code></li><li>Fire up JConsole</li></ol>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
 
-<div class='figure'>
+    a:hover {
+        color: #7A7A7A;
+    }
 
-![JConsole can detect the Karaf process](../images/jconsole-karaf.png)
-JConsole can detect the Karaf process
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
 
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Exploring Apache Karaf MBeans using JConsole</h1>
+<h3 class="date">2014-05-10 18:00</h3>
 </div>
-
-<p>Under the new connection window, JConsole should be able to detect the
-Karaf process. We can connect to it, and head straight to the MBeans
-tab. We can immediately see the list of MBeans available. The
-<code>java.lang.Memory</code> and <code>java.lang.Threading</code> MBeans are there, and we
-explored it in a previous blog post.</p>
-<div class='figure'>
-
-![MBeans tab of the Karaf process](../images/jconsole-karaf-mbeans.png)
-MBeans tab of the Karaf process
-
+<h1 id="exploring-apache-karaf-mbeans-using-jconsole">Exploring Apache Karaf MBeans using JConsole</h1>
+<p>This post will be about using JConsole to explore the MBeans exposed by Apache Karaf. <a href="http://karaf.apache.org/manual/latest-2.3.x/users-guide/jmx.html">Here’s</a> a list of MBeans that Karaf provides.</p>
+<h2 id="getting-karaf-up-and-running">Getting Karaf up and running</h2>
+<p>Karaf provides an extremely clear an concise <a href="http://karaf.apache.org/manual/latest-2.3.x/quick-start.html">quick start guide</a> and I was able to up everything up and running by following the instructions.</p>
+<h2 id="monitoring-using-jconsole">Monitoring using JConsole</h2>
+<ol style="list-style-type: decimal">
+<li>Fire up Karaf using <code>$KARAF_INSTALL_LOCATION\bin\start</code></li>
+<li>Fire up JConsole</li>
+</ol>
+<div class="figure">
+<p><img src="../images/jconsole-karaf.png" alt="JConsole can detect the Karaf process" /> JConsole can detect the Karaf process</p>
 </div>
-
-<h2 id="TheKarafMBeans">The Karaf MBeans</h2>
-
-<p>Karaf actually provides quite a number of MBeans, and are categorized by
-<code>type</code>. For example the mbeans have the domain <code>org.apache.karaf</code>, and
-some of the types are <code>admin</code>, <code>bundles</code>, <code>config</code>, etc. All of them
-have the same <code>name</code>, which is <code>root</code>.</p>
-<div class='figure'>
-
-![Karaf provides MBeans of many
-kinds](../images/jconsole-karaf-mbeans-all.png)
-Karaf provides MBeans of many kinds
-
+<p>Under the new connection window, JConsole should be able to detect the Karaf process. We can connect to it, and head straight to the MBeans tab. We can immediately see the list of MBeans available. The <code>java.lang.Memory</code> and <code>java.lang.Threading</code> MBeans are there, and we explored it in a previous blog post.</p>
+<div class="figure">
+<p><img src="../images/jconsole-karaf-mbeans.png" alt="MBeans tab of the Karaf process" /> MBeans tab of the Karaf process</p>
 </div>
-
-<h2 id="CamelMBeans">Camel MBeans</h2>
-
-<p>While exploring MBeans using JConsole, and following the Karaf
-quickstart, I chanced upon MBeans with the domain <code>org.apache.camel</code>, so
-it seems like <code>Camel</code> provides quite a number of mbeans as well! What’s
-interesting to me is that I am able to see <code>Camel</code> MBeans when my
-connection is to <code>Karaf</code>. I think this is because <code>Camel</code> was started by
-<code>Karaf</code>, so they are attached to the same process.</p>
-<div class='figure'>
-
-![Camel provides MBeans as well](../images/jconsole-karaf-camel.png)
-Camel provides MBeans as well
-
+<h2 id="the-karaf-mbeans">The Karaf MBeans</h2>
+<p>Karaf actually provides quite a number of MBeans, and are categorized by <code>type</code>. For example the mbeans have the domain <code>org.apache.karaf</code>, and some of the types are <code>admin</code>, <code>bundles</code>, <code>config</code>, etc. All of them have the same <code>name</code>, which is <code>root</code>.</p>
+<div class="figure">
+<p><img src="../images/jconsole-karaf-mbeans-all.png" alt="Karaf provides MBeans of many kinds" /> Karaf provides MBeans of many kinds</p>
 </div>
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<h2 id="camel-mbeans">Camel MBeans</h2>
+<p>While exploring MBeans using JConsole, and following the Karaf quickstart, I chanced upon MBeans with the domain <code>org.apache.camel</code>, so it seems like <code>Camel</code> provides quite a number of mbeans as well! What’s interesting to me is that I am able to see <code>Camel</code> MBeans when my connection is to <code>Karaf</code>. I think this is because <code>Camel</code> was started by <code>Karaf</code>, so they are attached to the same process.</p>
+<div class="figure">
+<p><img src="../images/jconsole-karaf-camel.png" alt="Camel provides MBeans as well" /> Camel provides MBeans as well</p>
+</div>
+</section>
+</body>
 </html>

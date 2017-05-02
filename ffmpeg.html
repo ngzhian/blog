@@ -1,67 +1,171 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>ffmpeg to make gifs</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>ffmpeg to make gifs</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        ffmpeg to make gifs
-        </h1>
-        <time class="published">
-        2015-05-17
-        </time>
-        <div class="entry-content">
-        <p>Over the weekend I was working on a little hack called <a href='https://github.com/ngzhian/help-me-man/'>Help me man!</a>, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.</p>
-<p>I&#39;ve heard quite a bit about <code>ffmpeg</code> as a swiss army knife for manipulating videos, so I decided to try it out.</p>
-<p>ffmpeg can be downloaded from its <a href='http://ffmpeg.org/'>homepage</a>, and the documentation is available <a href='http://ffmpeg.org/ffmpeg.html'>here</a>.</p>
-<blockquote><p>I couldn&#39;t find a package for it on Ubuntu, so I downloaded the binary file and it ran fine</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">ffmpeg to make gifs</h1>
+<h3 class="date">2015-05-17 09:30</h3>
+</div>
+<p>Over the weekend I was working on a little hack called <a href="https://github.com/ngzhian/help-me-man/">Help me man!</a>, which is a way for looking up arguments meaning from the man page while you are typing a command, and I wanted to make a gif demo. It was easy making a screencast, Camstudio was a free and easy way to record a particular window, the problem is converting it into a gif.</p>
+<p>I've heard quite a bit about <code>ffmpeg</code> as a swiss army knife for manipulating videos, so I decided to try it out.</p>
+<p>ffmpeg can be downloaded from its <a href="http://ffmpeg.org/">homepage</a>, and the documentation is available <a href="http://ffmpeg.org/ffmpeg.html">here</a>.</p>
+<blockquote>
+<p>I couldn't find a package for it on Ubuntu, so I downloaded the binary file and it ran fine</p>
 </blockquote>
-
 <p>There are so many command line parameters available that it can be daunting to use this tool. But since my use cases were pretty common, a quick search online turned out the right commands to run.</p>
 <p>The simplest command here is this:</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 demo.gif</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4 demo.gif</code></pre></div>
 <p>This converts a video file to a gif. The <code>-i</code> parameter specifies the input file, and the last argument is the name of the output file. <code>ffmpeg</code> will look at the name of the output file and determine what is the type of the file it will write to.</p>
 <p>However, the gif turned out to be too huge.</p>
 <p>One way to reduce the size of the gif is to reduce the screen resolution:</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -vf scale=320x260 demo.gif</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4 -vf scale=320x260 demo.gif</code></pre></div>
 <p>The <code>-vf</code> argument takes a scale in the format of <code>WIDTHxHEIGHT</code>. This requires us to calculate both the height and width of the output we want, but there is a better way:</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -vf scale=320:-1 demo.gif</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4 -vf scale=320:-1 demo.gif</code></pre></div>
 <p>By writing <code>:-1</code>, <code>ffmpeg</code> will automatically scale the video to fit!</p>
 <p>We can also crop the video using ffmpeg:</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -ss 00:00:04 demo.gif</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4 -ss 00:00:04 demo.gif</code></pre></div>
 <p>The <code>-ss</code> paramter specifies the time you want the video to crop to.</p>
 <p>To specify the end time, there are a couple of ways</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -ss 4 -t 10 demo.gif</code></pre>
-
-<p>Note that you can specify the number of seconds as well, so you don&#39;t have to keep typing <code>00:00:04</code>.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4 -ss 4 -t 10 demo.gif</code></pre></div>
+<p>Note that you can specify the number of seconds as well, so you don't have to keep typing <code>00:00:04</code>.</p>
 <p>The <code>-t</code> paramter specifics the duration of the video to run, so in the above example, we start from 4 seconds into the video, and run for 10 seconds. Our resulting gif is then 10 seconds long.</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4 -ss 4 -to 10 demo.gif</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4 -ss 4 -to 10 demo.gif</code></pre></div>
 <p>If you instead use <code>-to</code>, it will seek to 4 seconds and stop at 10 seconds, the resulting gif is then 6 seconds (10 - 4) long.</p>
 <p>The last thing I did to reduce the file size was to reduce the frame rate of the resulting video.</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4  -r 6 demo.gif</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4  -r 6 demo.gif</code></pre></div>
 <p>The <code>-r</code> parameter specifies the frame rate of the output file, in this case we set the output frame rate to 6 frames per second.</p>
 <p>One last helpful thing, if you call <code>ffmpeg</code> without an output file name, it will print out the info of the input file.</p>
-<pre class='bash'><code class='bash'>$ ./ffmpeg -i demo.mp4</code></pre>
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">./ffmpeg</span> -i demo.mp4</code></pre></div>
+</section>
+</body>
 </html>

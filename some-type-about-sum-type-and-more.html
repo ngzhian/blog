@@ -1,33 +1,111 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Some type about Sum types (and more)</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Some type about Sum types (and more)</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Some type about Sum types (and more)
-        </h1>
-        <time class="published">
-        2017-03-22
-        </time>
-        <div class="entry-content">
-        <p>A computer stores bits, and 8 bits make a byte.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Some type about Sum types (and more)</h1>
+<h3 class="date">2017-03-22 19:00</h3>
+</div>
+<p>A computer stores bits, and 8 bits make a byte.</p>
 <p>Some bytes are not like other bytes -- bytes can mean different things.</p>
 <p>Some bytes mean an integer, some bytes mean a list; we say that they have different types.</p>
-<h2 id="Atypeisagroupofthings">A type is a group of things</h2>
-
+<h2 id="a-type-is-a-group-of-things">A type is a group of things</h2>
 <p>An <code>integer</code> is a group of integers, like 1, 2, 3, and so on, and so forth.</p>
 <p>A <code>boolean</code> is a group that has 2 members, True and False.</p>
-<p>But we&#39;re getting ahead of ourselves, so let&#39;s start from 0.</p>
+<p>But we're getting ahead of ourselves, so let's start from 0.</p>
 <p>A <code>void</code> type has no members. It is void.</p>
 <p>A <code>unit</code> type has only 1 member, and the member is called <code>unit</code>. You see it as <code>()</code> in many places.</p>
 <p>What type has 2 members?</p>
@@ -35,113 +113,111 @@
 <p><code>True</code> and <code>False</code> are both members of <code>boolean</code>. <code>True</code> is not <code>False</code>, and <code>False</code> is not <code>True</code>. But they are both <code>boolean</code>.</p>
 <p>We can write it as such</p>
 <pre><code>type boolean = True | False</code></pre>
-
 <p>This reads as: &quot;The type boolean has 2 members, it can either be True or False&quot;.</p>
 <p>(In OCaml, the type <code>boolean</code> is actually spelled <code>bool</code>.)</p>
-<h2 id="Sumtypes">Sum types</h2>
-
-<p>Suppose you&#39;re deciding if you should continue reading.</p>
+<h2 id="sum-types">Sum types</h2>
+<p>Suppose you're deciding if you should continue reading.</p>
 <pre><code>type decision =
   | Decided of boolean
   | Undecided</code></pre>
-
 <p>We can make a decision</p>
-<ul><li>do (<code>Decided True</code>), or</li><li>do not (<code>Decided False</code>), or</li><li>be <code>Undecided</code> (there is no try).</li></ul>
-
+<ul>
+<li>do (<code>Decided True</code>), or</li>
+<li>do not (<code>Decided False</code>), or</li>
+<li>be <code>Undecided</code> (there is no try).</li>
+</ul>
 <p>We observe that the type <code>decision</code> has 3 members.</p>
 <p>In the <code>Decided</code> case, there are 2 members.</p>
 <p>The number of members is the same as the number of members in a <code>boolean</code>, because the <code>Decided</code> case is made up entirely of <code>boolean</code>.</p>
 <p>In the <code>Undecided</code> case, there is 1 member, similar to <code>Unit</code>.</p>
-<p>How did we get 3? A <code>decision</code> can be <code>Decided</code> (2) <strong>or</strong> <code>Undecided</code> (1).  2 <strong>+</strong> 1 = 3.</p>
+<p>How did we get 3? A <code>decision</code> can be <code>Decided</code> (2) <strong>or</strong> <code>Undecided</code> (1). 2 <strong>+</strong> 1 = 3.</p>
 <p>See how <strong>or</strong> and <code>+</code> works in similar ways.</p>
-<p>That&#39;s why they call it a sum type!</p>
-<h2 id="Producttypes">Product types</h2>
-
-<p>Let&#39;s make a <code>Pair</code> of <code>boolean</code>s.</p>
+<p>That's why they call it a sum type!</p>
+<h2 id="product-types">Product types</h2>
+<p>Let's make a <code>Pair</code> of <code>boolean</code>s.</p>
 <pre><code>type pair = Pair of boolean * boolean;</code></pre>
-
 <p>How many members are in this type? 4!</p>
 <pre><code>True * True
 True * False
 False * True
 False * False</code></pre>
-
 <p>How did we get 4?</p>
 <p>For the first boolean, there are 2 members, True and False.</p>
 <p>And for each of these 2 members, the second boolean can be True or False.</p>
 <p>2 * 2 = 4</p>
-<p>And that&#39;s where the name <strong>product</strong> comes from.</p>
+<p>And that's where the name <strong>product</strong> comes from.</p>
 <p>(Notice how the OCaml syntax for defining a product type, or a tuple, is using the <code>*</code> operator, which in many cases mean product)</p>
-<h2 id="Exponentialtypes">Exponential types</h2>
-
-<p>You&#39;ve made a decision, and depending on the decision you will either continue reading, or not.</p>
-<p>Here&#39;s one particular way to encode this decision-to-action process.</p>
+<h2 id="exponential-types">Exponential types</h2>
+<p>You've made a decision, and depending on the decision you will either continue reading, or not.</p>
+<p>Here's one particular way to encode this decision-to-action process.</p>
 <pre><code>let continue = function
     | Decided True -&gt; True
     | Decided False -&gt; False
     | Undecided -&gt; True</code></pre>
-
 <p>If you have decided, you follow your decision. If you are undecided, you continue reading and see what happens.</p>
 <p><code>continue</code> is a function, its type is <code>decision -&gt; boolean</code>.</p>
-<p>Let&#39;s ask the same question: how many members are there in the <code>decision -&gt; boolean</code> type?</p>
+<p>Let's ask the same question: how many members are there in the <code>decision -&gt; boolean</code> type?</p>
 <p>A function of this type has to, for each member of the input type, <code>decision</code> with 3 members, give a member of the output type, <code>boolean</code> with 2 members.</p>
 <p>So the total number of unique functions of this type is 2 * 2 * 2 = 8, or equivalently, 2 ^ 3!</p>
-<ol><li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; True</li><li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; False</li><li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; True</li><li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; False</li><li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; True</li><li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; False</li><li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; True</li><li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; False</li></ol>
-
+<ol style="list-style-type: decimal">
+<li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; True</li>
+<li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; False</li>
+<li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; True</li>
+<li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; False</li>
+<li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; True</li>
+<li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; False</li>
+<li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; True</li>
+<li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; False</li>
+</ol>
 <p>So you see, function types are also called <strong>exponential</strong> types.</p>
-<h2 id="DependentsumtypesSigmatype">Dependent sum types / Sigma type</h2>
-
-<p>A <code>Pair boolean integer</code> is a type, but a <code>Pair boolean a&#39;</code>, where <code>a&#39;</code> depends on what <code>boolean</code> actually is, <code>True</code> or <code>False</code>, is called a dependent sum type.</p>
-<p>Here&#39;s an example (not actual valid OCaml code):</p>
+<h2 id="dependent-sum-types-sigma-type">Dependent sum types / Sigma type</h2>
+<p>A <code>Pair boolean integer</code> is a type, but a <code>Pair boolean a'</code>, where <code>a'</code> depends on what <code>boolean</code> actually is, <code>True</code> or <code>False</code>, is called a dependent sum type.</p>
+<p>Here's an example (not actual valid OCaml code):</p>
 <pre><code>type pair = Pair of (b : boolean) * a&#39;
 where Pair of True * boolean
       Pair of False * integer</code></pre>
-
 <p>It says that that the <code>pair</code> depends on the first item in the pair, if it is <code>True</code>, we have a <code>Pair of boolean * boolean</code>, but if it is <code>False</code>, we have a <code>Pair of boolean * integer</code>.</p>
 <p>To count how many members there are in this type <code>pair</code>, we can treat it like a sum type.</p>
 <p>The first item in the pair can have 2 possible values</p>
-<ul><li>when <code>True</code>, the second item has to be a <code>boolean</code>, which has 2 possible value.</li><li>when <code>False</code>, the second item has to be a <code>integer</code>, which for simplicity sake, can have 256 values.</li></ul>
-
+<ul>
+<li>when <code>True</code>, the second item has to be a <code>boolean</code>, which has 2 possible value.</li>
+<li>when <code>False</code>, the second item has to be a <code>integer</code>, which for simplicity sake, can have 256 values.</li>
+</ul>
 <p>Therefore, the total number of members is 2 <strong>+</strong> 256 = 258.</p>
 <p>Why is this called sigma? Because you are taking the sum of all possible types across all values of the type being depended on (first item in the pair).</p>
-<h2 id="DependentproducttypesPitype">Dependent product types / Pi type</h2>
-
+<h2 id="dependent-product-types-pi-type">Dependent product types / Pi type</h2>
 <p>A <code>decision -&gt; boolean</code> is a function type, with an argument of type <code>decision</code>, and a return type <code>boolean</code>.</p>
-<p>But a function <code>decision -&gt; a&#39;</code>, where <code>a&#39;</code> depends on what <code>decision</code> actually is, <code>True</code> or <code>False</code>, is called a dependent product type.</p>
+<p>But a function <code>decision -&gt; a'</code>, where <code>a'</code> depends on what <code>decision</code> actually is, <code>True</code> or <code>False</code>, is called a dependent product type.</p>
 <pre><code>type continue = decision -&gt; a&#39;
 where continue Decided True : integer
       continue Decided False : boolean
       continue Undecided : boolean</code></pre>
-
 <p>This says that when the type of <code>continue</code> depends on the value of the argument.</p>
 <p>When <code>decision</code> is <code>Decided True</code>, <code>continue</code> returns an integer, when <code>Decided False</code> or <code>Undecided</code>, it returns a boolean.</p>
-<p>Let&#39;s count how many members type has. Recall how we counted the number of members a function type has previously, we multiplied the number of members in the output type n times, where n is the number of member in the input type.</p>
+<p>Let's count how many members type has. Recall how we counted the number of members a function type has previously, we multiplied the number of members in the output type n times, where n is the number of member in the input type.</p>
 <p>In this case, since the number of members in the output type changes, we have to multiply them one by one instead of taking an exponent, to get 256 * 2 * 2 = 1024.</p>
 <p>Why is this called pi? Because you are taking the product of all possible types across all values of the type being depended on (argument of the function).</p>
 <p>And actually, the function space is a special case of the pi type, where the return type is constant, i.e. does not depend on the value of the argument.</p>
-<h2 id="Alittletheorybehindthis">A little theory behind this</h2>
-
-<p>We can think of types as a set of things.
-We say that some value is of that type when it is a member in that set.</p>
+<h2 id="a-little-theory-behind-this">A little theory behind this</h2>
+<p>We can think of types as a set of things. We say that some value is of that type when it is a member in that set.</p>
 <p>For example, <code>boolean</code> is the set of things, which contains <code>True</code> and <code>False</code>.</p>
 <p>A sum type is a <em>disjoint union</em>, or <em>tagged union</em>.</p>
 <p>A product type is a <em>cartesian product</em>.</p>
 <p>A sigma is the symbol to do a sum over a sequence.</p>
 <p>A pi is the symbol to do a product over a sequence.</p>
-<p>A lot of this comes from, or is related, to <a href='https://ncatlab.org/nlab/show/category+theory'>category theory</a>.</p>
-<h2 id="Notes">Notes</h2>
-
+<p>A lot of this comes from, or is related, to <a href="https://ncatlab.org/nlab/show/category+theory">category theory</a>.</p>
+<h2 id="notes">Notes</h2>
 <p>I chose to say that a type has 2 members to invoke the idea of thinking about types as sets. Other words that can be used include value (rejected because it means too many things).</p>
 <p>The real reason why the words <code>sum</code>, <code>product</code>, etc are used probably has less to do with counting members, and more to do with category theory. But it works well enough if you are trying to get an intuition about the meaning.</p>
-<h2 id="References">References</h2>
-
+<h2 id="references">References</h2>
 <p>I found a lot of relevant and helpful resources while researching on sum types:</p>
-<ul><li>Manis Goregaokar. <a href='http://manishearth.github.io/blog/2017/03/04/what-are-sum-product-and-pi-types/'>What Are Sum, Product, and Pi Types?</a></li><li>Chris Taylor. <a href='http://chris-taylor.github.io/blog/2013/02/10/the-algebra-of-algebraic-data-types/'>The Algebra of Algebraic Data Types, Part 1</a> (he goes into recursive types in the next post, check it out!)</li><li>Wikipedia page on <a href='https://en.wikipedia.org/wiki/Dependent_type'>Dependent Type</a></li><li>Idris, which has <a href='http://docs.idris-lang.org/en/latest/tutorial/typesfuns.html?highlight=dependent'>dependent types</a>, for tips on the made up syntax.</li><li><a href='https://en.wikipedia.org/wiki/Intuitionistic_type_theory'>Intuitionistic type theory</a></li></ul>
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<ul>
+<li>Manis Goregaokar. <a href="http://manishearth.github.io/blog/2017/03/04/what-are-sum-product-and-pi-types/">What Are Sum, Product, and Pi Types?</a></li>
+<li>Chris Taylor. <a href="http://chris-taylor.github.io/blog/2013/02/10/the-algebra-of-algebraic-data-types/">The Algebra of Algebraic Data Types, Part 1</a> (he goes into recursive types in the next post, check it out!)</li>
+<li>Wikipedia page on <a href="https://en.wikipedia.org/wiki/Dependent_type">Dependent Type</a></li>
+<li>Idris, which has <a href="http://docs.idris-lang.org/en/latest/tutorial/typesfuns.html?highlight=dependent">dependent types</a>, for tips on the made up syntax.</li>
+<li><a href="https://en.wikipedia.org/wiki/Intuitionistic_type_theory">Intuitionistic type theory</a></li>
+</ul>
+</section>
+</body>
 </html>

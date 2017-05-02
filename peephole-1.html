@@ -1,96 +1,201 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>What are Peephole Optimizations?</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>What are Peephole Optimizations?</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        What are Peephole Optimizations?
-        </h1>
-        <time class="published">
-        2015-04-28
-        </time>
-        <div class="entry-content">
-        <p>As part of <a href='{filename}/closure-compiler-1.mdown'>the series</a> exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.</p>
-<p>The <a href='https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28'>code itself</a> describes peephole optimizations as:</p>
-<blockquote><p>optimizations that look at a small section of code and either remove
-that code (if it is not needed) or replaces it with smaller code.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">What are Peephole Optimizations?</h1>
+<h3 class="date">2015-04-28 18:00</h3>
+</div>
+<p>As part of <a href="%7Bfilename%7D/closure-compiler-1.mdown">the series</a> exploring the internals of Google Closure Compiler, this time we are diving into one of the many optimizations that it does, the peephole optimization.</p>
+<p>The <a href="https://github.com/google/closure-compiler/blob/0f7da6bca71de86ea949fcec45ee8db699a3af45/src/com/google/javascript/jscomp/AbstractPeepholeOptimization.java#L22-L28">code itself</a> describes peephole optimizations as:</p>
+<blockquote>
+<p>optimizations that look at a small section of code and either remove that code (if it is not needed) or replaces it with smaller code.</p>
 </blockquote>
-
-<p>And from <a href='https://en.wikipedia.org/wiki/Peephole_optimization'>Wikipedia</a></p>
-<blockquote><p>In compiler theory, peephole optimization is a kind of optimization performed over a very small set of instructions in a segment of generated code. The set is called a &gt; &quot;peephole&quot; or a &quot;window&quot;. It works by recognising sets of instructions that can be replaced by shorter or faster sets of instructions.</p>
+<p>And from <a href="https://en.wikipedia.org/wiki/Peephole_optimization">Wikipedia</a></p>
+<blockquote>
+<p>In compiler theory, peephole optimization is a kind of optimization performed over a very small set of instructions in a segment of generated code. The set is called a &gt; &quot;peephole&quot; or a &quot;window&quot;. It works by recognising sets of instructions that can be replaced by shorter or faster sets of instructions.</p>
 </blockquote>
-
-<p>Let&#39;s try an example:</p>
-<pre class='javascript'><code class='javascript'>var x = 1 + 2;</code></pre>
-
+<p>Let's try an example:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> x <span class="op">=</span> <span class="dv">1</span> <span class="op">+</span> <span class="dv">2</span><span class="op">;</span></code></pre></div>
 <p>This would be completely correct if it were written as</p>
-<pre class='javascript'><code class='javascript'> var x = 3;</code></pre>
-
-<p>And it&#39;s easy to verify so!</p>
-<p>This is a particular kind of peephole optimization that known as &quot;contant folding&quot;, which has an <a href='https://en.wikipedia.org/wiki/Constant_folding'>entire wiki page</a> dedicated.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"> <span class="kw">var</span> x <span class="op">=</span> <span class="dv">3</span><span class="op">;</span></code></pre></div>
+<p>And it's easy to verify so!</p>
+<p>This is a particular kind of peephole optimization that known as &quot;contant folding&quot;, which has an <a href="https://en.wikipedia.org/wiki/Constant_folding">entire wiki page</a> dedicated.</p>
 <p>To quote what Wikipedia has to say about constant folding:</p>
-<blockquote><p>Constant folding is the process of recognizing and evaluating constant expressions at compile time rather than computing them at runtime.</p>
+<blockquote>
+<p>Constant folding is the process of recognizing and evaluating constant expressions at compile time rather than computing them at runtime.</p>
 </blockquote>
-
-<p>It&#39;s about getting results event before running any code! I think of it as being similar to static typing, where you can prove correctness without running the code.</p>
+<p>It's about getting results event before running any code! I think of it as being similar to static typing, where you can prove correctness without running the code.</p>
 <p>The Wiki page gives more examples of constant folding that a compiler may do, including:</p>
-<ul><li>fold <code>0 * x</code> to <code>0</code></li><li>fold <code>&quot;abc&quot; + &quot;def&quot;</code> to <code>&quot;abcdef&quot;</code></li></ul>
-
+<ul>
+<li>fold <code>0 * x</code> to <code>0</code></li>
+<li>fold <code>&quot;abc&quot; + &quot;def&quot;</code> to <code>&quot;abcdef&quot;</code></li>
+</ul>
 <p>We can find out if the closure compiler does such folding:</p>
 <p><code>var z = 0 * 10;</code> gets compiled to <code>var z = 0</code>.</p>
 <p>And, probably unsurprisingly, <code>var s = &quot;abc&quot; + &quot;def&quot;</code> gets compiled to <code>var s = &quot;abcdefg&quot;</code>.</p>
 <p>A more advanced optimization is <em>Constant Propagation</em>. This is when values of expressions are known during the compilation stage, because they are constant, and can be substituted.</p>
 <p>For example, this code:</p>
-<pre class='javascript'><code class='javascript'>var x = 10;
-var z = x * 2;</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> x <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>
+<span class="kw">var</span> z <span class="op">=</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></code></pre></div>
 <p>will be compiled down to</p>
-<pre class='javascript'><code class='javascript'>var x=10,z=20;</code></pre>
-
-<p>However to get this using the closure compiler, you have to turn on advanced optimizations, the instructions are <a href='https://developers.google.com/closure/compiler/docs/api-tutorial3#enable-app'>here</a>.</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> x<span class="op">=</span><span class="dv">10</span><span class="op">,</span>z<span class="op">=</span><span class="dv">20</span><span class="op">;</span></code></pre></div>
+<p>However to get this using the closure compiler, you have to turn on advanced optimizations, the instructions are <a href="https://developers.google.com/closure/compiler/docs/api-tutorial3#enable-app">here</a>.</p>
 <p>If you tried this and got and empty file, chances are that the compiler eliminated all code in the <em>dead code elimination</em> pass, where unused code is just thrown away. This is another compilation pass that is enabled when you turn on advanced optimizations.</p>
 <p>In this case you can just add a stray log statement to ensure that the variable is used, like so:</p>
-<pre class='javascript'><code class='javascript'>var x = 10;
-var z = x * 2;
-console.log(z);</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> x <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>
+<span class="kw">var</span> z <span class="op">=</span> x <span class="op">*</span> <span class="dv">2</span><span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(z)<span class="op">;</span></code></pre></div>
 <p>and you should see, <code>console.log(20)</code>. Pretty crazy optimizations huh?</p>
 <p>Here are the peephole optimizations that the closure compiler has:</p>
-<p><img src='http://i.imgur.com/dhRAzCX.png' alt='List of peephole optimizations in closure compiler' /></p>
-<h1 id="Whywouldanyonewritecodelikethis">Why would anyone write code like this?</h1>
-
+<div class="figure">
+<img src="http://i.imgur.com/dhRAzCX.png" alt="List of peephole optimizations in closure compiler" />
+<p class="caption">List of peephole optimizations in closure compiler</p>
+</div>
+<h1 id="why-would-anyone-write-code-like-this">Why would anyone write code like this?</h1>
 <p>When I first saw this example, I was thinking to myself, would people even write such code? And almost immediately I realized that I was guilty of this!</p>
 <p>When building websites, I often use the <code>setInterval</code> and <code>setTimeout</code> functions. Both of these functions take as their first argument a callback function, and the second argument is a time duration in milliseconds. For example,</p>
-<pre class='javascript'><code class='javascript'>setInterval(function() {
-    alert(&#39;Hi!&#39;);
-}, 5000);</code></pre>
-
-<p>Would set off an alert saying &#39;Hi!&#39; every 5 seconds. It isn&#39;t that hard seeing that 5000ms is 5 seconds... Or you could write it like this:</p>
-<pre class='javascript'><code class='javascript'>setInterval(function() {
-    alert(&#39;Hi!&#39;);
-}, 5 * 1000);</code></pre>
-
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="at">setInterval</span>(<span class="kw">function</span>() <span class="op">{</span>
+    <span class="at">alert</span>(<span class="st">&#39;Hi!&#39;</span>)<span class="op">;</span>
+<span class="op">},</span> <span class="dv">5000</span>)<span class="op">;</span></code></pre></div>
+<p>Would set off an alert saying 'Hi!' every 5 seconds. It isn't that hard seeing that 5000ms is 5 seconds... Or you could write it like this:</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="at">setInterval</span>(<span class="kw">function</span>() <span class="op">{</span>
+    <span class="at">alert</span>(<span class="st">&#39;Hi!&#39;</span>)<span class="op">;</span>
+<span class="op">},</span> <span class="dv">5</span> <span class="op">*</span> <span class="dv">1000</span>)<span class="op">;</span></code></pre></div>
 <p>This makes the 5 extremely obvious.</p>
 <p>When more complicated calculations are involved:</p>
-<pre class='javascript'><code class='javascript'>SECONDS_IN_DAY = 24 * 60 * 60</code></pre>
-
-<p>It&#39;s nice knowing that it will be compiled down to <code>SECONDS_IN_DAY=86400</code>.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript">SECONDS_IN_DAY <span class="op">=</span> <span class="dv">24</span> <span class="op">*</span> <span class="dv">60</span> <span class="op">*</span> <span class="dv">60</span></code></pre></div>
+<p>It's nice knowing that it will be compiled down to <code>SECONDS_IN_DAY=86400</code>.</p>
+</section>
+</body>
 </html>

@@ -1,65 +1,172 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>NOC New York Module Credits mapping for SoC</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>NOC New York Module Credits mapping for SoC</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        NOC New York Module Credits mapping for SoC
-        </h1>
-        <time class="published">
-        2015-01-02
-        </time>
-        <div class="entry-content">
-        <p><em>NOC is a big deal, so you&#39;ll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg</em></p>
-<p>In one year, you should be able to clear 40 MCs in order to be MC-neutral<sup>1</sup>.
-For my batch we are able to clear up to <strong>32 MCs</strong> because we do not have discipline-based module<sup>2</sup></p>
-<p>Here&#39;s how I allocated my MCs (Computer Science):</p>
-<p>| Module Code |  Name | MCs | Map to |
-|-----------|---------------------------------------|-------|---|
-|    TR3101    |    Internship Continuous assessment    |    4     |    Internship |
-|    TR3102    |    Internship Program Report            |    8    |    Internship |
-|    TR3103    |    Start up Business case                |    8    |    ULR |
-|    TR3002    |    New Venture Creation                |    4     |    UEM |
-|    MG2304    |    Marketing                            |    4     |    UEM |
-|    TRXXXX    |    TBC<sup>3</sup>                        |    4     |    UEM |</p>
-<p>For <strong>CS</strong> students, <code>TR3101</code> and <code>TR3102</code> can go towards clearing our <a href='http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html'>program requirements</a></p>
-<blockquote><p>Either<br />
-CP4101 BComp Dissertation<br />
-or<br />
-Complete 12 MCs by taking CS modules at level-4000 or above, or modules approved by the Department of Computer Science<br />
-or<br />
-12 MCs of Industrial Experience Training.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">NOC New York Module Credits mapping for SoC</h1>
+<h3 class="date">2015-01-02 16:30</h3>
+</div>
+<p><em>NOC is a big deal, so you'll probably have questions. This hopefully-series of articles serves to tell you more about a SOC student going on NOC in New York. Hope this helps you, feel free to drop me suggestions/questions at ngzhian@nus.edu.sg</em></p>
+<p>In one year, you should be able to clear 40 MCs in order to be MC-neutral<sup>1</sup>. For my batch we are able to clear up to <strong>32 MCs</strong> because we do not have discipline-based module<sup>2</sup></p>
+<p>Here's how I allocated my MCs (Computer Science):</p>
+<table>
+<thead>
+<tr class="header">
+<th>Module Code</th>
+<th>Name</th>
+<th>MCs</th>
+<th>Map to</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TR3101</td>
+<td>Internship Continuous assessment</td>
+<td>4</td>
+<td>Internship</td>
+</tr>
+<tr class="even">
+<td>TR3102</td>
+<td>Internship Program Report</td>
+<td>8</td>
+<td>Internship</td>
+</tr>
+<tr class="odd">
+<td>TR3103</td>
+<td>Start up Business case</td>
+<td>8</td>
+<td>ULR</td>
+</tr>
+<tr class="even">
+<td>TR3002</td>
+<td>New Venture Creation</td>
+<td>4</td>
+<td>UEM</td>
+</tr>
+<tr class="odd">
+<td>MG2304</td>
+<td>Marketing</td>
+<td>4</td>
+<td>UEM</td>
+</tr>
+<tr class="even">
+<td>TRXXXX</td>
+<td>TBC<sup>3</sup></td>
+<td>4</td>
+<td>UEM</td>
+</tr>
+</tbody>
+</table>
+<p>For <strong>CS</strong> students, <code>TR3101</code> and <code>TR3102</code> can go towards clearing our <a href="http://www.comp.nus.edu.sg/undergraduates/cs_cs_2012_13.html">program requirements</a></p>
+<blockquote>
+<p>Either<br/> CP4101 BComp Dissertation<br/> or<br/> Complete 12 MCs by taking CS modules at level-4000 or above, or modules approved by the Department of Computer Science<br/> or<br/> 12 MCs of Industrial Experience Training.</p>
 </blockquote>
-
 <p>For <strong>IS/EC</strong> students, they can map IS4010 Industry Internship Programme (equivalent to 12-MC FYP or 3 IS modules) to NOC (TR3101 and TR3102). The other TR module confirmed is TR2202 Technological Innovation. (Thanks Jason for this!)</p>
 <p>Check the requirements for your cohort to be sure.</p>
-<p>Recall that the breakdown of ULR is</p>
-<ul><li>8 MCs on GEM</li><li>4 MCs on SS</li><li>8 MCs on Breadth</li></ul>
-
+<p>Recall that the breakdown of ULR is - 8 MCs on GEM - 4 MCs on SS - 8 MCs on Breadth</p>
 <p>so <code>TR3103</code> essentially completes my ULR requirement.</p>
 <p>The remaining 3 modules (<code>TR3002</code>, <code>MG2304</code>, <code>TRXXXX</code>) maps to my UE, which has a cap of 20 MCs. This means that for you to be MC neutral, you should not have taken more than 2 UEs thus far.</p>
-<h2 id="Whataboutthe8MCsleft">What about the 8 MCs left?</h2><p><code>40 - 32 = 8MCs</code>, so at the end of NOC I would have 8 MCs I need to clear.</p>
-<p>In my case, I haven&#39;t taken a single UE yet, so this 8 MCs will be used on UEs. I took Orbtial (a summer module) in Year 1, so that clears 4 MCs. I plan to overload 1 module in my final year, so that I can make 160 MCs and graduate in 4 years.</p>
-<h2 id="Needmoreinfo">Need more info?</h2><p>Shoot me a question ngzhian@nus.edu.sg</p>
+<h2 id="what-about-the-8-mcs-left">What about the 8 MCs left?</h2>
+<p><code>40 - 32 = 8MCs</code>, so at the end of NOC I would have 8 MCs I need to clear.</p>
+<p>In my case, I haven't taken a single UE yet, so this 8 MCs will be used on UEs. I took Orbtial (a summer module) in Year 1, so that clears 4 MCs. I plan to overload 1 module in my final year, so that I can make 160 MCs and graduate in 4 years.</p>
+<h2 id="need-more-info">Need more info?</h2>
+<p>Shoot me a question ngzhian@nus.edu.sg</p>
 <p><sup>1</sup> this means to not take more modules than necessary</p>
 <p><sup>2</sup> reasons are not easy to explain, and this might change for your batch</p>
 <p><sup>3</sup> module not confirmed but can definitely map it to UE</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+</section>
+</body>
 </html>

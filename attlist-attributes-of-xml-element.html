@@ -1,113 +1,174 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Default value of ATTLIST, attributes of an XML Element, XML Doctype</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Default value of ATTLIST, attributes of an XML Element, XML Doctype</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Default value of ATTLIST, attributes of an XML Element, XML Doctype
-        </h1>
-        <time class="published">
-        2014-05-10
-        </time>
-        <div class="entry-content">
-        <h1 id="DefaultvalueofATTLISTattributesofanXMLElementXMLDoctype">Default value of ATTLIST, attributes of an XML Element, XML Doctype</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<h2 id="Theproblem">The problem</h2>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>It started with a failing test that complained about
-<code>NumberFormatException</code> because an empty string was passed in to
-<code>Integer.parseInt</code>. I decided to file <a href='https://github.com/ganglia/jmxetric/issues/22'>an
-issue</a> and went on to
-investigate.</p>
-<h2 id="Investigation">Investigation</h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<p>I started by adding breakpoint on the <a href='https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L103'>method which returned the
-string</a>
-to be passed into <code>Integer.parseInt</code>. But this was problematic because
-the method was called multiple times, within nested loops. So I decided
-to tackle this in another way.</p>
-<p>I called the method on a bogus attribute that I knew for sure would not
-exist:</p>
-<pre><code> {.sourceCode .java}
-String testNonValidAttri = selectParameterFromNode(sample, &quot;asdfasdf&quot;, &quot;1&quot;);
-System.out.println(&quot;testnonvalid: &quot; + testNonValidAttri);</code></pre>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
 
-<p>and sure enough the string returned was <code>1</code>. This meant that the method
-<code>selectParameterFromNode</code> was working fine, and so I shifted my focus
-somewhere else.</p>
-<p>Next I wanted to check out exactly what attributes the <code>sample</code> node
-contained. The <a href='https://github.com/ganglia/jmxetric/blob/master/src/test/resources/jmxetric_test.xml#L35'>configuration
-file</a>
-showed that there is only 1: <code>delay</code>.</p>
-<pre><code> {.sourceCode .xml}
-&lt;sample delay=&quot;3&quot;&gt;</code></pre>
+    a:hover {
+        color: #7A7A7A;
+    }
 
-<p>So if I print out all the names of the attributes, I should only have 1
-name appear. I consulted the <a href='http://docs.oracle.com/javase/7/docs/api/javax/xml/xpath/package-summary.html'>xpath
-docs</a>
-to find out how to get the list of attributes and print them, this is
-the code:</p>
-<pre><code> {.sourceCode .java}
-NamedNodeMap samplemap = sample.getAttributes();
-System.out.println(samplemap.getLength());
-for (int j = 0; i &lt; samplemap.getLength(); j++) {
-  System.out.println(samplemap.item(j).getNodeName());
-}</code></pre>
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
 
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Default value of ATTLIST, attributes of an XML Element, XML Doctype</h1>
+<h3 class="date">2014-05-10 18:00</h3>
+</div>
+<h1 id="default-value-of-attlist-attributes-of-an-xml-element-xml-doctype">Default value of ATTLIST, attributes of an XML Element, XML Doctype</h1>
+<h2 id="the-problem">The problem</h2>
+<p>It started with a failing test that complained about <code>NumberFormatException</code> because an empty string was passed in to <code>Integer.parseInt</code>. I decided to file <a href="https://github.com/ganglia/jmxetric/issues/22">an issue</a> and went on to investigate.</p>
+<h2 id="investigation">Investigation</h2>
+<p>I started by adding breakpoint on the <a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L103">method which returned the string</a> to be passed into <code>Integer.parseInt</code>. But this was problematic because the method was called multiple times, within nested loops. So I decided to tackle this in another way.</p>
+<p>I called the method on a bogus attribute that I knew for sure would not exist:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span> testNonValidAttri = <span class="fu">selectParameterFromNode</span>(sample, <span class="st">&quot;asdfasdf&quot;</span>, <span class="st">&quot;1&quot;</span>);
+<span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;testnonvalid: &quot;</span> + testNonValidAttri);</code></pre></div>
+<p>and sure enough the string returned was <code>1</code>. This meant that the method <code>selectParameterFromNode</code> was working fine, and so I shifted my focus somewhere else.</p>
+<p>Next I wanted to check out exactly what attributes the <code>sample</code> node contained. The <a href="https://github.com/ganglia/jmxetric/blob/master/src/test/resources/jmxetric_test.xml#L35">configuration file</a> showed that there is only 1: <code>delay</code>.</p>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;sample</span><span class="ot"> delay=</span><span class="st">&quot;3&quot;</span><span class="kw">&gt;</span></code></pre></div>
+<p>So if I print out all the names of the attributes, I should only have 1 name appear. I consulted the <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/xpath/package-summary.html">xpath docs</a> to find out how to get the list of attributes and print them, this is the code:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">NamedNodeMap</span> samplemap = sample.<span class="fu">getAttributes</span>();
+<span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(samplemap.<span class="fu">getLength</span>());
+<span class="kw">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; i &lt; samplemap.<span class="fu">getLength</span>(); j++) {
+  <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(samplemap.<span class="fu">item</span>(j).<span class="fu">getNodeName</span>());
+}</code></pre></div>
 <p>I was surprised to see the output:</p>
 <pre><code>delay
-dmax</code></pre><p>What was the <code>dmax</code> attribute doing there? I could see the <code>delay</code>
-attribute defined, but I didn’t know where <code>dmax</code> came from. My
-intuition was there <code>dmax</code> seems to be a default attribute that is
-specified somewhere.</p>
-<p>Right at the top of the configuration file is the XML doctype, and even
-though I didn’t know anything about that, I could identify the culprit</p>
-<pre><code> {.sourceCode .xml}
-&lt;!ELEMENT sample (mbean)*&gt;
-  &lt;!ATTLIST sample delay CDATA #REQUIRED&gt;
-  &lt;!ATTLIST sample dmax CDATA &quot;&quot; &gt;</code></pre>
-
-<p>So I noticed that <code>delay</code> and <code>dmax</code> are defined there, so I went to
-research a bit about <a href='http://xmlwriter.net/xml_guide/attlist_declaration.shtml'>XML doctypes and
-ATTLIST</a>. I
-learned that the definition <code>&lt;!ATTLIST sample dmax CDATA &quot;&quot; &gt;</code> meant
-that <code>dmax</code> was not a <em>required</em> attribute, the XML does not have to
-specify this attribute. And if <code>dmax</code> is not specified, it will have the
-value of <code>&quot;&quot;</code>, the empty string!</p>
-<p>So basically the empty string came from the doctype!
-<a href='https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L207'>All</a>
-<a href='https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L227'>the</a>
-<a href='https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L242'>checks</a>
-trying to make the default value of <code>dmax</code> <code>&quot;0&quot;</code> wasn’t working because
-of the doctype, resulting in the <code>NumberFormatException</code> when <a href='https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L249'>trying to
-parse</a></p>
-<h2 id="Resolution">Resolution</h2>
-
-<p>I have <a href='https://github.com/ganglia/jmxetric/issues/22'>suggested two
-ways</a> to fix this,</p>
-<ol><li>Remove this attribute from the doctype. I’m not sure what impact
- this would have, because I don’t know if the <code>sample</code> requires a
- <code>dmax</code> to be declared at that level. The <code>mbean</code>, <code>attribute</code>, and
- <code>composite</code> nodes all have the <code>dmax</code> attribute as well</li><li>Add the default value of <code>&quot;0&quot;</code> to the doctype. This seems to be a
- better way, referring to the <a href='http://github.com/ganglia/jmxetric/blob/master/etc/jmxetric.xml#L6'>default configuration
- file</a>,
- the attribute <code>initialdelay</code> is given the default value of <code>&quot;0&quot;</code>
- simplifying the processing.</li></ol>
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+dmax</code></pre>
+<p>What was the <code>dmax</code> attribute doing there? I could see the <code>delay</code> attribute defined, but I didn’t know where <code>dmax</code> came from. My intuition was there <code>dmax</code> seems to be a default attribute that is specified somewhere.</p>
+<p>Right at the top of the configuration file is the XML doctype, and even though I didn’t know anything about that, I could identify the culprit</p>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="er">&lt;</span>!ELEMENT sample (mbean)*&gt;
+  <span class="er">&lt;</span>!ATTLIST sample delay CDATA #REQUIRED&gt;
+  <span class="er">&lt;</span>!ATTLIST sample dmax CDATA &quot;&quot; &gt;</code></pre></div>
+<p>So I noticed that <code>delay</code> and <code>dmax</code> are defined there, so I went to research a bit about <a href="http://xmlwriter.net/xml_guide/attlist_declaration.shtml">XML doctypes and ATTLIST</a>. I learned that the definition <code>&lt;!ATTLIST sample dmax CDATA &quot;&quot; &gt;</code> meant that <code>dmax</code> was not a <em>required</em> attribute, the XML does not have to specify this attribute. And if <code>dmax</code> is not specified, it will have the value of <code>&quot;&quot;</code>, the empty string!</p>
+<p>So basically the empty string came from the doctype! <a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L207">All</a> <a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L227">the</a> <a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L242">checks</a> trying to make the default value of <code>dmax</code> <code>&quot;0&quot;</code> wasn’t working because of the doctype, resulting in the <code>NumberFormatException</code> when <a href="https://github.com/ganglia/jmxetric/blob/master/src/main/java/info/ganglia/jmxetric/XMLConfigurationService.java#L249">trying to parse</a></p>
+<h2 id="resolution">Resolution</h2>
+<p>I have <a href="https://github.com/ganglia/jmxetric/issues/22">suggested two ways</a> to fix this,</p>
+<ol style="list-style-type: decimal">
+<li>Remove this attribute from the doctype. I’m not sure what impact this would have, because I don’t know if the <code>sample</code> requires a <code>dmax</code> to be declared at that level. The <code>mbean</code>, <code>attribute</code>, and <code>composite</code> nodes all have the <code>dmax</code> attribute as well</li>
+<li>Add the default value of <code>&quot;0&quot;</code> to the doctype. This seems to be a better way, referring to the <a href="http://github.com/ganglia/jmxetric/blob/master/etc/jmxetric.xml#L6">default configuration file</a>, the attribute <code>initialdelay</code> is given the default value of <code>&quot;0&quot;</code> simplifying the processing.</li>
+</ol>
+</section>
+</body>
 </html>

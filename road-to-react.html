@@ -1,48 +1,120 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Road to React</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Road to React</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Road to React
-        </h1>
-        <time class="published">
-        2016-08-27
-        </time>
-        <div class="entry-content">
-        <blockquote><p>This is a series of posts for my CS3216 project, you can find the original post <a href='https://medium.com/@ngzhian/road-to-react-d726435a1421#.wbzdrycc8'>here</a>.</p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Road to React</h1>
+<h3 class="date">2016-08-27 12:24</h3>
+</div>
+<blockquote>
+<p>This is a series of posts for my CS3216 project, you can find the original post <a href="https://medium.com/@ngzhian/road-to-react-d726435a1421#.wbzdrycc8">here</a>.</p>
 </blockquote>
-
-<p>Last post, https://medium.com/@ngzhian/framework-v-s-library-e802db791eea, I mentioned that we decided on React, so this post I’m going to go share why.</p>
-<p>First, everyone was new to React, no one has used it before (beyond trying the tutorial).
-Second, it’s really, really popular. Used by many big companies, it must have interesting concepts! And it sure does, here’s 2:</p>
-<p><a href='http://jlongster.com/Removing-User-Interface-Complexity,-or-Why-React-is-Awesome'>Removing User Interface Complexity, or Why React is Awesome</a></p>
-<p><a href='http://calendar.perfplanet.com/2013/diff/'>Performance Calendar</a></p>
+<p>Last post, https://medium.com/<span class="citation">@ngzhian/framework-v-s-library-e802db791eea</span>, I mentioned that we decided on React, so this post I’m going to go share why.</p>
+<p>First, everyone was new to React, no one has used it before (beyond trying the tutorial). Second, it’s really, really popular. Used by many big companies, it must have interesting concepts! And it sure does, here’s 2:</p>
+<p><a href="http://jlongster.com/Removing-User-Interface-Complexity,-or-Why-React-is-Awesome">Removing User Interface Complexity, or Why React is Awesome</a></p>
+<p><a href="http://calendar.perfplanet.com/2013/diff/">Performance Calendar</a></p>
 <p>Third, learn something new.</p>
 <p>This third point might be a bit surprising. It was mentioned early in the semester that we shouldn’t be using CS3216 as a chance to learn new things, there isn’t enough time.</p>
 <p>I’m going to push back a bit on that advice and ask, why not?</p>
 <p><strong>I think we should strive learn something at every part of the way. Because that’s how you grow, that’s how you improve.</strong></p>
 <p>The rebellious side of me also says that:</p>
-<blockquote><p>don’t let others tell you what you can or cannot do</p>
+<blockquote>
+<p>don’t let others tell you what you can or cannot do</p>
 </blockquote>
-
 <p>:D</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+</section>
+</body>
 </html>

@@ -1,68 +1,118 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>JMX and MBeans</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>JMX and MBeans</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        JMX and MBeans
-        </h1>
-        <time class="published">
-        2014-05-07
-        </time>
-        <div class="entry-content">
-        <h1 id="JMXandMBeans">JMX and MBeans</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>The first thing was to understand a bit more about what jmxetric does.
-But before that we have to lay the foundation first, let’s talk about
-JMX and MBean.</p>
-<h2 id="JMXisatechnologythatletsyoumonitorresourceseasily">JMX is a technology that lets you monitor resources easily</h2>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>JMX stands for Java Management Extension. Resources can be applications,
-devices, services, etc. By monitoring, it means that you can 1. consult
-and change configuration, 2. view statistics of the application 3. be
-notified of changes and/or erros</p>
-<p>How can you make use of this JMX technology? You follow the patterns and
-interfaces defined in this specification. And one of it is MBean</p>
-<h2 id="MBeanorManagedBean">MBean, or <em>Managed Bean</em></h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<p>A MBean, is a Java object that is associated with a resource that you
-want to monitor. All MBeans expose an interface that has 1. set of
-readable and/or writable attributes 2. set of invokable operations 3.
-self-description</p>
-<p>You can make an MBean by making a Java interface called <code>FooMBean</code>, and
-a class <code>Foo</code> that implements that interface.</p>
-<h2 id="YoucanmanageMBeansusingaJMXagent">You can manage MBeans using a JMX agent</h2>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
 
-<p>It’s strange that you still need to <em>manage</em> a <em>managed bean</em>, but
-that’s just how it goes. A JMX agent is the manager of all these MBeans
-and the resources instrumented by the MBeans. The agent consists of a
-MBean server, which is where MBeans are registered. I think of the MBean
-server as a manager that overseas the registered MBeans.</p>
-<h2 id="Howdoesjmxetricfitinhere">How does jmxetric fit in here?</h2>
+    a:hover {
+        color: #7A7A7A;
+    }
 
-<p>The role of jmxetric is then to pool these MBeans, and pass on the
-attributes to Ganglia.</p>
-<h2 id="References">References</h2>
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
 
-<p><a href='docs.oracle.com/javase/tutorial/jmx/index.html'>Oracle’s tutorial trail on
-JMX</a> <a href='docs.oracle.com/javase/tutorial/jmx/mbeans/standard.html'>Oracle’s tutorial
-on MBeans</a></p>
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
 
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">JMX and MBeans</h1>
+<h3 class="date">2014-05-07 18:00</h3>
+</div>
+<h1 id="jmx-and-mbeans">JMX and MBeans</h1>
+<p>The first thing was to understand a bit more about what jmxetric does. But before that we have to lay the foundation first, let’s talk about JMX and MBean.</p>
+<h2 id="jmx-is-a-technology-that-lets-you-monitor-resources-easily">JMX is a technology that lets you monitor resources easily</h2>
+<p>JMX stands for Java Management Extension. Resources can be applications, devices, services, etc. By monitoring, it means that you can 1. consult and change configuration, 2. view statistics of the application 3. be notified of changes and/or erros</p>
+<p>How can you make use of this JMX technology? You follow the patterns and interfaces defined in this specification. And one of it is MBean</p>
+<h2 id="mbean-or-managed-bean">MBean, or <em>Managed Bean</em></h2>
+<p>A MBean, is a Java object that is associated with a resource that you want to monitor. All MBeans expose an interface that has 1. set of readable and/or writable attributes 2. set of invokable operations 3. self-description</p>
+<p>You can make an MBean by making a Java interface called <code>FooMBean</code>, and a class <code>Foo</code> that implements that interface.</p>
+<h2 id="you-can-manage-mbeans-using-a-jmx-agent">You can manage MBeans using a JMX agent</h2>
+<p>It’s strange that you still need to <em>manage</em> a <em>managed bean</em>, but that’s just how it goes. A JMX agent is the manager of all these MBeans and the resources instrumented by the MBeans. The agent consists of a MBean server, which is where MBeans are registered. I think of the MBean server as a manager that overseas the registered MBeans.</p>
+<h2 id="how-does-jmxetric-fit-in-here">How does jmxetric fit in here?</h2>
+<p>The role of jmxetric is then to pool these MBeans, and pass on the attributes to Ganglia.</p>
+<h2 id="references">References</h2>
+<p><a href="docs.oracle.com/javase/tutorial/jmx/index.html">Oracle’s tutorial trail on JMX</a> <a href="docs.oracle.com/javase/tutorial/jmx/mbeans/standard.html">Oracle’s tutorial on MBeans</a></p>
+</section>
+</body>
 </html>

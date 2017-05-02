@@ -1,136 +1,181 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>What I learned about fonts on Linux</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>What I learned about fonts on Linux</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        What I learned about fonts on Linux
-        </h1>
-        <time class="published">
-        2013-01-11
-        </time>
-        <div class="entry-content">
-        <h1 id="WhatIlearnedaboutfontsonLinux">What I learned about fonts on Linux</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<p>I started on this because I wanted to use unicode characters for
-<a href='https://github.com/LemonBoy/bar'>LemonBoy’s bar</a>. I wanted to display
-funky symbols without installing a new font, so I decided to use Dejavu
-Sans Mono to display them.</p>
-<p>I had to get bar to find my font, and that is the gist of this post. In
-X, a font is specified in a funny way. Here’s an example:</p>
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">What I learned about fonts on Linux</h1>
+<h3 class="date">2013-01-11 18:00</h3>
+</div>
+<h1 id="what-i-learned-about-fonts-on-linux">What I learned about fonts on Linux</h1>
+<p>I started on this because I wanted to use unicode characters for <a href="https://github.com/LemonBoy/bar">LemonBoy’s bar</a>. I wanted to display funky symbols without installing a new font, so I decided to use Dejavu Sans Mono to display them.</p>
+<p>I had to get bar to find my font, and that is the gist of this post. In X, a font is specified in a funny way. Here’s an example:</p>
 <p><code>-misc-dejavu sans mono-medium-r-normal--17-120-100-100-m-100-iso10646-1</code></p>
-<p>Most of the time though, we will not need to be so specific, can this
-will do:</p>
+<p>Most of the time though, we will not need to be so specific, can this will do:</p>
 <p><code>-*-dejavu sans mono-medium-r-normal--17-*-*-*-*-*-iso10646-1</code></p>
-<p>If you’re as curious as me you’ll probably want to find out what all
-those numbers as me, and if you’re as stupid too, you’ld probably spend
-an entire afternoon finding out.</p>
-<p>If you’re just interested in the answer jump to the bottom, ’cos I will
-be going though steps to find this information yourself.</p>
-<p><code>xlsfonts</code> is is the server font list displayer for X
-(<code>man xlsfonts</code>) This is the most crucial thing we need. Get it from
-your distribution’s package manager, I’m on arch so I just had to</p>
+<p>If you’re as curious as me you’ll probably want to find out what all those numbers as me, and if you’re as stupid too, you’ld probably spend an entire afternoon finding out.</p>
+<p>If you’re just interested in the answer jump to the bottom, ’cos I will be going though steps to find this information yourself.</p>
+<p><code>xlsfonts</code> is is the server font list displayer for X (<code>man xlsfonts</code>) This is the most crucial thing we need. Get it from your distribution’s package manager, I’m on arch so I just had to</p>
 <pre><code>pacman -S xlsfonts</code></pre>
-
 <p>Try this:</p>
 <pre><code>xlsfonts</code></pre>
-
-<p>You should see a bunch of fonts displayed similar to what I showed you
-above.</p>
+<p>You should see a bunch of fonts displayed similar to what I showed you above.</p>
 <p>If you have DejaVu Sans already installed you can probably try this:</p>
 <pre><code>xlsfonts -l -fn -misc-dejavu sans 
 mono-medium-r-normal–17-120-100-100-m-100-iso10646-1</code></pre>
-
 <p>Make sure you type the backslash as well, you have to escape the spaces.</p>
 <p>If not you, pick a font from the list generated by <code>xlsfonts</code>, and do:</p>
-<pre><code>xlsfonts -l -fn -the-font-you-picked-some-numbers-blah-blah111</code></pre><p>Or if you’re lazy to type we can just select the first font in the list:</p>
-<pre><code>xlsfonts -l -fn $(xlsfonts | head -1)</code></pre><p>Now thats not very interesting, a bunch of short cryptic headings, so lets try this:</p>
-<pre><code>xlsfonts -ll -fn \$(xlsfonts | head -1)</code></pre><p>Note the 2 l’s this time. So this gets much more interesting, lots of
-information, not that difficult to understand. Most are
-self-explanatory, such as direction, rows, columns. To go more in-depth,
-try these search terms: character encoding, character map, fonts in x.</p>
-<p>Now things become clearer, lets separate the full font name by hypens,
-and match them to the properties in the output:</p>
+<pre><code>xlsfonts -l -fn -the-font-you-picked-some-numbers-blah-blah111</code></pre>
+<p>Or if you’re lazy to type we can just select the first font in the list:</p>
+<pre><code>xlsfonts -l -fn $(xlsfonts | head -1)</code></pre>
+<p>Now thats not very interesting, a bunch of short cryptic headings, so lets try this:</p>
+<pre><code>xlsfonts -ll -fn \$(xlsfonts | head -1)</code></pre>
+<p>Note the 2 l’s this time. So this gets much more interesting, lots of information, not that difficult to understand. Most are self-explanatory, such as direction, rows, columns. To go more in-depth, try these search terms: character encoding, character map, fonts in x.</p>
+<p>Now things become clearer, lets separate the full font name by hypens, and match them to the properties in the output:</p>
 <table>
-  <tbody>
-  <tr>
-    <td>misc</td><td>FOUNDRY</td>
-  </tr>
-  <tr>
-    <td>dejavu sans mono</td><td>FAMILY\_NAME</td>
-  </tr>
-  <tr>
-    <td>mediumWEIGHT </td><td>NAME</td>
-  </tr>
-  <tr>
-    <td>r</td><td>SLANT</td>
-  </tr>
-  <tr>
-    <td>normal</td><td>SETWIDTH\_NAME</td>
-  </tr>
-      <td></td>
-      <td>ADD\_STYLE\_NAME</td>
-  <tr>
-    <td>17</td><td>PIXEL\_SIZE</td>
-  </tr>
-  <tr>
-    <td>120</td><td>POINT\_SIZE</td>
-  </tr>
-  <tr>
-    <td>100</td><td>RESOLUTION\_X</td>
-  </tr>
-  <tr>
-    <td>100</td><td>RESOLUTION\_Y</td>
-  </tr>
-  <tr>
-    <td>m</td><td>SPACING</td>
-  </tr>
-  <tr>
-    <td>100</td><td>AVERAGE\_WIDTH</td>
-  </tr>
-  <tr>
-    <td>iso10646</td><td>CHARSET\_REGISTRY</td>
-  </tr>
-  <tr>
-    <td>1</td><td>CHARSET\_ENCODING</td>
-  </tr>
-  </tbody>
+<tbody>
+<tr>
+<pre><code>&lt;td&gt;misc&lt;/td&gt;&lt;td&gt;FOUNDRY&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;dejavu sans mono&lt;/td&gt;&lt;td&gt;FAMILY\_NAME&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;mediumWEIGHT &lt;/td&gt;&lt;td&gt;NAME&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;r&lt;/td&gt;&lt;td&gt;SLANT&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;normal&lt;/td&gt;&lt;td&gt;SETWIDTH\_NAME&lt;/td&gt;</code></pre>
+</tr>
+<pre><code>  &lt;td&gt;&lt;/td&gt;
+  &lt;td&gt;ADD\_STYLE\_NAME&lt;/td&gt;</code></pre>
+<tr>
+<pre><code>&lt;td&gt;17&lt;/td&gt;&lt;td&gt;PIXEL\_SIZE&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;120&lt;/td&gt;&lt;td&gt;POINT\_SIZE&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;100&lt;/td&gt;&lt;td&gt;RESOLUTION\_X&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;100&lt;/td&gt;&lt;td&gt;RESOLUTION\_Y&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;m&lt;/td&gt;&lt;td&gt;SPACING&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;100&lt;/td&gt;&lt;td&gt;AVERAGE\_WIDTH&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;iso10646&lt;/td&gt;&lt;td&gt;CHARSET\_REGISTRY&lt;/td&gt;</code></pre>
+</tr>
+<tr>
+<pre><code>&lt;td&gt;1&lt;/td&gt;&lt;td&gt;CHARSET\_ENCODING&lt;/td&gt;</code></pre>
+</tr>
+</tbody>
 </table>
-
-<p>SLANT has to do with the italics, r stands for Roman, there is also o
-for Oblique. Mystery solved! I don’t know what every property means, but
-I guess you can probably find out if you want to</p>
-<p>This worked for <code>bar</code>, with the specific full font name. I also learned
-that the <code>PIXEL_SIZE</code> and <code>POINT_SIZE</code> should not both be set at the
-same time. For example, looking at the information above, you can set
-<code>PIXEL_SIZE</code> and <code>POINT_SIZE</code> to 17 and 120 respectively, but 12 and 120
-will fail.</p>
-<p>I suppose this has something to do with font rasterizing, so setting one
-will optimize the other for you. As such I chose to fidget with
-<code>PIXEL_SIZE</code> and leave <code>POINT_SIZE</code> as *.</p>
+<p>SLANT has to do with the italics, r stands for Roman, there is also o for Oblique. Mystery solved! I don’t know what every property means, but I guess you can probably find out if you want to</p>
+<p>This worked for <code>bar</code>, with the specific full font name. I also learned that the <code>PIXEL_SIZE</code> and <code>POINT_SIZE</code> should not both be set at the same time. For example, looking at the information above, you can set <code>PIXEL_SIZE</code> and <code>POINT_SIZE</code> to 17 and 120 respectively, but 12 and 120 will fail.</p>
+<p>I suppose this has something to do with font rasterizing, so setting one will optimize the other for you. As such I chose to fidget with <code>PIXEL_SIZE</code> and leave <code>POINT_SIZE</code> as *.</p>
 <p>What I’m using now is this:</p>
-<pre><code>-misc-dejavu sans mono-medium-r-normal--11-*-*-*-m-*-iso10646-1&quot;</code></pre><p>Which ensures that I get the correct font family, weight, encoding,
-which I guess are the most important parts, just leave the rest to the
-computer!</p>
-<p>Notes: <code>xlsfonts</code> has a <code>-lll</code> flag to, shows you every character in the
-font, pretty crazy and useful at the same time! And guess what I think
-I’ll be back to stlarch so it looks so much better.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<pre><code>-misc-dejavu sans mono-medium-r-normal--11-*-*-*-m-*-iso10646-1&quot;</code></pre>
+<p>Which ensures that I get the correct font family, weight, encoding, which I guess are the most important parts, just leave the rest to the computer!</p>
+<p>Notes: <code>xlsfonts</code> has a <code>-lll</code> flag to, shows you every character in the font, pretty crazy and useful at the same time! And guess what I think I’ll be back to stlarch so it looks so much better.</p>
+</section>
+</body>
 </html>

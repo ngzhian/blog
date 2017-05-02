@@ -1,85 +1,144 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>2D physics systems in the wild</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>2D physics systems in the wild</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        2D physics systems in the wild
-        </h1>
-        <time class="published">
-        2017-03-12
-        </time>
-        <div class="entry-content">
-        <p>For an assignment in school we were tasked to build a simple 2D physics engine for a Bubble-Bobble like game.
-We were also encouraged to check out other physics engine to see how it works.
-I looked at
-<a href='https://github.com/wellcaffeinated/PhysicsJS/'>PhysicsJS</a>,
-<a href='https://developer.apple.com/reference/uikit/uidynamicanimator'>UIDynamicAnimator</a>,
-and <a href='http://box2d.org/'>Box2D</a>.
-This blog post is a clean up and rearrangement of
-<a href='https://docs.google.com/document/d/1_NFbaDp5kqZgqGW7xJxd7juTEXcyjYtQMf1VR1DBdcs/edit?usp=sharing'>notes</a>
-I took when I went on that exploration.</p>
-<h2 id="What39sina2DPhysicsSystem">What&#39;s in a 2D Physics System</h2>
+    ul {
+        list-style-type: circle;
+    }
 
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">2D physics systems in the wild</h1>
+<h3 class="date">2017-03-12 18:01</h3>
+</div>
+<p>For an assignment in school we were tasked to build a simple 2D physics engine for a Bubble-Bobble like game. We were also encouraged to check out other physics engine to see how it works. I looked at <a href="https://github.com/wellcaffeinated/PhysicsJS/">PhysicsJS</a>, <a href="https://developer.apple.com/reference/uikit/uidynamicanimator">UIDynamicAnimator</a>, and <a href="http://box2d.org/">Box2D</a>. This blog post is a clean up and rearrangement of <a href="https://docs.google.com/document/d/1_NFbaDp5kqZgqGW7xJxd7juTEXcyjYtQMf1VR1DBdcs/edit?usp=sharing">notes</a> I took when I went on that exploration.</p>
+<h2 id="whats-in-a-2d-physics-system">What's in a 2D Physics System</h2>
 <p>In general I found that a system will have the following items:</p>
-<ol><li>World</li><li>Body and Shape</li><li>Behavior</li><li>Notification</li><li>Tick/Step/Integrate</li></ol>
-
-<h3 id="World">World</h3>
-
+<ol style="list-style-type: decimal">
+<li>World</li>
+<li>Body and Shape</li>
+<li>Behavior</li>
+<li>Notification</li>
+<li>Tick/Step/Integrate</li>
+</ol>
+<h3 id="world">World</h3>
 <p>A world is a <strong>frame of reference</strong>, it defines the <strong>physical bounds</strong> of the system. You add physic bodies to a world, and only bodies in the same world can react to each other.</p>
-<h3 id="Body">Body</h3>
-
+<h3 id="body">Body</h3>
 <p>A body is a <em>thing</em> in the system. It has a shape. A body can have position, velocity, acceleration, friction, restitution (bounciness).</p>
 <p>An example of a shape is circle. It is used to calculate the bounds of a body to determine collisions. For example, 2 circles are considered to have collided if the distance between their center is less than or equals to the sum of their radius.</p>
-<h3 id="Behavior">Behavior</h3>
-
+<h3 id="behavior">Behavior</h3>
 <p>A behavior describes <strong>what bodies will do</strong> when simulated. Common behaviors are gravity (so objects will fall), collision with edges (bounce), collision with other bodies (push each other away).</p>
-<h3 id="Notification">Notification</h3>
-
+<h3 id="notification">Notification</h3>
 <p>The user of a physics system might want to <strong>know or react</strong> when events happen in the physics system. For example, the user might want to play a sound when two circles collide. A notification is a way to get information from inside the system to outside the system.</p>
-<h3 id="TickStepIntegrator">Tick/Step/Integrator</h3>
-
+<h3 id="tickstepintegrator">Tick/Step/Integrator</h3>
 <p>After the bodies and behaviors have been defined, the physics system can be simulated. This is done <strong>stepwise</strong>, by telling all bodies that a certain <strong>delta of time</strong> has passed, and running behaviors over all physics bodies. This is usually done in two steps:</p>
-<ol><li>Integrate velocities, which calculates the new velocity of an object. For example, if an object has acceleration, its velocity should increase based on how much time has passed</li><li>Integrate positions, which positions the body. For example, if an object has velocity, then the object will shift to a new position based on the time that has passed</li></ol>
-
+<ol style="list-style-type: decimal">
+<li>Integrate velocities, which calculates the new velocity of an object. For example, if an object has acceleration, its velocity should increase based on how much time has passed</li>
+<li>Integrate positions, which positions the body. For example, if an object has velocity, then the object will shift to a new position based on the time that has passed</li>
+</ol>
 <p>These two steps are done via the <strong>integrator</strong>. In the real world, time is continuous. However, our simulated physics systems cannot be. Therefore we try to <strong>use discrete steps to simulate the continuous real world</strong> as closely as possible. The integrator is a way of doing so.</p>
 <p>Behaviors are simulated via internal notifications. When velocity integration is completed, an internal notification is sent, and behaviors that are added to the world can react to this, and update bodies. The same happens after position integration.</p>
-<h2 id="PhysicsJS">PhysicsJS</h2>
-
+<h2 id="physicsjs">PhysicsJS</h2>
 <p>This library was the most helpful in my understanding of a 2D physics system. The code is neatly organized, and quite easy to understand.</p>
 <p>In general the components of PhysicsJS are what I described above. It also has the ability to render the physics world. You pass it a renderer that conforms to the required interface, and the entire physics world can be displayed on a canvas, on the DOM, or using WebGL.</p>
-<h2 id="UIDynamicAnimator">UIDynamicAnimator</h2>
-
+<h2 id="uidynamicanimator">UIDynamicAnimator</h2>
 <p>This is probably the first tool iOS developers will reach for when physics is required in an app. And I can understand why: the usage is very simple. I would have really liked to reach the source for this, to see what it does to provide such a clean API.</p>
 <p>The <code>UIDynamicAnimator</code> allows very simple animation of <code>UIView</code> via the <code>UIDynamicItem</code> protocol. It is quite tied to <code>UIView</code>, you cannot initialize an animator without a view.</p>
 <p>An animator is equivalent to a physics world. You add behaviors to the world just as described above. Items must be added to the behaviors, and only items in the same behavior will interact with one another.</p>
 <p>Instead of using notifications (events), the animator uses a delegate for the behavior. A delegate will be informed of events via a method call.</p>
-<h2 id="Box2D">Box2D</h2>
-
-<p>This is probably the most well known, featured, and robust 2D physics system around. I didn&#39;t explore the source code because I am not familiar with C++. However I did look around at the manual and learned something about its implementation.</p>
+<h2 id="box2d">Box2D</h2>
+<p>This is probably the most well known, featured, and robust 2D physics system around. I didn't explore the source code because I am not familiar with C++. However I did look around at the manual and learned something about its implementation.</p>
 <p>Box2D is much more modular in the data structures it uses. In Box2D, a body has position, velocity, and fixture(s). A fixture has density, friction, and restitution. Fixtures attach shapes to bodies, which can be used independently, and body can have multiple fixtures (called a compound body).</p>
-<h2 id="Thoughts">Thoughts</h2>
-
-<p>I enjoyed this assignment a lot, and also enjoyed reading the source of existing 2D engines.
-Even though there are well known equations behind behaviors of physical objects in the real world, simulating the real world via discrete time delta presents its own set of problems.
-For example, if the time delta is too large, and the velocity of two objects are large, objects and <em>pass through</em> one another (the calculated position based on the time delta skips the collision).
-There are techniques to mitigate this, such as by playing back the route that an object has taken to see if there is an intersection with a route another object has taken.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<h2 id="thoughts">Thoughts</h2>
+<p>I enjoyed this assignment a lot, and also enjoyed reading the source of existing 2D engines. Even though there are well known equations behind behaviors of physical objects in the real world, simulating the real world via discrete time delta presents its own set of problems. For example, if the time delta is too large, and the velocity of two objects are large, objects and <em>pass through</em> one another (the calculated position based on the time delta skips the collision). There are techniques to mitigate this, such as by playing back the route that an object has taken to see if there is an intersection with a route another object has taken.</p>
+</section>
+</body>
 </html>

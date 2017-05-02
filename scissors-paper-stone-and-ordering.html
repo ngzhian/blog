@@ -1,215 +1,289 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)
-        </h1>
-        <time class="published">
-        2014-04-28
-        </time>
-        <div class="entry-content">
-        <h1 id="ScissorsPaperStoneandtheirorderingOrisitRockPaperScissors">Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</h1>
+    ul {
+        list-style-type: circle;
+    }
 
-<h2 id="Inspiration">Inspiration</h2>
+    a {
+        color: #4A4A4A;
+    }
 
-<p>I was in the bathroom, after watching a <a href='https://www.youtube.com/watch?v=WBJ3hdcM7G8'>video on
-Kata</a>, and fiddling with
-the thought of doing a Kata using Haskell. So I thought of what Kata I
-could try, and figured that a Scissors Paper Stone kata would be cool. I
-would have a chance to practice IO, hence Monads, and also some simple
-logic. So that led to the thought of how a game of SPS may work out…</p>
-<h2 id="ScissorsPaperStone">Scissors Paper Stone</h2>
+    .entry-content a {
+        color: #9FBF2E;
+    }
 
-<p>Now you probably know the game and <a href='http://worldrps.com/game-basics'>how it’s
-played</a>. Scissors beats Paper, Paper
-beats Stone, Stone beats Scissors. Hmm what? If we plot how powerful
-each Move is, we see this:</p>
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</h1>
+<h3 class="date">2014-04-28 18:00</h3>
+</div>
+<h1 id="scissors-paper-stone-and-their-ordering-or-is-it-rock-paper-scissors">Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</h1>
+<h2 id="inspiration">Inspiration</h2>
+<p>I was in the bathroom, after watching a <a href="https://www.youtube.com/watch?v=WBJ3hdcM7G8">video on Kata</a>, and fiddling with the thought of doing a Kata using Haskell. So I thought of what Kata I could try, and figured that a Scissors Paper Stone kata would be cool. I would have a chance to practice IO, hence Monads, and also some simple logic. So that led to the thought of how a game of SPS may work out…</p>
+<h2 id="scissors-paper-stone">Scissors Paper Stone</h2>
+<p>Now you probably know the game and <a href="http://worldrps.com/game-basics">how it’s played</a>. Scissors beats Paper, Paper beats Stone, Stone beats Scissors. Hmm what? If we plot how powerful each Move is, we see this:</p>
 <pre><code>&gt; Stone
 &gt;&gt;&gt; Paper
 &gt;&gt;&gt;&gt;&gt; Scissors
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; Stone   // what???</code></pre><p>This is interesting because, given a list of Scissors, Paper, and Stone,
-how would the result look like?</p>
-<p>Eventually I went to research a bit more, sometimes you just got to know
-what search terms to type, and I found <a href='https://en.wikipedia.org/wiki/Cyclic_order'>cyclic
-ordering</a>. It even
-classifies Scissors Paper Stone as a Discrete Cycle. But that didn’t
-stop me from wondering what sorting them will look like!</p>
-<h2 id="Code">Code</h2>
-
-<p>So I went ahead to explore. Code given is in Java, my most familiar
-lanugage. Code is ugly because, well its ugly. Maybe I should try to use
-polymorphism to clean it up… hm… Anyway, the <a href='https://gist.github.com/ngzhian/11373536' title='GitHub Gist for this experiment'>gist is
-here</a></p>
-<pre><code> {.sourceCode .java}
-static class Move implements Comparable&lt;Move&gt; {
-  public enum TYPE {
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; Stone   // what???</code></pre>
+<p>This is interesting because, given a list of Scissors, Paper, and Stone, how would the result look like?</p>
+<p>Eventually I went to research a bit more, sometimes you just got to know what search terms to type, and I found <a href="https://en.wikipedia.org/wiki/Cyclic_order">cyclic ordering</a>. It even classifies Scissors Paper Stone as a Discrete Cycle. But that didn’t stop me from wondering what sorting them will look like!</p>
+<h2 id="code">Code</h2>
+<p>So I went ahead to explore. Code given is in Java, my most familiar lanugage. Code is ugly because, well its ugly. Maybe I should try to use polymorphism to clean it up… hm… Anyway, the <a href="https://gist.github.com/ngzhian/11373536" title="GitHub Gist for this experiment">gist is here</a></p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="dt">static</span> <span class="kw">class</span> Move <span class="kw">implements</span> <span class="bu">Comparable</span>&lt;Move&gt; {
+  <span class="kw">public</span> <span class="kw">enum</span> TYPE {
     SCISSORS, PAPER, STONE
   };
 
-  public static int COUNT = 0;
-  private TYPE type;
-  private int count;
+  <span class="kw">public</span> <span class="dt">static</span> <span class="dt">int</span> COUNT = <span class="dv">0</span>;
+  <span class="kw">private</span> TYPE type;
+  <span class="kw">private</span> <span class="dt">int</span> count;
 
-  private static Move paper() {
-    Move move = new Move();
-    move.type = TYPE.PAPER;
-    move.count = COUNT++;
-    return move;
+  <span class="kw">private</span> <span class="dt">static</span> Move <span class="fu">paper</span>() {
+    Move move = <span class="kw">new</span> <span class="fu">Move</span>();
+    move.<span class="fu">type</span> = TYPE.<span class="fu">PAPER</span>;
+    move.<span class="fu">count</span> = COUNT++;
+    <span class="kw">return</span> move;
   }
 
-  private static Move scissors() {
-    Move move = new Move();
-    move.type = TYPE.SCISSORS;
-    move.count = COUNT++;
-    return move;
+  <span class="kw">private</span> <span class="dt">static</span> Move <span class="fu">scissors</span>() {
+    Move move = <span class="kw">new</span> <span class="fu">Move</span>();
+    move.<span class="fu">type</span> = TYPE.<span class="fu">SCISSORS</span>;
+    move.<span class="fu">count</span> = COUNT++;
+    <span class="kw">return</span> move;
   }
 
-  private static Move stone() {
-    Move move = new Move();
-    move.type = TYPE.STONE;
-    move.count = COUNT++;
-    return move;
+  <span class="kw">private</span> <span class="dt">static</span> Move <span class="fu">stone</span>() {
+    Move move = <span class="kw">new</span> <span class="fu">Move</span>();
+    move.<span class="fu">type</span> = TYPE.<span class="fu">STONE</span>;
+    move.<span class="fu">count</span> = COUNT++;
+    <span class="kw">return</span> move;
   }
 
-  public String toString() {
-    switch (type) {
-      case SCISSORS:
-        return &quot;Scissors [&quot; + count + &quot;]&quot;;
-      case PAPER:
-        return &quot;Paper [&quot; + count + &quot;]&quot;;
-      case STONE:
-        return &quot;Stone [&quot; + count + &quot;]&quot;;
+  <span class="kw">public</span> <span class="bu">String</span> <span class="fu">toString</span>() {
+    <span class="kw">switch</span> (type) {
+      <span class="kw">case</span> SCISSORS:
+        <span class="kw">return</span> <span class="st">&quot;Scissors [&quot;</span> + count + <span class="st">&quot;]&quot;</span>;
+      <span class="kw">case</span> PAPER:
+        <span class="kw">return</span> <span class="st">&quot;Paper [&quot;</span> + count + <span class="st">&quot;]&quot;</span>;
+      <span class="kw">case</span> STONE:
+        <span class="kw">return</span> <span class="st">&quot;Stone [&quot;</span> + count + <span class="st">&quot;]&quot;</span>;
     }
-    return &quot;&quot;;
+    <span class="kw">return</span> <span class="st">&quot;&quot;</span>;
   }
 
-  @Override
-  public int compareTo(Move o) {
-    switch (this.type) {
-      case SCISSORS:
-        switch (o.type) {
-          case SCISSORS:
-            return 0;
-          case PAPER:
-            return 1;
-          case STONE:
-            return -1;
+  <span class="at">@Override</span>
+  <span class="kw">public</span> <span class="dt">int</span> <span class="fu">compareTo</span>(Move o) {
+    <span class="kw">switch</span> (<span class="kw">this</span>.<span class="fu">type</span>) {
+      <span class="kw">case</span> SCISSORS:
+        <span class="kw">switch</span> (o.<span class="fu">type</span>) {
+          <span class="kw">case</span> SCISSORS:
+            <span class="kw">return</span> <span class="dv">0</span>;
+          <span class="kw">case</span> PAPER:
+            <span class="kw">return</span> <span class="dv">1</span>;
+          <span class="kw">case</span> STONE:
+            <span class="kw">return</span> -<span class="dv">1</span>;
         }
-      case PAPER:
-        switch (o.type) {
-          case SCISSORS:
-            return -1;
-          case PAPER:
-            return 0;
-          case STONE:
-            return 1;
+      <span class="kw">case</span> PAPER:
+        <span class="kw">switch</span> (o.<span class="fu">type</span>) {
+          <span class="kw">case</span> SCISSORS:
+            <span class="kw">return</span> -<span class="dv">1</span>;
+          <span class="kw">case</span> PAPER:
+            <span class="kw">return</span> <span class="dv">0</span>;
+          <span class="kw">case</span> STONE:
+            <span class="kw">return</span> <span class="dv">1</span>;
         }
-      case STONE:
-        switch (o.type) {
-          case SCISSORS:
-            return 1;
-          case PAPER:
-            return -1;
-          case STONE:
-            return 0;
+      <span class="kw">case</span> STONE:
+        <span class="kw">switch</span> (o.<span class="fu">type</span>) {
+          <span class="kw">case</span> SCISSORS:
+            <span class="kw">return</span> <span class="dv">1</span>;
+          <span class="kw">case</span> PAPER:
+            <span class="kw">return</span> -<span class="dv">1</span>;
+          <span class="kw">case</span> STONE:
+            <span class="kw">return</span> <span class="dv">0</span>;
         }
   }
-  return 0;
+  <span class="kw">return</span> <span class="dv">0</span>;
   }
-}</code></pre>
+}</code></pre></div>
+<p>This is how the <code>Move</code> class looks like, and <code>compareTo</code> basically has the rules for the entire game. After this it was just making an outer class to add <code>Move</code>s to a list and to use <code>Collections.sort</code> on them:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="kw">class</span> ScissorsPaperStone {
+  <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span>[] args) {
+    <span class="bu">List</span>&lt;Move&gt; list = <span class="kw">new</span> <span class="bu">Vector</span>&lt;Move&gt;();
 
-<p>This is how the <code>Move</code> class looks like, and <code>compareTo</code> basically has
-the rules for the entire game. After this it was just making an outer
-class to add <code>Move</code>s to a list and to use <code>Collections.sort</code> on them:</p>
-<pre><code> {.sourceCode .java}
-public class ScissorsPaperStone {
-  public static void main(String[] args) {
-    List&lt;Move&gt; list = new Vector&lt;Move&gt;();
-
-    for (Move move : list) {
-      System.out.print(move + &quot;, &quot;);
+    <span class="kw">for</span> (Move move : list) {
+      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">print</span>(move + <span class="st">&quot;, &quot;</span>);
     }
-    System.out.println();
+    <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>();
 
-    Collections.sort(list);
+    <span class="bu">Collections</span>.<span class="fu">sort</span>(list);
 
-    for (Move move : list) {
-      System.out.print(move + &quot;, &quot;);
+    <span class="kw">for</span> (Move move : list) {
+      <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">print</span>(move + <span class="st">&quot;, &quot;</span>);
     }
-    System.out.println();
+    <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>();
     }
-}</code></pre>
-
-<h2 id="Resultseverythingissorted">Results - everything is sorted</h2>
-
+}</code></pre></div>
+<h2 id="results---everything-is-sorted">Results - everything is sorted</h2>
 <p>The results are as such:</p>
-<h3 id="MovesaddedareScissorsPaperStone3times">Moves added are: (Scissors-Paper-Stone) 3 times</h3>
-
+<h3 id="moves-added-are-scissors-paper-stone-3-times">Moves added are: (Scissors-Paper-Stone) 3 times</h3>
 <pre><code>Original:
 Scissors [0], Paper [1], Stone [2], Scissors [3], Paper [4], Stone [5], Scissors [6], Paper [7], Stone [8], 
 Sorted:
-Stone [8], Paper [7], Scissors [6], Stone [5], Paper [4], Scissors [3], Stone [2], Paper [1], Scissors [0], </code></pre><h3 id="ScissorsStonePaper3times">(Scissors-Stone-Paper) 3 times</h3>
-
+Stone [8], Paper [7], Scissors [6], Stone [5], Paper [4], Scissors [3], Stone [2], Paper [1], Scissors [0], </code></pre>
+<h3 id="scissors-stone-paper-3-times">(Scissors-Stone-Paper) 3 times</h3>
 <pre><code>Original:
 Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], 
 Sorted:
-Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], </code></pre><h3 id="StonePaperScissors3times">(Stone-Paper-Scissors) 3 times</h3>
-
+Scissors [0], Stone [1], Paper [2], Scissors [3], Stone [4], Paper [5], Scissors [6], Stone [7], Paper [8], </code></pre>
+<h3 id="stone-paper-scissors-3-times">(Stone-Paper-Scissors) 3 times</h3>
 <pre><code>Original:
 Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], 
 Sorted:
-Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], </code></pre><h3 id="StoneScissorsPaper3times">(Stone-Scissors-Paper) 3 times</h3>
-
+Stone [0], Paper [1], Scissors [2], Stone [3], Paper [4], Scissors [5], Stone [6], Paper [7], Scissors [8], </code></pre>
+<h3 id="stone-scissors-paper-3-times">(Stone-Scissors-Paper) 3 times</h3>
 <pre><code>Original:
 Stone [0], Scissors [1], Paper [2], Stone [3], Scissors [4], Paper [5], Stone [6], Scissors [7], Paper [8], 
 Sorted:
-Paper [8], Scissors [7], Stone [6], Paper [5], Scissors [4], Stone [3], Paper [2], Scissors [1], Stone [0], </code></pre><h3 id="PaperScissorsStone3times">(Paper-Scissors-Stone) 3 times</h3>
-
+Paper [8], Scissors [7], Stone [6], Paper [5], Scissors [4], Stone [3], Paper [2], Scissors [1], Stone [0], </code></pre>
+<h3 id="paper-scissors-stone-3-times">(Paper-Scissors-Stone) 3 times</h3>
 <pre><code>Original:
 Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], 
 Sorted:
-Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], </code></pre><h3 id="PaperStoneScissors3times">(Paper-Stone-Scissors) 3 times</h3>
-
+Paper [0], Scissors [1], Stone [2], Paper [3], Scissors [4], Stone [5], Paper [6], Scissors [7], Stone [8], </code></pre>
+<h3 id="paper-stone-scissors-3-times">(Paper-Stone-Scissors) 3 times</h3>
 <pre><code>Original:
 Paper [0], Stone [1], Scissors [2], Paper [3], Stone [4], Scissors [5], Paper [6], Stone [7], Scissors [8], 
 Sorted:
-Scissors [8], Stone [7], Paper [6], Scissors [5], Stone [4], Paper [3], Scissors [2], Stone [1], Paper [0], </code></pre><h3 id="Somewhatrandomsequence">Somewhat random sequence</h3>
-
+Scissors [8], Stone [7], Paper [6], Scissors [5], Stone [4], Paper [3], Scissors [2], Stone [1], Paper [0], </code></pre>
+<h3 id="somewhat-random-sequence">Somewhat random sequence</h3>
 <pre><code>Original:
 Paper [0], Scissors [1], Scissors [2], Stone [3], Paper [4], Stone [5], Paper [6], Scissors [7], Paper [8], Scissors [9], Stone [10], Stone [11], 
 Sorted:
-Paper [0], Scissors [1], Scissors [2], Scissors [7], Scissors [9], Stone [3], Stone [5], Stone [10], Stone [11], Paper [4], Paper [6], Paper [8], </code></pre><h2 id="ObservationsIdontreallyknow">Observations?? I don’t really know…</h2>
-
-<p>The results are definitely sorted, if we look at them pairwise. For
-example in the somehwat random sequence, every pair of <code>Move</code>s is sored,
-but we can see that the 2nd element is <code>Scissors</code>, but the last element
-is a <code>Paper</code>, and clearly Paper does not beat Scissors.</p>
-<p>Another observation is that, sequences that are already sorted don’t
-change. For example, Paper-Scissors-Stone is already in order, so the
-whole sequence is sorted, and hence doesn’t change. But I’m not sure how
-to explain the resuts for the rest, especially for the somewhat random
-sequence.</p>
-<p>But I wanted to know a bit more about how Java does sorting, and so I
-went to a bit of digging and jotted my discoveries
-<a href='../posts/2014-04-28-how-java-sorts-objects.html' title='A journey to discover how Java sorts objects'>here</a>.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+Paper [0], Scissors [1], Scissors [2], Scissors [7], Scissors [9], Stone [3], Stone [5], Stone [10], Stone [11], Paper [4], Paper [6], Paper [8], </code></pre>
+<h2 id="observations-i-dont-really-know">Observations?? I don’t really know…</h2>
+<p>The results are definitely sorted, if we look at them pairwise. For example in the somehwat random sequence, every pair of <code>Move</code>s is sored, but we can see that the 2nd element is <code>Scissors</code>, but the last element is a <code>Paper</code>, and clearly Paper does not beat Scissors.</p>
+<p>Another observation is that, sequences that are already sorted don’t change. For example, Paper-Scissors-Stone is already in order, so the whole sequence is sorted, and hence doesn’t change. But I’m not sure how to explain the resuts for the rest, especially for the somewhat random sequence.</p>
+<p>But I wanted to know a bit more about how Java does sorting, and so I went to a bit of digging and jotted my discoveries <a href="../posts/2014-04-28-how-java-sorts-objects.html" title="A journey to discover how Java sorts objects">here</a>.</p>
+</section>
+</body>
 </html>

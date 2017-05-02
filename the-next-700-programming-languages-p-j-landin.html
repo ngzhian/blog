@@ -1,103 +1,155 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="author" content="Ng Zhi An">
-    <title>The Next 700 Programming Languages by P. J. Landin</title>
-    <link rel="stylesheet" href="./styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
-  </head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>The Next 700 Programming Languages by P. J. Landin</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
 
-  <body>
-    <div class="content">
-      <section id="content" class="body">
-        <a class="home" href="./index.html">Home</a>
-        <h1>
-        The Next 700 Programming Languages by P. J. Landin
-        </h1>
-        <time class="published">
-        2017-03-11
-        </time>
-        <div class="entry-content">
-        <blockquote><p>This is a series of posts where I jot down my learnings from computer science papers I&#39;ve read. Previously, <a href='./paper-axiomatic-basis-for-computer-programming.html'>An Axiomatic Basis for Computer Programming</a></p>
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">The Next 700 Programming Languages by P. J. Landin</h1>
+<h3 class="date">2017-03-11 15:12</h3>
+</div>
+<blockquote>
+<p>This is a series of posts where I jot down my learnings from computer science papers I've read. Previously, <a href="./paper-axiomatic-basis-for-computer-programming.html">An Axiomatic Basis for Computer Programming</a></p>
 </blockquote>
-
-<p><a href='https://archive.alvb.in/msc/11_infomtpt/papers/the-next-700_Landin_dk.pdf'>Paper (pdf)</a></p>
-<p>This blog post summarizes key points/learnings from the paper.
-I chose this paper after hearing a <a href='https://www.youtube.com/watch?v=1qBHf8DrWR8'>talk</a> by John Hughes and Mary Sheeran.
-I thought it would be fun to examine what Landin thought about the programming language (PL) landscape 50 years ago, and contrast it with what we have now.</p>
-<h2 id="ISWIM">ISWIM</h2>
-
-<p>The paper describes a framework, called <strong>ISWIM</strong> (for If you See What I Mean), for programming languages.
-The framework defines rules around 2 features that all programming languages provide:</p>
-<ol><li><p>User-coined names</p>
-</li><li><p>Conventions about characterizing functional relationships</p>
-</li></ol>
-
+<p><a href="https://archive.alvb.in/msc/11_infomtpt/papers/the-next-700_Landin_dk.pdf">Paper (pdf)</a></p>
+<p>This blog post summarizes key points/learnings from the paper. I chose this paper after hearing a <a href="https://www.youtube.com/watch?v=1qBHf8DrWR8">talk</a> by John Hughes and Mary Sheeran. I thought it would be fun to examine what Landin thought about the programming language (PL) landscape 50 years ago, and contrast it with what we have now.</p>
+<h2 id="iswim">ISWIM</h2>
+<p>The paper describes a framework, called <strong>ISWIM</strong> (for If you See What I Mean), for programming languages. The framework defines rules around 2 features that all programming languages provide:</p>
+<ol style="list-style-type: decimal">
+<li><p>User-coined names</p></li>
+<li><p>Conventions about characterizing functional relationships</p></li>
+</ol>
 <p>ISWIM attemps to be a general purpose system, that can be made oriented for a specific problem by picking an appropriate set of <em>primitives</em>.</p>
-<blockquote><p>&quot;Most programming languages are partly a way of expressing things in terms of other things and partly a basic set of given things&quot;</p>
+<blockquote>
+<p>&quot;Most programming languages are partly a way of expressing things in terms of other things and partly a basic set of given things&quot;</p>
 </blockquote>
-
-<h2 id="LevelsofISWIM">Levels of ISWIM</h2>
-
+<h2 id="levels-of-iswim">Levels of ISWIM</h2>
 <p>Landin defines the 4 levels of abstraction for ISWIM:</p>
-<ol><li><p>Physical ISWIM</p>
-</li><li><p>Logical ISWIM</p>
-</li><li><p>Abstract ISWIM</p>
-</li><li><p>Applicative Expressions (AEs)</p>
-</li></ol>
-
+<ol style="list-style-type: decimal">
+<li><p>Physical ISWIM</p></li>
+<li><p>Logical ISWIM</p></li>
+<li><p>Abstract ISWIM</p></li>
+<li><p>Applicative Expressions (AEs)</p></li>
+</ol>
 <p>Physical ISWIM is the actual text that is seen and written by programmers.</p>
 <p>Logical ISWIM can be thought of lex tokens output by a Lexer (<code>&lt;=</code> is the less than equals operator).</p>
 <p>The abstract ISWIM is the Abstract Syntax Tree (AST) for the program.</p>
 <p>And the AEs is the lowest level bytecode/assembly that is executed.</p>
-<p>This separation of layers gives ISWIM its <strong>flexibility</strong>.
-For example, &quot;new&quot; languages can be written that runs on the same Abstract Machine that executes AEs, as long as these &quot;new&quot; languages can be transformed in AEs.
-(This is similar to how various X-to-JavaScript languages, such as ClojureScript, BuckleScript, GopherJS, etc., works.)</p>
+<p>This separation of layers gives ISWIM its <strong>flexibility</strong>. For example, &quot;new&quot; languages can be written that runs on the same Abstract Machine that executes AEs, as long as these &quot;new&quot; languages can be transformed in AEs. (This is similar to how various X-to-JavaScript languages, such as ClojureScript, BuckleScript, GopherJS, etc., works.)</p>
 <p>For the abstract ISWIM, Landin defines a <em>where-expression</em>, which looks like how mathematical formulas are broken down:</p>
 <pre><code>f(b+2c) + f(2b-c) where f(x) = x * (x+1)</code></pre>
-
-<h2 id="Characteristicequivalences">Characteristic equivalences</h2>
-
-<p>Landin describes in details the <em>characteristic equivalences</em> of ISWIM expressions, i.e. when are two expressions in ISWIM equal.
-Through these equivalence relations, <strong>different expressions at the abstract level can be transformed into the same expressions at the AEs level</strong>.
-The benefit is that now you can have a <strong>smaller core</strong>.</p>
+<h2 id="characteristic-equivalences">Characteristic equivalences</h2>
+<p>Landin describes in details the <em>characteristic equivalences</em> of ISWIM expressions, i.e. when are two expressions in ISWIM equal. Through these equivalence relations, <strong>different expressions at the abstract level can be transformed into the same expressions at the AEs level</strong>. The benefit is that now you can have a <strong>smaller core</strong>.</p>
 <p>User-coined names (which is a major feature that ISWIM claims) introduced via let expressions, function definitions, have equivalent where-expressions.</p>
 <p>So the benefit is obvious here: instead of separately supporting various ways of user-coined names, they are all equivalent to where-expressions, and at the AEs level, it only needs to know about where-expressions. I think this is now more commonly known as <strong>desugaring</strong>.</p>
 <p>The basis of all these beautiful transformation are 3 things:</p>
-<ol><li><p>Expressions have nesting subexpression structure</p>
-</li><li><p>Each subexpression denotes something (a number, string, etc.)</p>
-</li><li><p>What the expression denotes depends only on the values of its subexpressions</p>
-</li></ol>
-
+<ol style="list-style-type: decimal">
+<li><p>Expressions have nesting subexpression structure</p></li>
+<li><p>Each subexpression denotes something (a number, string, etc.)</p></li>
+<li><p>What the expression denotes depends only on the values of its subexpressions</p></li>
+</ol>
 <p>These 3 properties make expressions easier to construct and understand, and Landin suggests that there is an</p>
-<blockquote><p>&quot;evolutionary trend towards &#39;bigger right hand sides&#39; in place of strings of small, explicitly sequenced assignments and jumps&quot;.</p>
+<blockquote>
+<p>&quot;evolutionary trend towards 'bigger right hand sides' in place of strings of small, explicitly sequenced assignments and jumps&quot;.</p>
 </blockquote>
-
-<p>From my experience with programming, we don&#39;t actually have bigger right hand sides.
-Rather we bury more expressions within curly braces in classes and methods, at least in object-oriented languages like Java.
-In functional languages, I think this is quite true. I find myself using <code>let</code> expressions more in OCaml.
-One explanation is that OCaml infers types well, I don&#39;t have to specify types whenever I use <code>let</code>, which reduces the friction.</p>
-<h2 id="Discussiononindentationbasedsyntaxanddeclarativelanguages">Discussion on indentation-based syntax and declarative languages</h2>
-
+<p>From my experience with programming, we don't actually have bigger right hand sides. Rather we bury more expressions within curly braces in classes and methods, at least in object-oriented languages like Java. In functional languages, I think this is quite true. I find myself using <code>let</code> expressions more in OCaml. One explanation is that OCaml infers types well, I don't have to specify types whenever I use <code>let</code>, which reduces the friction.</p>
+<h2 id="discussion-on-indentation-based-syntax-and-declarative-languages">Discussion on indentation-based syntax and declarative languages</h2>
 <p>At the end of the paper, there is a discussion section from various computer scientists about the indentation based syntax of ISWIM, and what declarative languages are.</p>
-<p>The general consensus around not using indentation for structure is when you have a block that has multiple lines, spanning multiple pages.
-In that case it makes it harder, when on a new page, which containing block an indented block belongs to.</p>
-<p>The definition of declarative language starts of as &quot;languages which do not contain assignment statements or jumps&quot;, as offered by Strachey.
-As the discussion progresses, the definition moves towards having a &quot;situation where you have specified everything you want to know, though the exact sequence in which you evoke the various operations to cause the solution is left unspecified&quot;, offered by Ingerman. This is closer to the current, common understanding of declarative languages, think MySQL.</p>
-<h2 id="Thoughts">Thoughts</h2>
-
-<p>This paper has been quite a challenging but interesting read.
-It is challenging because I have to try and put myself into the PL world 50 years ago, and it&#39;s hard to imagine what it was like then, and the motivations behind this paper.
-It is interesting because I can spot a little of ISWIM in the languages I use now, both object-oriented and functional.
-It is also interesting that Landin advocates strongly for expressions with no side effects, but somehow it didn&#39;t become the default way of doing things.</p>
-
-        </div>
-      </section>
-      <footer>
-      Powered by <a href="https://github.com/ngzhian/ocs">ocs</a>, a static blog generator written in OCaml.
-      </footer>
-    </div>
-  </body>
+<p>The general consensus around not using indentation for structure is when you have a block that has multiple lines, spanning multiple pages. In that case it makes it harder, when on a new page, which containing block an indented block belongs to.</p>
+<p>The definition of declarative language starts of as &quot;languages which do not contain assignment statements or jumps&quot;, as offered by Strachey. As the discussion progresses, the definition moves towards having a &quot;situation where you have specified everything you want to know, though the exact sequence in which you evoke the various operations to cause the solution is left unspecified&quot;, offered by Ingerman. This is closer to the current, common understanding of declarative languages, think MySQL.</p>
+<h2 id="thoughts">Thoughts</h2>
+<p>This paper has been quite a challenging but interesting read. It is challenging because I have to try and put myself into the PL world 50 years ago, and it's hard to imagine what it was like then, and the motivations behind this paper. It is interesting because I can spot a little of ISWIM in the languages I use now, both object-oriented and functional. It is also interesting that Landin advocates strongly for expressions with no side effects, but somehow it didn't become the default way of doing things.</p>
+</section>
+</body>
 </html>
