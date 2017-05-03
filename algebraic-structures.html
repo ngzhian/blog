@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Algebraic structures</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Algebraic structures</h1>
+<h3 class="date">2017-05-03 16:06</h3>
+</div>
+<p>I have encountered these <em>algebraic structures</em> in my readings often, but can't seem to remember them. I hope that jotting them down in this manner will help me to recall and recognize the patterns.</p>
+<p>The list of algebraic structures here are in order from most general (less requirements) to least general (more requirements).</p>
+<p>These structures are also called <em>group-like</em>, because they similar to a <em>group</em> (which is a structure we will get to), but with either more or less requirements.</p>
+<h1 id="group-like-algebraic-structures">Group-like algebraic structures</h1>
+<p>A group-like algebraic structure is made up of 2 components:</p>
+<ol style="list-style-type: decimal">
+<li>A set of elements, <em><code>A</code></em></li>
+<li>An operation, <code>•</code></li>
+</ol>
+<p>The operation combines any two elements in the set to form a third element: given the elements <code>a</code> and <code>b</code>, you can combine them to get <code>a • b</code>.</p>
+<p>Below I will list out the different kinds of structures classified as group-like, and enumerate requirements the structure must fulfill.</p>
+<h2 id="magma">Magma</h2>
+<p>A magma is the simplest structure: the operation only has 1 requirement, which is</p>
+<ul>
+<li>Closure, for any <code>a</code> and <code>b</code>, <code>a • b</code> must be in the set of elements</li>
+</ul>
+<p>In other words, you can never get out of this structure by applying operations.</p>
+<h2 id="semigroup">Semigroup</h2>
+<p>A semigroup is a magma with 1 more requirement on the operation:</p>
+<ul>
+<li>Associativity, which is that for any <code>a</code>, <code>b</code>, and <code>c</code>, <code>(a • b) • c = a • (b • c)</code></li>
+</ul>
+<p>The order in which the operation is applied does not matter, as long as the order of the operands stay the same.</p>
+<h3 id="example">Example</h3>
+<p>The set of positive integers with addition as the operation.</p>
+<p>Let the set <code>A</code> be the set of positive integers: 1, 2, ..., and the operation be <code>+</code>.</p>
+<ul>
+<li>Closure is satisfied: <code>a + b</code> is still a positive integer in <code>A</code></li>
+<li>Associativity is satisfied: <code>(a + b) + c = a + (b + c)</code>, since <code>+</code> is associative</li>
+</ul>
+<p>Mnemonic: semi is half, half is 1/<strong>2</strong>, so a semigroup has <strong>2</strong> requirements.</p>
+<h2 id="monoid">Monoid</h2>
+<p>A monoid is a semigroup with 1 more requirement on the set of elements:</p>
+<ul>
+<li>Identity, there must be an identity element, <code>e</code>, such that for all <code>a</code>, <code>e • a = a = a • e</code></li>
+</ul>
+<p>In other words, an operation applied to the identity effectively does nothing.</p>
+<h3 id="example-1">Example</h3>
+<p>The set of natural numbers with addition as the operation, 0 as the identity.</p>
+<p>Let the set <code>A</code> be the set of natural numbers: 0, 1, 2, ..., and the operation be <code>+</code>.</p>
+<ul>
+<li>Closure and associativity are satisfied, see semigroup</li>
+<li>Identity is satisfied with 0 as the identity element: <code>0 + a = a = a + 0</code></li>
+</ul>
+<p>Mnemonic: Mono<strong>i</strong>d, the <strong>i</strong> is for identity</p>
+<h2 id="group">Group</h2>
+<p>A group is a monoid with 1 more requirement on the set of elements:</p>
+<ul>
+<li>Inverse, for every <code>a</code> in the set, there is an inverse <code>-a</code>, such that <code>a • -a = -a • a = e</code></li>
+</ul>
+<p>Applying the operation to an element an its inverse gives you the identity, they cancel out.</p>
+<h3 id="example-2">Example</h3>
+<p>The set of integers with addition as the operation, 0 as the identity, the inverse of each integer is its negation.</p>
+<p>Let the set <code>A</code> be the set of integers: ..., -2, -1, 0, 1, 2, ..., and the operation be <code>+</code>.</p>
+<ul>
+<li>Closure, associativity, and identity are satisfied, see monoid</li>
+<li>Inverse is satisfied with <code>-a</code> being the inverse of <code>a</code>: <code>a + -a = -a + a = 0</code></li>
+</ul>
+<p>(Observe that the set of integers can form a group with another operation: multiplication, and 1 as the identity)</p>
+<h2 id="abelian-group">Abelian group</h2>
+<p>An Abelian group is a group with 1 more requirement on the operation:</p>
+<ul>
+<li>Commutativity, for all <code>a</code> and <code>b</code>, <code>a • b = b • a</code></li>
+</ul>
+<p>Note that we had some restricted form of this in monoids (for the identity) and in groups (for inverses). This restriction now extends to all elements in the set.</p>
+<h3 id="example-3">Example</h3>
+<p>The set of integers with addition as the operation, 0 as the identity, negation as the inverse.</p>
+<ul>
+<li>Closure, associativity, identity, and inverse are satisfied, see group</li>
+<li>Commutativity is is satisfied <code>a + b = b + a</code>, since <code>+</code> is commutative</li>
+</ul>
+<h2 id="references">References</h2>
+<p>Wikipedia is a fantastic resource and goes into much further depth, and has an <a href="https://en.wikipedia.org/wiki/Magma_(algebra)#ref_Alpha">illustrative table</a> comparing the aforementioned structures.</p>
+<p><a href="https://en.wikipedia.org/wiki/Magma_(algebra)">Magma</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Semigroup">Semigroup</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Monoid">Monoid</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Group_(mathematics)">Group</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Abelian_group">Abelian group</a></p>
+</section>
+</body>
+</html>

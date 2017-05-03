@@ -1,0 +1,125 @@
+---
+title: Algebraic structures
+date: 2017-05-03 16:06
+...
+
+I have encountered these *algebraic structures* in my readings often,
+but can't seem to remember them.
+I hope that jotting them down in this manner will help me to recall and recognize the patterns.
+
+The list of algebraic structures here are in order from
+most general (less requirements) to least general (more requirements).
+
+These structures are also called *group-like*, because they similar to a *group*
+(which is a structure we will get to), but with either more or less requirements.
+
+# Group-like algebraic structures
+
+A group-like algebraic structure is made up of 2 components:
+
+1. A set of elements, *`A`*
+2. An operation, `•`
+
+The operation combines any two elements in the set to form a third element:
+given the elements `a` and `b`, you can combine them to get `a • b`.
+
+Below I will list out the different kinds of structures classified as group-like,
+and enumerate requirements the structure must fulfill.
+
+## Magma
+
+A magma is the simplest structure: the operation only has 1 requirement, which is
+
+- Closure, for any `a` and `b`, `a • b` must be in the set of elements
+
+In other words, you can never get out of this structure by applying operations.
+
+## Semigroup
+
+A semigroup is a magma with 1 more requirement on the operation:
+
+- Associativity, which is that for any `a`, `b`, and `c`, `(a • b) • c = a • (b • c)`
+
+The order in which the operation is applied does not matter, as long as the order of the operands stay the same.
+
+### Example
+
+The set of positive integers with addition as the operation.
+
+Let the set `A` be the set of positive integers: 1, 2, ..., and the operation be `+`.
+
+- Closure is satisfied: `a + b` is still a positive integer in `A`
+- Associativity is satisfied: `(a + b) + c = a + (b + c)`, since `+` is associative
+
+Mnemonic: semi is half, half is 1/**2**, so a semigroup has **2** requirements.
+
+## Monoid
+
+A monoid is a semigroup with 1 more requirement on the set of elements:
+
+- Identity, there must be an identity element, `e`, such that for all `a`, `e • a = a = a • e`
+
+In other words, an operation applied to the identity effectively does nothing.
+
+### Example
+
+The set of natural numbers with addition as the operation, 0 as the identity.
+
+Let the set `A` be the set of natural numbers: 0, 1, 2, ..., and the operation be `+`.
+
+- Closure and associativity are satisfied, see semigroup
+- Identity is satisfied with 0 as the identity element: `0 + a = a = a + 0`
+
+Mnemonic: Mono**i**d, the **i** is for identity
+
+## Group
+
+A group is a monoid with 1 more requirement on the set of elements:
+
+- Inverse, for every `a` in the set, there is an inverse `-a`, such that `a • -a = -a • a = e`
+
+Applying the operation to an element an its inverse gives you the identity, they cancel out.
+
+### Example
+
+The set of integers with addition as the operation, 0 as the identity, the inverse of each integer is its negation.
+
+Let the set `A` be the set of integers: ..., -2, -1, 0, 1, 2, ..., and the operation be `+`.
+
+- Closure, associativity, and identity are satisfied, see monoid
+- Inverse is satisfied with `-a` being the inverse of `a`: `a + -a = -a + a = 0`
+
+(Observe that the set of integers can form a group with another operation: multiplication,
+and 1 as the identity)
+
+## Abelian group
+
+An Abelian group is a group with 1 more requirement on the operation:
+
+- Commutativity, for all `a` and `b`, `a • b = b • a`
+
+Note that we had some restricted form of this in monoids (for the identity) and in groups (for inverses). This restriction now extends to all elements in the set.
+
+### Example
+
+The set of integers with addition as the operation, 0 as the identity, negation as the inverse.
+
+- Closure, associativity, identity, and inverse are satisfied, see group
+- Commutativity is is satisfied `a + b = b + a`, since `+` is commutative
+
+## References
+
+Wikipedia is a fantastic resource and goes into much further depth,
+and has an
+[illustrative table](https://en.wikipedia.org/wiki/Magma_(algebra)#ref_Alpha)
+comparing the aforementioned structures.
+
+[Magma](https://en.wikipedia.org/wiki/Magma_(algebra))
+
+[Semigroup](https://en.wikipedia.org/wiki/Semigroup)
+
+[Monoid](https://en.wikipedia.org/wiki/Monoid)
+
+[Group](https://en.wikipedia.org/wiki/Group_(mathematics))
+
+[Abelian group](https://en.wikipedia.org/wiki/Abelian_group)
