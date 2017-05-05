@@ -160,16 +160,16 @@ Here I tackle some challenges:
 2. Draw a picture of a category whose only objects are the types `Void`, `()`, and `Bool`; with arrows corresponding to all possible functions between these types.
 
     ```
-    Void -id-----> Void # Rule 3
+    Void ---id---> Void # Rule 3
     Void -absurd-> ()
     Void -absurd-> Bool
-    ()   -id-----> () # Rule 3
-    ()   -true---> Bool # always returns true
-    ()   -false--> Bool # always returns false
-    Bool -id-----> Bool # Rule 3
-    Bool -not-----> Bool # negation, turns true to false
-    Bool -not-----> Bool # negation, turns false to true
-    Bool -unit---> ()
+    ()   ---id---> () # Rule 3
+    ()   --true--> Bool # always returns true
+    ()   --false-> Bool # always returns false
+    Bool ---id---> Bool # Rule 3
+    Bool ---not--> Bool # negation, turns true to false
+    Bool ---not--> Bool # negation, turns false to true
+    Bool --unit--> ()
     ```
 
 ## Categories Great and Small
@@ -192,7 +192,7 @@ Then, to build a category, we can add arrows until all the rules are satisfied.
 1. Start by adding identity arrow at each node (Rule 3),
 2. Then add composition arrows (Rule 1),
 3. More composition arrows might become required to satisfy the rules, thus
-4. GOTO 2
+4. `GOTO` 2
 
 The category might end up with infinitely many arrows.
 (And Milewski assures us that it's okay, so let's trust him).
@@ -221,7 +221,7 @@ This example is not a thin category (omitting the identity morphism) because the
 a ---> b
 a ---> b
 b ---> a
-a != b
+(a != b)
 ```
 
 If we make the less than or equal relation stronger,
@@ -232,10 +232,12 @@ This is not a partial order because `a` and `b` are related to each other, but t
 ```
 a ---> b
 b ---> a
-a != b
+(a != b)
 ```
 
-If we enforce that any two objects are in a relation with each other, then we have a *linear order* or *total order*.
+If we enforce that any two objects are in a relation with each other
+(or equivalently, every object is related to one another),
+then we have a *linear order* or *total order*.
 
 
 For any objects `a` and `b` in a category `C`, the set of morphisms from `a` to `b` is called the *hom-set*, written as `C(a,b)`.
@@ -272,6 +274,7 @@ The set of natural numbers is then a single object (no peeking into the object),
 with many morphisms (infinite), which are the adders (including the identity `add0`).
 So we observe that a monoid (when viewed as a category) is a single object category!
 
+The other way holds as well, i.e. a single object category forms a monoid.
 From a single object category, we can extract a unique set with a binary operator.
 This set is the hom-set `M(m, m)`, i.e. the set of all morphisms from `m` to `m`,
 where `m` is the single object in the category M.
