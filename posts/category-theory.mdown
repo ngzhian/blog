@@ -150,13 +150,12 @@ Here I tackle some challenges:
 
 1. How many different functions are there from `Bool` to `Bool`? 4, or 2 ^ 2:
 
-    `True -> True`,
-
-    `True -> False`,
-
-    `False -> True`,
-
-    `False -> False`.
+    ```
+    True -> True
+    True -> False
+    False -> True
+    False -> False
+    ```
 
 2. Draw a picture of a category whose only objects are the types `Void`, `()`, and `Bool`; with arrows corresponding to all possible functions between these types.
 

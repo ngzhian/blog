@@ -97,7 +97,7 @@
 <a class="home" href="./index.html">Home</a>
 <div id="header">
 <h1 class="title">Category theory</h1>
-<h3 class="date">2017-05-05 14:00</h3>
+<h3 class="date">2017-05-05 19:00</h3>
 </div>
 <p>This will be a scratchpad of notes I'm taking down as I'm reading Bartosz Milewski's <a href="https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/">Category Theory for Programmers</a>. As such, this will only contain key points, summary of ideas, and attempts at posed challenges. His posts are very detailed, the expositions are clear, presents cute illustrations, and contains exercises that will help check your understanding.</p>
 <h2 id="why-category-theory">Why category theory</h2>
@@ -170,10 +170,10 @@ idA ∘ f = f</code></pre>
 <p>Here I tackle some challenges:</p>
 <ol style="list-style-type: decimal">
 <li><p>How many different functions are there from <code>Bool</code> to <code>Bool</code>? 4, or 2 ^ 2:</p>
-<p><code>True -&gt; True</code>,</p>
-<p><code>True -&gt; False</code>,</p>
-<p><code>False -&gt; True</code>,</p>
-<p><code>False -&gt; False</code>.</p></li>
+<pre><code>True -&gt; True
+True -&gt; False
+False -&gt; True
+False -&gt; False</code></pre></li>
 <li><p>Draw a picture of a category whose only objects are the types <code>Void</code>, <code>()</code>, and <code>Bool</code>; with arrows corresponding to all possible functions between these types.</p>
 <pre><code>Void -id-----&gt; Void # Rule 3
 Void -absurd-&gt; ()
