@@ -1,0 +1,313 @@
+---
+title: Category theory
+date: 2017-05-05 19:00
+...
+
+This will be a scratchpad of notes I'm taking down as I'm reading Bartosz Milewski's
+[Category Theory for Programmers](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/).
+As such, this will only contain key points, summary of ideas, and attempts at posed challenges.
+His posts are very detailed, the expositions are clear, presents cute illustrations, and contains exercises that will help check your understanding.
+
+## Why category theory
+
+In this [preface](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
+for this entire series, Milewski details why he is writing this series, and why he thinks a programmer should read it.
+
+To summarize, *category theory* has a lot of interesting ideas for programmers.
+For example, the key idea in category, composition, is "the essence of programming".
+
+He also brings up the topic of multicore and parallelism as an upcoming paradigm, which functional programming is suitable for.
+This new environment forces us to think in a different way and adapt, and category theory is a way to help us accomplish that.
+
+## Category: The Essence of Composition
+
+From Bartosz Milewski's [Category: The Essence of Composition](https://bartoszmilewski.com/2014/11/04/category-the-essence-of-composition/)
+
+A category has *objects* and *arrows*, also called *morphisms*, that start from one object and end up at another object.
+This makes a category easy to represent in diagrams, looking like a directed graph.
+
+<!-- > In the rest of the post, and in Milewski's posts as well, we use the uppercase alphabets `A`, `B`, `C`, `D` to stand for an object, the lowercase alphabets `f`, `g`, `h` to stand for morphisms (unless otherwise stated). -->
+
+### Rule 1: Morphisms compose
+
+- If there is a morphism `f` from `A` to `B`, and
+- a morphism `g` from `B` to `C`,
+- there must be a morphism `A` to `C`.
+
+The morphism from `A` to `C` is the *composition* of the previous 2 morphisms,
+and is usually written `g ∘ f`.
+
+As an simplified and in accurate example example, in shell we have the pipe notation:
+
+```
+ls | wc # counts the number of files in the current directory
+```
+
+First there is a morphism from directory to list of files, `ls`, and a morphism from a list of files to a number, `wc`.
+The pipe `|` is the composition operator, that composes `ls` and `wc` into a morphism,
+`ls | wc` that takes directory to a number.
+
+<!-- Usually, composition is represented by a `∘` symbol. Where as the pipe operator `|` goes from left to right, `ls .` then `wc`, `∘` goes from right to left. -->
+
+<!-- ``` -->
+<!-- wc ∘ ls . -->
+<!-- ``` -->
+
+<!-- Which means `ls .`, then `wc`. -->
+
+<!-- Here we observe a nice effect of composition working from right to left. -->
+<!-- We can imagine defining a new function, `count_files` as the composition of `wc` and `ls`. -->
+
+<!-- ``` -->
+<!-- count_files = wc ∘ ls -->
+<!-- ``` -->
+
+<!-- This doesn't have the argument built into it, unlike using the `pipe` operator, and thus can be used anywhere -->
+
+<!-- ``` -->
+<!-- count_files ~/ -->
+<!-- ``` -->
+
+### Rule 2: Composition is associative
+
+An example of an *associative* operator is `+` on natural numbers.
+
+```
+1 + (2 + 3) = (1 + 2) + 3
+```
+
+In the world of category, for any three morphisms, `f`, `g`, `h` that can be composed,
+the order of composition does not matter, as long as the order of morphisms don't change.
+
+```
+h ∘ (g ∘f) = (h ∘ g) ∘f
+```
+
+Thus, we can omit parenthesis and write it simply as:
+
+```
+h ∘ g ∘f
+```
+
+### Rule 3: Every object has a unit of composition
+
+Every object `A`, has a morphism that goes straight to itself.
+
+This morphism can be composed with any other morphism that starts or ends at A, giving back the same morphism.
+
+We call this morphism the *identity* on `A`, written as `idA`:
+
+```
+f ∘ idA = f
+idA ∘ f = f
+```
+
+> At first thought, I was reminded of a [monoid](https://blog.ngzhian.com/algebraic-structures.html#monoid). A monoid requires a set of elements (morphisms), an associative operation (composition), and a identity element. In a category the identity element depends on the object to be composed with, whereas a monoid requires an identity element that works for all members in the set. So that's where the similarities break down.
+
+As a concluding thought, this is one of my favourite quote from Bartosz Milewski in this chapter, talking about objects:
+
+> All you can ever know about it is how it relates to other object — how it connects with them using arrows. ... The moment you have to dig into the implementation of the object in order to understand how to compose it with other objects, you’ve lost the advantages of your programming paradigm.
+
+I will attempt a few of the challenges he has set:
+
+1. Is Facebook a category, with people as objects and friendships as morphisms? *No, friendships don't compose (see Rule 1); a friend (morphism from B to C) of my friend (morphism from A to B) is not immediately my friend (no morphism from A to C).*
+2. When is a direct graph a category? *When every node has an edge to itself (Rule 3), and there exists a transitive (if we think in terms of sets and relations) relationship (Rule 1) between nodes, i.e. if there is an edge from A to B, and an edge from B to C, there must be an edge from A to B.*
+
+# Types and Functions
+
+From Bartosz Milewski's [Types and Functions](https://bartoszmilewski.com/2014/11/24/types-and-functions/)
+
+In the last chapter, we talked about objects and morphisms, which sounds very general and make
+it hard to see any obvious practical use.
+In this section we can specialize the concepts into *types* and *functions*, something closer
+to what programmers deal with.
+
+Morphisms compose, but only if the target of one morphism matches the source of the other.
+For example, a morphism from `A` to `B` can be composed with a morphism from `B` to `C`
+(the `B` matches) but not with a morphism from `Y` to `Z`.
+
+This is similar to the restrictions in a programming language with a strong type system:
+the objects `A`, `B`, `C`, are types, and the morphisms are functions from one type to another.
+
+Types can be thought of as a *set of values*: a `Bool` type is a set containing the values `True` and `False`, the `Integer` type can be thought of as an infinite set containing all integers (this is the case in Haskell).
+
+This association of types with sets has some subtleties. However throughout the post Milewski works with a special category **Set**, in which objects are sets, and morphisms are functions.
+**Set** allows us break the rule and peek inside its objects.
+The goal is to generalize from this, and slowly shake the need to look into objects.
+
+If we have an empty set, what is the corresponding type? In Haskell, this is called `Void`, and this type has no values.
+Which means that we can define a function that takes a `Void`, but we can never call it,
+because we cannot provide a value of type `Void` to apply the function to (because there are none!)
+
+How about the singleton set, a set with only 1 member? The type has only one value, and it is usually called *unit*, represented in many languages as `()`.
+If we have a function from unit to a type, say `Bool`, we can implement it in two ways: return a `True` or return a `False`.
+In fact, for any type `A`, there are as many functions from unit to `A` as there are members in `A`.
+
+How about a function from `A` to unit? The only thing that the function can do is return unit.
+For any type `A`, there is a single function from `A` to unit.
+
+Here I tackle some challenges:
+
+1. How many different functions are there from `Bool` to `Bool`? 4, or 2 ^ 2:
+
+    `True -> True`,
+
+    `True -> False`,
+
+    `False -> True`,
+
+    `False -> False`.
+
+2. Draw a picture of a category whose only objects are the types `Void`, `()`, and `Bool`; with arrows corresponding to all possible functions between these types.
+
+    ```
+    Void -id-----> Void # Rule 3
+    Void -absurd-> ()
+    Void -absurd-> Bool
+    ()   -id-----> () # Rule 3
+    ()   -true---> Bool # always returns true
+    ()   -false--> Bool # always returns false
+    Bool -id-----> Bool # Rule 3
+    Bool -not-----> Bool # negation, turns true to false
+    Bool -not-----> Bool # negation, turns false to true
+    Bool -unit---> ()
+    ```
+
+## Categories Great and Small
+
+From Bartosz Milewski's [Categories Great and Small](https://bartoszmilewski.com/2014/12/05/categories-great-and-small/)
+
+This chapter examines a few different examples of categories.
+
+### An empty category
+
+Just like an empty set has no elements, an empty category has no objects, and thus no morphisms.
+This might not seem useful initially, but Milewski hints at the future,
+when we consider the category of categories.
+
+### Building a category from a graph
+
+Given any directed graph, we can treat each node as an object, and edges as morphisms.
+Then, to build a category, we can add arrows until all the rules are satisfied.
+
+1. Start by adding identity arrow at each node (Rule 3),
+2. Then add composition arrows (Rule 1),
+3. More composition arrows might become required to satisfy the rules, thus
+4. GOTO 2
+
+The category might end up with infinitely many arrows.
+(And Milewski assures us that it's okay, so let's trust him).
+
+Such a category is called a *free category* generated by a given graph.
+We are adding the minimum number of items to a structure to fulfill the laws,
+this process is called a *free construction*.
+
+### Orders
+
+Instead of plain directed graphs, imagine edges as relations: an edge exists between two nodes if they are related.
+Given the less than or equal relation, we have a category,
+with the nodes as objects,
+and the edges/relations as morphisms.
+
+- Rule 1 is satisfied because the relation is so morphisms compose,
+- Rule 2 is satisfied because relation is associative,
+- Rule 3 is satisfied, every object is less than or equal to itself,
+
+The set with such a relation is called a *preorder*, and a preorder is a category.
+
+In categorical terms, a preorder will have at most one morphism going from any object `a` to any object `b`, this is known as a *thin category*.
+This example is not a thin category (omitting the identity morphism) because there are two morphisms from `a` to `b`.
+
+```
+a ---> b
+a ---> b
+b ---> a
+a != b
+```
+
+If we make the less than or equal relation stronger,
+such that if `a <= b`, and `b <= a`, then `a` and `b` must be the same object,
+we have a *partial order*.
+This is not a partial order because `a` and `b` are related to each other, but they are not the same object, i.e. there are cycles.
+
+```
+a ---> b
+b ---> a
+a != b
+```
+
+If we enforce that any two objects are in a relation with each other, then we have a *linear order* or *total order*.
+
+
+For any objects `a` and `b` in a category `C`, the set of morphisms from `a` to `b` is called the *hom-set*, written as `C(a,b)`.
+In a pre-order, every hom-set is either the singleton (definition of thin category),
+or the empty set (not related).
+Trivially, the hom-set `C(a,a)` is the singleton set consisting of the identity morphism on `a`.
+
+
+### Monoid as Set and Category
+
+A *monoid* can be thought of as a set with an identity element, and a binary operator that is associative.
+An example of a monoid is the set of strings with the empty string, `""`, as the identity element,
+and the string concatenation operator, usually `++` or `^`, as the associative binary operator.
+
+With this idea of a monoid as a set, we can try to imagine monoid as a category.
+To do that, we need to stop thinking of sets and elements and relations,
+and instead think of objects and morphisms.
+
+Here's an idea we can try: the application of a binary operation can be thought of as the action of "shifting" things around in the set.
+
+For example, adding 5 to a natural number, let's call this `add5`. It maps 0 to 5, 1 to 6.
+`add5` is a function defined on the set of natural numbers.
+There are many more functions that does something similar, for example `add1`, `add2`, `add10`, etc.
+In fact there are as many of these functions as there are natural numbers, infinite!
+We can call each of these `addN` functions the "adder" of `n`.
+
+Adders can compose: the composition of `add5` and `add1` is effectively an `add6`.
+Composing adders is equivalent to composing additions (Rule 1).
+The composition of adders is associative, since addition is associative (Rule 2).
+
+There is a special adder, `add0`, which is equivalent to the identity function on the set of natural numbers, it doesn't move anything around (Rule 3).
+
+The set of natural numbers is then a single object (no peeking into the object),
+with many morphisms (infinite), which are the adders (including the identity `add0`).
+So we observe that a monoid (when viewed as a category) is a single object category!
+
+From a single object category, we can extract a unique set with a binary operator.
+This set is the hom-set `M(m, m)`, i.e. the set of all morphisms from `m` to `m`,
+where `m` is the single object in the category M.
+We can then define a binary operator for this set, call it `+`,
+such that for any two morphisms `f` and `g`, the application of this operator is the
+composition of these two morphisms.
+The identity morphism is the identity element of the hom-set under the operator `+`.
+
+> To put it in more concrete terms, in the world of natural numbers,
+if we imagine the morphisms in the category `M` as curried additions, such as `add5`,
+the hom-set contains these curried additions,
+and you can apply a binary operator to any two of these morphisms.
+This unique binary operator in the hom-set is defined by the composition of the
+curried additions in `M`.
+Notice how the binary operator is uniquely defined by the compositions.
+Both `+` and `x` are candidate binary operators for the set of natural numbers to form
+a monoid, but the morphisms defined in 0M` requires `+` to be selected.
+If we define the morphisms differently, we end up with a different operator.
+
+I shall attempt some of the challenges:
+
+1. Generate a free category from a graph with one node and no edges.
+*Following the free construction, we need to add the identity morphism, that's it.
+We can try composing the identity morphism, but by Rule 3, composing identity with anything
+gives you identity, so we don't have any new arrows to add.*
+2. Generate a free category from a graph with one node and one directed edge.
+*Following the free construction, we first add the identity morphism.
+Since we have one directed edge (that is not the identity morphism), we can compose it
+with itself. The resulting composition can be composed with again, so we get an
+infinite number of morphisms that starts and ends at the node.*
+4. What kind of order is this? A set of sets with the inclusion relation: A is included in B if every element of A is also an element of B.
+*Partial order. If every element of A is in B, and every element in B is in A, then they are the same set.*
+5. Considering that `Bool` is a set of two values True and False, show that it forms two (set-theoretical) monoids with respect to, respectively, operator && (AND) and || (OR).
+*Monoid with respect to &&: set of natural numbers, True as identity element, && is associative.
+Monoid with respect to || set of natural numbers, False as identity element, || is associative.*
+6. Represent the `Bool` monoid with the AND operator as a category: List the morphisms and their rules of composition.
+*Two morphisms representing (AND True) and (AND False). (AND True) is also the identity morphism.
+The composition of morphisms follow the binary application of the boolean operators, the composition of (AND True) with any morphism f is f, the composition of (AND False) with any morphism g is (AND False)*
