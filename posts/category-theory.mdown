@@ -106,7 +106,7 @@ idA ∘ f = f
 
 As a concluding thought, this is one of my favourite quote from Bartosz Milewski in this chapter, talking about objects:
 
-> All you can ever know about it is how it relates to other object — how it connects with them using arrows. ... The moment you have to dig into the implementation of the object in order to understand how to compose it with other objects, you’ve lost the advantages of your programming paradigm.
+> All you can ever know about it is how it relates to other object — how it connects with them using arrows. ... The moment you have to dig into the implementation of the object in order to understand how to compose it with other objects, you have lost the advantages of your programming paradigm.
 
 I will attempt a few of the challenges he has set:
 
@@ -208,8 +208,8 @@ Given the less than or equal relation, we have a category,
 with the nodes as objects,
 and the edges/relations as morphisms.
 
-- Rule 1 is satisfied because the relation is so morphisms compose,
-- Rule 2 is satisfied because relation is associative,
+- Rule 1 is satisfied because the relation is transitive so morphisms compose,
+- Rule 2 is satisfied because the composition of this relation is associative,
 - Rule 3 is satisfied, every object is less than or equal to itself,
 
 The set with such a relation is called a *preorder*, and a preorder is a category.
@@ -268,7 +268,11 @@ Adders can compose: the composition of `add5` and `add1` is effectively an `add6
 Composing adders is equivalent to composing additions (Rule 1).
 The composition of adders is associative, since addition is associative (Rule 2).
 
+> This composition of adders is called `mappend` in Haskell
+
 There is a special adder, `add0`, which is equivalent to the identity function on the set of natural numbers, it doesn't move anything around (Rule 3).
+
+> This identity of adders is called `mempty` in Haskell
 
 The set of natural numbers is then a single object (no peeking into the object),
 with many morphisms (infinite), which are the adders (including the identity `add0`).
@@ -313,3 +317,1519 @@ Monoid with respect to || set of natural numbers, False as identity element, || 
 6. Represent the `Bool` monoid with the AND operator as a category: List the morphisms and their rules of composition.
 *Two morphisms representing (AND True) and (AND False). (AND True) is also the identity morphism.
 The composition of morphisms follow the binary application of the boolean operators, the composition of (AND True) with any morphism f is f, the composition of (AND False) with any morphism g is (AND False)*
+
+
+## Kleisli Categories
+
+From Bartosz Milewski's [Kleisli Categories](https://bartoszmilewski.com/2014/12/23/kleisli-categories/)
+
+We start with an example of logging to motivate this section.
+
+Suppose we have two pure functions:
+
+```haskell
+toUpper :: String -> String
+toWords :: String -> [String]
+```
+
+`toUpper` turns a string uppercase, and `toWords` breaks up a string by whitespace.
+
+```haskell
+toUpper "abc" = "ABC"
+toWords "a b c" = ["a", "b", "c"]
+```
+
+And we can define a composition of these two functions as
+
+```haskell
+toUpperWords :: String -> [String]
+toUpperWords = toWords . toUpper
+```
+
+We might want to have an audit trail (or log) of the function calls.
+The usual imperative way to do this might be to append to a global log,
+which will cause these two functions no longer be pure.
+<!-- Another way is for the functions to take in the current log, and append to the log, -->
+<!-- but -->
+
+Another way is to *embellish* these functions,
+which means to add something to the return value.
+
+```haskell
+toUpper :: String -> (String, String)
+toWords :: String -> ([String], String)
+```
+
+We make the functions return a pair of values now, where the first value
+in the pair is the original return value, and the second value in the pair
+is the string we want to log.
+
+Our original function composition no longer works, because now the types don't match.
+
+So we have to be more explicit: we call these functions and aggregate the logs:
+
+1. Call `toUpper` on an input string to get a value and a log,
+2. Call `toWords` on the value from 1, to get a list of words, and another log,
+3. Return the value from 2, and append the log from 1 and 2 together
+
+In pseudocode:
+
+```haskell
+toUpperWords :: String -> ([String], String)
+toUpperWords s =
+    let (s1, l1) = toUpper s
+        (s2, l2) = toWords s1
+    in (s2, l1 ++ l2)
+```
+
+This becomes repetitive very quickly, and hides the original purpose,
+mixing the logic of logging and concatenating logs with the logic of
+`toUpper` and `toWords`.
+
+We can then try to come up with a new kind of embellished function composition:
+
+1. Call the first embellished function,
+2. Call the second embellished function with the first value of 1,
+3. Concatenate the second value of 1 and 2,
+4. Return a pair of the first value from 2, and the concatenated value from 3.
+
+We can first make up a more generic type for this sort of embellished function:
+
+```haskell
+type Writer a = (a, String)
+toUpper      :: String -> Writer String
+toWords      :: String -> Writer [String]
+toUpperWords :: String -> Writer [String]
+```
+
+Where `Writer [String]` is a type where the first component has type `[String]`,
+and the second component has type `String` representing the log.
+
+The pseudocode looks something like this:
+
+```haskell
+embellished_compose :: (a -> Writer b) ->
+                       (b -> Writer c) ->
+                       (a -> Writer c)
+embellished_compose f g s =
+    let (s1, l1) = f s
+        (s2, l2) = g s1
+    in (s2, l1 + l2)
+```
+
+And thus, `toUpperWords` looks like this:
+
+```haskell
+toUpperWords :: String -> Writer [String]
+toUpperWords s = embellished_compose toUpper toWords
+```
+
+Now we can look at this new composition from a categorical point of view.
+The types are still objects, and the morphisms are the embellished functions.
+The important point is that the morphism is still considered an arrow between
+`String` and `String`, or `String` and `[String]`, although the function]
+actually returns a pair.
+
+In this new category, `embellished_compose` is composition, and the identity morphism will
+take a type to the same type, and not add anything to the log:
+
+```haskell
+return :: a -> Writer a
+return s = (s, "")
+```
+
+Does this category fulfill all the rules? Yes!
+
+1. Morphisms compose, as shown by `embellished_compose`, satisfying Rule 1,
+2. Composition is associative, because at the first part of the pair we have
+function composition (which is associative) and on the second part we have concatenation, which is associative, satisfying Rule 2,
+3. Every object has a unit of composition, the `return` function, satisfying Rule 3.
+
+> The log here is actually monoidal, `""` is `mempty`, and `+` is `mappend`.
+
+### Kleisli Categories
+
+This category we have constructed is actually an example of a *Kleisli category*, a category based on a monad.
+The objects of a Kleisli category are the types of the underlying programming language,
+and morphisms from `A` to `B` are functions from the types `A` to an embellished `B`.
+
+The morphisms in the above example are from the objects `String` to `String`,
+and `String` to `[String]`,
+whereas the functions were from the types `String` to `Writer String`,
+and `String` to `Write [String]`.
+
+Each Kleisli category defines it's own embellishment,
+composition of morphisms, and identity morphisms.
+The example Kleisli category above is based on a *write monad*, which has the
+embellishments, composition, and identity has described.
+
+Previously when we thought of programming languages as categories,
+we modelled types as objects and functions as morphisms,
+and defined categorical compositions as function compositions,
+which merely passes the output of one function as the input to another.
+Here we defined a different category,
+where the categorical compositions are not the usual function compositions:
+it does more than passing output as input,
+and (in this example) can append to a log as well.
+
+Here I attempt the challenges (I don't write C++ so the answers probably won't run,
+but will hint at the solution):
+
+1. Construct the Kleisli category for partial functions
+(define composition and identity).
+*The composition of two embellished function f and g first calls f with the input.
+If it is not valid, return invalid.
+Otherwise pass the return value of f to g, and returns the result.
+The identity is a function that a valid optional with value of type A.*
+
+    ```cpp
+    auto const compose = [](auto m1, auto m2) {
+        return [m1, m2](auto x) {
+            auto p1 = m1(x);
+            if (p1.isValid()) return m2(p1.value())
+            // this is optional<B>, where B is the return type of m2
+            else return optional()
+        }
+    }
+
+    template<class A>
+    optional<A> identity(A x) {
+      return optional(x);
+    }
+    ```
+
+2. Implement the embellished function `safe_reciprocal` that returns a
+valid reciprocal of its argument, if it’s different from zero.
+
+    ```cpp
+    optional<double> safe_reciprocal(double x) {
+      if (x == 0) return optional<double>{};
+      else return optional<double>{1/x};
+    }
+    ```
+
+3. Compose `safe_root` and `safe_reciprocal` to implement `safe_root_reciprocal` that calculates sqrt(1/x) whenever possible.
+
+    ```cpp
+    optional<double> safe_root_reciprocal(double x) {
+      return compose(safe_reciprocal, safe_root)(x);
+    }
+    ```
+
+## Products and Coproducts
+
+From Bartosz Milewski's [Products and Coproducts](https://bartoszmilewski.com/2015/01/07/products-and-coproducts/)
+
+### Universal construction
+
+In a category, we only have objects and morphisms.
+An object can be singled out by describing its relationships with other objects based on morphisms.
+We can pick a pattern of relationships, a shape, and try to find occurrences of this
+pattern in the category. We can then rank these occurrences and find the best-fit.
+This is the *universal construction*.
+
+### Initial object
+
+There are as many single-objects as there are in a category.
+We can rank these objects using a trait *initial*.
+An object `A` is more initial than `B` if there is a morphism from `A` to `B`.
+Then, the most initial object has morphisms to every other object.
+
+This object might not exist, or there may be more than one such object.
+Then, if we restrict the category to be ordered, such as a preorder,
+then we are able to find the *initial object*, which has one and only one morphism
+going to any object in the category.
+
+This restriction to ordered categories still does not guarantee uniqueness of the initial object,
+only up to isomorphism, explained later.
+
+For example, the set of natural numbers has an initial object, 0, with the less than or equal
+relation. The set of integers however, is infinite, and has no initial object.
+In the category of types and function, the initial object is `Void`, the empty set of values.
+The morphism from `Void` to any other type is this `absurd :: Void -> a`.
+
+### Terminal object
+
+If we think of the initial object as the bottom, then maybe we can have a top, called
+the *terminal object*. We define this by tweaking our ranking slightly:
+an object `A` is more terminal than `B` if there is a morphism from `B` to `A`.
+The most terminal object is then the object which has one and only one morphism
+coming to it from any object in the category.
+
+Similar to the initial object, the terminal object might not exist,
+or there might be more than one such object, again up to isomorphism.
+
+For example, the set of integers does not have a terminal object.
+In the category of types and functions, the type which has one and only one arrow
+going to it from any other type is `unit`, or `()`,
+and the function is `unit : a -> ()`.
+
+### Duality
+
+There is a symmetry between the definition of the initial object and terminal object.
+The difference is direction of the morphism, and hence the ranking.
+In fact, for any category, we can define the opposite category with all the morphisms flipped,
+and the compositions flipped, and identity identical.
+
+This duality means that for every pattern in category theory, you get the opposite one for free:
+product and coproduct, monad and comonad, etc.
+
+So, the terminal object can be thought of as the initial object in the opposite category.
+
+### Isomorphisms
+
+Isomorphic objects look the same, the structure have a one-to-one mapping.
+An isomorphism is a pair of morphisms, one being the inverse of the other.
+So for objects `A` and `B`, the morphism `f` from `A` to `B` and the morphism
+`g` from `B` to `A`, and they are the inverse of each other.
+`f` and `g` thus forms an isomorphism.
+
+We can examine isomorphisms in the context of composition and identity:
+
+```
+f ∘ g = id
+g ∘ f = id
+```
+
+The composition of isomorphisms is the identity morphism, since they are the inverse of each other.
+
+Looking back at how we defined initial objects,
+any two initial objects `a` and `b` must be isomorphic.
+
+Since `a` and `b` are initial objects,
+there is one, and only one, morphism `f` from `a` to `b`,
+and a morphism `g` from `b` to `a`.
+Thus, `f ∘ g` must be a morphism from `a` to `a`.
+Since `a` is initial, there is only one morphism from `a` to `a`.
+And since `a` is an object in a category, it must have an identity morphism.
+Therefore, `f ∘ g` must be the identity morphism and is unique.
+A symmetrical proof of `g ∘ f` can be made.
+And by duality, this proof can be used for showing uniqueness up to isomorphism for terminal objects as well.
+
+Observe that because of the initial object conditions, `f` and `g` are unique as well.
+Thus we actually have uniqueness up to unique isomorphism,
+i.e. not only is the initial object unique up to isomorphism,
+the isomorphisms are themselves unique.
+
+What we have done so far is to use universal construction to find the initial object
+(unique up to isomorphism) and the terminal object (unique up to isomorphism).
+Let's spot more patterns
+
+### Products
+
+The cartesian product of two sets is a set of pairs, but we shouldn't be able to
+peek into the objects. So let's think in terms of morphisms and compositions.
+
+Let's define a pattern using two morphism from the product, `c`,
+to it's constituents, `a` and `b`,
+`p` is a morphism from `c` to `a`, and
+`q` is a morphism from `c` to `b`.
+In this example, `p` and `q` can also be called *projections*.
+
+```haskell
+p :: c -> a
+q :: c -> b
+```
+
+Again, there might be lots of candidates `c` that fits into this pattern.
+For example, for the constituent types `Int` and `Bool`,
+a candidate for their product is `Int`. Then,
+
+```haskell
+p :: Int -> Int
+p x = x
+
+q :: Int -> Bool
+q _ = True
+```
+
+This candidate seems too small, `q` doesn't look sensible.
+
+Another candidate is a triple of `(Int, Int, Bool)`:
+
+```haskell
+p :: (Int, Int, Bool) -> Int
+p (x, _, _) = x
+
+q :: (Int, Int, Bool) -> Bool
+q (_, _, b) = b
+```
+
+This candidate seems too big, the second `Int` is never used.
+
+How can we then rank these candidates?
+We can say that a candidate `c` is better than another candidate `c'` if
+there is a morphism `m` from `c'` to `c`.
+We also want the projects `p` and `q` of `c`, to be better than
+the projections `p'` and `q'` of `c'`.
+Better here means that one can be constructed in terms of another:
+
+```haskell
+p' = p . m
+q' = q . m
+```
+
+Another way to say this is that `m` factorizes `p'` and `q'`.
+
+Let's have another candidate for c, `(Int, Bool)`, and show that this is the best candidate:
+
+```haskell
+p :: (Int, Bool) -> Int
+p (x, _) = x
+
+q :: (Int, Bool) -> Bool
+q (_, b) = b
+```
+
+First we construct a morphism `m` from `c'` (`Int`) to `c` (`(Int, Bool)`):
+
+```haskell
+m :: Int -> (Int, Bool)
+m x = (x, True)
+```
+
+And observe that `p'` and `q'` is defined in terms of `p`, `q` and m:
+
+```haskell
+p' x = (p . m) x = x
+q' x = (q . m) x = True
+```
+
+First we construct a morphism `m` from `c'` (`(Int, Int, Bool)`) to `c` (`(Int, Bool)`):
+
+```haskell
+m :: (Int, Int, Bool) -> (Int, Bool)
+m (x, _, b) = (x, b)
+```
+
+And observe that `p'` and `q'` is defined in terms of `p`, `q` and m:
+
+```haskell
+p' (x, y, b) = (p . m) (x, y, b) = x
+q' (x, y, b) = (q . m) (x, y, b) = b
+```
+
+Thus, `(Int, Bool)` is better than the first two candidates we came up with.
+How about the other way round?
+
+For the first candidate, `Int`, we lose information: we will never be able to get back
+the value of the `Bool`, since it always returns `True`.
+
+For the second candidate, there are more than one way to factorize `p'` and `q'`.
+If we try to define an `m'` from `(Int, Bool)` to `(Int, Int, Bool)`, we can do it in many ways:
+
+```haskell
+m' (x, b) = (x, x, b)
+m' (x, b) = (x, 42, b)
+...
+m' (x, b) = (x, 99, b)
+```
+
+From our examples, we see that for any type `c`, with projections `p` and `q`,
+there is a unique `m` from `c` to the cartesian product `(a, b)`, that factorizes them.
+Thus, this makes the cartesian product the best match.
+
+Categorically, a product of two objects `a` and `b`, is the object `c`
+with two projections, `p` from `c` to `a` and `q` from `c` to `b`,
+such that any other object `c'` with two projections
+`p'` from `c'` to `a` and `q'` from `c'` to `b'`,
+there is a unique morphism `m` from `c'` to `c`,
+such that `m` factorizes `p'` and `q'`.
+
+### Coproduct
+
+By duality, the product has a dual.
+When we reverse all the arrows in a product, we get a coproduct.
+Define two morphisms `i` and `j` from objects `a` and `b` to an object `c`.
+`i` and `j` can also be called *injections*.
+
+Suppose there is another object `c'`, and there are two morphisms
+`i'` from `a` to `c'` and `j'` from `b` to `c'`.
+
+We say that `c` is better than `c'` if there is a morphism `m`
+from `c` to `c'` (when we flip the arrows, the ranking is flipped too),
+that factorizes the injections.
+
+```haskell
+i' = m . i
+j' = m . j
+```
+
+The best candidate `c`, is called a coproduct, and if exists,
+is unique up to unique isomorphism.
+
+In the category of types (as sets) and functions, the coproduct is the disjoint union
+of two sets. In the example below, the type `Toss` is the coproduct, the disjoint union of the
+sets `Heads` and `Tails`. `Heads` and `Tails` also act as the morphisms `i` and `j`.
+
+```haskell
+data Toss = Heads | Tails
+```
+
+Here I attempt some challenges:
+
+1. Show that the terminal object is unique up to unique isomorphism.
+*The terminal object, has one and only one morphism from any object to it.
+Assume we have two terminal objects `a` and `b`, there must be a morphism `f`
+from `a` to `b`, and a morphism `g` from `b` to `a`.
+The composition of these two morphisms `f ∘ g` is a morphism from `b` to `b`.
+Because `b` is a terminal object, there can only be one morphism from `b` to `b`.
+And because `b` is an object in a category, it has an identity morphism.
+Thus the morphism from `b` to `b` is the identity morphism and must be unique.
+The same argument can be made for the composition `g ∘ f`.
+Therefore we have unique isomorphisms between `a` and `b`,
+and the terminal object is unique up to isomorphism.*
+2. What is a product of two objects in a poset? Hint: Use the universal construction.
+*Let `c` be an object with projections `p` to an object `a`, and `q` to object `b`.
+When this is a poset, it means that `c` is related to `a` and `b`.
+Let `c'` be an object with projections `p'` and `q'`.
+Then there exists a unique morphism `m` from `c'` to `c`, which means that `c'`
+is related to `c`. So the product of two objects in a poset is the greatest
+(defined by the ordering) object that is related to both `a` and `b`.
+Using less than equal relation as an example,
+the product of two numbers, is the smaller number.
+Using sets and subset relation as an example,
+the product of two sets is the intersection.*
+3. What is a coproduct of two objects in a poset?
+*Let `c` be an object with injections `i` from `a`, and `j` from `b`.
+Let `c'` be an object with injections `i'` from `a` and `j'` from `b'`.
+For `c` to be a coproduct of `a` and `b`, there must be a morphism `m`
+from `c` to `c'`.
+In a poset this means that `c` must be ordered less than `c'`.
+For example, with the less than or equal relation, the coproduct of two objects
+is the bigger object.
+For example, with the subset relation, the coproduct of two objects is the union of the sets.*
+
+## Simple Algebraic Data Types
+
+From Bartosz Milewski's [Simple Algebraic Data Types](https://bartoszmilewski.com/2015/01/13/simple-algebraic-data-types/)
+
+### Product types
+
+In many languages, a product of two types is implemented as a pair.
+Pairs are not commutative, only up to isomorphism.
+
+For example, `(Bool, Int)` is not the same as `(Int, Bool)`, although they carry the
+same information. The isomorphism between these two types is the `swap` function,
+which is it's own inverse.
+
+```haskell
+swap :: (a, b) -> (b, a)
+swap (x, y) = (y, x)
+```
+
+Pairs can be nested as well, for example `((a, b), c)`, a pair of two types,
+the first value being a pair `(a, b)`, and the second value a `c`.
+
+This is isomorphic to the nested pair `(a, (b, c))`.
+
+If you view the `,` as a binary operation to create a pair out of two types,
+then `,` looks like an associative operator.
+
+Also, the pair of any type `a` with unit, `()`, is isomorphic to `a` itself.
+
+In this sense, the category of sets (in programming languages), is a monoidal category.
+It is a category, that's also a monoid.
+The binary associative operator is the product, and the identity element is the unit type, `()`.
+
+### Coproduct types (Sum types)
+
+A sum type can be expressed in Haskell as:
+
+```haskell
+data Either a b = Left a | Right b
+```
+
+Similar to pairs, `Either` is commutative up to isomorphism, and can be nested.
+
+The category of sets is also a monoidal category with the disjoint sum as the binary operator,
+and `Void` as the identity element.
+
+### Algebra of Types
+
+We can try to view types as numbers,
+`Void` maps to zero, `()` to one.
+Then product can be thought of as multiplication, and coproduct as addition.
+
+Previously we defined a pair `(a, ())` and said that it was isomorphic to `a`.
+In this sense, `a * 1 = a`.
+
++----------+----------------------------------+
+| Numbers  | Types                            |
++==========+==================================+
+| 0        | Void                             |
++----------+----------------------------------+
+| 1        | Unit                             |
++----------+----------------------------------+
+| a * 1    | (a, ())                          |
++----------+----------------------------------+
+| a + b    | Either a b = Left a | Right b    |
++----------+----------------------------------+
+
+In natural numbers, we have distribution of multiplication over addition:
+
+```
+a * (b + c) = a * b + a * c
+```
+
+The left hand side translates, at the types level, to:
+
+```
+(a, Either b c)
+```
+
+And the right hand side to:
+
+```
+Either (a, c) (b, c)
+```
+
+To show that these two are equal up to isomorphism, we have to find a morphism `f`
+from the left hand side to the right hand side, and the inverse morphism `g`:
+
+```
+f :: (a, Either b c) -> Either (a, c) (b, c)
+f (a, Left b) = Left a b
+f (a, Right c) = Right b c
+
+g :: Either (a, c) (b, c) -> (a, Either b c)
+g Left (a, b) = (a, Left b)
+g Right (a, c) = (a, Right c)
+```
+
+A structure with two intertwined monoids of these sort is called a *semiring*.
+
+> Specifically, a semiring is a structure with
+an associative, commutative addition operator with an identity `0`,
+a associative multiplication operator with an identity `1`,
+the multiplication left and right distributes over addition,
+and multiplication by `0` gives `0`.
+
+### Recursive types
+
+The `List` type is common defined as a coproduct of `Nil`, indicating the end of the list,
+and `Cons a (List a)`, indicating an element of type `a` and the rest of the list:
+
+```haskell
+List a = Nil | Cons a (List a)
+```
+
+In terms of an algebraic equation, letting `x = List a`:
+
+```
+x = 1 + (a * x)
+```
+
+Note that `Nil` is isomorphic to `()`, and hence `1`. And `Cons` is isomorphic to `,`,
+or the pair operator, and so it's the `*` of two types, `a` and `List a`,
+which we defined to be `x`.
+
+We can try to solve this algebraic equation by expansion:
+
+```
+x = 1 + (a * x)
+x = 1 + (a * (1 + a * x)) = 1 + a + a * a * x
+...
+x = 1 + a + a * a + ... + a * a * a * a...
+```
+
+Which can be interpreted as, `x` (`List a`), is either `Nil` (empty), or
+a singleton (`a`), or a pair of values (`a * a`), or three values (`a * a * a`), ...
+
+> I previously wrote a
+[post](./some-type-about-sum-type-and-more.html)
+that goes a bit more into the relationship between numbers and types.
+
+There is also a relationship between types and intuitionistic logic, specifically
+`Void` and false, `()` and true, product with and, coproduct with or.
+This relationship is more commonly known as the *Curry-Howard isomorphism*,
+and also popularized as *propositions as types*.
+
+Here I attempt some challenges:
+
+1. Show the isomorphism between Maybe a and Either () a.
+
+    ```haskell
+    f :: Maybe a -> Either () a
+    f Nothing = Left ()
+    f Just x = Right x
+
+    g :: Either () a -> Maybe a
+    g Left _ = Nothing
+    g Right x = Just x
+    ```
+
+2. Show that `a + a = 2 * a` holds for types (up to isomorphism).
+Remember that 2 corresponds to `Bool`, according to our translation table.
+
+    ```haskell
+    f :: Either a a -> (Bool, a)
+    f Left x = (True, x)
+    f Right x = (False, x)
+
+    g :: (Bool, a) -> Either a a
+    g True x = Left x
+    g False x = Right x
+    ```
+
+## Functors
+
+From Bartosz Milewski's [Functors](https://bartoszmilewski.com/2015/01/20/functors/)
+
+A functor is a mapping between categories.
+A functor `F` from category `C` to category `D` maps objects and morphisms in `C` to `D`.
+
+Given an object `a` in `C`, the functor `F` maps `a` to the object `F a` in `D`.
+We call `F a` the image of `a` in `D`.
+
+Given a morphism `f` from `a` to `b` in `C`, the functor `F` will map `f` to
+a morphism `F f` from `F a` to `F b`.
+
+A functor preserves the source and destinations of a morphism under `F`,
+and also preserves composition of morphism.
+
+If `h` is a composition of morphisms `f` and `g`, `h = g . f`, then the image under F
+is a composition `F h = F g . F f`.
+
+And the functor also preserves the identity morphisms: for an object `A`,
+it maps the identity morphism `idA` from `A ` to `A` in `C` to
+`F idA` in `D`,
+which is also the identity morphism `idFA` from `F a` to `F a` in `D`.
+
+### Functors in our programming language
+
+In the category of types and functions in programming,
+we can talk about functors that map this category onto itself,
+such functors where the source and target category is the same is called an *endofunctor*.
+
+A functor in the this category then maps types to types, and functions to functions.
+
+The mapping of types to types has been seen previously, it's the case of
+building a type parameterised by another type, such as a `Maybe a`, or an `Either a b`.
+
+```haskell
+data Maybe a = Nothing | Just a
+data Either a b = Left a | Right b
+```
+
+`Maybe` is a *type constructor* that maps types to types.
+Give it a type `Bool` and you will get a type `Maybe Bool`.
+
+We can try making `Maybe` a functor.
+It already maps types to types, what remains is to map functions to functions.
+Given a function `f :: a -> b`, a functor should map `f` to a function
+`f' :: Maybe a -> Maybe b`. Such a function `f'` can be defined as such:
+
+```haskell
+f' :: Maybe a -> Maybe b
+f' Nothing = Nothing
+f' (Just x) = Just (f x)
+```
+
+We can also define a higher order function to map the function `f` to `f'`::
+
+```haskell
+fmap :: (a -> b) -> (Maybe a -> Maybe b)
+fmap _ Nothing = Nothing
+fmap f (Just x) = Just (f x)
+```
+
+`fmap` can be said to *lift* a function from the type of `f` to the type of `f'`,
+so now the lifted function can work on values of type `Maybe a`
+
+The final steps to show that `Maybe` (which maps types to types),
+and `fmap` (which maps morphisms to morphisms) form a function,
+we need to prove the functor laws,
+namely that they preserve composition and identity.
+
+Let's start with identity, we need to prove that `fmap` preserves identity morphisms:
+
+```haskell
+fmap id = id
+-- case one, Nothing
+fmap id Nothing = Nothing
+                = id Nothing
+-- case two, Just x
+fmap id (Just x) = (Just id x)
+                 = (Just x)
+                 = id (Just x)
+```
+
+Then show that `fmap` preserves composition:
+
+```haskell
+fmap (g . f) = fmap g . fmap f
+-- case one, Nothing
+fmap (g . f) Nothing = Nothing
+                     = fmap g Nothing
+                     = fmap g (fmap f Nothing)
+                     = (fmap g . fmap f) Nothing
+-- case two, Just x
+fmap (g . f) (Just x) = Just ((g . f) x)
+                 = Just (g (f x))
+                 = fmap g (Just (f x))
+                 = fmap g (fmap f (Just x))
+                 = (fmap g . fmap f) (Just x)
+```
+
+Thus we show that `Maybe` and `fmap` forms a functor.
+
+### Typeclass
+
+Haskell uses a *typeclass* mechanism to specify a functor.
+It specifies that types adhere to a common interface.
+For example we can specify a `Functor` typeclass.
+
+```haskell
+class Functor f where
+    fmap :: (a -> b) -> f a -> f b
+```
+
+This defines that `f` is a `Functor` if it supports an `fmap` function.
+
+And to declare that a type is a functor, for example `Maybe`,
+we declare the type as an *instance* of a typeclass:
+
+```haskell
+instance Functor Maybe where
+    fmap _ Nothing = Nothing
+    fmap f (Just x) = Just (f x)
+```
+
+This implementation of `fmap` for `Maybe` is exactly what we came up with earlier.
+
+### List functor
+
+We can try to spot more functors in our programming language.
+Good candidates for functors are type constructors, since they map types to types,
+such as `List`.
+
+The `List` type constructor maps a type `a` to a type `List a`, and its `fmap` function
+looks takes a `a -> b` to `List a -> List b`.
+
+We can make `List` an instance of a `Functor` as such:
+
+```haskell
+instance Functor List where
+    fmap _ Nil = Nil
+    fmap f (Cons x tl) = Cons (f x) (fmap f tl)
+```
+
+What's happening here is that we are applying `f` to the head of the list,
+and recursively using `fmap` to apply `f` to the rest of the list (the tail).
+
+Let's talk about the type of functions.
+Whenever we are defining a function, we use `->` in the type signature, such as `f :: a -> b`.
+We can think of `->` as an infix type constructor that takes a two types,
+`a` and `b`, to a type `a -> b`.
+
+This is different from our previous examples, where the type constructors only take one type.
+
+If we provide only one type to `->`, we get `r ->`, or as a prefix `(->) r`,
+which is a whole family of type constructors parameterized by `r`.
+
+To satisfy our functor laws, we want to lift `a -> b` to `(r -> a) -> (r -> b)`.
+
+```haskell
+instance Functor ((->) r) where
+    fmap :: (a -> b) -> (r -> a) -> (r -> b)
+    fmap f g = f . g
+```
+
+The type constructor `((->) r)` and the `fmap` implementation forms the *reader functor*.
+
+### Const functor
+
+Another functor is the `Const` functor, which ignores it's second argument,
+so the implementation of `fmap` can ignore the function argument too:
+
+```haskell
+data Const c a = Const c
+
+instance Functor (Const c) where
+    fmap _ (Const v) = Const v
+```
+
+### Functor composition
+
+Functors between categories compose as well, just like morphisms compose.
+
+When you compose two functors, the object mappings compose, and the morphisms compose too:
+identity morphisms and composition of morphisms in the initial category are still
+identity morphisms and composition of morphism in the final category.
+
+Like morphisms in a category, functor composition is associative
+(since the mapping of object and morphisms is associative),
+and there is also an identity functor in every category
+(maps every object and morphism to itself).
+
+So functors seem to act like morphisms, if that's the case, what category is it?
+A category of categories, where the objects are categories and morphisms are functors.
+A category of *all* categories would get us into trouble, leading us into
+[Russell's Paradox](https://en.wikipedia.org/wiki/Russell%27s_paradox).
+Instead there is a category of all *small* categories called **Cat**,
+which itself is *big*, so does not contain itself.
+
+Here I attempt some challenges:
+
+1. Can we turn the `Maybe` type constructor into a functor by defining:
+*One of the functor laws is that of preserving identity morphisms.
+However, this definition of fmap does not do that:*
+
+    ```haskell
+    fmap id (Just x) = Nothing
+                    != Just x
+                     = id (Just x)
+    ```
+
+2. Prove functor laws for the reader functor. Hint: it’s really simple.
+
+    ```haskell
+    fmap id = id
+    fmap id r = id . r
+              = r
+              = id r
+
+    fmap (f . g) r = (f . g) . r
+                   = f . (g . r)
+                   = fmap f (g . r)
+                   = fmap f (fmap g r)
+                   = (fmap f . fmap g) r
+    ```
+
+3. Prove the functor laws for the list functor. Assume that the laws are true for the tail part of the list you’re applying it to (in other words, use induction).
+
+
+    ```haskell
+    fmap id ls = id ls
+    fmap id Nil = Nil
+                = id Nil
+    fmap id (Cons x t) = Cons (id x) (fmap id t)
+                       = Cons x t -- inductive hypothesis, fmap id t = t
+                       = id (Const x t)
+
+    fmap (f . g) Nil = Nil
+                     = fmap f Nil
+                     = fmap f (fmap g Nil)
+                     = (fmap f . fmap g) Nil
+    fmap (f . g) (Cons x t) = Cons ((f . g) x) (fmap (f . g) t)
+                            -- induction hypothesis fmap (f . g) t = (fmap f . fmap g) t
+                            = Cons (f (g x)) ((fmap f . fmap g) t)
+                            = Cons (f (g x)) (fmap f (fmap g t))
+                            = fmap f (Cons (g x) (fmap g t))
+                            = fmap f (fmap g (Const x t))
+                            = (fmap f . fmap g) (Const x t)
+    ```
+
+## Functoriality
+
+From Bartosz Milewski's [Functoriality](https://bartoszmilewski.com/2015/02/03/functoriality/)
+
+## Bifunctors
+
+A functor maps objects and morphisms from one category to another.
+A functor with two arguments is called a *bifunctor*.
+
+A bifunctor maps every pair of objects, one from category `C`, one from category `D`,
+to an object in category `E`.
+In other words, it is mapping the cartesian product of `C` and `D` to `E`.
+
+Also, it has to map a pair of morphisms, one from `C` and one from `D`, to `E`.
+It maps the cartesian product of morphisms in `C` and `D` to `E`.
+These morphisms in `E` can also be composed:
+
+```
+(f , g) . (f', g') = (f . f', g . g')
+```
+
+This composition of pairs of morphisms is associative and has an identity `(id, id)`
+
+If you have a mapping from a pair of categories to a third category,
+and it can be proven that it acts like a functor on each argument separately,
+then the mapping is a bifunctor.
+
+A functor in Haskell is a typeclass that takes one argument,
+a bifunctor in Haskell is then a typeclass that takes two arguments.
+
+```haskell
+class Bifunctor f where
+    bimap :: (a -> c) -> (b -> d) -> f a b -> f c d
+    bimap g h = first g . second h
+    first :: (a -> c) -> f a b -> f c b
+    first g = bimap g id
+    second :: (b -> d) -> f a b -> f a d
+    second = bimap id
+```
+
+`bimap` lifts a pair of functions, `a -> c` and `b -> d` to a `f a b -> f c d`,
+and can be defined in terms of `first` and `second`, which lifts a function from
+each argument of the bifunctor.
+
+### Product and Coproduct Bifunctors
+
+An example of a bifunctor is the categorical product.
+
+```haskell
+instance Bifunctor (,) where
+    bimap f g (x, y) = (f x, g y)
+```
+
+It applies the first function to the first value of the pair,
+and the second function to the second value of the pair.
+
+By duality, a coproduct is defined too, and is a bifunctor.
+
+```haskell
+instance Bifunctor Either where
+    bimap f _ (Left x) = Left (f x)
+    bimap _ g (Right y) = Right (g y)
+```
+
+It was mentioned earlier that the category of types and functions
+is a monoidal category in two ways,
+with cartesian product as the operator and `()` as identity element,
+and with disjoint union as the operator and `Void` as the identity element.
+The operator also needs to be a bifunctor (and in this category they are).
+The binary operator of a monoidal category must be a bifunctor.
+
+In the previous chapter we defined functor instances for several data types,
+such as `Maybe` and `Either`. In fact they are built up from products and coproducts.
+Since we have seen that both product and coproduct are functorial and that functors compose.
+If we can show that that basic elements in an algebraic data types are functorial,
+we can show that parametrized algebraic data types are functorial too.
+
+When building up our types, there are broadly two kinds of type constructors:
+the first do not take in any type arguments, such as `Nothing` in `Maybe`,
+the second takes an argument, like `Just` in `Maybe.`
+
+The first kind is equivalent to a `Const` functor, which ignores the type parameter,
+and the second is equivalent to an `Identity` functor.
+
+```haskell
+data Identity a = Identity a
+
+instance Functor Identity where
+    fmap f (Identity x) = Identity (f x)
+```
+
+Then `Maybe` can be defined, up to isomorphism, in terms of functors:
+
+```haskell
+type Maybe a = Either (Const () a) (Identity a)
+```
+
+### Writer functor
+
+In an earlier chapter talking about the Kleisli category, we had an embellished type `Writer`:
+
+```haskell
+tyep Writer a = (a, String)
+```
+
+The embellishment in the Kleisli category is always a functor.
+Kleisli category has a >=> composition operator of embellished type, and an identity morphism:
+
+```haskell
+(>=>) :: (a -> Writer b) -> (b -> Writer c) -> (a -> Writer c)
+return :: a -> Writer a
+```
+
+How can we define a functor for a embellishment?
+
+```haskell
+fmap :: a -> b -> Writer a -> Writer b
+fmap f = id >=> (\b -> return (f b))
+```
+
+### Reader functor
+
+The `Reader` functor is based on the partially applied arrow type constructor: `(->) r`.
+
+```haskell
+type Reader r a = r -> a
+```
+
+We can try to make it functorial in the first argument, by defining a synonym:
+
+```haskell
+type Op r a = a -> r
+```
+
+We would then need to implement an `fmap` with this signature:
+
+```haskell
+fmap :: (a -> b) -> (a -> r) -> (b -> r)
+```
+
+However this is impossible, we won't know what to do with `b`!
+What we can try to do is to get `b -> a`, by somehow inverting the first argument to `fmap`.
+But we cannot do that easily. But we can go to an opposite category.
+
+Consider a functor `F` from the opposite category of C, `Cop`, to `D`.
+The morphism from `b` to `a` in `C`, now becomes `a` to `b` in `Cop`.
+Consider another mapping called `G`, which is not a functor, from `C` to `D`.
+It maps objects like `F`, but reverses all morphisms.
+It maps an morphism `b` to `a` in `C` and maps it to the possible
+morphism `g` from `a` to `b`.
+Then G is a contravariant functor because it inverts the direction of the morphisms.
+
+## Profunctors
+
+A *profunctor* is a mapping that is contravariant in the first argument
+and covariant in the second,
+and the arrow operator is an instance of a profunctor.
+It takes the cartesian product of the opposite category of `C`, `Cop`, and `D` to
+an object in `E`:
+
+```haskell
+class Profunctor p where
+  dimap :: (a -> b) -> (c -> d) -> p b c -> p a d
+  dimap f g = lmap f . rmap g
+  lmap :: (a -> b) -> p b c -> p a c
+  lmap f = dimap f id
+  rmap :: (b -> c) -> p a b -> p a c
+  rmap = dimap id
+```
+
+Here I attempt some challenges:
+
+1. Show that the data type:
+
+    ```haskell
+    data Pair a b = Pair a b
+    ```
+is a bifunctor. For additional credit implement all three methods of Bifunctor and use equational reasoning to show that these definitions are compatible with the default implementations whenever they can be applied.
+*This data type is equivalent to `,`, which is a bifunctor.*
+
+    ```haskell
+    data Pair a b = Pair a b
+    instance Bifunctor Pair where
+        bimap :: (a -> c) -> (b -> d) -> Pair a b -> Pair c d
+        bimap f g (Pair a b) = Pair (f a) (g b)
+
+    -- default implementation of bimap
+    bimap g h (Pair a b) = (first g . second h) (Pair a b)
+                         = first g (second h (Pair a b))
+                         = first g (bimap id h (Pair a b))
+                         = first g (Pair (id a) (h b))
+                         = first g (Pair a (h b))
+                         = bimap g id (Pair a (h b))
+                         = Pair (g a) (id (h b))
+                         = Pair (g a) (h b)
+    -- default implementation of first
+    first g (Pair a b) = bimap g id (Pair a b)
+                       = Pair (g a) (id b)
+                       = Pair (g a) b
+    -- default implementation of second
+    second g (Pair a b) = bimap id g (Pair a b)
+                        = Pair (id a) (g b)
+                        = Pair a (g b)
+    ```
+
+2. Show the isomorphism between the standard definition of `Maybe` and this desugaring:
+
+    ```haskell
+    type Maybe' a = Either (Const () a) (Identity a)
+    ```
+    ```haskell
+    f :: Maybe a -> Maybe' a
+    f Nothing = Left ()
+    f (Just a) = Right (Identity a)
+
+    g :: Maybe' a -> Maybe a
+    g (Left _) = Nothing
+    g (Right (Identity a)) = Just a
+
+    -- to show that f is the inverse of g, we show that both left and right
+    -- composition of f and g are equivalent to id
+    (g . f) Nothing = g (Left ())
+                    = Nothing
+    (g . f) (Just a) = g (Right (Identity a))
+                     = Just a
+    (f . g) (Left ()) = f Nothing
+                      = Left ()
+    (f . g) (Right (Identity a)) = f (Just a)
+                                 = Right (Identity a)
+    ```
+
+3. Show that `PreList` is an instance of `Bifunctor`.
+*We can show that this definition is functorial in both arguments by
+redefining it in terms of basic functorial building blocks.*
+    ```haskell
+    data PreList a b = Nil | Cons a b
+    data Prelist a b = Either (Const () a) (Identity (a ,b))
+
+    instance Bifunctor Prelist where
+        bimap :: (a -> c) -> (b -> d) -> Prelist a b -> Prelist c d
+        bimap f g Nil = Nil
+        bimap f g (Cons a b) = Cons (f a) (g b)
+    ```
+
+## Function Types
+
+From Bartosz Milewski's [Function Types](https://bartoszmilewski.com/2015/03/13/function-types/)
+
+When working in the category of types and functions, the objects are sets representing types.
+For example the object `Bool` is a set with two elements.
+A function type `a -> b` must exist in the set as well, but what does it contain?
+It contains the morphisms from `a` to `b`: it's a hom-set.
+
+It is not always the case that a hom-set exists in the same category as
+the objects it was built from.
+When they are in different categories, we call the objects *external* hom-sets.
+
+And if they are in the same category, they are *internal* hom-sets.
+
+### Universal Construction
+
+We can try to construct an internal hom-set from scratch.
+We can think of A function type as a composite type, much like
+product and coproduct types.
+The product and coproduct types were constructed using by looking for patterns
+in the category, using universal construction.
+The same strategy can be used to find function types.
+
+In this case an object `z` contains functions that maps
+the argument type `a`, to the return type `b`.
+This pattern represents *function application*
+
+If we peek inside `z`, we can find functions `f` which maps
+a value `x` of type `a` to a value `f x` of type `b`.
+A pair of `(f, a)` will map to `b`.
+However we want to avoid peeking, so instead of looking at an individual function,
+we look at the entire object `z`.
+Then we can build a morphism `g` between the cartesian product of `z` and `a`, to `b`.
+In the category of types and functions, `g` will then be a function
+that maps every pair `(f, x)` to `f x`.
+
+How do we rank candidates for `z`?
+An object `z` with a morphism `g` from `z * a` to `b`,
+is better than an object `z'` with morphism `g'` from `z * a'` to `b`,
+if there is a morphism `h` from `z'` to `z` that factorizes `g`.
+This is not completely sufficient, because we have the
+products `z' * a` and `z * a`, but only a morphism `h` from `z'` to `z`.
+What we would like is a morphism `h'` from `z' * a` to `z * a`.
+Since we already know that a product is functorial, the product of
+morphisms is also functorial. So the factorization is:
+
+```haskell
+g' = g . (h * id)
+```
+
+The best candidate in this case will be
+
+1. an object `a=>b` with
+2. a morphism `eval :: ((a=>b) * a) -> b`
+3. such that any other candidate `z` with a morphism `g :: z * a -> b`
+4. there is a unique morphism `h :: z -> (a=>b)`
+5. that factorizes `g` through `eval`
+
+This object `a=>b` might not exist for any pair of objects `a`, `b`, in a category,
+but in the category of types and functions it always does.
+In fact, in this category, the object `a=>b` is isomorphic to the hom-set of `a` and `b`.
+
+### Currying
+
+The morphism `g` can be seen as a function of two variables, `z` and `a`.
+The morphism `h` can be seen as a function of one variable, `z`, returning a function
+from `a` to `b`. This makes `h` a higher ordered function.
+`h` is the *curried* version of `g`.
+
+
+### Exponentials
+
+The function object is often called the *exponential*, denoted by `b^a`,
+where `a` is the argument type.
+
+A function from `Bool` to `Int` accepts two values as it's argument, `True` and `False`,
+and for each value can return any of the values in `Int`.
+So the number of possible functions from `Bool` to `Int` is `Int * Int`, or `Int ^ 2`.
+
+In this sense, functions can be turned into table lookups.
+This is the equivalence between function types as objects, and functions as morphisms.
+
+### Cartesian Closed Categories
+
+So far, we have been using the category of Set as a model for types and functions.
+There is a larger family of categories that can be used as well.
+These categories are called *cartesian closed*.
+The category of Set is an example.
+
+The requirements of a cartesian closed category is that it must contain:
+1. The terminal object
+2. Product of any pair of objects
+3. Exponential of any pair of objects
+
+Exponential can be seen as a product of arbitrary many terms,
+and the terminal object as a product of zero objects, or zeroth power of an object.
+
+The cartesian closed category provide models for the simply typed lambda calculus.
+
+The terminal object and product have their duals, the terminal object and coproduct.
+A cartesian closed category that also supports these two constructions,
+and that product can be distributed over coproduct,
+is called a *bicartesian closed category*, which Set is.
+
+### Exponentials and Algebraic Data Types
+
+The function type from `0` to any type `a` is equivalent to the type `1`,
+there is only one function from `Void` to any type `a`, `absurd`,
+the hom-set *C(0,a)* is a singleton set.
+
+```haskell
+a ^ 0 = 1
+```
+
+The function type from `a` to `1`, is equivalent to `1`,
+there is only one function from any type `a` to the type `()`, `unit`,
+
+```haskell
+1^a = 1
+```
+
+Morphism from the terminal object is isomorphic to the object itself:
+
+```haskell
+a^1 = a
+```
+
+The exponential form of a coproduct of two objects, is isomorphic to a product of two exponentials.
+When writing a function that takes in a coproduct `b + c`, it is sufficient to write
+a pair of functions dealing with each type in the coproduct separately.
+
+```haskell
+a ^ (b+c) = a^b * a^c
+```
+
+The exponential of an exponential is the product of the exponents,
+which is a way to express uncurrying.
+
+```haskell
+(a^b)^c = a^(b*c)
+```
+
+A function returning a pair is equivalent to a pair of functions returning one
+element of the pair each.
+
+```haskell
+(a * b)^c = a^c * b^c
+```
+
+### Curry-Howard isomorphism
+
+Algebraic data types and logic have a certain correspondence described above.
+In particular, the new function types we have learned corresponds to implication:
+the function type `a -> b` is the logical implication that, `a` implies `b`.
+
+The Curry-Howard isomorphism states that every type can be viewed as a proposition,
+and the proposition is true if the type can be inhabited, false if not.
+A logical implication is true if the argument and return type is inhabited.
+Thus an implementation of a function is then a proof of the proposition,
+that is the type signature of the function.
+
+## Natural Transformations
+
+From Bartosz Milewski's [Natural Transformations](https://bartoszmilewski.com/2015/04/07/natural-transformations/)
+
+Functors are mappings between categories that preserve structure (composition, identity).
+It embeds one category into another.
+
+<!-- TODO give example of functors that behave differently -->
+There can be many functors from a source category `C` to a target category `D`.
+*Natural transformations* allows us to compare different functors,
+they are mapping functors that preserver the functorial nature of functors.
+
+Given two functors `F` and `G`, both from a category `C` to another category `D`,
+an object `a` in a `C` can be mapped to two objects in `D`,
+`F a` or `G a`.
+Then a mapping of functors will map `F a` to `G a`.
+
+`F a` and `G a` are objects in the same category `D`, and the mapping between them
+will be a `morphism` in `D`.
+A natural transformation `α` is a selection of morphisms, for every `a`,
+select a morphism from `F a` to `G a`.
+This morphism is called the *component* of `α` at `a`.
+
+```haskell
+α_a :: F a -> G a
+```
+
+If for some `a`, there is no morphism between `F a` and `G a`, then there is
+no natural transformation between `F` and `G`.
+
+Functors also map morphisms,
+so natural transformations have to map these mapped morphisms as well.
+`F f` must be mapped to `G f`.
+
+```haskell
+F f :: F a -> F b
+G f :: G a -> G b
+```
+
+The natural transformation then provides an additional morphisms:
+
+```haskell
+α_a :: F a -> G a
+α_b :: F b -> G b
+```
+
+And we impose the *naturality condition* that for any `f`:
+
+```haskell
+G f . α_a  = α_b  . F f
+```
+
+This ensures that if we use `α_a` first to get from `F a` to `G a`,
+then use `G f` to get from `G a` to `G b`,
+we get the same result as if we use
+`F f` to get from `F a` to `F b`, then use  `α_b` to get from `F b` to `G b`.
+
+This requirement is pretty stringent, and so functors related by natural transformations
+are not easy to find.
+But if found, they can tell you a lot about the structure of the categories.
+
+You can see natural transformation as mapping objects to morphisms
+(maps an object `a` to to a morphism `α_a` from `F a` to `G a`).
+It also maps morphisms to commuting squares
+(the morphism `f` from `a` to `b` is mapped to a square that shows
+two ways of getting from `F a` to `G b`).
+
+Natural transformations can be used to define isomorphisms of functors.
+Natural isomorphism is defined as a natural transformation whose
+components are all isomorphisms.
+
+### Polymorphic functors
+
+In Haskell, functors map types to types, and lifts functions using `fmap`.
+One way to think about functors is that they are generalized containers.
+Then, natural transformations are a way to repackage the contents
+of one container into another container.
+
+One example of a natural transformation is between the `List` functor and the `Maybe` functor.
+
+```haskell
+safeHead :: [a] -> Maybe a
+safeHead [] = Nothing
+safeHead (x:xs) = Just x
+```
+
+To show that this satisfies the naturality condition, we need to show that:
+
+```haskell
+G f . α_a  = α_b  . F f
+-- G f is fmap for G
+-- α_a s the component at a
+-- F f is fmap for F
+-- α_b s the component at b
+-- In the case of safeHead, G is Maybe, and F is List
+
+fmap f safeHead = safeHead . fmap f
+
+fmap f (safeHead []) = fmap f Nothing
+                     = Nothing
+                     = safeHead []
+                     = safeHead (fmap f [])
+fmap f (safeHead (x:xs)) = fmap f (Just x)
+                         = Just (f x)
+                         = safeHead (f x : fmap f xs)
+                         = safeHead (fmap f (x : xs))
+```
+
+Another functor is the `Reader` functor:
+
+```haskell
+newtype Reader e a = Reader (e -> a)
+instance Functor (Reader e) where
+    fmap f (Reader g) = Reader (\x -> f (g x))
+```
+
+This functor is parameterized by two types `e` and `a`, and functorial only in `a`.
+
+For every type `e`, you can define a natural transform from `Reader e` to a functor `F`.
+The *Yoneda lemma* states that the members of this family are always in one to one
+correspondence of the elements of `F e`.
+For example the functor `Reader ()` takes any type `a` and maps it a function type
+`() -> a`. We can try to build a natural transformation from this functor to `Maybe`.
+
+```haskell
+α_a :: Reader () a -> Maybe a
+dumb (Reader _) -> Nothing
+obvious (Reader g) -> Just (g ())
+```
+
+Natural transformations feel like morphisms, they map a functor to another functor.
+And in fact, functors form a category.
+Objects in this category are functors from `C` to `D`, and morphisms
+are the natural transformations between those functors.
+
+If we have a category, we need composition. Composition of natural transformations
+is the composition of the morphisms that the natural transformations select.
+
+Given a natural transformation `α` from `F` to `G`, the component at `a` is a morphism:
+
+```haskell
+α_a :: F a -> G a
+```
+
+If we have another natural transformation `β` from `G` to `H`, the component at `a` is:
+
+```haskell
+β_a :: G a -> H a
+```
+
+Thus the composition of the natural transformations at `a` is:
+
+```haskell
+(β . α)_a = β_a . α_a
+```
+
+And the result of this composition is a natural transformation from `F` to `H`.
+
+```haskell
+-- naturality condition
+G f . α_a  = α_b  . F f
+-- rewritten in terms of the composition
+H f . (β . α)_a = (β . α)_b . F f
+```
+
+For each functor `F`, there is an identity natural transformation:
+
+```haskell
+id_fa :: F a -> F a
+```
+
+Here I attempt some challenges:
+
+1. Define a natural transformation from the `Maybe` functor to the list functor. Prove the naturality condition for it.
+
+    ```haskell
+    g :: Maybe a -> [a]
+    g Nothing = []
+    g Just a = [a]
+
+
+    -- G f . α_a  = α_b  . F f
+    fmap f (g Nothing) = []
+                       = g Nothing
+                       = g (fmap f Nothing)
+                       = (g . fmap f) Nothing
+    fmap f (g (Just a)) = fmap f [a]
+                        = g (Just (f a))
+                        = g (fmap f (Just a))
+                        = (g . fmap f) (Just a)
+    ```
+2. Define at least two different natural transformations between `Reader ()` and the list functor. How many different lists of `()` are there?
+
+    ```haskell
+    α_a :: Reader () a -> [A]
+    dumb    (Reader _) = []
+    obvious (Reader a) = [a ()]
+    ```
+
+3. Continue the previous exercise with `Reader Bool` and `Maybe`.
+    ```haskell
+    α_a :: Reader Bool a -> Maybe a
+    alpha (Reader _) = Nothing
+    beta (Reader f) = Just (f True)
+    beta (Reader f) = Just (f False)
+    ```

@@ -91,6 +91,43 @@
         white-space: pre;
     }
   </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
 </head>
 <body>
 <section class="content">
@@ -150,7 +187,7 @@ idA ∘ f = f</code></pre>
 </blockquote>
 <p>As a concluding thought, this is one of my favourite quote from Bartosz Milewski in this chapter, talking about objects:</p>
 <blockquote>
-<p>All you can ever know about it is how it relates to other object — how it connects with them using arrows. ... The moment you have to dig into the implementation of the object in order to understand how to compose it with other objects, you’ve lost the advantages of your programming paradigm.</p>
+<p>All you can ever know about it is how it relates to other object — how it connects with them using arrows. ... The moment you have to dig into the implementation of the object in order to understand how to compose it with other objects, you have lost the advantages of your programming paradigm.</p>
 </blockquote>
 <p>I will attempt a few of the challenges he has set:</p>
 <ol style="list-style-type: decimal">
@@ -204,8 +241,8 @@ Bool --unit--&gt; ()</code></pre></li>
 <h3 id="orders">Orders</h3>
 <p>Instead of plain directed graphs, imagine edges as relations: an edge exists between two nodes if they are related. Given the less than or equal relation, we have a category, with the nodes as objects, and the edges/relations as morphisms.</p>
 <ul>
-<li>Rule 1 is satisfied because the relation is so morphisms compose,</li>
-<li>Rule 2 is satisfied because relation is associative,</li>
+<li>Rule 1 is satisfied because the relation is transitive so morphisms compose,</li>
+<li>Rule 2 is satisfied because the composition of this relation is associative,</li>
 <li>Rule 3 is satisfied, every object is less than or equal to itself,</li>
 </ul>
 <p>The set with such a relation is called a <em>preorder</em>, and a preorder is a category.</p>
@@ -226,7 +263,13 @@ b ---&gt; a
 <p>Here's an idea we can try: the application of a binary operation can be thought of as the action of &quot;shifting&quot; things around in the set.</p>
 <p>For example, adding 5 to a natural number, let's call this <code>add5</code>. It maps 0 to 5, 1 to 6. <code>add5</code> is a function defined on the set of natural numbers. There are many more functions that does something similar, for example <code>add1</code>, <code>add2</code>, <code>add10</code>, etc. In fact there are as many of these functions as there are natural numbers, infinite! We can call each of these <code>addN</code> functions the &quot;adder&quot; of <code>n</code>.</p>
 <p>Adders can compose: the composition of <code>add5</code> and <code>add1</code> is effectively an <code>add6</code>. Composing adders is equivalent to composing additions (Rule 1). The composition of adders is associative, since addition is associative (Rule 2).</p>
+<blockquote>
+<p>This composition of adders is called <code>mappend</code> in Haskell</p>
+</blockquote>
 <p>There is a special adder, <code>add0</code>, which is equivalent to the identity function on the set of natural numbers, it doesn't move anything around (Rule 3).</p>
+<blockquote>
+<p>This identity of adders is called <code>mempty</code> in Haskell</p>
+</blockquote>
 <p>The set of natural numbers is then a single object (no peeking into the object), with many morphisms (infinite), which are the adders (including the identity <code>add0</code>). So we observe that a monoid (when viewed as a category) is a single object category!</p>
 <p>The other way holds as well, i.e. a single object category forms a monoid. From a single object category, we can extract a unique set with a binary operator. This set is the hom-set <code>M(m, m)</code>, i.e. the set of all morphisms from <code>m</code> to <code>m</code>, where <code>m</code> is the single object in the category M. We can then define a binary operator for this set, call it <code>+</code>, such that for any two morphisms <code>f</code> and <code>g</code>, the application of this operator is the composition of these two morphisms. The identity morphism is the identity element of the hom-set under the operator <code>+</code>.</p>
 <blockquote>
@@ -239,6 +282,686 @@ b ---&gt; a
 <li>What kind of order is this? A set of sets with the inclusion relation: A is included in B if every element of A is also an element of B. <em>Partial order. If every element of A is in B, and every element in B is in A, then they are the same set.</em></li>
 <li>Considering that <code>Bool</code> is a set of two values True and False, show that it forms two (set-theoretical) monoids with respect to, respectively, operator &amp;&amp; (AND) and || (OR). <em>Monoid with respect to &amp;&amp;: set of natural numbers, True as identity element, &amp;&amp; is associative. Monoid with respect to || set of natural numbers, False as identity element, || is associative.</em></li>
 <li>Represent the <code>Bool</code> monoid with the AND operator as a category: List the morphisms and their rules of composition. <em>Two morphisms representing (AND True) and (AND False). (AND True) is also the identity morphism. The composition of morphisms follow the binary application of the boolean operators, the composition of (AND True) with any morphism f is f, the composition of (AND False) with any morphism g is (AND False)</em></li>
+</ol>
+<h2 id="kleisli-categories">Kleisli Categories</h2>
+<p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2014/12/23/kleisli-categories/">Kleisli Categories</a></p>
+<p>We start with an example of logging to motivate this section.</p>
+<p>Suppose we have two pure functions:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">toUpper<span class="ot"> ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
+<span class="ot">toWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> [<span class="dt">String</span>]</code></pre></div>
+<p><code>toUpper</code> turns a string uppercase, and <code>toWords</code> breaks up a string by whitespace.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">toUpper <span class="st">&quot;abc&quot;</span> <span class="fu">=</span> <span class="st">&quot;ABC&quot;</span>
+toWords <span class="st">&quot;a b c&quot;</span> <span class="fu">=</span> [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;c&quot;</span>]</code></pre></div>
+<p>And we can define a composition of these two functions as</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">toUpperWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> [<span class="dt">String</span>]
+toUpperWords <span class="fu">=</span> toWords <span class="fu">.</span> toUpper</code></pre></div>
+<p>We might want to have an audit trail (or log) of the function calls. The usual imperative way to do this might be to append to a global log, which will cause these two functions no longer be pure. <!-- Another way is for the functions to take in the current log, and append to the log, --> <!-- but --></p>
+<p>Another way is to <em>embellish</em> these functions, which means to add something to the return value.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">toUpper<span class="ot"> ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> (<span class="dt">String</span>, <span class="dt">String</span>)
+<span class="ot">toWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> ([<span class="dt">String</span>], <span class="dt">String</span>)</code></pre></div>
+<p>We make the functions return a pair of values now, where the first value in the pair is the original return value, and the second value in the pair is the string we want to log.</p>
+<p>Our original function composition no longer works, because now the types don't match.</p>
+<p>So we have to be more explicit: we call these functions and aggregate the logs:</p>
+<ol style="list-style-type: decimal">
+<li>Call <code>toUpper</code> on an input string to get a value and a log,</li>
+<li>Call <code>toWords</code> on the value from 1, to get a list of words, and another log,</li>
+<li>Return the value from 2, and append the log from 1 and 2 together</li>
+</ol>
+<p>In pseudocode:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">toUpperWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> ([<span class="dt">String</span>], <span class="dt">String</span>)
+toUpperWords s <span class="fu">=</span>
+    <span class="kw">let</span> (s1, l1) <span class="fu">=</span> toUpper s
+        (s2, l2) <span class="fu">=</span> toWords s1
+    <span class="kw">in</span> (s2, l1 <span class="fu">++</span> l2)</code></pre></div>
+<p>This becomes repetitive very quickly, and hides the original purpose, mixing the logic of logging and concatenating logs with the logic of <code>toUpper</code> and <code>toWords</code>.</p>
+<p>We can then try to come up with a new kind of embellished function composition:</p>
+<ol style="list-style-type: decimal">
+<li>Call the first embellished function,</li>
+<li>Call the second embellished function with the first value of 1,</li>
+<li>Concatenate the second value of 1 and 2,</li>
+<li>Return a pair of the first value from 2, and the concatenated value from 3.</li>
+</ol>
+<p>We can first make up a more generic type for this sort of embellished function:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Writer</span> a <span class="fu">=</span> (a, <span class="dt">String</span>)
+toUpper<span class="ot">      ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Writer</span> <span class="dt">String</span>
+<span class="ot">toWords      ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Writer</span> [<span class="dt">String</span>]
+<span class="ot">toUpperWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Writer</span> [<span class="dt">String</span>]</code></pre></div>
+<p>Where <code>Writer [String]</code> is a type where the first component has type <code>[String]</code>, and the second component has type <code>String</code> representing the log.</p>
+<p>The pseudocode looks something like this:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">embellished_compose ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Writer</span> b) <span class="ot">-&gt;</span>
+                       (b <span class="ot">-&gt;</span> <span class="dt">Writer</span> c) <span class="ot">-&gt;</span>
+                       (a <span class="ot">-&gt;</span> <span class="dt">Writer</span> c)
+embellished_compose f g s <span class="fu">=</span>
+    <span class="kw">let</span> (s1, l1) <span class="fu">=</span> f s
+        (s2, l2) <span class="fu">=</span> g s1
+    <span class="kw">in</span> (s2, l1 <span class="fu">+</span> l2)</code></pre></div>
+<p>And thus, <code>toUpperWords</code> looks like this:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">toUpperWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Writer</span> [<span class="dt">String</span>]
+toUpperWords s <span class="fu">=</span> embellished_compose toUpper toWords</code></pre></div>
+<p>Now we can look at this new composition from a categorical point of view. The types are still objects, and the morphisms are the embellished functions. The important point is that the morphism is still considered an arrow between <code>String</code> and <code>String</code>, or <code>String</code> and <code>[String]</code>, although the function] actually returns a pair.</p>
+<p>In this new category, <code>embellished_compose</code> is composition, and the identity morphism will take a type to the same type, and not add anything to the log:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">return<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">Writer</span> a
+return s <span class="fu">=</span> (s, <span class="st">&quot;&quot;</span>)</code></pre></div>
+<p>Does this category fulfill all the rules? Yes!</p>
+<ol style="list-style-type: decimal">
+<li>Morphisms compose, as shown by <code>embellished_compose</code>, satisfying Rule 1,</li>
+<li>Composition is associative, because at the first part of the pair we have function composition (which is associative) and on the second part we have concatenation, which is associative, satisfying Rule 2,</li>
+<li>Every object has a unit of composition, the <code>return</code> function, satisfying Rule 3.</li>
+</ol>
+<blockquote>
+<p>The log here is actually monoidal, <code>&quot;&quot;</code> is <code>mempty</code>, and <code>+</code> is <code>mappend</code>.</p>
+</blockquote>
+<h3 id="kleisli-categories-1">Kleisli Categories</h3>
+<p>This category we have constructed is actually an example of a <em>Kleisli category</em>, a category based on a monad. The objects of a Kleisli category are the types of the underlying programming language, and morphisms from <code>A</code> to <code>B</code> are functions from the types <code>A</code> to an embellished <code>B</code>.</p>
+<p>The morphisms in the above example are from the objects <code>String</code> to <code>String</code>, and <code>String</code> to <code>[String]</code>, whereas the functions were from the types <code>String</code> to <code>Writer String</code>, and <code>String</code> to <code>Write [String]</code>.</p>
+<p>Each Kleisli category defines it's own embellishment, composition of morphisms, and identity morphisms. The example Kleisli category above is based on a <em>write monad</em>, which has the embellishments, composition, and identity has described.</p>
+<p>Previously when we thought of programming languages as categories, we modelled types as objects and functions as morphisms, and defined categorical compositions as function compositions, which merely passes the output of one function as the input to another. Here we defined a different category, where the categorical compositions are not the usual function compositions: it does more than passing output as input, and (in this example) can append to a log as well.</p>
+<p>Here I attempt the challenges (I don't write C++ so the answers probably won't run, but will hint at the solution):</p>
+<ol style="list-style-type: decimal">
+<li><p>Construct the Kleisli category for partial functions (define composition and identity). <em>The composition of two embellished function f and g first calls f with the input. If it is not valid, return invalid. Otherwise pass the return value of f to g, and returns the result. The identity is a function that a valid optional with value of type A.</em></p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">auto</span> <span class="at">const</span> compose = [](<span class="kw">auto</span> m1, <span class="kw">auto</span> m2) {
+    <span class="cf">return</span> [m1, m2](<span class="kw">auto</span> x) {
+        <span class="kw">auto</span> p1 = m1(x);
+        <span class="cf">if</span> (p1.isValid()) <span class="cf">return</span> m2(p1.value())
+        <span class="co">// this is optional&lt;B&gt;, where B is the return type of m2</span>
+        <span class="cf">else</span> <span class="cf">return</span> optional()
+    }
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> A&gt;
+optional&lt;A&gt; identity(A x) {
+  <span class="cf">return</span> optional(x);
+}</code></pre></div></li>
+<li><p>Implement the embellished function <code>safe_reciprocal</code> that returns a valid reciprocal of its argument, if it’s different from zero.</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">optional&lt;<span class="dt">double</span>&gt; safe_reciprocal(<span class="dt">double</span> x) {
+  <span class="cf">if</span> (x == <span class="dv">0</span>) <span class="cf">return</span> optional&lt;<span class="dt">double</span>&gt;{};
+  <span class="cf">else</span> <span class="cf">return</span> optional&lt;<span class="dt">double</span>&gt;{<span class="dv">1</span>/x};
+}</code></pre></div></li>
+<li><p>Compose <code>safe_root</code> and <code>safe_reciprocal</code> to implement <code>safe_root_reciprocal</code> that calculates sqrt(1/x) whenever possible.</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">optional&lt;<span class="dt">double</span>&gt; safe_root_reciprocal(<span class="dt">double</span> x) {
+  <span class="cf">return</span> compose(safe_reciprocal, safe_root)(x);
+}</code></pre></div></li>
+</ol>
+<h2 id="products-and-coproducts">Products and Coproducts</h2>
+<p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/01/07/products-and-coproducts/">Products and Coproducts</a></p>
+<h3 id="universal-construction">Universal construction</h3>
+<p>In a category, we only have objects and morphisms. An object can be singled out by describing its relationships with other objects based on morphisms. We can pick a pattern of relationships, a shape, and try to find occurrences of this pattern in the category. We can then rank these occurrences and find the best-fit. This is the <em>universal construction</em>.</p>
+<h3 id="initial-object">Initial object</h3>
+<p>There are as many single-objects as there are in a category. We can rank these objects using a trait <em>initial</em>. An object <code>A</code> is more initial than <code>B</code> if there is a morphism from <code>A</code> to <code>B</code>. Then, the most initial object has morphisms to every other object.</p>
+<p>This object might not exist, or there may be more than one such object. Then, if we restrict the category to be ordered, such as a preorder, then we are able to find the <em>initial object</em>, which has one and only one morphism going to any object in the category.</p>
+<p>This restriction to ordered categories still does not guarantee uniqueness of the initial object, only up to isomorphism, explained later.</p>
+<p>For example, the set of natural numbers has an initial object, 0, with the less than or equal relation. The set of integers however, is infinite, and has no initial object. In the category of types and function, the initial object is <code>Void</code>, the empty set of values. The morphism from <code>Void</code> to any other type is this <code>absurd :: Void -&gt; a</code>.</p>
+<h3 id="terminal-object">Terminal object</h3>
+<p>If we think of the initial object as the bottom, then maybe we can have a top, called the <em>terminal object</em>. We define this by tweaking our ranking slightly: an object <code>A</code> is more terminal than <code>B</code> if there is a morphism from <code>B</code> to <code>A</code>. The most terminal object is then the object which has one and only one morphism coming to it from any object in the category.</p>
+<p>Similar to the initial object, the terminal object might not exist, or there might be more than one such object, again up to isomorphism.</p>
+<p>For example, the set of integers does not have a terminal object. In the category of types and functions, the type which has one and only one arrow going to it from any other type is <code>unit</code>, or <code>()</code>, and the function is <code>unit : a -&gt; ()</code>.</p>
+<h3 id="duality">Duality</h3>
+<p>There is a symmetry between the definition of the initial object and terminal object. The difference is direction of the morphism, and hence the ranking. In fact, for any category, we can define the opposite category with all the morphisms flipped, and the compositions flipped, and identity identical.</p>
+<p>This duality means that for every pattern in category theory, you get the opposite one for free: product and coproduct, monad and comonad, etc.</p>
+<p>So, the terminal object can be thought of as the initial object in the opposite category.</p>
+<h3 id="isomorphisms">Isomorphisms</h3>
+<p>Isomorphic objects look the same, the structure have a one-to-one mapping. An isomorphism is a pair of morphisms, one being the inverse of the other. So for objects <code>A</code> and <code>B</code>, the morphism <code>f</code> from <code>A</code> to <code>B</code> and the morphism <code>g</code> from <code>B</code> to <code>A</code>, and they are the inverse of each other. <code>f</code> and <code>g</code> thus forms an isomorphism.</p>
+<p>We can examine isomorphisms in the context of composition and identity:</p>
+<pre><code>f ∘ g = id
+g ∘ f = id</code></pre>
+<p>The composition of isomorphisms is the identity morphism, since they are the inverse of each other.</p>
+<p>Looking back at how we defined initial objects, any two initial objects <code>a</code> and <code>b</code> must be isomorphic.</p>
+<p>Since <code>a</code> and <code>b</code> are initial objects, there is one, and only one, morphism <code>f</code> from <code>a</code> to <code>b</code>, and a morphism <code>g</code> from <code>b</code> to <code>a</code>. Thus, <code>f ∘ g</code> must be a morphism from <code>a</code> to <code>a</code>. Since <code>a</code> is initial, there is only one morphism from <code>a</code> to <code>a</code>. And since <code>a</code> is an object in a category, it must have an identity morphism. Therefore, <code>f ∘ g</code> must be the identity morphism and is unique. A symmetrical proof of <code>g ∘ f</code> can be made. And by duality, this proof can be used for showing uniqueness up to isomorphism for terminal objects as well.</p>
+<p>Observe that because of the initial object conditions, <code>f</code> and <code>g</code> are unique as well. Thus we actually have uniqueness up to unique isomorphism, i.e. not only is the initial object unique up to isomorphism, the isomorphisms are themselves unique.</p>
+<p>What we have done so far is to use universal construction to find the initial object (unique up to isomorphism) and the terminal object (unique up to isomorphism). Let's spot more patterns</p>
+<h3 id="products">Products</h3>
+<p>The cartesian product of two sets is a set of pairs, but we shouldn't be able to peek into the objects. So let's think in terms of morphisms and compositions.</p>
+<p>Let's define a pattern using two morphism from the product, <code>c</code>, to it's constituents, <code>a</code> and <code>b</code>, <code>p</code> is a morphism from <code>c</code> to <code>a</code>, and <code>q</code> is a morphism from <code>c</code> to <code>b</code>. In this example, <code>p</code> and <code>q</code> can also be called <em>projections</em>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">p ::</span> c <span class="ot">-&gt;</span> a
+<span class="ot">q ::</span> c <span class="ot">-&gt;</span> b</code></pre></div>
+<p>Again, there might be lots of candidates <code>c</code> that fits into this pattern. For example, for the constituent types <code>Int</code> and <code>Bool</code>, a candidate for their product is <code>Int</code>. Then,</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">p ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+p x <span class="fu">=</span> x
+
+<span class="ot">q ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+q _ <span class="fu">=</span> <span class="dt">True</span></code></pre></div>
+<p>This candidate seems too small, <code>q</code> doesn't look sensible.</p>
+<p>Another candidate is a triple of <code>(Int, Int, Bool)</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">p ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Int</span>
+p (x, _, _) <span class="fu">=</span> x
+
+<span class="ot">q ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+q (_, _, b) <span class="fu">=</span> b</code></pre></div>
+<p>This candidate seems too big, the second <code>Int</code> is never used.</p>
+<p>How can we then rank these candidates? We can say that a candidate <code>c</code> is better than another candidate <code>c'</code> if there is a morphism <code>m</code> from <code>c'</code> to <code>c</code>. We also want the projects <code>p</code> and <code>q</code> of <code>c</code>, to be better than the projections <code>p'</code> and <code>q'</code> of <code>c'</code>. Better here means that one can be constructed in terms of another:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p&#39; <span class="fu">=</span> p <span class="fu">.</span> m
+q&#39; <span class="fu">=</span> q <span class="fu">.</span> m</code></pre></div>
+<p>Another way to say this is that <code>m</code> factorizes <code>p'</code> and <code>q'</code>.</p>
+<p>Let's have another candidate for c, <code>(Int, Bool)</code>, and show that this is the best candidate:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">p ::</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Int</span>
+p (x, _) <span class="fu">=</span> x
+
+<span class="ot">q ::</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+q (_, b) <span class="fu">=</span> b</code></pre></div>
+<p>First we construct a morphism <code>m</code> from <code>c'</code> (<code>Int</code>) to <code>c</code> (<code>(Int, Bool)</code>):</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">m ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>)
+m x <span class="fu">=</span> (x, <span class="dt">True</span>)</code></pre></div>
+<p>And observe that <code>p'</code> and <code>q'</code> is defined in terms of <code>p</code>, <code>q</code> and m:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p&#39; x <span class="fu">=</span> (p <span class="fu">.</span> m) x <span class="fu">=</span> x
+q&#39; x <span class="fu">=</span> (q <span class="fu">.</span> m) x <span class="fu">=</span> <span class="dt">True</span></code></pre></div>
+<p>First we construct a morphism <code>m</code> from <code>c'</code> (<code>(Int, Int, Bool)</code>) to <code>c</code> (<code>(Int, Bool)</code>):</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">m ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>)
+m (x, _, b) <span class="fu">=</span> (x, b)</code></pre></div>
+<p>And observe that <code>p'</code> and <code>q'</code> is defined in terms of <code>p</code>, <code>q</code> and m:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p&#39; (x, y, b) <span class="fu">=</span> (p <span class="fu">.</span> m) (x, y, b) <span class="fu">=</span> x
+q&#39; (x, y, b) <span class="fu">=</span> (q <span class="fu">.</span> m) (x, y, b) <span class="fu">=</span> b</code></pre></div>
+<p>Thus, <code>(Int, Bool)</code> is better than the first two candidates we came up with. How about the other way round?</p>
+<p>For the first candidate, <code>Int</code>, we lose information: we will never be able to get back the value of the <code>Bool</code>, since it always returns <code>True</code>.</p>
+<p>For the second candidate, there are more than one way to factorize <code>p'</code> and <code>q'</code>. If we try to define an <code>m'</code> from <code>(Int, Bool)</code> to <code>(Int, Int, Bool)</code>, we can do it in many ways:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">m&#39; (x, b) <span class="fu">=</span> (x, x, b)
+m&#39; (x, b) <span class="fu">=</span> (x, <span class="dv">42</span>, b)
+<span class="fu">...</span>
+m&#39; (x, b) <span class="fu">=</span> (x, <span class="dv">99</span>, b)</code></pre></div>
+<p>From our examples, we see that for any type <code>c</code>, with projections <code>p</code> and <code>q</code>, there is a unique <code>m</code> from <code>c</code> to the cartesian product <code>(a, b)</code>, that factorizes them. Thus, this makes the cartesian product the best match.</p>
+<p>Categorically, a product of two objects <code>a</code> and <code>b</code>, is the object <code>c</code> with two projections, <code>p</code> from <code>c</code> to <code>a</code> and <code>q</code> from <code>c</code> to <code>b</code>, such that any other object <code>c'</code> with two projections <code>p'</code> from <code>c'</code> to <code>a</code> and <code>q'</code> from <code>c'</code> to <code>b'</code>, there is a unique morphism <code>m</code> from <code>c'</code> to <code>c</code>, such that <code>m</code> factorizes <code>p'</code> and <code>q'</code>.</p>
+<h3 id="coproduct">Coproduct</h3>
+<p>By duality, the product has a dual. When we reverse all the arrows in a product, we get a coproduct. Define two morphisms <code>i</code> and <code>j</code> from objects <code>a</code> and <code>b</code> to an object <code>c</code>. <code>i</code> and <code>j</code> can also be called <em>injections</em>.</p>
+<p>Suppose there is another object <code>c'</code>, and there are two morphisms <code>i'</code> from <code>a</code> to <code>c'</code> and <code>j'</code> from <code>b</code> to <code>c'</code>.</p>
+<p>We say that <code>c</code> is better than <code>c'</code> if there is a morphism <code>m</code> from <code>c</code> to <code>c'</code> (when we flip the arrows, the ranking is flipped too), that factorizes the injections.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">i&#39; <span class="fu">=</span> m <span class="fu">.</span> i
+j&#39; <span class="fu">=</span> m <span class="fu">.</span> j</code></pre></div>
+<p>The best candidate <code>c</code>, is called a coproduct, and if exists, is unique up to unique isomorphism.</p>
+<p>In the category of types (as sets) and functions, the coproduct is the disjoint union of two sets. In the example below, the type <code>Toss</code> is the coproduct, the disjoint union of the sets <code>Heads</code> and <code>Tails</code>. <code>Heads</code> and <code>Tails</code> also act as the morphisms <code>i</code> and <code>j</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Toss</span> <span class="fu">=</span> <span class="dt">Heads</span> <span class="fu">|</span> <span class="dt">Tails</span></code></pre></div>
+<p>Here I attempt some challenges:</p>
+<ol style="list-style-type: decimal">
+<li>Show that the terminal object is unique up to unique isomorphism. <em>The terminal object, has one and only one morphism from any object to it. Assume we have two terminal objects <code>a</code> and <code>b</code>, there must be a morphism <code>f</code> from <code>a</code> to <code>b</code>, and a morphism <code>g</code> from <code>b</code> to <code>a</code>. The composition of these two morphisms <code>f ∘ g</code> is a morphism from <code>b</code> to <code>b</code>. Because <code>b</code> is a terminal object, there can only be one morphism from <code>b</code> to <code>b</code>. And because <code>b</code> is an object in a category, it has an identity morphism. Thus the morphism from <code>b</code> to <code>b</code> is the identity morphism and must be unique. The same argument can be made for the composition <code>g ∘ f</code>. Therefore we have unique isomorphisms between <code>a</code> and <code>b</code>, and the terminal object is unique up to isomorphism.</em></li>
+<li>What is a product of two objects in a poset? Hint: Use the universal construction. <em>Let <code>c</code> be an object with projections <code>p</code> to an object <code>a</code>, and <code>q</code> to object <code>b</code>. When this is a poset, it means that <code>c</code> is related to <code>a</code> and <code>b</code>. Let <code>c'</code> be an object with projections <code>p'</code> and <code>q'</code>. Then there exists a unique morphism <code>m</code> from <code>c'</code> to <code>c</code>, which means that <code>c'</code> is related to <code>c</code>. So the product of two objects in a poset is the greatest (defined by the ordering) object that is related to both <code>a</code> and <code>b</code>. Using less than equal relation as an example, the product of two numbers, is the smaller number. Using sets and subset relation as an example, the product of two sets is the intersection.</em></li>
+<li>What is a coproduct of two objects in a poset? <em>Let <code>c</code> be an object with injections <code>i</code> from <code>a</code>, and <code>j</code> from <code>b</code>. Let <code>c'</code> be an object with injections <code>i'</code> from <code>a</code> and <code>j'</code> from <code>b'</code>. For <code>c</code> to be a coproduct of <code>a</code> and <code>b</code>, there must be a morphism <code>m</code> from <code>c</code> to <code>c'</code>. In a poset this means that <code>c</code> must be ordered less than <code>c'</code>. For example, with the less than or equal relation, the coproduct of two objects is the bigger object. For example, with the subset relation, the coproduct of two objects is the union of the sets.</em></li>
+</ol>
+<h2 id="simple-algebraic-data-types">Simple Algebraic Data Types</h2>
+<p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/01/13/simple-algebraic-data-types/">Simple Algebraic Data Types</a></p>
+<h3 id="product-types">Product types</h3>
+<p>In many languages, a product of two types is implemented as a pair. Pairs are not commutative, only up to isomorphism.</p>
+<p>For example, <code>(Bool, Int)</code> is not the same as <code>(Int, Bool)</code>, although they carry the same information. The isomorphism between these two types is the <code>swap</code> function, which is it's own inverse.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">swap ::</span> (a, b) <span class="ot">-&gt;</span> (b, a)
+swap (x, y) <span class="fu">=</span> (y, x)</code></pre></div>
+<p>Pairs can be nested as well, for example <code>((a, b), c)</code>, a pair of two types, the first value being a pair <code>(a, b)</code>, and the second value a <code>c</code>.</p>
+<p>This is isomorphic to the nested pair <code>(a, (b, c))</code>.</p>
+<p>If you view the <code>,</code> as a binary operation to create a pair out of two types, then <code>,</code> looks like an associative operator.</p>
+<p>Also, the pair of any type <code>a</code> with unit, <code>()</code>, is isomorphic to <code>a</code> itself.</p>
+<p>In this sense, the category of sets (in programming languages), is a monoidal category. It is a category, that's also a monoid. The binary associative operator is the product, and the identity element is the unit type, <code>()</code>.</p>
+<h3 id="coproduct-types-sum-types">Coproduct types (Sum types)</h3>
+<p>A sum type can be expressed in Haskell as:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Either</span> a b <span class="fu">=</span> <span class="dt">Left</span> a <span class="fu">|</span> <span class="dt">Right</span> b</code></pre></div>
+<p>Similar to pairs, <code>Either</code> is commutative up to isomorphism, and can be nested.</p>
+<p>The category of sets is also a monoidal category with the disjoint sum as the binary operator, and <code>Void</code> as the identity element.</p>
+<h3 id="algebra-of-types">Algebra of Types</h3>
+<p>We can try to view types as numbers, <code>Void</code> maps to zero, <code>()</code> to one. Then product can be thought of as multiplication, and coproduct as addition.</p>
+<p>Previously we defined a pair <code>(a, ())</code> and said that it was isomorphic to <code>a</code>. In this sense, <code>a * 1 = a</code>.</p>
+<table style="width:64%;">
+<colgroup>
+<col width="15%" />
+<col width="48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Numbers</th>
+<th>Types</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>0</p></td>
+<td><p>Void</p></td>
+</tr>
+<tr class="even">
+<td><p>1</p></td>
+<td><p>Unit</p></td>
+</tr>
+<tr class="odd">
+<td><p>a * 1</p></td>
+<td><p>(a, ())</p></td>
+</tr>
+<tr class="even">
+<td><p>a + b</p></td>
+<td><p>Either a b = Left a | Right b</p></td>
+</tr>
+</tbody>
+</table>
+<p>In natural numbers, we have distribution of multiplication over addition:</p>
+<pre><code>a * (b + c) = a * b + a * c</code></pre>
+<p>The left hand side translates, at the types level, to:</p>
+<pre><code>(a, Either b c)</code></pre>
+<p>And the right hand side to:</p>
+<pre><code>Either (a, c) (b, c)</code></pre>
+<p>To show that these two are equal up to isomorphism, we have to find a morphism <code>f</code> from the left hand side to the right hand side, and the inverse morphism <code>g</code>:</p>
+<pre><code>f :: (a, Either b c) -&gt; Either (a, c) (b, c)
+f (a, Left b) = Left a b
+f (a, Right c) = Right b c
+
+g :: Either (a, c) (b, c) -&gt; (a, Either b c)
+g Left (a, b) = (a, Left b)
+g Right (a, c) = (a, Right c)</code></pre>
+<p>A structure with two intertwined monoids of these sort is called a <em>semiring</em>.</p>
+<blockquote>
+<p>Specifically, a semiring is a structure with an associative, commutative addition operator with an identity <code>0</code>, a associative multiplication operator with an identity <code>1</code>, the multiplication left and right distributes over addition, and multiplication by <code>0</code> gives <code>0</code>.</p>
+</blockquote>
+<h3 id="recursive-types">Recursive types</h3>
+<p>The <code>List</code> type is common defined as a coproduct of <code>Nil</code>, indicating the end of the list, and <code>Cons a (List a)</code>, indicating an element of type <code>a</code> and the rest of the list:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> <span class="dt">Cons</span> a (<span class="dt">List</span> a)</code></pre></div>
+<p>In terms of an algebraic equation, letting <code>x = List a</code>:</p>
+<pre><code>x = 1 + (a * x)</code></pre>
+<p>Note that <code>Nil</code> is isomorphic to <code>()</code>, and hence <code>1</code>. And <code>Cons</code> is isomorphic to <code>,</code>, or the pair operator, and so it's the <code>*</code> of two types, <code>a</code> and <code>List a</code>, which we defined to be <code>x</code>.</p>
+<p>We can try to solve this algebraic equation by expansion:</p>
+<pre><code>x = 1 + (a * x)
+x = 1 + (a * (1 + a * x)) = 1 + a + a * a * x
+...
+x = 1 + a + a * a + ... + a * a * a * a...</code></pre>
+<p>Which can be interpreted as, <code>x</code> (<code>List a</code>), is either <code>Nil</code> (empty), or a singleton (<code>a</code>), or a pair of values (<code>a * a</code>), or three values (<code>a * a * a</code>), ...</p>
+<blockquote>
+<p>I previously wrote a <a href="./some-type-about-sum-type-and-more.html">post</a> that goes a bit more into the relationship between numbers and types.</p>
+</blockquote>
+<p>There is also a relationship between types and intuitionistic logic, specifically <code>Void</code> and false, <code>()</code> and true, product with and, coproduct with or. This relationship is more commonly known as the <em>Curry-Howard isomorphism</em>, and also popularized as <em>propositions as types</em>.</p>
+<p>Here I attempt some challenges:</p>
+<ol style="list-style-type: decimal">
+<li><p>Show the isomorphism between Maybe a and Either () a.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Either</span> () a
+f <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Left</span> ()
+f <span class="dt">Just</span> x <span class="fu">=</span> <span class="dt">Right</span> x
+
+<span class="ot">g ::</span> <span class="dt">Either</span> () a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+g <span class="dt">Left</span> _ <span class="fu">=</span> <span class="dt">Nothing</span>
+g <span class="dt">Right</span> x <span class="fu">=</span> <span class="dt">Just</span> x</code></pre></div></li>
+<li><p>Show that <code>a + a = 2 * a</code> holds for types (up to isomorphism). Remember that 2 corresponds to <code>Bool</code>, according to our translation table.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Either</span> a a <span class="ot">-&gt;</span> (<span class="dt">Bool</span>, a)
+f <span class="dt">Left</span> x <span class="fu">=</span> (<span class="dt">True</span>, x)
+f <span class="dt">Right</span> x <span class="fu">=</span> (<span class="dt">False</span>, x)
+
+<span class="ot">g ::</span> (<span class="dt">Bool</span>, a) <span class="ot">-&gt;</span> <span class="dt">Either</span> a a
+g <span class="dt">True</span> x <span class="fu">=</span> <span class="dt">Left</span> x
+g <span class="dt">False</span> x <span class="fu">=</span> <span class="dt">Right</span> x</code></pre></div></li>
+</ol>
+<h2 id="functors">Functors</h2>
+<p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/01/20/functors/">Functors</a></p>
+<p>A functor is a mapping between categories. A functor <code>F</code> from category <code>C</code> to category <code>D</code> maps objects and morphisms in <code>C</code> to <code>D</code>.</p>
+<p>Given an object <code>a</code> in <code>C</code>, the functor <code>F</code> maps <code>a</code> to the object <code>F a</code> in <code>D</code>. We call <code>F a</code> the image of <code>a</code> in <code>D</code>.</p>
+<p>Given a morphism <code>f</code> from <code>a</code> to <code>b</code> in <code>C</code>, the functor <code>F</code> will map <code>f</code> to a morphism <code>F f</code> from <code>F a</code> to <code>F b</code>.</p>
+<p>A functor preserves the source and destinations of a morphism under <code>F</code>, and also preserves composition of morphism.</p>
+<p>If <code>h</code> is a composition of morphisms <code>f</code> and <code>g</code>, <code>h = g . f</code>, then the image under F is a composition <code>F h = F g . F f</code>.</p>
+<p>And the functor also preserves the identity morphisms: for an object <code>A</code>, it maps the identity morphism <code>idA</code> from <code>A</code> to <code>A</code> in <code>C</code> to <code>F idA</code> in <code>D</code>, which is also the identity morphism <code>idFA</code> from <code>F a</code> to <code>F a</code> in <code>D</code>.</p>
+<h3 id="functors-in-our-programming-language">Functors in our programming language</h3>
+<p>In the category of types and functions in programming, we can talk about functors that map this category onto itself, such functors where the source and target category is the same is called an <em>endofunctor</em>.</p>
+<p>A functor in the this category then maps types to types, and functions to functions.</p>
+<p>The mapping of types to types has been seen previously, it's the case of building a type parameterised by another type, such as a <code>Maybe a</code>, or an <code>Either a b</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Nothing</span> <span class="fu">|</span> <span class="dt">Just</span> a
+<span class="kw">data</span> <span class="dt">Either</span> a b <span class="fu">=</span> <span class="dt">Left</span> a <span class="fu">|</span> <span class="dt">Right</span> b</code></pre></div>
+<p><code>Maybe</code> is a <em>type constructor</em> that maps types to types. Give it a type <code>Bool</code> and you will get a type <code>Maybe Bool</code>.</p>
+<p>We can try making <code>Maybe</code> a functor. It already maps types to types, what remains is to map functions to functions. Given a function <code>f :: a -&gt; b</code>, a functor should map <code>f</code> to a function <code>f' :: Maybe a -&gt; Maybe b</code>. Such a function <code>f'</code> can be defined as such:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f&#39; ::</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b
+f&#39; <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+f&#39; (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (f x)</code></pre></div>
+<p>We can also define a higher order function to map the function <code>f</code> to <code>f'</code>::</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (<span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> b)
+fmap _ <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+fmap f (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (f x)</code></pre></div>
+<p><code>fmap</code> can be said to <em>lift</em> a function from the type of <code>f</code> to the type of <code>f'</code>, so now the lifted function can work on values of type <code>Maybe a</code></p>
+<p>The final steps to show that <code>Maybe</code> (which maps types to types), and <code>fmap</code> (which maps morphisms to morphisms) form a function, we need to prove the functor laws, namely that they preserve composition and identity.</p>
+<p>Let's start with identity, we need to prove that <code>fmap</code> preserves identity morphisms:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap id <span class="fu">=</span> id
+<span class="co">-- case one, Nothing</span>
+fmap id <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+                <span class="fu">=</span> id <span class="dt">Nothing</span>
+<span class="co">-- case two, Just x</span>
+fmap id (<span class="dt">Just</span> x) <span class="fu">=</span> (<span class="dt">Just</span> id x)
+                 <span class="fu">=</span> (<span class="dt">Just</span> x)
+                 <span class="fu">=</span> id (<span class="dt">Just</span> x)</code></pre></div>
+<p>Then show that <code>fmap</code> preserves composition:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap (g <span class="fu">.</span> f) <span class="fu">=</span> fmap g <span class="fu">.</span> fmap f
+<span class="co">-- case one, Nothing</span>
+fmap (g <span class="fu">.</span> f) <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+                     <span class="fu">=</span> fmap g <span class="dt">Nothing</span>
+                     <span class="fu">=</span> fmap g (fmap f <span class="dt">Nothing</span>)
+                     <span class="fu">=</span> (fmap g <span class="fu">.</span> fmap f) <span class="dt">Nothing</span>
+<span class="co">-- case two, Just x</span>
+fmap (g <span class="fu">.</span> f) (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> ((g <span class="fu">.</span> f) x)
+                 <span class="fu">=</span> <span class="dt">Just</span> (g (f x))
+                 <span class="fu">=</span> fmap g (<span class="dt">Just</span> (f x))
+                 <span class="fu">=</span> fmap g (fmap f (<span class="dt">Just</span> x))
+                 <span class="fu">=</span> (fmap g <span class="fu">.</span> fmap f) (<span class="dt">Just</span> x)</code></pre></div>
+<p>Thus we show that <code>Maybe</code> and <code>fmap</code> forms a functor.</p>
+<h3 id="typeclass">Typeclass</h3>
+<p>Haskell uses a <em>typeclass</em> mechanism to specify a functor. It specifies that types adhere to a common interface. For example we can specify a <code>Functor</code> typeclass.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Functor</span> f <span class="kw">where</span>
+<span class="ot">    fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</code></pre></div>
+<p>This defines that <code>f</code> is a <code>Functor</code> if it supports an <code>fmap</code> function.</p>
+<p>And to declare that a type is a functor, for example <code>Maybe</code>, we declare the type as an <em>instance</em> of a typeclass:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">Maybe</span> <span class="kw">where</span>
+    fmap _ <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+    fmap f (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (f x)</code></pre></div>
+<p>This implementation of <code>fmap</code> for <code>Maybe</code> is exactly what we came up with earlier.</p>
+<h3 id="list-functor">List functor</h3>
+<p>We can try to spot more functors in our programming language. Good candidates for functors are type constructors, since they map types to types, such as <code>List</code>.</p>
+<p>The <code>List</code> type constructor maps a type <code>a</code> to a type <code>List a</code>, and its <code>fmap</code> function looks takes a <code>a -&gt; b</code> to <code>List a -&gt; List b</code>.</p>
+<p>We can make <code>List</code> an instance of a <code>Functor</code> as such:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">List</span> <span class="kw">where</span>
+    fmap _ <span class="dt">Nil</span> <span class="fu">=</span> <span class="dt">Nil</span>
+    fmap f (<span class="dt">Cons</span> x tl) <span class="fu">=</span> <span class="dt">Cons</span> (f x) (fmap f tl)</code></pre></div>
+<p>What's happening here is that we are applying <code>f</code> to the head of the list, and recursively using <code>fmap</code> to apply <code>f</code> to the rest of the list (the tail).</p>
+<p>Let's talk about the type of functions. Whenever we are defining a function, we use <code>-&gt;</code> in the type signature, such as <code>f :: a -&gt; b</code>. We can think of <code>-&gt;</code> as an infix type constructor that takes a two types, <code>a</code> and <code>b</code>, to a type <code>a -&gt; b</code>.</p>
+<p>This is different from our previous examples, where the type constructors only take one type.</p>
+<p>If we provide only one type to <code>-&gt;</code>, we get <code>r -&gt;</code>, or as a prefix <code>(-&gt;) r</code>, which is a whole family of type constructors parameterized by <code>r</code>.</p>
+<p>To satisfy our functor laws, we want to lift <code>a -&gt; b</code> to <code>(r -&gt; a) -&gt; (r -&gt; b)</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Functor</span> ((<span class="ot">-&gt;</span>) r) <span class="kw">where</span>
+<span class="ot">    fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (r <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> (r <span class="ot">-&gt;</span> b)
+    fmap f g <span class="fu">=</span> f <span class="fu">.</span> g</code></pre></div>
+<p>The type constructor <code>((-&gt;) r)</code> and the <code>fmap</code> implementation forms the <em>reader functor</em>.</p>
+<h3 id="const-functor">Const functor</h3>
+<p>Another functor is the <code>Const</code> functor, which ignores it's second argument, so the implementation of <code>fmap</code> can ignore the function argument too:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Const</span> c a <span class="fu">=</span> <span class="dt">Const</span> c
+
+<span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Const</span> c) <span class="kw">where</span>
+    fmap _ (<span class="dt">Const</span> v) <span class="fu">=</span> <span class="dt">Const</span> v</code></pre></div>
+<h3 id="functor-composition">Functor composition</h3>
+<p>Functors between categories compose as well, just like morphisms compose.</p>
+<p>When you compose two functors, the object mappings compose, and the morphisms compose too: identity morphisms and composition of morphisms in the initial category are still identity morphisms and composition of morphism in the final category.</p>
+<p>Like morphisms in a category, functor composition is associative (since the mapping of object and morphisms is associative), and there is also an identity functor in every category (maps every object and morphism to itself).</p>
+<p>So functors seem to act like morphisms, if that's the case, what category is it? A category of categories, where the objects are categories and morphisms are functors. A category of <em>all</em> categories would get us into trouble, leading us into <a href="https://en.wikipedia.org/wiki/Russell%27s_paradox">Russell's Paradox</a>. Instead there is a category of all <em>small</em> categories called <strong>Cat</strong>, which itself is <em>big</em>, so does not contain itself.</p>
+<p>Here I attempt some challenges:</p>
+<ol style="list-style-type: decimal">
+<li><p>Can we turn the <code>Maybe</code> type constructor into a functor by defining: <em>One of the functor laws is that of preserving identity morphisms. However, this definition of fmap does not do that:</em></p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap id (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Nothing</span>
+                <span class="fu">!=</span> <span class="dt">Just</span> x
+                 <span class="fu">=</span> id (<span class="dt">Just</span> x)</code></pre></div></li>
+<li><p>Prove functor laws for the reader functor. Hint: it’s really simple.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap id <span class="fu">=</span> id
+fmap id r <span class="fu">=</span> id <span class="fu">.</span> r
+          <span class="fu">=</span> r
+          <span class="fu">=</span> id r
+
+fmap (f <span class="fu">.</span> g) r <span class="fu">=</span> (f <span class="fu">.</span> g) <span class="fu">.</span> r
+               <span class="fu">=</span> f <span class="fu">.</span> (g <span class="fu">.</span> r)
+               <span class="fu">=</span> fmap f (g <span class="fu">.</span> r)
+               <span class="fu">=</span> fmap f (fmap g r)
+               <span class="fu">=</span> (fmap f <span class="fu">.</span> fmap g) r</code></pre></div></li>
+<li><p>Prove the functor laws for the list functor. Assume that the laws are true for the tail part of the list you’re applying it to (in other words, use induction).</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap id ls <span class="fu">=</span> id ls
+fmap id <span class="dt">Nil</span> <span class="fu">=</span> <span class="dt">Nil</span>
+            <span class="fu">=</span> id <span class="dt">Nil</span>
+fmap id (<span class="dt">Cons</span> x t) <span class="fu">=</span> <span class="dt">Cons</span> (id x) (fmap id t)
+                   <span class="fu">=</span> <span class="dt">Cons</span> x t <span class="co">-- inductive hypothesis, fmap id t = t</span>
+                   <span class="fu">=</span> id (<span class="dt">Const</span> x t)
+
+fmap (f <span class="fu">.</span> g) <span class="dt">Nil</span> <span class="fu">=</span> <span class="dt">Nil</span>
+                 <span class="fu">=</span> fmap f <span class="dt">Nil</span>
+                 <span class="fu">=</span> fmap f (fmap g <span class="dt">Nil</span>)
+                 <span class="fu">=</span> (fmap f <span class="fu">.</span> fmap g) <span class="dt">Nil</span>
+fmap (f <span class="fu">.</span> g) (<span class="dt">Cons</span> x t) <span class="fu">=</span> <span class="dt">Cons</span> ((f <span class="fu">.</span> g) x) (fmap (f <span class="fu">.</span> g) t)
+                        <span class="co">-- induction hypothesis fmap (f . g) t = (fmap f . fmap g) t</span>
+                        <span class="fu">=</span> <span class="dt">Cons</span> (f (g x)) ((fmap f <span class="fu">.</span> fmap g) t)
+                        <span class="fu">=</span> <span class="dt">Cons</span> (f (g x)) (fmap f (fmap g t))
+                        <span class="fu">=</span> fmap f (<span class="dt">Cons</span> (g x) (fmap g t))
+                        <span class="fu">=</span> fmap f (fmap g (<span class="dt">Const</span> x t))
+                        <span class="fu">=</span> (fmap f <span class="fu">.</span> fmap g) (<span class="dt">Const</span> x t)</code></pre></div></li>
+</ol>
+<h2 id="functoriality">Functoriality</h2>
+<p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/02/03/functoriality/">Functoriality</a></p>
+<h2 id="bifunctors">Bifunctors</h2>
+<p>A functor maps objects and morphisms from one category to another. A functor with two arguments is called a <em>bifunctor</em>.</p>
+<p>A bifunctor maps every pair of objects, one from category <code>C</code>, one from category <code>D</code>, to an object in category <code>E</code>. In other words, it is mapping the cartesian product of <code>C</code> and <code>D</code> to <code>E</code>.</p>
+<p>Also, it has to map a pair of morphisms, one from <code>C</code> and one from <code>D</code>, to <code>E</code>. It maps the cartesian product of morphisms in <code>C</code> and <code>D</code> to <code>E</code>. These morphisms in <code>E</code> can also be composed:</p>
+<pre><code>(f , g) . (f&#39;, g&#39;) = (f . f&#39;, g . g&#39;)</code></pre>
+<p>This composition of pairs of morphisms is associative and has an identity <code>(id, id)</code></p>
+<p>If you have a mapping from a pair of categories to a third category, and it can be proven that it acts like a functor on each argument separately, then the mapping is a bifunctor.</p>
+<p>A functor in Haskell is a typeclass that takes one argument, a bifunctor in Haskell is then a typeclass that takes two arguments.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Bifunctor</span> f <span class="kw">where</span>
+<span class="ot">    bimap ::</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> d) <span class="ot">-&gt;</span> f a b <span class="ot">-&gt;</span> f c d
+    bimap g h <span class="fu">=</span> first g <span class="fu">.</span> second h
+<span class="ot">    first ::</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> f a b <span class="ot">-&gt;</span> f c b
+    first g <span class="fu">=</span> bimap g id
+<span class="ot">    second ::</span> (b <span class="ot">-&gt;</span> d) <span class="ot">-&gt;</span> f a b <span class="ot">-&gt;</span> f a d
+    second <span class="fu">=</span> bimap id</code></pre></div>
+<p><code>bimap</code> lifts a pair of functions, <code>a -&gt; c</code> and <code>b -&gt; d</code> to a <code>f a b -&gt; f c d</code>, and can be defined in terms of <code>first</code> and <code>second</code>, which lifts a function from each argument of the bifunctor.</p>
+<h3 id="product-and-coproduct-bifunctors">Product and Coproduct Bifunctors</h3>
+<p>An example of a bifunctor is the categorical product.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Bifunctor</span> (,) <span class="kw">where</span>
+    bimap f g (x, y) <span class="fu">=</span> (f x, g y)</code></pre></div>
+<p>It applies the first function to the first value of the pair, and the second function to the second value of the pair.</p>
+<p>By duality, a coproduct is defined too, and is a bifunctor.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Bifunctor</span> <span class="dt">Either</span> <span class="kw">where</span>
+    bimap f _ (<span class="dt">Left</span> x) <span class="fu">=</span> <span class="dt">Left</span> (f x)
+    bimap _ g (<span class="dt">Right</span> y) <span class="fu">=</span> <span class="dt">Right</span> (g y)</code></pre></div>
+<p>It was mentioned earlier that the category of types and functions is a monoidal category in two ways, with cartesian product as the operator and <code>()</code> as identity element, and with disjoint union as the operator and <code>Void</code> as the identity element. The operator also needs to be a bifunctor (and in this category they are). The binary operator of a monoidal category must be a bifunctor.</p>
+<p>In the previous chapter we defined functor instances for several data types, such as <code>Maybe</code> and <code>Either</code>. In fact they are built up from products and coproducts. Since we have seen that both product and coproduct are functorial and that functors compose. If we can show that that basic elements in an algebraic data types are functorial, we can show that parametrized algebraic data types are functorial too.</p>
+<p>When building up our types, there are broadly two kinds of type constructors: the first do not take in any type arguments, such as <code>Nothing</code> in <code>Maybe</code>, the second takes an argument, like <code>Just</code> in <code>Maybe.</code></p>
+<p>The first kind is equivalent to a <code>Const</code> functor, which ignores the type parameter, and the second is equivalent to an <code>Identity</code> functor.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Identity</span> a <span class="fu">=</span> <span class="dt">Identity</span> a
+
+<span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">Identity</span> <span class="kw">where</span>
+    fmap f (<span class="dt">Identity</span> x) <span class="fu">=</span> <span class="dt">Identity</span> (f x)</code></pre></div>
+<p>Then <code>Maybe</code> can be defined, up to isomorphism, in terms of functors:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Either</span> (<span class="dt">Const</span> () a) (<span class="dt">Identity</span> a)</code></pre></div>
+<h3 id="writer-functor">Writer functor</h3>
+<p>In an earlier chapter talking about the Kleisli category, we had an embellished type <code>Writer</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">tyep <span class="dt">Writer</span> a <span class="fu">=</span> (a, <span class="dt">String</span>)</code></pre></div>
+<p>The embellishment in the Kleisli category is always a functor. Kleisli category has a &gt;=&gt; composition operator of embellished type, and an identity morphism:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">(&gt;=&gt;) ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Writer</span> b) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> <span class="dt">Writer</span> c) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">Writer</span> c)
+return<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">Writer</span> a</code></pre></div>
+<p>How can we define a functor for a embellishment?</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap<span class="ot"> ::</span> a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> <span class="dt">Writer</span> a <span class="ot">-&gt;</span> <span class="dt">Writer</span> b
+fmap f <span class="fu">=</span> id <span class="fu">&gt;=&gt;</span> (\b <span class="ot">-&gt;</span> return (f b))</code></pre></div>
+<h3 id="reader-functor">Reader functor</h3>
+<p>The <code>Reader</code> functor is based on the partially applied arrow type constructor: <code>(-&gt;) r</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Reader</span> r a <span class="fu">=</span> r <span class="ot">-&gt;</span> a</code></pre></div>
+<p>We can try to make it functorial in the first argument, by defining a synonym:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Op</span> r a <span class="fu">=</span> a <span class="ot">-&gt;</span> r</code></pre></div>
+<p>We would then need to implement an <code>fmap</code> with this signature:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap<span class="ot"> ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> r) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> r)</code></pre></div>
+<p>However this is impossible, we won't know what to do with <code>b</code>! What we can try to do is to get <code>b -&gt; a</code>, by somehow inverting the first argument to <code>fmap</code>. But we cannot do that easily. But we can go to an opposite category.</p>
+<p>Consider a functor <code>F</code> from the opposite category of C, <code>Cop</code>, to <code>D</code>. The morphism from <code>b</code> to <code>a</code> in <code>C</code>, now becomes <code>a</code> to <code>b</code> in <code>Cop</code>. Consider another mapping called <code>G</code>, which is not a functor, from <code>C</code> to <code>D</code>. It maps objects like <code>F</code>, but reverses all morphisms. It maps an morphism <code>b</code> to <code>a</code> in <code>C</code> and maps it to the possible morphism <code>g</code> from <code>a</code> to <code>b</code>. Then G is a contravariant functor because it inverts the direction of the morphisms.</p>
+<h2 id="profunctors">Profunctors</h2>
+<p>A <em>profunctor</em> is a mapping that is contravariant in the first argument and covariant in the second, and the arrow operator is an instance of a profunctor. It takes the cartesian product of the opposite category of <code>C</code>, <code>Cop</code>, and <code>D</code> to an object in <code>E</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">Profunctor</span> p <span class="kw">where</span>
+<span class="ot">  dimap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> (c <span class="ot">-&gt;</span> d) <span class="ot">-&gt;</span> p b c <span class="ot">-&gt;</span> p a d
+  dimap f g <span class="fu">=</span> lmap f <span class="fu">.</span> rmap g
+<span class="ot">  lmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> p b c <span class="ot">-&gt;</span> p a c
+  lmap f <span class="fu">=</span> dimap f id
+<span class="ot">  rmap ::</span> (b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> p a b <span class="ot">-&gt;</span> p a c
+  rmap <span class="fu">=</span> dimap id</code></pre></div>
+<p>Here I attempt some challenges:</p>
+<ol style="list-style-type: decimal">
+<li><p>Show that the data type:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Pair</span> a b <span class="fu">=</span> <span class="dt">Pair</span> a b</code></pre></div>
+<p>is a bifunctor. For additional credit implement all three methods of Bifunctor and use equational reasoning to show that these definitions are compatible with the default implementations whenever they can be applied. <em>This data type is equivalent to <code>,</code>, which is a bifunctor.</em></p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Pair</span> a b <span class="fu">=</span> <span class="dt">Pair</span> a b
+<span class="kw">instance</span> <span class="dt">Bifunctor</span> <span class="dt">Pair</span> <span class="kw">where</span>
+<span class="ot">    bimap ::</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> d) <span class="ot">-&gt;</span> <span class="dt">Pair</span> a b <span class="ot">-&gt;</span> <span class="dt">Pair</span> c d
+    bimap f g (<span class="dt">Pair</span> a b) <span class="fu">=</span> <span class="dt">Pair</span> (f a) (g b)
+
+<span class="co">-- default implementation of bimap</span>
+bimap g h (<span class="dt">Pair</span> a b) <span class="fu">=</span> (first g <span class="fu">.</span> second h) (<span class="dt">Pair</span> a b)
+                     <span class="fu">=</span> first g (second h (<span class="dt">Pair</span> a b))
+                     <span class="fu">=</span> first g (bimap id h (<span class="dt">Pair</span> a b))
+                     <span class="fu">=</span> first g (<span class="dt">Pair</span> (id a) (h b))
+                     <span class="fu">=</span> first g (<span class="dt">Pair</span> a (h b))
+                     <span class="fu">=</span> bimap g id (<span class="dt">Pair</span> a (h b))
+                     <span class="fu">=</span> <span class="dt">Pair</span> (g a) (id (h b))
+                     <span class="fu">=</span> <span class="dt">Pair</span> (g a) (h b)
+<span class="co">-- default implementation of first</span>
+first g (<span class="dt">Pair</span> a b) <span class="fu">=</span> bimap g id (<span class="dt">Pair</span> a b)
+                   <span class="fu">=</span> <span class="dt">Pair</span> (g a) (id b)
+                   <span class="fu">=</span> <span class="dt">Pair</span> (g a) b
+<span class="co">-- default implementation of second</span>
+second g (<span class="dt">Pair</span> a b) <span class="fu">=</span> bimap id g (<span class="dt">Pair</span> a b)
+                    <span class="fu">=</span> <span class="dt">Pair</span> (id a) (g b)
+                    <span class="fu">=</span> <span class="dt">Pair</span> a (g b)</code></pre></div></li>
+<li><p>Show the isomorphism between the standard definition of <code>Maybe</code> and this desugaring:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Maybe&#39;</span> a <span class="fu">=</span> <span class="dt">Either</span> (<span class="dt">Const</span> () a) (<span class="dt">Identity</span> a)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe&#39;</span> a
+f <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Left</span> ()
+f (<span class="dt">Just</span> a) <span class="fu">=</span> <span class="dt">Right</span> (<span class="dt">Identity</span> a)
+
+<span class="ot">g ::</span> <span class="dt">Maybe&#39;</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+g (<span class="dt">Left</span> _) <span class="fu">=</span> <span class="dt">Nothing</span>
+g (<span class="dt">Right</span> (<span class="dt">Identity</span> a)) <span class="fu">=</span> <span class="dt">Just</span> a
+
+<span class="co">-- to show that f is the inverse of g, we show that both left and right</span>
+<span class="co">-- composition of f and g are equivalent to id</span>
+(g <span class="fu">.</span> f) <span class="dt">Nothing</span> <span class="fu">=</span> g (<span class="dt">Left</span> ())
+                <span class="fu">=</span> <span class="dt">Nothing</span>
+(g <span class="fu">.</span> f) (<span class="dt">Just</span> a) <span class="fu">=</span> g (<span class="dt">Right</span> (<span class="dt">Identity</span> a))
+                 <span class="fu">=</span> <span class="dt">Just</span> a
+(f <span class="fu">.</span> g) (<span class="dt">Left</span> ()) <span class="fu">=</span> f <span class="dt">Nothing</span>
+                  <span class="fu">=</span> <span class="dt">Left</span> ()
+(f <span class="fu">.</span> g) (<span class="dt">Right</span> (<span class="dt">Identity</span> a)) <span class="fu">=</span> f (<span class="dt">Just</span> a)
+                             <span class="fu">=</span> <span class="dt">Right</span> (<span class="dt">Identity</span> a)</code></pre></div></li>
+<li><p>Show that <code>PreList</code> is an instance of <code>Bifunctor</code>. <em>We can show that this definition is functorial in both arguments by redefining it in terms of basic functorial building blocks.</em></p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">PreList</span> a b <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> <span class="dt">Cons</span> a b
+<span class="kw">data</span> <span class="dt">Prelist</span> a b <span class="fu">=</span> <span class="dt">Either</span> (<span class="dt">Const</span> () a) (<span class="dt">Identity</span> (a ,b))
+
+<span class="kw">instance</span> <span class="dt">Bifunctor</span> <span class="dt">Prelist</span> <span class="kw">where</span>
+<span class="ot">    bimap ::</span> (a <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> d) <span class="ot">-&gt;</span> <span class="dt">Prelist</span> a b <span class="ot">-&gt;</span> <span class="dt">Prelist</span> c d
+    bimap f g <span class="dt">Nil</span> <span class="fu">=</span> <span class="dt">Nil</span>
+    bimap f g (<span class="dt">Cons</span> a b) <span class="fu">=</span> <span class="dt">Cons</span> (f a) (g b)</code></pre></div></li>
+</ol>
+<h2 id="function-types">Function Types</h2>
+<p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/03/13/function-types/">Function Types</a></p>
+<p>When working in the category of types and functions, the objects are sets representing types. For example the object <code>Bool</code> is a set with two elements. A function type <code>a -&gt; b</code> must exist in the set as well, but what does it contain? It contains the morphisms from <code>a</code> to <code>b</code>: it's a hom-set.</p>
+<p>It is not always the case that a hom-set exists in the same category as the objects it was built from. When they are in different categories, we call the objects <em>external</em> hom-sets.</p>
+<p>And if they are in the same category, they are <em>internal</em> hom-sets.</p>
+<h3 id="universal-construction-1">Universal Construction</h3>
+<p>We can try to construct an internal hom-set from scratch. We can think of A function type as a composite type, much like product and coproduct types. The product and coproduct types were constructed using by looking for patterns in the category, using universal construction. The same strategy can be used to find function types.</p>
+<p>In this case an object <code>z</code> contains functions that maps the argument type <code>a</code>, to the return type <code>b</code>. This pattern represents <em>function application</em></p>
+<p>If we peek inside <code>z</code>, we can find functions <code>f</code> which maps a value <code>x</code> of type <code>a</code> to a value <code>f x</code> of type <code>b</code>. A pair of <code>(f, a)</code> will map to <code>b</code>. However we want to avoid peeking, so instead of looking at an individual function, we look at the entire object <code>z</code>. Then we can build a morphism <code>g</code> between the cartesian product of <code>z</code> and <code>a</code>, to <code>b</code>. In the category of types and functions, <code>g</code> will then be a function that maps every pair <code>(f, x)</code> to <code>f x</code>.</p>
+<p>How do we rank candidates for <code>z</code>? An object <code>z</code> with a morphism <code>g</code> from <code>z * a</code> to <code>b</code>, is better than an object <code>z'</code> with morphism <code>g'</code> from <code>z * a'</code> to <code>b</code>, if there is a morphism <code>h</code> from <code>z'</code> to <code>z</code> that factorizes <code>g</code>. This is not completely sufficient, because we have the products <code>z' * a</code> and <code>z * a</code>, but only a morphism <code>h</code> from <code>z'</code> to <code>z</code>. What we would like is a morphism <code>h'</code> from <code>z' * a</code> to <code>z * a</code>. Since we already know that a product is functorial, the product of morphisms is also functorial. So the factorization is:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">g&#39; <span class="fu">=</span> g <span class="fu">.</span> (h <span class="fu">*</span> id)</code></pre></div>
+<p>The best candidate in this case will be</p>
+<ol style="list-style-type: decimal">
+<li>an object <code>a=&gt;b</code> with</li>
+<li>a morphism <code>eval :: ((a=&gt;b) * a) -&gt; b</code></li>
+<li>such that any other candidate <code>z</code> with a morphism <code>g :: z * a -&gt; b</code></li>
+<li>there is a unique morphism <code>h :: z -&gt; (a=&gt;b)</code></li>
+<li>that factorizes <code>g</code> through <code>eval</code></li>
+</ol>
+<p>This object <code>a=&gt;b</code> might not exist for any pair of objects <code>a</code>, <code>b</code>, in a category, but in the category of types and functions it always does. In fact, in this category, the object <code>a=&gt;b</code> is isomorphic to the hom-set of <code>a</code> and <code>b</code>.</p>
+<h3 id="currying">Currying</h3>
+<p>The morphism <code>g</code> can be seen as a function of two variables, <code>z</code> and <code>a</code>. The morphism <code>h</code> can be seen as a function of one variable, <code>z</code>, returning a function from <code>a</code> to <code>b</code>. This makes <code>h</code> a higher ordered function. <code>h</code> is the <em>curried</em> version of <code>g</code>.</p>
+<h3 id="exponentials">Exponentials</h3>
+<p>The function object is often called the <em>exponential</em>, denoted by <code>b^a</code>, where <code>a</code> is the argument type.</p>
+<p>A function from <code>Bool</code> to <code>Int</code> accepts two values as it's argument, <code>True</code> and <code>False</code>, and for each value can return any of the values in <code>Int</code>. So the number of possible functions from <code>Bool</code> to <code>Int</code> is <code>Int * Int</code>, or <code>Int ^ 2</code>.</p>
+<p>In this sense, functions can be turned into table lookups. This is the equivalence between function types as objects, and functions as morphisms.</p>
+<h3 id="cartesian-closed-categories">Cartesian Closed Categories</h3>
+<p>So far, we have been using the category of Set as a model for types and functions. There is a larger family of categories that can be used as well. These categories are called <em>cartesian closed</em>. The category of Set is an example.</p>
+<p>The requirements of a cartesian closed category is that it must contain: 1. The terminal object 2. Product of any pair of objects 3. Exponential of any pair of objects</p>
+<p>Exponential can be seen as a product of arbitrary many terms, and the terminal object as a product of zero objects, or zeroth power of an object.</p>
+<p>The cartesian closed category provide models for the simply typed lambda calculus.</p>
+<p>The terminal object and product have their duals, the terminal object and coproduct. A cartesian closed category that also supports these two constructions, and that product can be distributed over coproduct, is called a <em>bicartesian closed category</em>, which Set is.</p>
+<h3 id="exponentials-and-algebraic-data-types">Exponentials and Algebraic Data Types</h3>
+<p>The function type from <code>0</code> to any type <code>a</code> is equivalent to the type <code>1</code>, there is only one function from <code>Void</code> to any type <code>a</code>, <code>absurd</code>, the hom-set <em>C(0,a)</em> is a singleton set.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">a <span class="fu">^</span> <span class="dv">0</span> <span class="fu">=</span> <span class="dv">1</span></code></pre></div>
+<p>The function type from <code>a</code> to <code>1</code>, is equivalent to <code>1</code>, there is only one function from any type <code>a</code> to the type <code>()</code>, <code>unit</code>,</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dv">1</span><span class="fu">^</span>a <span class="fu">=</span> <span class="dv">1</span></code></pre></div>
+<p>Morphism from the terminal object is isomorphic to the object itself:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">a<span class="fu">^</span><span class="dv">1</span> <span class="fu">=</span> a</code></pre></div>
+<p>The exponential form of a coproduct of two objects, is isomorphic to a product of two exponentials. When writing a function that takes in a coproduct <code>b + c</code>, it is sufficient to write a pair of functions dealing with each type in the coproduct separately.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">a <span class="fu">^</span> (b<span class="fu">+</span>c) <span class="fu">=</span> a<span class="fu">^</span>b <span class="fu">*</span> a<span class="fu">^</span>c</code></pre></div>
+<p>The exponential of an exponential is the product of the exponents, which is a way to express uncurrying.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(a<span class="fu">^</span>b)<span class="fu">^</span>c <span class="fu">=</span> a<span class="fu">^</span>(b<span class="fu">*</span>c)</code></pre></div>
+<p>A function returning a pair is equivalent to a pair of functions returning one element of the pair each.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(a <span class="fu">*</span> b)<span class="fu">^</span>c <span class="fu">=</span> a<span class="fu">^</span>c <span class="fu">*</span> b<span class="fu">^</span>c</code></pre></div>
+<h3 id="curry-howard-isomorphism">Curry-Howard isomorphism</h3>
+<p>Algebraic data types and logic have a certain correspondence described above. In particular, the new function types we have learned corresponds to implication: the function type <code>a -&gt; b</code> is the logical implication that, <code>a</code> implies <code>b</code>.</p>
+<p>The Curry-Howard isomorphism states that every type can be viewed as a proposition, and the proposition is true if the type can be inhabited, false if not. A logical implication is true if the argument and return type is inhabited. Thus an implementation of a function is then a proof of the proposition, that is the type signature of the function.</p>
+<h2 id="natural-transformations">Natural Transformations</h2>
+<p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/04/07/natural-transformations/">Natural Transformations</a></p>
+<p>Functors are mappings between categories that preserve structure (composition, identity). It embeds one category into another.</p>
+<!-- TODO give example of functors that behave differently -->
+<p>There can be many functors from a source category <code>C</code> to a target category <code>D</code>. <em>Natural transformations</em> allows us to compare different functors, they are mapping functors that preserver the functorial nature of functors.</p>
+<p>Given two functors <code>F</code> and <code>G</code>, both from a category <code>C</code> to another category <code>D</code>, an object <code>a</code> in a <code>C</code> can be mapped to two objects in <code>D</code>, <code>F a</code> or <code>G a</code>. Then a mapping of functors will map <code>F a</code> to <code>G a</code>.</p>
+<p><code>F a</code> and <code>G a</code> are objects in the same category <code>D</code>, and the mapping between them will be a <code>morphism</code> in <code>D</code>. A natural transformation <code>α</code> is a selection of morphisms, for every <code>a</code>, select a morphism from <code>F a</code> to <code>G a</code>. This morphism is called the <em>component</em> of <code>α</code> at <code>a</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">α<span class="ot">_a ::</span> <span class="dt">F</span> a <span class="ot">-&gt;</span> <span class="dt">G</span> a</code></pre></div>
+<p>If for some <code>a</code>, there is no morphism between <code>F a</code> and <code>G a</code>, then there is no natural transformation between <code>F</code> and <code>G</code>.</p>
+<p>Functors also map morphisms, so natural transformations have to map these mapped morphisms as well. <code>F f</code> must be mapped to <code>G f</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">F</span><span class="ot"> f ::</span> <span class="dt">F</span> a <span class="ot">-&gt;</span> <span class="dt">F</span> b
+<span class="dt">G</span><span class="ot"> f ::</span> <span class="dt">G</span> a <span class="ot">-&gt;</span> <span class="dt">G</span> b</code></pre></div>
+<p>The natural transformation then provides an additional morphisms:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">α<span class="ot">_a ::</span> <span class="dt">F</span> a <span class="ot">-&gt;</span> <span class="dt">G</span> a
+α<span class="ot">_b ::</span> <span class="dt">F</span> b <span class="ot">-&gt;</span> <span class="dt">G</span> b</code></pre></div>
+<p>And we impose the <em>naturality condition</em> that for any <code>f</code>:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">G</span> f <span class="fu">.</span> α_a  <span class="fu">=</span> α_b  <span class="fu">.</span> <span class="dt">F</span> f</code></pre></div>
+<p>This ensures that if we use <code>α_a</code> first to get from <code>F a</code> to <code>G a</code>, then use <code>G f</code> to get from <code>G a</code> to <code>G b</code>, we get the same result as if we use <code>F f</code> to get from <code>F a</code> to <code>F b</code>, then use <code>α_b</code> to get from <code>F b</code> to <code>G b</code>.</p>
+<p>This requirement is pretty stringent, and so functors related by natural transformations are not easy to find. But if found, they can tell you a lot about the structure of the categories.</p>
+<p>You can see natural transformation as mapping objects to morphisms (maps an object <code>a</code> to to a morphism <code>α_a</code> from <code>F a</code> to <code>G a</code>). It also maps morphisms to commuting squares (the morphism <code>f</code> from <code>a</code> to <code>b</code> is mapped to a square that shows two ways of getting from <code>F a</code> to <code>G b</code>).</p>
+<p>Natural transformations can be used to define isomorphisms of functors. Natural isomorphism is defined as a natural transformation whose components are all isomorphisms.</p>
+<h3 id="polymorphic-functors">Polymorphic functors</h3>
+<p>In Haskell, functors map types to types, and lifts functions using <code>fmap</code>. One way to think about functors is that they are generalized containers. Then, natural transformations are a way to repackage the contents of one container into another container.</p>
+<p>One example of a natural transformation is between the <code>List</code> functor and the <code>Maybe</code> functor.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">safeHead ::</span> [a] <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+safeHead [] <span class="fu">=</span> <span class="dt">Nothing</span>
+safeHead (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="dt">Just</span> x</code></pre></div>
+<p>To show that this satisfies the naturality condition, we need to show that:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">G</span> f <span class="fu">.</span> α_a  <span class="fu">=</span> α_b  <span class="fu">.</span> <span class="dt">F</span> f
+<span class="co">-- G f is fmap for G</span>
+<span class="co">-- α_a s the component at a</span>
+<span class="co">-- F f is fmap for F</span>
+<span class="co">-- α_b s the component at b</span>
+<span class="co">-- In the case of safeHead, G is Maybe, and F is List</span>
+
+fmap f safeHead <span class="fu">=</span> safeHead <span class="fu">.</span> fmap f
+
+fmap f (safeHead []) <span class="fu">=</span> fmap f <span class="dt">Nothing</span>
+                     <span class="fu">=</span> <span class="dt">Nothing</span>
+                     <span class="fu">=</span> safeHead []
+                     <span class="fu">=</span> safeHead (fmap f [])
+fmap f (safeHead (x<span class="fu">:</span>xs)) <span class="fu">=</span> fmap f (<span class="dt">Just</span> x)
+                         <span class="fu">=</span> <span class="dt">Just</span> (f x)
+                         <span class="fu">=</span> safeHead (f x <span class="fu">:</span> fmap f xs)
+                         <span class="fu">=</span> safeHead (fmap f (x <span class="fu">:</span> xs))</code></pre></div>
+<p>Another functor is the <code>Reader</code> functor:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Reader</span> e a <span class="fu">=</span> <span class="dt">Reader</span> (e <span class="ot">-&gt;</span> a)
+<span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Reader</span> e) <span class="kw">where</span>
+    fmap f (<span class="dt">Reader</span> g) <span class="fu">=</span> <span class="dt">Reader</span> (\x <span class="ot">-&gt;</span> f (g x))</code></pre></div>
+<p>This functor is parameterized by two types <code>e</code> and <code>a</code>, and functorial only in <code>a</code>.</p>
+<p>For every type <code>e</code>, you can define a natural transform from <code>Reader e</code> to a functor <code>F</code>. The <em>Yoneda lemma</em> states that the members of this family are always in one to one correspondence of the elements of <code>F e</code>. For example the functor <code>Reader ()</code> takes any type <code>a</code> and maps it a function type <code>() -&gt; a</code>. We can try to build a natural transformation from this functor to <code>Maybe</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">α<span class="ot">_a ::</span> <span class="dt">Reader</span> () a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+dumb (<span class="dt">Reader</span> _) <span class="ot">-&gt;</span> <span class="dt">Nothing</span>
+obvious (<span class="dt">Reader</span> g) <span class="ot">-&gt;</span> <span class="dt">Just</span> (g ())</code></pre></div>
+<p>Natural transformations feel like morphisms, they map a functor to another functor. And in fact, functors form a category. Objects in this category are functors from <code>C</code> to <code>D</code>, and morphisms are the natural transformations between those functors.</p>
+<p>If we have a category, we need composition. Composition of natural transformations is the composition of the morphisms that the natural transformations select.</p>
+<p>Given a natural transformation <code>α</code> from <code>F</code> to <code>G</code>, the component at <code>a</code> is a morphism:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">α<span class="ot">_a ::</span> <span class="dt">F</span> a <span class="ot">-&gt;</span> <span class="dt">G</span> a</code></pre></div>
+<p>If we have another natural transformation <code>β</code> from <code>G</code> to <code>H</code>, the component at <code>a</code> is:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">β<span class="ot">_a ::</span> <span class="dt">G</span> a <span class="ot">-&gt;</span> <span class="dt">H</span> a</code></pre></div>
+<p>Thus the composition of the natural transformations at <code>a</code> is:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(β <span class="fu">.</span> α)_a <span class="fu">=</span> β_a <span class="fu">.</span> α_a</code></pre></div>
+<p>And the result of this composition is a natural transformation from <code>F</code> to <code>H</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- naturality condition</span>
+<span class="dt">G</span> f <span class="fu">.</span> α_a  <span class="fu">=</span> α_b  <span class="fu">.</span> <span class="dt">F</span> f
+<span class="co">-- rewritten in terms of the composition</span>
+<span class="dt">H</span> f <span class="fu">.</span> (β <span class="fu">.</span> α)_a <span class="fu">=</span> (β <span class="fu">.</span> α)_b <span class="fu">.</span> <span class="dt">F</span> f</code></pre></div>
+<p>For each functor <code>F</code>, there is an identity natural transformation:</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">id_fa ::</span> <span class="dt">F</span> a <span class="ot">-&gt;</span> <span class="dt">F</span> a</code></pre></div>
+<p>Here I attempt some challenges:</p>
+<ol style="list-style-type: decimal">
+<li><p>Define a natural transformation from the <code>Maybe</code> functor to the list functor. Prove the naturality condition for it.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">g ::</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> [a]
+g <span class="dt">Nothing</span> <span class="fu">=</span> []
+g <span class="dt">Just</span> a <span class="fu">=</span> [a]
+
+
+<span class="co">-- G f . α_a  = α_b  . F f</span>
+fmap f (g <span class="dt">Nothing</span>) <span class="fu">=</span> []
+                   <span class="fu">=</span> g <span class="dt">Nothing</span>
+                   <span class="fu">=</span> g (fmap f <span class="dt">Nothing</span>)
+                   <span class="fu">=</span> (g <span class="fu">.</span> fmap f) <span class="dt">Nothing</span>
+fmap f (g (<span class="dt">Just</span> a)) <span class="fu">=</span> fmap f [a]
+                    <span class="fu">=</span> g (<span class="dt">Just</span> (f a))
+                    <span class="fu">=</span> g (fmap f (<span class="dt">Just</span> a))
+                    <span class="fu">=</span> (g <span class="fu">.</span> fmap f) (<span class="dt">Just</span> a)</code></pre></div></li>
+<li><p>Define at least two different natural transformations between <code>Reader ()</code> and the list functor. How many different lists of <code>()</code> are there?</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">α<span class="ot">_a ::</span> <span class="dt">Reader</span> () a <span class="ot">-&gt;</span> [<span class="dt">A</span>]
+dumb    (<span class="dt">Reader</span> _) <span class="fu">=</span> []
+obvious (<span class="dt">Reader</span> a) <span class="fu">=</span> [a ()]</code></pre></div></li>
+<li><p>Continue the previous exercise with <code>Reader Bool</code> and <code>Maybe</code>.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">α<span class="ot">_a ::</span> <span class="dt">Reader</span> <span class="dt">Bool</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
+alpha (<span class="dt">Reader</span> _) <span class="fu">=</span> <span class="dt">Nothing</span>
+beta (<span class="dt">Reader</span> f) <span class="fu">=</span> <span class="dt">Just</span> (f <span class="dt">True</span>)
+beta (<span class="dt">Reader</span> f) <span class="fu">=</span> <span class="dt">Just</span> (f <span class="dt">False</span>)</code></pre></div></li>
 </ol>
 </section>
 </body>
