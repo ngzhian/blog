@@ -670,7 +670,7 @@ fmap (g <span class="fu">.</span> f) (<span class="dt">Just</span> x) <span clas
 <p>Functors between categories compose as well, just like morphisms compose.</p>
 <p>When you compose two functors, the object mappings compose, and the morphisms compose too: identity morphisms and composition of morphisms in the initial category are still identity morphisms and composition of morphism in the final category.</p>
 <p>Like morphisms in a category, functor composition is associative (since the mapping of object and morphisms is associative), and there is also an identity functor in every category (maps every object and morphism to itself).</p>
-<p>So functors seem to act like morphisms, if that's the case, what category is it? A category of categories, where the objects are categories and morphisms are functors. A category of <em>all</em> categories would get us into trouble, leading us into <a href="https://en.wikipedia.org/wiki/Russell%27s_paradox">Russell's Paradox</a>. Instead there is a category of all <em>small</em> categories called <strong>Cat</strong>, which itself is <em>big</em>, so does not contain itself.</p>
+<p>So functors seem to act like morphisms, if that's the case, what category is it? A category of categories, where the objects are categories and morphisms are functors. A category of <em>all</em> categories would get us into trouble, leading us to <a href="https://en.wikipedia.org/wiki/Russell%27s_paradox">Russell's Paradox</a>. Instead there is a category of all <em>small</em> categories called <strong>Cat</strong>, which itself is <em>big</em>, and so does not contain itself.</p>
 <p>Here I attempt some challenges:</p>
 <ol style="list-style-type: decimal">
 <li><p>Can we turn the <code>Maybe</code> type constructor into a functor by defining: <em>One of the functor laws is that of preserving identity morphisms. However, this definition of fmap does not do that:</em></p>
@@ -735,11 +735,16 @@ fmap (f <span class="fu">.</span> g) (<span class="dt">Cons</span> x t) <span cl
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Bifunctor</span> <span class="dt">Either</span> <span class="kw">where</span>
     bimap f _ (<span class="dt">Left</span> x) <span class="fu">=</span> <span class="dt">Left</span> (f x)
     bimap _ g (<span class="dt">Right</span> y) <span class="fu">=</span> <span class="dt">Right</span> (g y)</code></pre></div>
-<p>It was mentioned earlier that the category of types and functions is a monoidal category in two ways, with cartesian product as the operator and <code>()</code> as identity element, and with disjoint union as the operator and <code>Void</code> as the identity element. The operator also needs to be a bifunctor (and in this category they are). The binary operator of a monoidal category must be a bifunctor.</p>
+<p>It was mentioned earlier that the category of types and functions is a monoidal category in two ways, with cartesian product as the operator and <code>()</code> as identity element, and with disjoint union as the operator and <code>Void</code> as the identity element. The operator also needs to be a bifunctor (and in this category they are).</p>
 <p>In the previous chapter we defined functor instances for several data types, such as <code>Maybe</code> and <code>Either</code>. In fact they are built up from products and coproducts. Since we have seen that both product and coproduct are functorial and that functors compose. If we can show that that basic elements in an algebraic data types are functorial, we can show that parametrized algebraic data types are functorial too.</p>
 <p>When building up our types, there are broadly two kinds of type constructors: the first do not take in any type arguments, such as <code>Nothing</code> in <code>Maybe</code>, the second takes an argument, like <code>Just</code> in <code>Maybe.</code></p>
 <p>The first kind is equivalent to a <code>Const</code> functor, which ignores the type parameter, and the second is equivalent to an <code>Identity</code> functor.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Identity</span> a <span class="fu">=</span> <span class="dt">Identity</span> a
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Const</span> c a <span class="fu">=</span> <span class="dt">Const</span> c
+
+<span class="kw">instance</span> <span class="dt">Functor</span> (<span class="dt">Const</span> c) <span class="kw">where</span>
+    fmap _ (<span class="dt">Const</span> v) <span class="fu">=</span> <span class="dt">Const</span> v
+
+<span class="kw">data</span> <span class="dt">Identity</span> a <span class="fu">=</span> <span class="dt">Identity</span> a
 
 <span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">Identity</span> <span class="kw">where</span>
     fmap f (<span class="dt">Identity</span> x) <span class="fu">=</span> <span class="dt">Identity</span> (f x)</code></pre></div>
@@ -751,7 +756,7 @@ fmap (f <span class="fu">.</span> g) (<span class="dt">Cons</span> x t) <span cl
 <p>The embellishment in the Kleisli category is always a functor. Kleisli category has a &gt;=&gt; composition operator of embellished type, and an identity morphism:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">(&gt;=&gt;) ::</span> (a <span class="ot">-&gt;</span> <span class="dt">Writer</span> b) <span class="ot">-&gt;</span> (b <span class="ot">-&gt;</span> <span class="dt">Writer</span> c) <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">Writer</span> c)
 return<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">Writer</span> a</code></pre></div>
-<p>How can we define a functor for a embellishment?</p>
+<p>How can we define a functor for this embellishment?</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap<span class="ot"> ::</span> a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> <span class="dt">Writer</span> a <span class="ot">-&gt;</span> <span class="dt">Writer</span> b
 fmap f <span class="fu">=</span> id <span class="fu">&gt;=&gt;</span> (\b <span class="ot">-&gt;</span> return (f b))</code></pre></div>
 <h3 id="reader-functor">Reader functor</h3>

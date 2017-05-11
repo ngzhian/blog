@@ -1172,10 +1172,10 @@ and there is also an identity functor in every category
 
 So functors seem to act like morphisms, if that's the case, what category is it?
 A category of categories, where the objects are categories and morphisms are functors.
-A category of *all* categories would get us into trouble, leading us into
+A category of *all* categories would get us into trouble, leading us to
 [Russell's Paradox](https://en.wikipedia.org/wiki/Russell%27s_paradox).
 Instead there is a category of all *small* categories called **Cat**,
-which itself is *big*, so does not contain itself.
+which itself is *big*, and so does not contain itself.
 
 Here I attempt some challenges:
 
@@ -1297,7 +1297,6 @@ is a monoidal category in two ways,
 with cartesian product as the operator and `()` as identity element,
 and with disjoint union as the operator and `Void` as the identity element.
 The operator also needs to be a bifunctor (and in this category they are).
-The binary operator of a monoidal category must be a bifunctor.
 
 In the previous chapter we defined functor instances for several data types,
 such as `Maybe` and `Either`. In fact they are built up from products and coproducts.
@@ -1313,6 +1312,11 @@ The first kind is equivalent to a `Const` functor, which ignores the type parame
 and the second is equivalent to an `Identity` functor.
 
 ```haskell
+data Const c a = Const c
+
+instance Functor (Const c) where
+    fmap _ (Const v) = Const v
+
 data Identity a = Identity a
 
 instance Functor Identity where
@@ -1341,7 +1345,7 @@ Kleisli category has a >=> composition operator of embellished type, and an iden
 return :: a -> Writer a
 ```
 
-How can we define a functor for a embellishment?
+How can we define a functor for this embellishment?
 
 ```haskell
 fmap :: a -> b -> Writer a -> Writer b
