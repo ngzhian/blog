@@ -307,21 +307,20 @@ toUpperWords <span class="fu">=</span> toWords <span class="fu">.</span> toUpper
 <li>Call <code>toWords</code> on the value from 1, to get a list of words, and another log,</li>
 <li>Return the value from 2, and append the log from 1 and 2 together</li>
 </ol>
-<p>In pseudocode:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">toUpperWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> ([<span class="dt">String</span>], <span class="dt">String</span>)
 toUpperWords s <span class="fu">=</span>
     <span class="kw">let</span> (s1, l1) <span class="fu">=</span> toUpper s
         (s2, l2) <span class="fu">=</span> toWords s1
     <span class="kw">in</span> (s2, l1 <span class="fu">++</span> l2)</code></pre></div>
 <p>This becomes repetitive very quickly, and hides the original purpose, mixing the logic of logging and concatenating logs with the logic of <code>toUpper</code> and <code>toWords</code>.</p>
-<p>We can then try to come up with a new kind of embellished function composition:</p>
+<p>We can then try to come up with a new kind of function composition that helps us to handle this embellishment:</p>
 <ol style="list-style-type: decimal">
 <li>Call the first embellished function,</li>
 <li>Call the second embellished function with the first value of 1,</li>
 <li>Concatenate the second value of 1 and 2,</li>
 <li>Return a pair of the first value from 2, and the concatenated value from 3.</li>
 </ol>
-<p>We can first make up a more generic type for this sort of embellished function:</p>
+<p>First, let's make up a more generic type for this sort of embellished function:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Writer</span> a <span class="fu">=</span> (a, <span class="dt">String</span>)
 toUpper<span class="ot">      ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Writer</span> <span class="dt">String</span>
 <span class="ot">toWords      ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Writer</span> [<span class="dt">String</span>]
@@ -338,11 +337,11 @@ embellished_compose f g s <span class="fu">=</span>
 <p>And thus, <code>toUpperWords</code> looks like this:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">toUpperWords ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Writer</span> [<span class="dt">String</span>]
 toUpperWords s <span class="fu">=</span> embellished_compose toUpper toWords</code></pre></div>
-<p>Now we can look at this new composition from a categorical point of view. The types are still objects, and the morphisms are the embellished functions. The important point is that the morphism is still considered an arrow between <code>String</code> and <code>String</code>, or <code>String</code> and <code>[String]</code>, although the function] actually returns a pair.</p>
+<p>Now we can look at this new composition from a categorical point of view. The types are still objects, and the morphisms are the embellished functions. The important point is that the morphism is still considered an arrow between <code>String</code> and <code>String</code>, or <code>String</code> and <code>[String]</code>, although the function actually returns a pair.</p>
 <p>In this new category, <code>embellished_compose</code> is composition, and the identity morphism will take a type to the same type, and not add anything to the log:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">return<span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">Writer</span> a
 return s <span class="fu">=</span> (s, <span class="st">&quot;&quot;</span>)</code></pre></div>
-<p>Does this category fulfill all the rules? Yes!</p>
+<p>We can check that this forms a category by checking all the rules:</p>
 <ol style="list-style-type: decimal">
 <li>Morphisms compose, as shown by <code>embellished_compose</code>, satisfying Rule 1,</li>
 <li>Composition is associative, because at the first part of the pair we have function composition (which is associative) and on the second part we have concatenation, which is associative, satisfying Rule 2,</li>
@@ -352,9 +351,9 @@ return s <span class="fu">=</span> (s, <span class="st">&quot;&quot;</span>)</co
 <p>The log here is actually monoidal, <code>&quot;&quot;</code> is <code>mempty</code>, and <code>+</code> is <code>mappend</code>.</p>
 </blockquote>
 <h3 id="kleisli-categories-1">Kleisli Categories</h3>
-<p>This category we have constructed is actually an example of a <em>Kleisli category</em>, a category based on a monad. The objects of a Kleisli category are the types of the underlying programming language, and morphisms from <code>A</code> to <code>B</code> are functions from the types <code>A</code> to an embellished <code>B</code>.</p>
+<p>This category we have constructed is actually an example of a <em>Kleisli category</em>, a category based on a monad. The objects of a Kleisli category are the types of the underlying programming language, and morphisms from <code>A</code> to <code>B</code> are functions from the types <code>A</code> to an embellished type <code>B</code>.</p>
 <p>The morphisms in the above example are from the objects <code>String</code> to <code>String</code>, and <code>String</code> to <code>[String]</code>, whereas the functions were from the types <code>String</code> to <code>Writer String</code>, and <code>String</code> to <code>Write [String]</code>.</p>
-<p>Each Kleisli category defines it's own embellishment, composition of morphisms, and identity morphisms. The example Kleisli category above is based on a <em>write monad</em>, which has the embellishments, composition, and identity has described.</p>
+<p>Each Kleisli category defines it's own embellishment, composition of morphisms, and identity morphisms. The example Kleisli category above is based on a <em>writer monad</em>, which has the embellishments, composition, and identity has described.</p>
 <p>Previously when we thought of programming languages as categories, we modelled types as objects and functions as morphisms, and defined categorical compositions as function compositions, which merely passes the output of one function as the input to another. Here we defined a different category, where the categorical compositions are not the usual function compositions: it does more than passing output as input, and (in this example) can append to a log as well.</p>
 <p>Here I attempt the challenges (I don't write C++ so the answers probably won't run, but will hint at the solution):</p>
 <ol style="list-style-type: decimal">
@@ -385,33 +384,41 @@ optional&lt;A&gt; identity(A x) {
 <h2 id="products-and-coproducts">Products and Coproducts</h2>
 <p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/01/07/products-and-coproducts/">Products and Coproducts</a></p>
 <h3 id="universal-construction">Universal construction</h3>
-<p>In a category, we only have objects and morphisms. An object can be singled out by describing its relationships with other objects based on morphisms. We can pick a pattern of relationships, a shape, and try to find occurrences of this pattern in the category. We can then rank these occurrences and find the best-fit. This is the <em>universal construction</em>.</p>
+<p>In a category, we only have objects and morphisms. An object can be singled out by describing its relationships with other objects based on morphisms. We can pick a pattern of relationships, a <em>shape</em>, and try to find occurrences of this pattern in the category. We can then rank these occurrences and find the best-fit. This is the <em>universal construction</em>.</p>
 <h3 id="initial-object">Initial object</h3>
-<p>There are as many single-objects as there are in a category. We can rank these objects using a trait <em>initial</em>. An object <code>A</code> is more initial than <code>B</code> if there is a morphism from <code>A</code> to <code>B</code>. Then, the most initial object has morphisms to every other object.</p>
-<p>This object might not exist, or there may be more than one such object. Then, if we restrict the category to be ordered, such as a preorder, then we are able to find the <em>initial object</em>, which has one and only one morphism going to any object in the category.</p>
+<p>Let's start with the pattern of the single object. There are as many of these as there are objects in a category. We can rank these objects using an <em>initial</em> trait. An object <code>A</code> is more initial than <code>B</code> if there is a morphism from <code>A</code> to <code>B</code>. Then, the most initial object has morphisms to every other object.</p>
+<p>This object might not exist, or there may be more than one such object. Then, if we restrict the category to be ordered, such as a preorder, we are able to find the <em>initial object</em>, which has one and only one morphism going to any object in the category.</p>
 <p>This restriction to ordered categories still does not guarantee uniqueness of the initial object, only up to isomorphism, explained later.</p>
 <p>For example, the set of natural numbers has an initial object, 0, with the less than or equal relation. The set of integers however, is infinite, and has no initial object. In the category of types and function, the initial object is <code>Void</code>, the empty set of values. The morphism from <code>Void</code> to any other type is this <code>absurd :: Void -&gt; a</code>.</p>
 <h3 id="terminal-object">Terminal object</h3>
-<p>If we think of the initial object as the bottom, then maybe we can have a top, called the <em>terminal object</em>. We define this by tweaking our ranking slightly: an object <code>A</code> is more terminal than <code>B</code> if there is a morphism from <code>B</code> to <code>A</code>. The most terminal object is then the object which has one and only one morphism coming to it from any object in the category.</p>
+<p>If we think of the initial object as the bottom, then maybe we can have a top, called the <em>terminal object</em>. We define this by tweaking our ranking slightly: an object <code>A</code> is more terminal than <code>B</code> if there is a morphism from <code>B</code> to <code>A</code>. The most terminal object is then the object which has one and only one morphism coming to it from any object in the category. Note that this does not say anything about morphisms going out from <code>A</code>.</p>
 <p>Similar to the initial object, the terminal object might not exist, or there might be more than one such object, again up to isomorphism.</p>
 <p>For example, the set of integers does not have a terminal object. In the category of types and functions, the type which has one and only one arrow going to it from any other type is <code>unit</code>, or <code>()</code>, and the function is <code>unit : a -&gt; ()</code>.</p>
 <h3 id="duality">Duality</h3>
-<p>There is a symmetry between the definition of the initial object and terminal object. The difference is direction of the morphism, and hence the ranking. In fact, for any category, we can define the opposite category with all the morphisms flipped, and the compositions flipped, and identity identical.</p>
+<p>There is a symmetry between the definition of the initial object and terminal object. The difference is direction of the morphism, and hence the ranking. In fact, for any category, we can define the opposite category with all the morphisms flipped, and the compositions flipped, and identity remaining identical.</p>
 <p>This duality means that for every pattern in category theory, you get the opposite one for free: product and coproduct, monad and comonad, etc.</p>
 <p>So, the terminal object can be thought of as the initial object in the opposite category.</p>
 <h3 id="isomorphisms">Isomorphisms</h3>
-<p>Isomorphic objects look the same, the structure have a one-to-one mapping. An isomorphism is a pair of morphisms, one being the inverse of the other. So for objects <code>A</code> and <code>B</code>, the morphism <code>f</code> from <code>A</code> to <code>B</code> and the morphism <code>g</code> from <code>B</code> to <code>A</code>, and they are the inverse of each other. <code>f</code> and <code>g</code> thus forms an isomorphism.</p>
+<p>Isomorphic objects look the same, the structure have a one-to-one mapping. An isomorphism is a pair of morphisms, one being the inverse of the other. So given objects <code>A</code> and <code>B</code>, the morphism <code>f</code> from <code>A</code> to <code>B</code> and the morphism <code>g</code> from <code>B</code> to <code>A</code>, if <code>f</code> and <code>g</code> are the inverse of each other then they form an isomorphism.</p>
 <p>We can examine isomorphisms in the context of composition and identity:</p>
 <pre><code>f ∘ g = id
 g ∘ f = id</code></pre>
 <p>The composition of isomorphisms is the identity morphism, since they are the inverse of each other.</p>
 <p>Looking back at how we defined initial objects, any two initial objects <code>a</code> and <code>b</code> must be isomorphic.</p>
-<p>Since <code>a</code> and <code>b</code> are initial objects, there is one, and only one, morphism <code>f</code> from <code>a</code> to <code>b</code>, and a morphism <code>g</code> from <code>b</code> to <code>a</code>. Thus, <code>f ∘ g</code> must be a morphism from <code>a</code> to <code>a</code>. Since <code>a</code> is initial, there is only one morphism from <code>a</code> to <code>a</code>. And since <code>a</code> is an object in a category, it must have an identity morphism. Therefore, <code>f ∘ g</code> must be the identity morphism and is unique. A symmetrical proof of <code>g ∘ f</code> can be made. And by duality, this proof can be used for showing uniqueness up to isomorphism for terminal objects as well.</p>
+<ol style="list-style-type: decimal">
+<li>Since <code>a</code> is an initial object, there is one and only one morphism <code>f</code> from <code>a</code> to <code>b</code></li>
+<li>Since <code>b</code> is an initial object, there is one and only one morphism <code>g</code> from <code>b</code> to <code>a</code></li>
+<li>Thus, <code>f ∘ g</code> must be a morphism from <code>a</code> to <code>a</code></li>
+<li>Since <code>a</code> is initial, there is only one morphism from <code>a</code> to <code>a</code></li>
+<li>Since <code>a</code> is an object in a category, it must have an identity morphism</li>
+<li>Therefore, <code>f ∘ g</code> must be the identity morphism and is unique</li>
+</ol>
+<p>A symmetrical proof of <code>g ∘ f</code> can be made. And by duality, this proof can be used for showing uniqueness up to isomorphism for terminal objects as well.</p>
 <p>Observe that because of the initial object conditions, <code>f</code> and <code>g</code> are unique as well. Thus we actually have uniqueness up to unique isomorphism, i.e. not only is the initial object unique up to isomorphism, the isomorphisms are themselves unique.</p>
 <p>What we have done so far is to use universal construction to find the initial object (unique up to isomorphism) and the terminal object (unique up to isomorphism). Let's spot more patterns</p>
 <h3 id="products">Products</h3>
 <p>The cartesian product of two sets is a set of pairs, but we shouldn't be able to peek into the objects. So let's think in terms of morphisms and compositions.</p>
-<p>Let's define a pattern using two morphism from the product, <code>c</code>, to it's constituents, <code>a</code> and <code>b</code>, <code>p</code> is a morphism from <code>c</code> to <code>a</code>, and <code>q</code> is a morphism from <code>c</code> to <code>b</code>. In this example, <code>p</code> and <code>q</code> can also be called <em>projections</em>.</p>
+<p>Let's define a pattern using two morphism from the product, <code>c</code>, to it's constituents, <code>a</code> and <code>b</code>. <code>p</code> is a morphism from <code>c</code> to <code>a</code>, and <code>q</code> is a morphism from <code>c</code> to <code>b</code>. In this example, <code>p</code> and <code>q</code> can also be called <em>projections</em>.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">p ::</span> c <span class="ot">-&gt;</span> a
 <span class="ot">q ::</span> c <span class="ot">-&gt;</span> b</code></pre></div>
 <p>Again, there might be lots of candidates <code>c</code> that fits into this pattern. For example, for the constituent types <code>Int</code> and <code>Bool</code>, a candidate for their product is <code>Int</code>. Then,</p>
@@ -420,7 +427,7 @@ p x <span class="fu">=</span> x
 
 <span class="ot">q ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 q _ <span class="fu">=</span> <span class="dt">True</span></code></pre></div>
-<p>This candidate seems too small, <code>q</code> doesn't look sensible.</p>
+<p>This candidate seems too small, <code>q</code> doesn't look sensible because it always returns the same thing.</p>
 <p>Another candidate is a triple of <code>(Int, Int, Bool)</code>:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">p ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Int</span>
 p (x, _, _) <span class="fu">=</span> x
@@ -428,7 +435,7 @@ p (x, _, _) <span class="fu">=</span> x
 <span class="ot">q ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 q (_, _, b) <span class="fu">=</span> b</code></pre></div>
 <p>This candidate seems too big, the second <code>Int</code> is never used.</p>
-<p>How can we then rank these candidates? We can say that a candidate <code>c</code> is better than another candidate <code>c'</code> if there is a morphism <code>m</code> from <code>c'</code> to <code>c</code>. We also want the projects <code>p</code> and <code>q</code> of <code>c</code>, to be better than the projections <code>p'</code> and <code>q'</code> of <code>c'</code>. Better here means that one can be constructed in terms of another:</p>
+<p>How can we then rank these candidates? We can say that a candidate <code>c</code> is better than another candidate <code>c'</code> if there is a morphism <code>m</code> from <code>c'</code> to <code>c</code>. We also want the projections <code>p</code> and <code>q</code> of <code>c</code>, to be better than the projections <code>p'</code> and <code>q'</code> of <code>c'</code>. Better here means that one can be constructed in terms of another:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p&#39; <span class="fu">=</span> p <span class="fu">.</span> m
 q&#39; <span class="fu">=</span> q <span class="fu">.</span> m</code></pre></div>
 <p>Another way to say this is that <code>m</code> factorizes <code>p'</code> and <code>q'</code>.</p>
@@ -438,13 +445,13 @@ p (x, _) <span class="fu">=</span> x
 
 <span class="ot">q ::</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 q (_, b) <span class="fu">=</span> b</code></pre></div>
-<p>First we construct a morphism <code>m</code> from <code>c'</code> (<code>Int</code>) to <code>c</code> (<code>(Int, Bool)</code>):</p>
+<p>First we construct a morphism <code>m</code> from <code>c'</code>, <code>Int</code>, to <code>c</code>, <code>(Int, Bool)</code>:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">m ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>)
 m x <span class="fu">=</span> (x, <span class="dt">True</span>)</code></pre></div>
 <p>And observe that <code>p'</code> and <code>q'</code> is defined in terms of <code>p</code>, <code>q</code> and m:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p&#39; x <span class="fu">=</span> (p <span class="fu">.</span> m) x <span class="fu">=</span> x
 q&#39; x <span class="fu">=</span> (q <span class="fu">.</span> m) x <span class="fu">=</span> <span class="dt">True</span></code></pre></div>
-<p>First we construct a morphism <code>m</code> from <code>c'</code> (<code>(Int, Int, Bool)</code>) to <code>c</code> (<code>(Int, Bool)</code>):</p>
+<p>First we construct a morphism <code>m</code> from <code>c'</code>, <code>(Int, Int, Bool)</code>, to <code>c</code>, <code>(Int, Bool)</code>:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">m ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>)
 m (x, _, b) <span class="fu">=</span> (x, b)</code></pre></div>
 <p>And observe that <code>p'</code> and <code>q'</code> is defined in terms of <code>p</code>, <code>q</code> and m:</p>
@@ -457,10 +464,12 @@ q&#39; (x, y, b) <span class="fu">=</span> (q <span class="fu">.</span> m) (x, y
 m&#39; (x, b) <span class="fu">=</span> (x, <span class="dv">42</span>, b)
 <span class="fu">...</span>
 m&#39; (x, b) <span class="fu">=</span> (x, <span class="dv">99</span>, b)</code></pre></div>
-<p>From our examples, we see that for any type <code>c</code>, with projections <code>p</code> and <code>q</code>, there is a unique <code>m</code> from <code>c</code> to the cartesian product <code>(a, b)</code>, that factorizes them. Thus, this makes the cartesian product the best match.</p>
+<p>From our examples, we see that for any type <code>c'</code>, with projections <code>p'</code> and <code>q'</code>, there is a unique <code>m</code> from <code>c'</code> to the cartesian product <code>(a, b)</code>, that factorizes them. Thus, this makes the cartesian product the best match.</p>
 <p>Categorically, a product of two objects <code>a</code> and <code>b</code>, is the object <code>c</code> with two projections, <code>p</code> from <code>c</code> to <code>a</code> and <code>q</code> from <code>c</code> to <code>b</code>, such that any other object <code>c'</code> with two projections <code>p'</code> from <code>c'</code> to <code>a</code> and <code>q'</code> from <code>c'</code> to <code>b'</code>, there is a unique morphism <code>m</code> from <code>c'</code> to <code>c</code>, such that <code>m</code> factorizes <code>p'</code> and <code>q'</code>.</p>
 <h3 id="coproduct">Coproduct</h3>
-<p>By duality, the product has a dual. When we reverse all the arrows in a product, we get a coproduct. Define two morphisms <code>i</code> and <code>j</code> from objects <code>a</code> and <code>b</code> to an object <code>c</code>. <code>i</code> and <code>j</code> can also be called <em>injections</em>.</p>
+<p>By duality, the product has a dual. When we reverse all the arrows in a product, we get a coproduct. Define two morphisms <code>i</code> and <code>j</code> from objects <code>a</code> and <code>b</code> to an object <code>c</code>. <code>i</code> and <code>j</code> are also called <em>injections</em>.</p>
+<pre><code>i :: a -&gt; c
+j :: b -&gt; c</code></pre>
 <p>Suppose there is another object <code>c'</code>, and there are two morphisms <code>i'</code> from <code>a</code> to <code>c'</code> and <code>j'</code> from <code>b</code> to <code>c'</code>.</p>
 <p>We say that <code>c</code> is better than <code>c'</code> if there is a morphism <code>m</code> from <code>c</code> to <code>c'</code> (when we flip the arrows, the ranking is flipped too), that factorizes the injections.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">i&#39; <span class="fu">=</span> m <span class="fu">.</span> i
@@ -477,7 +486,7 @@ j&#39; <span class="fu">=</span> m <span class="fu">.</span> j</code></pre></div
 <h2 id="simple-algebraic-data-types">Simple Algebraic Data Types</h2>
 <p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/01/13/simple-algebraic-data-types/">Simple Algebraic Data Types</a></p>
 <h3 id="product-types">Product types</h3>
-<p>In many languages, a product of two types is implemented as a pair. Pairs are not commutative, only up to isomorphism.</p>
+<p>In many languages, a product of two types is implemented as a pair. Pairs are not commutative.</p>
 <p>For example, <code>(Bool, Int)</code> is not the same as <code>(Int, Bool)</code>, although they carry the same information. The isomorphism between these two types is the <code>swap</code> function, which is it's own inverse.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">swap ::</span> (a, b) <span class="ot">-&gt;</span> (b, a)
 swap (x, y) <span class="fu">=</span> (y, x)</code></pre></div>

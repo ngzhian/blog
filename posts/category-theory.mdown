@@ -372,8 +372,6 @@ So we have to be more explicit: we call these functions and aggregate the logs:
 2. Call `toWords` on the value from 1, to get a list of words, and another log,
 3. Return the value from 2, and append the log from 1 and 2 together
 
-In pseudocode:
-
 ```haskell
 toUpperWords :: String -> ([String], String)
 toUpperWords s =
@@ -386,14 +384,15 @@ This becomes repetitive very quickly, and hides the original purpose,
 mixing the logic of logging and concatenating logs with the logic of
 `toUpper` and `toWords`.
 
-We can then try to come up with a new kind of embellished function composition:
+We can then try to come up with a new kind of function composition that
+helps us to handle this embellishment:
 
 1. Call the first embellished function,
 2. Call the second embellished function with the first value of 1,
 3. Concatenate the second value of 1 and 2,
 4. Return a pair of the first value from 2, and the concatenated value from 3.
 
-We can first make up a more generic type for this sort of embellished function:
+First, let's make up a more generic type for this sort of embellished function:
 
 ```haskell
 type Writer a = (a, String)
@@ -427,7 +426,7 @@ toUpperWords s = embellished_compose toUpper toWords
 Now we can look at this new composition from a categorical point of view.
 The types are still objects, and the morphisms are the embellished functions.
 The important point is that the morphism is still considered an arrow between
-`String` and `String`, or `String` and `[String]`, although the function]
+`String` and `String`, or `String` and `[String]`, although the function
 actually returns a pair.
 
 In this new category, `embellished_compose` is composition, and the identity morphism will
@@ -438,7 +437,7 @@ return :: a -> Writer a
 return s = (s, "")
 ```
 
-Does this category fulfill all the rules? Yes!
+We can check that this forms a category by checking all the rules:
 
 1. Morphisms compose, as shown by `embellished_compose`, satisfying Rule 1,
 2. Composition is associative, because at the first part of the pair we have
@@ -451,7 +450,7 @@ function composition (which is associative) and on the second part we have conca
 
 This category we have constructed is actually an example of a *Kleisli category*, a category based on a monad.
 The objects of a Kleisli category are the types of the underlying programming language,
-and morphisms from `A` to `B` are functions from the types `A` to an embellished `B`.
+and morphisms from `A` to `B` are functions from the types `A` to an embellished type `B`.
 
 The morphisms in the above example are from the objects `String` to `String`,
 and `String` to `[String]`,
@@ -460,7 +459,7 @@ and `String` to `Write [String]`.
 
 Each Kleisli category defines it's own embellishment,
 composition of morphisms, and identity morphisms.
-The example Kleisli category above is based on a *write monad*, which has the
+The example Kleisli category above is based on a *writer monad*, which has the
 embellishments, composition, and identity has described.
 
 Previously when we thought of programming languages as categories,
@@ -524,20 +523,21 @@ From Bartosz Milewski's [Products and Coproducts](https://bartoszmilewski.com/20
 
 In a category, we only have objects and morphisms.
 An object can be singled out by describing its relationships with other objects based on morphisms.
-We can pick a pattern of relationships, a shape, and try to find occurrences of this
+We can pick a pattern of relationships, a *shape*, and try to find occurrences of this
 pattern in the category. We can then rank these occurrences and find the best-fit.
 This is the *universal construction*.
 
 ### Initial object
 
-There are as many single-objects as there are in a category.
-We can rank these objects using a trait *initial*.
+Let's start with the pattern of the single object.
+There are as many of these as there are objects in a category.
+We can rank these objects using an *initial* trait.
 An object `A` is more initial than `B` if there is a morphism from `A` to `B`.
 Then, the most initial object has morphisms to every other object.
 
 This object might not exist, or there may be more than one such object.
 Then, if we restrict the category to be ordered, such as a preorder,
-then we are able to find the *initial object*, which has one and only one morphism
+we are able to find the *initial object*, which has one and only one morphism
 going to any object in the category.
 
 This restriction to ordered categories still does not guarantee uniqueness of the initial object,
@@ -555,6 +555,7 @@ the *terminal object*. We define this by tweaking our ranking slightly:
 an object `A` is more terminal than `B` if there is a morphism from `B` to `A`.
 The most terminal object is then the object which has one and only one morphism
 coming to it from any object in the category.
+Note that this does not say anything about morphisms going out from `A`.
 
 Similar to the initial object, the terminal object might not exist,
 or there might be more than one such object, again up to isomorphism.
@@ -569,7 +570,7 @@ and the function is `unit : a -> ()`.
 There is a symmetry between the definition of the initial object and terminal object.
 The difference is direction of the morphism, and hence the ranking.
 In fact, for any category, we can define the opposite category with all the morphisms flipped,
-and the compositions flipped, and identity identical.
+and the compositions flipped, and identity remaining identical.
 
 This duality means that for every pattern in category theory, you get the opposite one for free:
 product and coproduct, monad and comonad, etc.
@@ -580,9 +581,9 @@ So, the terminal object can be thought of as the initial object in the opposite 
 
 Isomorphic objects look the same, the structure have a one-to-one mapping.
 An isomorphism is a pair of morphisms, one being the inverse of the other.
-So for objects `A` and `B`, the morphism `f` from `A` to `B` and the morphism
-`g` from `B` to `A`, and they are the inverse of each other.
-`f` and `g` thus forms an isomorphism.
+So given objects `A` and `B`, the morphism `f` from `A` to `B` and the morphism
+`g` from `B` to `A`, if `f` and `g` are the inverse of each other then
+they form an isomorphism.
 
 We can examine isomorphisms in the context of composition and identity:
 
@@ -596,13 +597,13 @@ The composition of isomorphisms is the identity morphism, since they are the inv
 Looking back at how we defined initial objects,
 any two initial objects `a` and `b` must be isomorphic.
 
-Since `a` and `b` are initial objects,
-there is one, and only one, morphism `f` from `a` to `b`,
-and a morphism `g` from `b` to `a`.
-Thus, `f ∘ g` must be a morphism from `a` to `a`.
-Since `a` is initial, there is only one morphism from `a` to `a`.
-And since `a` is an object in a category, it must have an identity morphism.
-Therefore, `f ∘ g` must be the identity morphism and is unique.
+1. Since `a` is an initial object, there is one and only one morphism `f` from `a` to `b`
+2. Since `b` is an initial object, there is one and only one morphism `g` from `b` to `a`
+3. Thus, `f ∘ g` must be a morphism from `a` to `a`
+4. Since `a` is initial, there is only one morphism from `a` to `a`
+5. Since `a` is an object in a category, it must have an identity morphism
+6. Therefore, `f ∘ g` must be the identity morphism and is unique
+
 A symmetrical proof of `g ∘ f` can be made.
 And by duality, this proof can be used for showing uniqueness up to isomorphism for terminal objects as well.
 
@@ -621,7 +622,7 @@ The cartesian product of two sets is a set of pairs, but we shouldn't be able to
 peek into the objects. So let's think in terms of morphisms and compositions.
 
 Let's define a pattern using two morphism from the product, `c`,
-to it's constituents, `a` and `b`,
+to it's constituents, `a` and `b`.
 `p` is a morphism from `c` to `a`, and
 `q` is a morphism from `c` to `b`.
 In this example, `p` and `q` can also be called *projections*.
@@ -643,7 +644,8 @@ q :: Int -> Bool
 q _ = True
 ```
 
-This candidate seems too small, `q` doesn't look sensible.
+This candidate seems too small,
+`q` doesn't look sensible because it always returns the same thing.
 
 Another candidate is a triple of `(Int, Int, Bool)`:
 
@@ -660,7 +662,7 @@ This candidate seems too big, the second `Int` is never used.
 How can we then rank these candidates?
 We can say that a candidate `c` is better than another candidate `c'` if
 there is a morphism `m` from `c'` to `c`.
-We also want the projects `p` and `q` of `c`, to be better than
+We also want the projections `p` and `q` of `c`, to be better than
 the projections `p'` and `q'` of `c'`.
 Better here means that one can be constructed in terms of another:
 
@@ -681,7 +683,7 @@ q :: (Int, Bool) -> Bool
 q (_, b) = b
 ```
 
-First we construct a morphism `m` from `c'` (`Int`) to `c` (`(Int, Bool)`):
+First we construct a morphism `m` from `c'`, `Int`, to `c`, `(Int, Bool)`:
 
 ```haskell
 m :: Int -> (Int, Bool)
@@ -695,7 +697,7 @@ p' x = (p . m) x = x
 q' x = (q . m) x = True
 ```
 
-First we construct a morphism `m` from `c'` (`(Int, Int, Bool)`) to `c` (`(Int, Bool)`):
+First we construct a morphism `m` from `c'`, `(Int, Int, Bool)`, to `c`, `(Int, Bool)`:
 
 ```haskell
 m :: (Int, Int, Bool) -> (Int, Bool)
@@ -725,8 +727,8 @@ m' (x, b) = (x, 42, b)
 m' (x, b) = (x, 99, b)
 ```
 
-From our examples, we see that for any type `c`, with projections `p` and `q`,
-there is a unique `m` from `c` to the cartesian product `(a, b)`, that factorizes them.
+From our examples, we see that for any type `c'`, with projections `p'` and `q'`,
+there is a unique `m` from `c'` to the cartesian product `(a, b)`, that factorizes them.
 Thus, this makes the cartesian product the best match.
 
 Categorically, a product of two objects `a` and `b`, is the object `c`
@@ -741,7 +743,12 @@ such that `m` factorizes `p'` and `q'`.
 By duality, the product has a dual.
 When we reverse all the arrows in a product, we get a coproduct.
 Define two morphisms `i` and `j` from objects `a` and `b` to an object `c`.
-`i` and `j` can also be called *injections*.
+`i` and `j` are also called *injections*.
+
+```
+i :: a -> c
+j :: b -> c
+```
 
 Suppose there is another object `c'`, and there are two morphisms
 `i'` from `a` to `c'` and `j'` from `b` to `c'`.
@@ -807,7 +814,7 @@ From Bartosz Milewski's [Simple Algebraic Data Types](https://bartoszmilewski.co
 ### Product types
 
 In many languages, a product of two types is implemented as a pair.
-Pairs are not commutative, only up to isomorphism.
+Pairs are not commutative.
 
 For example, `(Bool, Int)` is not the same as `(Int, Bool)`, although they carry the
 same information. The isomorphism between these two types is the `swap` function,
