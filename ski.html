@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>SKI combinators</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">SKI combinators</h1>
+<h3 class="date">2017-05-12 16:00</h3>
+</div>
+<p>S, K, and I are the name of three combinators. Perhaps surprisingly, these combinators are sufficient to form a Turing-complete language <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>, albeit tedious to write. Any expression in lambda calculus can be translated into the SKI combinator calculus via a process called <em>abstraction elimination</em>, and that is what this post will be exploring.</p>
+<blockquote>
+<p>Source code is available <a href="https://github.com/ngzhian/ski">here</a></p>
+</blockquote>
+<h2 id="the-ski-combinators">The SKI combinators</h2>
+<p>Combinators are functions without free variables, for example, in pseudo-Haskell syntax: <code>id x = x</code> is a combinator that returns it's argument unchanged. And here is what the SKI combinators do:</p>
+<pre><code>I x     = x
+K x y   = x
+S x y z = x z (y z)</code></pre>
+<p>I is the identity function, K behaves like a two argument identity function, returning the first argument passed to it, S performs substitution (function application). Here are some examples:</p>
+<pre><code>I I = I
+K K I = K
+S K S K = K K (S K) = K</code></pre>
+<h2 id="ski-abstract-syntax-tree">SKI abstract syntax tree</h2>
+<p>To be more precise, the SKI combinator calculus is made up of terms: 1. S, K, and I are terms 2. <code>(x y)</code> are terms if <code>x</code> and <code>y</code> are terms</p>
+<p>Thus an expression in the SKI system can be visualized as a binary tree, each leaf node being S, K, or I, and an inner node representing the parentheses.</p>
+<p>Let's define an abstract syntax tree for an SKI expression like so:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> ski =
+  | I
+  | K
+  | S
+  | T <span class="kw">of</span> ski * ski</code></pre></div>
+<p>Thus the terms used in the examples above can be constructed as such:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml">T (I, I)               <span class="co">(* I I     *)</span>
+T (T (K, K), I)        <span class="co">(* K K I   *)</span>
+T (T (T (S, K), S), K) <span class="co">(* S K S K *)</span></code></pre></div>
+<p>With the abstract syntax tree, we can now try to reduce or interpret the SKI expressions. We will be looking at two different ways of doing so, the first is by interpreting recursively, the second is by running it as a stack machine.</p>
+<h2 id="interpreting">Interpreting</h2>
+<p>We interpret expressions by pattern matching on the structure of the abstract syntax tree:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">let</span> <span class="kw">rec</span> interp c =
+  <span class="kw">match</span> c <span class="kw">with</span>
+  <span class="co">(* leaf node, remain unchanged *)</span>
+  | I | K | S              -&gt; c
+  <span class="co">(* an I term, reduce argument *)</span>
+  | T (I, x)               -&gt; interp x
+  <span class="co">(* a K term, reduce first argument *)</span>
+  | T (T (K, x), y)        -&gt; interp x
+  <span class="co">(* an S term, perform substitution *)</span>
+  | T (T (T (S, x), y), z) -&gt;
+    interp (T (T (x, z), T (y, z)))
+  <span class="co">(* any other term *)</span>
+  <span class="co">(* the goal here is to check if terms are reducible *)</span>
+  <span class="co">(* to prevent infinite recursion   *)</span>
+  | T (c1, c2)             -&gt;
+    <span class="kw">let</span> c1&#39; = interp c1 <span class="kw">in</span>
+    <span class="kw">let</span> c2&#39; = interp c2 <span class="kw">in</span>
+    <span class="kw">if</span> c1 = c1&#39; &amp;&amp; c2 = c2&#39;
+    <span class="kw">then</span> T (c1, c2)
+    <span class="kw">else</span> interp (T (c1&#39;, c2&#39;))</code></pre></div>
+<h2 id="stack-machine">Stack machine</h2>
+<p>The idea for a stack machine based reduction of the SKI calculus is from <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
+<p>First we define a step function for the machine, which works on the current term, and updates the stack based on the calculus rules.</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> step =
+  <span class="co">(* able to perform next step with term and current stack *)</span>
+  | Step <span class="kw">of</span> (ski * ski <span class="dt">list</span>)
+  <span class="co">(* no reduction possible anymore *)</span>
+  | End <span class="kw">of</span> ski
+
+<span class="kw">let</span> step term stack =
+  <span class="kw">match</span> (term, stack) <span class="kw">with</span>
+  <span class="co">(* I term, work on the top term in the stack *)</span>
+  | I, x::s -&gt; Step(x , s)
+  <span class="co">(* K term, work on the top term, discard the second *)</span>
+  | K, x::y::s -&gt; Step(x, s)
+  <span class="co">(* works on the substituted term *)</span>
+  | S, x::y::z::s -&gt;
+    Step(T (T (x, z), T(y, z)), s)
+  <span class="co">(* push the second pargument onto the stack *)</span>
+  | T (c1, c2), s -&gt; Step(c1, c2 :: s)
+  <span class="co">(* empty stack, return as the result of reduction *)</span>
+  | e, [] -&gt; End e
+  <span class="co">(* no idea how to handle this *)</span>
+  | _ -&gt; <span class="dt">failwith</span> <span class="st">&quot;Unrecognized term&quot;</span></code></pre></div>
+<p>Then a full run of an expression will be running the step function until we hit the end:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">let</span> run term =
+  <span class="kw">let</span> <span class="kw">rec</span> go term stack =
+    <span class="kw">match</span> step term stack <span class="kw">with</span>
+    | End e -&gt; e
+    | Step (e, s&#39;) -&gt; go e s&#39;
+  <span class="kw">in</span>
+  go term []</code></pre></div>
+<p>Next up: translating terms in lambda calculus to SKI combinators.</p>
+<h2 id="references">References</h2>
+<ol style="list-style-type: decimal">
+<li>Wikipedia <a href="https://en.wikipedia.org/wiki/SKI_combinator_calculus">SKI Combinator calculus</a></li>
+<li>Wikipedia <a href="https://en.wikipedia.org/wiki/Combinatory_logic">Combinatory Logic</a></li>
+<li><a href="http://people.cs.uchicago.edu/~odonnell/Teacher/Lectures/Formal_Organization_of_Knowledge/Examples/combinator_calculus/">The SKI Combinator Calculus a universal formal system</a></li>
+<li><a href="https://github.com/eperdew/SKI/">eperdew's implementation in OCaml</a></li>
+<li><a href="https://gist.github.com/bmjames/745291/ab52ffdf8230bbec9bcf1059825ad6d3fd7186f5">bmjames' implementation in Erlang</a></li>
+<li><a href="http://yager.io/HaSKI/HaSKI.html">yager's implementation in Haskell</a></li>
+<li><a href="https://github.com/ac1235/ski-combinator-calculus/blob/master/ski.y">ac1235's implementation in Haskell's happy</a></li>
+</ol>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Wikipedia <a href="https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis">Combinatory Logic</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>http://yager.io/HaSKI/HaSKI.html<a href="#fnref2">↩</a></p></li>
+</ol>
+</div>
+</section>
+</body>
+</html>
