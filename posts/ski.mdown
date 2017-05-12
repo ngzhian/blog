@@ -42,6 +42,7 @@ S K S K = K K (S K) = K
 ## SKI abstract syntax tree
 
 To be more precise, the SKI combinator calculus is made up of terms:
+
 1. S, K, and I are terms
 2. `(x y)` are terms if `x` and `y` are terms
 

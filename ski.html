@@ -151,7 +151,11 @@ S x y z = x z (y z)</code></pre>
 K K I = K
 S K S K = K K (S K) = K</code></pre>
 <h2 id="ski-abstract-syntax-tree">SKI abstract syntax tree</h2>
-<p>To be more precise, the SKI combinator calculus is made up of terms: 1. S, K, and I are terms 2. <code>(x y)</code> are terms if <code>x</code> and <code>y</code> are terms</p>
+<p>To be more precise, the SKI combinator calculus is made up of terms:</p>
+<ol style="list-style-type: decimal">
+<li>S, K, and I are terms</li>
+<li><code>(x y)</code> are terms if <code>x</code> and <code>y</code> are terms</li>
+</ol>
 <p>Thus an expression in the SKI system can be visualized as a binary tree, each leaf node being S, K, or I, and an inner node representing the parentheses.</p>
 <p>Let's define an abstract syntax tree for an SKI expression like so:</p>
 <div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> ski =
