@@ -141,11 +141,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Source code is available <a href="https://github.com/ngzhian/ski">here</a></p>
 </blockquote>
 <h2 id="the-ski-combinators">The SKI combinators</h2>
-<p>Combinators are functions without free variables, for example, in pseudo-Haskell syntax: <code>id x = x</code> is a combinator that returns it's argument unchanged. And here is what the SKI combinators do:</p>
+<p>Combinators are functions without free variables, for example, in pseudo-Haskell syntax: <code>id x = x</code> is a combinator that returns it's argument unchanged. This is what the SKI combinators do:</p>
 <pre><code>I x     = x
 K x y   = x
 S x y z = x z (y z)</code></pre>
-<p>I is the identity function, K behaves like a two argument identity function, returning the first argument passed to it, S performs substitution (function application). Here are some examples:</p>
+<p>I is the identity function, K behaves like a two argument constant function, returning the first argument passed to it unchanged, S performs substitution (function application).</p>
+<p>Here are some examples:</p>
 <pre><code>I I = I
 K K I = K
 S K S K = K K (S K) = K</code></pre>

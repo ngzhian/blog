@@ -18,7 +18,7 @@ a process called *abstraction elimination*, and that is what this post will be e
 
 Combinators are functions without free variables, for example, in pseudo-Haskell syntax:
 `id x = x` is a combinator that returns it's argument unchanged.
-And here is what the SKI combinators do:
+This is what the SKI combinators do:
 
 ```
 I x     = x
@@ -26,8 +26,11 @@ K x y   = x
 S x y z = x z (y z)
 ```
 
-I is the identity function, K behaves like a two argument identity function, returning
-the first argument passed to it, S performs substitution (function application).
+I is the identity function,
+K behaves like a two argument constant function, returning
+the first argument passed to it unchanged,
+S performs substitution (function application).
+
 Here are some examples:
 
 ```
