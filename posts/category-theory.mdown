@@ -86,12 +86,12 @@ h ∘ (g ∘f) = (h ∘ g) ∘f
 Thus, we can omit parenthesis and write it simply as:
 
 ```
-h ∘ g ∘f
+h ∘ g ∘ f
 ```
 
 ### Rule 3: Every object has a unit of composition
 
-Every object `A`, has a morphism that goes straight to itself.
+Every object `A` has a morphism that goes straight to itself.
 
 This morphism can be composed with any other morphism that starts or ends at A, giving back the same morphism.
 
@@ -117,7 +117,7 @@ I will attempt a few of the challenges he has set:
 
 From Bartosz Milewski's [Types and Functions](https://bartoszmilewski.com/2014/11/24/types-and-functions/)
 
-In the last chapter, we talked about objects and morphisms, which sounds very general and make
+In the last chapter, we talked about objects and morphisms, which sounds very general and makes
 it hard to see any obvious practical use.
 In this section we can specialize the concepts into *types* and *functions*, something closer
 to what programmers deal with.
@@ -133,7 +133,7 @@ Types can be thought of as a *set of values*: a `Bool` type is a set containing 
 
 This association of types with sets has some subtleties. However throughout the post Milewski works with a special category **Set**, in which objects are sets, and morphisms are functions.
 **Set** allows us break the rule and peek inside its objects.
-The goal is to generalize from this, and slowly shake the need to look into objects.
+The goal is to generalize from this, and slowly remove the need to look into objects.
 
 If we have an empty set, what is the corresponding type? In Haskell, this is called `Void`, and this type has no values.
 Which means that we can define a function that takes a `Void`, but we can never call it,

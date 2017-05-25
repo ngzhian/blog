@@ -32,6 +32,7 @@
     blockquote {
         border-left: 2px solid #eee;
         padding-left: 1rem;
+        color: #666;
     }
 
     a:hover {
@@ -149,10 +150,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li>If there is a morphism <code>f</code> from <code>A</code> to <code>B</code>, and</li>
 <li>a morphism <code>g</code> from <code>B</code> to <code>C</code>,</li>
-<li>there must be a morphism <code>A</code> to <code>C</code>.</li>
+<li>there must be a morphism from <code>A</code> to <code>C</code>.</li>
 </ul>
 <p>The morphism from <code>A</code> to <code>C</code> is the <em>composition</em> of the previous 2 morphisms, and is usually written <code>g ∘ f</code>.</p>
-<p>As an simplified and in accurate example example, in shell we have the pipe notation:</p>
+<p>As a simplified and inaccurate example, in shell we have the pipe notation:</p>
 <pre><code>ls | wc # counts the number of files in the current directory</code></pre>
 <p>First there is a morphism from directory to list of files, <code>ls</code>, and a morphism from a list of files to a number, <code>wc</code>. The pipe <code>|</code> is the composition operator, that composes <code>ls</code> and <code>wc</code> into a morphism, <code>ls | wc</code> that takes directory to a number.</p>
 <!-- Usually, composition is represented by a `∘` symbol. Where as the pipe operator `|` goes from left to right, `ls .` then `wc`, `∘` goes from right to left. -->
@@ -175,9 +176,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>In the world of category, for any three morphisms, <code>f</code>, <code>g</code>, <code>h</code> that can be composed, the order of composition does not matter, as long as the order of morphisms don't change.</p>
 <pre><code>h ∘ (g ∘f) = (h ∘ g) ∘f</code></pre>
 <p>Thus, we can omit parenthesis and write it simply as:</p>
-<pre><code>h ∘ g ∘f</code></pre>
+<pre><code>h ∘ g ∘ f</code></pre>
 <h3 id="rule-3-every-object-has-a-unit-of-composition">Rule 3: Every object has a unit of composition</h3>
-<p>Every object <code>A</code>, has a morphism that goes straight to itself.</p>
+<p>Every object <code>A</code> has a morphism that goes straight to itself.</p>
 <p>This morphism can be composed with any other morphism that starts or ends at A, giving back the same morphism.</p>
 <p>We call this morphism the <em>identity</em> on <code>A</code>, written as <code>idA</code>:</p>
 <pre><code>f ∘ idA = f
@@ -196,7 +197,7 @@ idA ∘ f = f</code></pre>
 </ol>
 <h1 id="types-and-functions">Types and Functions</h1>
 <p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2014/11/24/types-and-functions/">Types and Functions</a></p>
-<p>In the last chapter, we talked about objects and morphisms, which sounds very general and make it hard to see any obvious practical use. In this section we can specialize the concepts into <em>types</em> and <em>functions</em>, something closer to what programmers deal with.</p>
+<p>In the last chapter, we talked about objects and morphisms, which sounds very general and makes it hard to see any obvious practical use. In this section we can specialize the concepts into <em>types</em> and <em>functions</em>, something closer to what programmers deal with.</p>
 <p>Morphisms compose, but only if the target of one morphism matches the source of the other. For example, a morphism from <code>A</code> to <code>B</code> can be composed with a morphism from <code>B</code> to <code>C</code> (the <code>B</code> matches) but not with a morphism from <code>Y</code> to <code>Z</code>.</p>
 <p>This is similar to the restrictions in a programming language with a strong type system: the objects <code>A</code>, <code>B</code>, <code>C</code>, are types, and the morphisms are functions from one type to another.</p>
 <p>Types can be thought of as a <em>set of values</em>: a <code>Bool</code> type is a set containing the values <code>True</code> and <code>False</code>, the <code>Integer</code> type can be thought of as an infinite set containing all integers (this is the case in Haskell).</p>
