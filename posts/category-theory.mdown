@@ -32,12 +32,12 @@ This makes a category easy to represent in diagrams, looking like a directed gra
 
 - If there is a morphism `f` from `A` to `B`, and
 - a morphism `g` from `B` to `C`,
-- there must be a morphism `A` to `C`.
+- there must be a morphism from `A` to `C`.
 
 The morphism from `A` to `C` is the *composition* of the previous 2 morphisms,
 and is usually written `g ∘ f`.
 
-As an simplified and in accurate example example, in shell we have the pipe notation:
+As a simplified and inaccurate example, in shell we have the pipe notation:
 
 ```
 ls | wc # counts the number of files in the current directory
