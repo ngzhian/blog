@@ -1,5 +1,5 @@
 ---
-title: SKI combinators
+title: SKI combinators - AST and Evaluating
 date: 2017-05-12 16:00
 ...
 
@@ -144,7 +144,7 @@ let run term =
   go term []
 ```
 
-Next up: translating terms in lambda calculus to SKI combinators.
+Next up: [translating terms in lambda calculus to SKI combinators](./ski2.html)
 
 ## References
 

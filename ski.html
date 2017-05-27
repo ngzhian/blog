@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title>SKI combinators</title>
+  <title>SKI combinators - AST and Evaluating</title>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -32,6 +32,7 @@
     blockquote {
         border-left: 2px solid #eee;
         padding-left: 1rem;
+        color: #666;
     }
 
     a:hover {
@@ -133,7 +134,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <section class="content">
 <a class="home" href="./index.html">Home</a>
 <div id="header">
-<h1 class="title">SKI combinators</h1>
+<h1 class="title">SKI combinators - AST and Evaluating</h1>
 <h3 class="date">2017-05-12 16:00</h3>
 </div>
 <p>S, K, and I are the name of three combinators. Perhaps surprisingly, these combinators are sufficient to form a Turing-complete language <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>, albeit tedious to write. Any expression in lambda calculus can be translated into the SKI combinator calculus via a process called <em>abstraction elimination</em>, and that is what this post will be exploring.</p>
@@ -222,7 +223,7 @@ T (T (T (S, K), S), K) <span class="co">(* S K S K *)</span></code></pre></div>
     | Step (e, s&#39;) -&gt; go e s&#39;
   <span class="kw">in</span>
   go term []</code></pre></div>
-<p>Next up: translating terms in lambda calculus to SKI combinators.</p>
+<p>Next up: <a href="./ski2.html">translating terms in lambda calculus to SKI combinators</a></p>
 <h2 id="references">References</h2>
 <ol style="list-style-type: decimal">
 <li>Wikipedia <a href="https://en.wikipedia.org/wiki/SKI_combinator_calculus">SKI Combinator calculus</a></li>
