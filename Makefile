@@ -13,6 +13,7 @@ all: pages
 	ocs -i true
 
 deploy:
+	git push origin HEAD
 	git checkout gh-pages
 	git rebase master
 	git push origin HEAD
