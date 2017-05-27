@@ -176,7 +176,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   | Sl
   | Kl
   | Il
-  | Tl <span class="kw">of</span> ls * ls</code></pre></div>
+  | Tl <span class="kw">of</span> ls * ls
+
+<span class="co">(* String representation of ls *)</span>
+<span class="kw">let</span> <span class="kw">rec</span> string_of_ls (l : ls) : <span class="dt">string</span> = <span class="kw">match</span> l <span class="kw">with</span>
+    | Var x -&gt; x
+    | App (e1, e2) -&gt; <span class="st">&quot;(&quot;</span> ^ (string_of_ls e1) ^ (string_of_ls e2) ^ <span class="st">&quot;)&quot;</span>
+    | Abs (x, e) -&gt; <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> ^ x ^ (string_of_ls e)
+    | Sl  -&gt; <span class="st">&quot;S&quot;</span>
+    | Kl  -&gt; <span class="st">&quot;K&quot;</span>
+    | Il  -&gt; <span class="st">&quot;I&quot;</span>
+    | Tl (e1, e2) -&gt;  <span class="st">&quot;(T &quot;</span> ^ (string_of_ls e1) ^ (string_of_ls e2) ^ <span class="st">&quot;)&quot;</span></code></pre></div>
 <p>We will also need a helper function to determine if a variable is free in an expression:</p>
 <div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Is x free in the expression e? *)</span>
 <span class="kw">let</span> free x (e : ls) =

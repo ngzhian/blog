@@ -77,6 +77,16 @@ type ls =
   | Kl
   | Il
   | Tl of ls * ls
+
+(* String representation of ls *)
+let rec string_of_ls (l : ls) : string = match l with
+    | Var x -> x
+    | App (e1, e2) -> "(" ^ (string_of_ls e1) ^ (string_of_ls e2) ^ ")"
+    | Abs (x, e) -> "\\" ^ x ^ (string_of_ls e)
+    | Sl  -> "S"
+    | Kl  -> "K"
+    | Il  -> "I"
+    | Tl (e1, e2) ->  "(T " ^ (string_of_ls e1) ^ (string_of_ls e2) ^ ")"
 ```
 
 We will also need a helper function to determine if a variable is free in an expression:
