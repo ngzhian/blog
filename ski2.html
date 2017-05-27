@@ -178,17 +178,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   | Il
   | Tl <span class="kw">of</span> ls * ls</code></pre></div>
 <p>We will also need a helper function to determine if a variable is free in an expression:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Is n free in the expression e? *)</span>
-<span class="kw">let</span> free n (e : ls) =
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Is x free in the expression e? *)</span>
+<span class="kw">let</span> free x (e : ls) =
   <span class="co">(* Get free variables of an expression *)</span>
   <span class="kw">let</span> <span class="kw">rec</span> fv (e : ls) = <span class="kw">match</span> e <span class="kw">with</span>
-    | Var n -&gt; [n]
+    | Var x -&gt; [x]
     | App (e1, e2) -&gt; fv e1 @ fv e2
-    | Abs (n, e) -&gt; <span class="dt">List</span>.filter (<span class="kw">fun</span> x -&gt; x != n) (fv e)
+    | Abs (x, e) -&gt; <span class="dt">List</span>.filter (<span class="kw">fun</span> v -&gt; v != x) (fv e)
     | Tl (e1, e2) -&gt; fv e1 @ fv e2
     | _ -&gt; []
   <span class="kw">in</span>
-  <span class="dt">List</span>.mem n (fv e)</code></pre></div>
+  <span class="dt">List</span>.mem x (fv e)</code></pre></div>
 <p>The core translation algorithm then follows the translation scheme described in the <a href="https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis">Wikipedia article</a>. We make use of the intermediate structure, <code>ls</code>, when translating. The signature of this structure doesn't say much, it looks like an identity function, but the assumption is that the input term is converted from a lambda term, made up of <code>Var</code>, <code>App</code>, and <code>Abs</code>, and the output term will only contain <code>Sl</code>, <code>Kl</code>, <code>Il</code>, and <code>Tl</code>, i.e. the terms that can be converted directly into the SKI combinators.</p>
 <div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* This is the core algorithm to translate ls terms (made up of lambda)</span>
 <span class="co"> * into ls terms (made up of SKI combinators).</span>
@@ -197,36 +197,56 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co"> * *)</span>
 <span class="kw">let</span> <span class="kw">rec</span> translate (e : ls) : ls = <span class="kw">match</span> e <span class="kw">with</span>
   <span class="co">(* clause 1. *)</span>
+  <span class="co">(* you can&#39;t do much with a variable *)</span>
   | Var x -&gt;
     Var x
   <span class="co">(* clause 2. *)</span>
+  <span class="co">(* an application remains an application, but with the terms translated *)</span>
   | App (e1, e2) -&gt;
     App (translate e1, translate e2)
   <span class="co">(* clause 3. *)</span>
+  <span class="co">(* when x is not free in e, there can be two cases:</span>
+<span class="co">   * 1. x does not appear in e at all,</span>
+<span class="co">   * 2. x appears bound in e, Abs (x, e&#39;) is in e</span>
+<span class="co">   * In both cases, whatever you apply this lambda term to will not affect</span>
+<span class="co">   * the result of application:</span>
+<span class="co">   * 1. since x is not used, you can ignore it</span>
+<span class="co">   * 2. the x is bound to an inner argument, so it&#39;s really a different x from this</span>
+<span class="co">   * hence this is really a constant term e,</span>
+<span class="co">   * which is the same as the K combinator with e as the first argument.</span>
+<span class="co">   * (recall that: K x y = x) *)</span>
   | Abs (x, e) <span class="kw">when</span> <span class="dt">not</span> (free x e) -&gt;
     App (Kl, translate e)
   <span class="co">(* clause 4. *)</span>
-  | Abs (n, Var n&#39;) -&gt;
-    <span class="co">(* lambda x : x becomes identity *)</span>
-    <span class="kw">if</span> n = n&#39;
+  | Abs (x, Var x&#39;) -&gt;
+    <span class="co">(* this is the identity function, which is the I combinator *)</span>
+    <span class="kw">if</span> x = x&#39;
     <span class="kw">then</span> Il
+    <span class="co">(* we will never hit this case because, when x != x&#39;,</span>
+<span class="co">     * we end up in clause 3, as x is not free in Var x&#39; *)</span>
     <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span>
   <span class="co">(* clause 5. *)</span>
   | Abs (x, Abs (y, e)) -&gt;
+    <span class="co">(* when x is free in e, the x in e is the argument,</span>
+<span class="co">     * we first translate the body into a combinator, to eliminate a layer of abstraction *)</span>
     <span class="kw">if</span> free x e
     <span class="kw">then</span> translate (Abs (x, translate (Abs (y, e))))
     <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span>
   <span class="co">(* clause 6. *)</span>
   | Abs (x, App (e1, e2)) -&gt;
+    <span class="co">(* eliminate the abstraction via application *)</span>
+    <span class="co">(* Recall that S x y z = x z (y z),</span>
+<span class="co">     * so applying the term Abs (x, App (e1, e2)) to an argument x</span>
+<span class="co">     * will result in substituting x into the body of e1, x z,</span>
+<span class="co">     * and e2, y z, and applying e1 to e2, x z (y z) *)</span>
     <span class="kw">if</span> free x e1 || free x e2
-    <span class="co">(* then App (Sl, App (translate (Abs (x, e1)), translate (Abs (x, e2)))) *)</span>
     <span class="kw">then</span> App (App (Sl, (translate (Abs (x, e1)))), translate (Abs (x, e2)))
     <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span>
   | Kl -&gt; Kl
   | Sl -&gt; Sl
   | Il -&gt; Il
   | _ -&gt;
-    <span class="dt">failwith</span> <span class="st">&quot;no matches&quot;</span></code></pre></div>
+    <span class="dt">failwith</span> (<span class="st">&quot;no matches for &quot;</span> ^ (string_of_ls e))</code></pre></div>
 <p>Finally we can write the top level <code>convert</code> function we imagined earlier:</p>
 <div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Converts a lambda term into an SKI term *)</span>
 <span class="kw">let</span> convert (e : lambda) : ski =
