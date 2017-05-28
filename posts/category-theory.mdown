@@ -621,10 +621,10 @@ Let's spot more patterns
 ### Products
 
 The cartesian product of two sets is a set of pairs, but we shouldn't be able to
-peek into the objects. So let's think in terms of morphisms and compositions.
+peek into the objects, so let's think in terms of morphisms and compositions.
 
-Let's define a pattern using two morphism from the product, `c`,
-to it's constituents, `a` and `b`.
+Let's define a pattern using two morphism from a product, `c`,
+to its constituents, `a` and `b`.
 `p` is a morphism from `c` to `a`, and
 `q` is a morphism from `c` to `b`.
 In this example, `p` and `q` can also be called *projections*.
@@ -661,7 +661,6 @@ q (_, _, b) = b
 
 This candidate seems too big, the second `Int` is never used.
 
-How can we then rank these candidates?
 We can say that a candidate `c` is better than another candidate `c'` if
 there is a morphism `m` from `c'` to `c`.
 We also want the projections `p` and `q` of `c`, to be better than
@@ -699,7 +698,8 @@ p' x = (p . m) x = x
 q' x = (q . m) x = True
 ```
 
-First we construct a morphism `m` from `c'`, `(Int, Int, Bool)`, to `c`, `(Int, Bool)`:
+To show that it s better than `(Int, Int, Bool)`,
+we construct a morphism `m` from `c'`, `(Int, Int, Bool)`, to `c`, `(Int, Bool)`:
 
 ```haskell
 m :: (Int, Int, Bool) -> (Int, Bool)
@@ -735,7 +735,7 @@ Thus, this makes the cartesian product the best match.
 
 Categorically, a product of two objects `a` and `b`, is the object `c`
 with two projections, `p` from `c` to `a` and `q` from `c` to `b`,
-such that any other object `c'` with two projections
+such that for any other object `c'` with two projections
 `p'` from `c'` to `a` and `q'` from `c'` to `b'`,
 there is a unique morphism `m` from `c'` to `c`,
 such that `m` factorizes `p'` and `q'`.
@@ -916,7 +916,7 @@ and multiplication by `0` gives `0`.
 
 ### Recursive types
 
-The `List` type is common defined as a coproduct of `Nil`, indicating the end of the list,
+The `List` type is commonly defined as a coproduct of `Nil`, indicating the end of the list,
 and `Cons a (List a)`, indicating an element of type `a` and the rest of the list:
 
 ```haskell
@@ -942,7 +942,7 @@ x = 1 + (a * (1 + a * x)) = 1 + a + a * a * x
 x = 1 + a + a * a + ... + a * a * a * a...
 ```
 
-Which can be interpreted as, `x` (`List a`), is either `Nil` (empty), or
+Which can be interpreted as, `x` is either `Nil` (empty), or
 a singleton (`a`), or a pair of values (`a * a`), or three values (`a * a * a`), ...
 
 > I previously wrote a
@@ -1008,9 +1008,8 @@ which is also the identity morphism `idFA` from `F a` to `F a` in `D`.
 ### Functors in our programming language
 
 In the category of types and functions in programming,
-we can talk about functors that map this category onto itself,
-such functors where the source and target category is the same is called an *endofunctor*.
-
+we can talk about functors that map this category onto itself.
+A functor where the source and target category are the same is called an *endofunctor*.
 A functor in the this category then maps types to types, and functions to functions.
 
 The mapping of types to types has been seen previously, it's the case of
@@ -1489,9 +1488,8 @@ It contains the morphisms from `a` to `b`: it's a hom-set.
 
 It is not always the case that a hom-set exists in the same category as
 the objects it was built from.
-When they are in different categories, we call the objects *external* hom-sets.
-
-And if they are in the same category, they are *internal* hom-sets.
+If the hom-set exists and is in the same category, it is an *internal* hom-set.
+If the hom-set exists and is in a different category, it is an *external* hom-set.
 
 ### Universal Construction
 
@@ -1569,6 +1567,7 @@ These categories are called *cartesian closed*.
 The category of Set is an example.
 
 The requirements of a cartesian closed category is that it must contain:
+
 1. The terminal object
 2. Product of any pair of objects
 3. Exponential of any pair of objects

@@ -421,8 +421,8 @@ g ∘ f = id</code></pre>
 <p>Observe that because of the initial object conditions, <code>f</code> and <code>g</code> are unique as well. Thus we actually have uniqueness up to unique isomorphism, i.e. not only is the initial object unique up to isomorphism, the isomorphisms are themselves unique.</p>
 <p>What we have done so far is to use universal construction to find the initial object (unique up to isomorphism) and the terminal object (unique up to isomorphism). Let's spot more patterns</p>
 <h3 id="products">Products</h3>
-<p>The cartesian product of two sets is a set of pairs, but we shouldn't be able to peek into the objects. So let's think in terms of morphisms and compositions.</p>
-<p>Let's define a pattern using two morphism from the product, <code>c</code>, to it's constituents, <code>a</code> and <code>b</code>. <code>p</code> is a morphism from <code>c</code> to <code>a</code>, and <code>q</code> is a morphism from <code>c</code> to <code>b</code>. In this example, <code>p</code> and <code>q</code> can also be called <em>projections</em>.</p>
+<p>The cartesian product of two sets is a set of pairs, but we shouldn't be able to peek into the objects, so let's think in terms of morphisms and compositions.</p>
+<p>Let's define a pattern using two morphism from a product, <code>c</code>, to its constituents, <code>a</code> and <code>b</code>. <code>p</code> is a morphism from <code>c</code> to <code>a</code>, and <code>q</code> is a morphism from <code>c</code> to <code>b</code>. In this example, <code>p</code> and <code>q</code> can also be called <em>projections</em>.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">p ::</span> c <span class="ot">-&gt;</span> a
 <span class="ot">q ::</span> c <span class="ot">-&gt;</span> b</code></pre></div>
 <p>Again, there might be lots of candidates <code>c</code> that fits into this pattern. For example, for the constituent types <code>Int</code> and <code>Bool</code>, a candidate for their product is <code>Int</code>. Then,</p>
@@ -439,7 +439,7 @@ p (x, _, _) <span class="fu">=</span> x
 <span class="ot">q ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 q (_, _, b) <span class="fu">=</span> b</code></pre></div>
 <p>This candidate seems too big, the second <code>Int</code> is never used.</p>
-<p>How can we then rank these candidates? We can say that a candidate <code>c</code> is better than another candidate <code>c'</code> if there is a morphism <code>m</code> from <code>c'</code> to <code>c</code>. We also want the projections <code>p</code> and <code>q</code> of <code>c</code>, to be better than the projections <code>p'</code> and <code>q'</code> of <code>c'</code>. Better here means that one can be constructed in terms of another:</p>
+<p>We can say that a candidate <code>c</code> is better than another candidate <code>c'</code> if there is a morphism <code>m</code> from <code>c'</code> to <code>c</code>. We also want the projections <code>p</code> and <code>q</code> of <code>c</code>, to be better than the projections <code>p'</code> and <code>q'</code> of <code>c'</code>. Better here means that one can be constructed in terms of another:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p&#39; <span class="fu">=</span> p <span class="fu">.</span> m
 q&#39; <span class="fu">=</span> q <span class="fu">.</span> m</code></pre></div>
 <p>Another way to say this is that <code>m</code> factorizes <code>p'</code> and <code>q'</code>.</p>
@@ -455,7 +455,7 @@ m x <span class="fu">=</span> (x, <span class="dt">True</span>)</code></pre></di
 <p>And observe that <code>p'</code> and <code>q'</code> is defined in terms of <code>p</code>, <code>q</code> and m:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p&#39; x <span class="fu">=</span> (p <span class="fu">.</span> m) x <span class="fu">=</span> x
 q&#39; x <span class="fu">=</span> (q <span class="fu">.</span> m) x <span class="fu">=</span> <span class="dt">True</span></code></pre></div>
-<p>First we construct a morphism <code>m</code> from <code>c'</code>, <code>(Int, Int, Bool)</code>, to <code>c</code>, <code>(Int, Bool)</code>:</p>
+<p>To show that it s better than <code>(Int, Int, Bool)</code>, we construct a morphism <code>m</code> from <code>c'</code>, <code>(Int, Int, Bool)</code>, to <code>c</code>, <code>(Int, Bool)</code>:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">m ::</span> (<span class="dt">Int</span>, <span class="dt">Int</span>, <span class="dt">Bool</span>) <span class="ot">-&gt;</span> (<span class="dt">Int</span>, <span class="dt">Bool</span>)
 m (x, _, b) <span class="fu">=</span> (x, b)</code></pre></div>
 <p>And observe that <code>p'</code> and <code>q'</code> is defined in terms of <code>p</code>, <code>q</code> and m:</p>
@@ -469,7 +469,7 @@ m&#39; (x, b) <span class="fu">=</span> (x, <span class="dv">42</span>, b)
 <span class="fu">...</span>
 m&#39; (x, b) <span class="fu">=</span> (x, <span class="dv">99</span>, b)</code></pre></div>
 <p>From our examples, we see that for any type <code>c'</code>, with projections <code>p'</code> and <code>q'</code>, there is a unique <code>m</code> from <code>c'</code> to the cartesian product <code>(a, b)</code>, that factorizes them. Thus, this makes the cartesian product the best match.</p>
-<p>Categorically, a product of two objects <code>a</code> and <code>b</code>, is the object <code>c</code> with two projections, <code>p</code> from <code>c</code> to <code>a</code> and <code>q</code> from <code>c</code> to <code>b</code>, such that any other object <code>c'</code> with two projections <code>p'</code> from <code>c'</code> to <code>a</code> and <code>q'</code> from <code>c'</code> to <code>b'</code>, there is a unique morphism <code>m</code> from <code>c'</code> to <code>c</code>, such that <code>m</code> factorizes <code>p'</code> and <code>q'</code>.</p>
+<p>Categorically, a product of two objects <code>a</code> and <code>b</code>, is the object <code>c</code> with two projections, <code>p</code> from <code>c</code> to <code>a</code> and <code>q</code> from <code>c</code> to <code>b</code>, such that for any other object <code>c'</code> with two projections <code>p'</code> from <code>c'</code> to <code>a</code> and <code>q'</code> from <code>c'</code> to <code>b'</code>, there is a unique morphism <code>m</code> from <code>c'</code> to <code>c</code>, such that <code>m</code> factorizes <code>p'</code> and <code>q'</code>.</p>
 <h3 id="coproduct">Coproduct</h3>
 <p>By duality, the product has a dual. When we reverse all the arrows in a product, we get a coproduct. Define two morphisms <code>i</code> and <code>j</code> from objects <code>a</code> and <code>b</code> to an object <code>c</code>. <code>i</code> and <code>j</code> are also called <em>injections</em>.</p>
 <pre><code>i :: a -&gt; c
@@ -556,7 +556,7 @@ g Right (a, c) = (a, Right c)</code></pre>
 <p>Specifically, a semiring is a structure with an associative, commutative addition operator with an identity <code>0</code>, a associative multiplication operator with an identity <code>1</code>, the multiplication left and right distributes over addition, and multiplication by <code>0</code> gives <code>0</code>.</p>
 </blockquote>
 <h3 id="recursive-types">Recursive types</h3>
-<p>The <code>List</code> type is common defined as a coproduct of <code>Nil</code>, indicating the end of the list, and <code>Cons a (List a)</code>, indicating an element of type <code>a</code> and the rest of the list:</p>
+<p>The <code>List</code> type is commonly defined as a coproduct of <code>Nil</code>, indicating the end of the list, and <code>Cons a (List a)</code>, indicating an element of type <code>a</code> and the rest of the list:</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> <span class="dt">Cons</span> a (<span class="dt">List</span> a)</code></pre></div>
 <p>In terms of an algebraic equation, letting <code>x = List a</code>:</p>
 <pre><code>x = 1 + (a * x)</code></pre>
@@ -566,7 +566,7 @@ g Right (a, c) = (a, Right c)</code></pre>
 x = 1 + (a * (1 + a * x)) = 1 + a + a * a * x
 ...
 x = 1 + a + a * a + ... + a * a * a * a...</code></pre>
-<p>Which can be interpreted as, <code>x</code> (<code>List a</code>), is either <code>Nil</code> (empty), or a singleton (<code>a</code>), or a pair of values (<code>a * a</code>), or three values (<code>a * a * a</code>), ...</p>
+<p>Which can be interpreted as, <code>x</code> is either <code>Nil</code> (empty), or a singleton (<code>a</code>), or a pair of values (<code>a * a</code>), or three values (<code>a * a * a</code>), ...</p>
 <blockquote>
 <p>I previously wrote a <a href="./some-type-about-sum-type-and-more.html">post</a> that goes a bit more into the relationship between numbers and types.</p>
 </blockquote>
@@ -599,8 +599,7 @@ g <span class="dt">False</span> x <span class="fu">=</span> <span class="dt">Rig
 <p>If <code>h</code> is a composition of morphisms <code>f</code> and <code>g</code>, <code>h = g . f</code>, then the image under F is a composition <code>F h = F g . F f</code>.</p>
 <p>And the functor also preserves the identity morphisms: for an object <code>A</code>, it maps the identity morphism <code>idA</code> from <code>A</code> to <code>A</code> in <code>C</code> to <code>F idA</code> in <code>D</code>, which is also the identity morphism <code>idFA</code> from <code>F a</code> to <code>F a</code> in <code>D</code>.</p>
 <h3 id="functors-in-our-programming-language">Functors in our programming language</h3>
-<p>In the category of types and functions in programming, we can talk about functors that map this category onto itself, such functors where the source and target category is the same is called an <em>endofunctor</em>.</p>
-<p>A functor in the this category then maps types to types, and functions to functions.</p>
+<p>In the category of types and functions in programming, we can talk about functors that map this category onto itself. A functor where the source and target category are the same is called an <em>endofunctor</em>. A functor in the this category then maps types to types, and functions to functions.</p>
 <p>The mapping of types to types has been seen previously, it's the case of building a type parameterised by another type, such as a <code>Maybe a</code>, or an <code>Either a b</code>.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Nothing</span> <span class="fu">|</span> <span class="dt">Just</span> a
 <span class="kw">data</span> <span class="dt">Either</span> a b <span class="fu">=</span> <span class="dt">Left</span> a <span class="fu">|</span> <span class="dt">Right</span> b</code></pre></div>
@@ -840,8 +839,7 @@ g (<span class="dt">Right</span> (<span class="dt">Identity</span> a)) <span cla
 <h2 id="function-types">Function Types</h2>
 <p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2015/03/13/function-types/">Function Types</a></p>
 <p>When working in the category of types and functions, the objects are sets representing types. For example the object <code>Bool</code> is a set with two elements. A function type <code>a -&gt; b</code> must exist in the set as well, but what does it contain? It contains the morphisms from <code>a</code> to <code>b</code>: it's a hom-set.</p>
-<p>It is not always the case that a hom-set exists in the same category as the objects it was built from. When they are in different categories, we call the objects <em>external</em> hom-sets.</p>
-<p>And if they are in the same category, they are <em>internal</em> hom-sets.</p>
+<p>It is not always the case that a hom-set exists in the same category as the objects it was built from. If the hom-set exists and is in the same category, it is an <em>internal</em> hom-set. If the hom-set exists and is in a different category, it is an <em>external</em> hom-set.</p>
 <h3 id="universal-construction-1">Universal Construction</h3>
 <p>We can try to construct an internal hom-set from scratch. We can think of A function type as a composite type, much like product and coproduct types. The product and coproduct types were constructed using by looking for patterns in the category, using universal construction. The same strategy can be used to find function types.</p>
 <p>In this case an object <code>z</code> contains functions that maps the argument type <code>a</code>, to the return type <code>b</code>. This pattern represents <em>function application</em></p>
@@ -865,7 +863,12 @@ g (<span class="dt">Right</span> (<span class="dt">Identity</span> a)) <span cla
 <p>In this sense, functions can be turned into table lookups. This is the equivalence between function types as objects, and functions as morphisms.</p>
 <h3 id="cartesian-closed-categories">Cartesian Closed Categories</h3>
 <p>So far, we have been using the category of Set as a model for types and functions. There is a larger family of categories that can be used as well. These categories are called <em>cartesian closed</em>. The category of Set is an example.</p>
-<p>The requirements of a cartesian closed category is that it must contain: 1. The terminal object 2. Product of any pair of objects 3. Exponential of any pair of objects</p>
+<p>The requirements of a cartesian closed category is that it must contain:</p>
+<ol style="list-style-type: decimal">
+<li>The terminal object</li>
+<li>Product of any pair of objects</li>
+<li>Exponential of any pair of objects</li>
+</ol>
 <p>Exponential can be seen as a product of arbitrary many terms, and the terminal object as a product of zero objects, or zeroth power of an object.</p>
 <p>The cartesian closed category provide models for the simply typed lambda calculus.</p>
 <p>The terminal object and product have their duals, the terminal object and coproduct. A cartesian closed category that also supports these two constructions, and that product can be distributed over coproduct, is called a <em>bicartesian closed category</em>, which Set is.</p>
