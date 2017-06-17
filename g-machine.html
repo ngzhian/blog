@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>G-machine</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #fff;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">G-machine</h1>
+<h3 class="date">2017-06-17 22:02</h3>
+</div>
+<p>This post is about using an abstract machine to implement a <em>non-strict functional language</em>.</p>
+<p>A non-strict language does not evaluate expressions until they are required.</p>
+<p>For example, <code>[1..]</code> is a valid expression, it's an infinite list of ascending integers starting from 1.</p>
+<p>A functional language allows you to name and pass functions around. For example <code>map add1 [1..10]</code> applies the function <code>add</code> to each element in the list.</p>
+<h2 id="machines">Machines</h2>
+<p>G-machine is a <em>compiler-based graph reduction machine</em>.</p>
+<p>This compiler takes as input a simple intermediate language called <em>Core</em>, and compiles the code into G-machine instructions. Then, these instructions can be run on the machine.</p>
+<p>This is in contrast with other implementation such as template instantiation, where you traverse some of the Core code only at run-time.</p>
+<h2 id="core-language">Core language</h2>
+<p>The compilation works on Core, which is language simplified from a higher level non-strict functional language such as Haskell.</p>
+<h3 id="supercombinators">Supercombinators</h3>
+<p>The following example Core program evaluates to 42:</p>
+<pre><code>main = double 21
+double x = x + x</code></pre>
+<p>This program has two supercombinator definitions. <code>main</code> and <code>double</code> are functions, the variables after that but before the equals sign are the arguments to the function, and the expression on the right-hand-side (rhs) is the body of the function.</p>
+<p><code>main</code> is a special supercombinator: it is the starting point of program execution.</p>
+<h3 id="local-definitions">Local definitions</h3>
+<p>Supercombinators can have local definitions in the form of <code>let</code> or <code>letrec</code> expressions</p>
+<pre><code>main = quadruple 20 ;
+quadruple x = let twice_x = x + x
+              in twice_x + twice_x
+
+infinite n = letrec ns = cons n ns
+             in ns</code></pre>
+<p><code>quadruple</code> defines locally <code>twice_x</code>, to be used in the body of the let expression. This is useful for naming intermediate values and to avoid recomputing the same value twice.</p>
+<p><code>infinite</code> declares <code>ns</code> and uses <code>ns</code> at the same time - the definition of <code>ns</code> is recursive.</p>
+<h3 id="algebraic-data-types-adts">Algebraic Data Types (ADTs)</h3>
+<p>In many functional languages, such as OCaml in the example below, algebraic data types are defined by the user like so:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> colour = Red | Green | Blue
+<span class="kw">type</span> complex = Rect <span class="kw">of</span> <span class="dt">int</span> * <span class="dt">int</span> | Polar <span class="kw">of</span> <span class="dt">int</span> * <span class="dt">int</span></code></pre></div>
+<p><code>Red</code>, <code>Green</code>, <code>Blue</code>, <code>Rect</code>, and <code>Polar</code>, are called constructors, because you use them to construct values of the ADTs.</p>
+<p>We can pattern match on these ADTs using a match expression:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">match</span> colour <span class="kw">with</span>
+| Red   -&gt; <span class="st">&quot;Red&quot;</span>
+| Green -&gt; <span class="st">&quot;Green&quot;</span>
+| Blue  -&gt; <span class="st">&quot;Blue&quot;</span></code></pre></div>
+<p>In Core, we use a simple, uniform representation for constructors, and transform pattern matching into simple case expressions.</p>
+<p>We use <code>Pack</code> to define constructors:</p>
+<pre><code>Red   = Pack{1,0}
+Green = Pack{2,0}
+Blue  = Pack{3,0}
+
+Rect  = Pack{1,2}
+Polar = Pack{2,2}</code></pre>
+<p>The first argument identifies a constructor in the ADT, and the second argument is the arity of the constructor, (how many arguments it requires).</p>
+<p>A <code>case</code> expression is used to determine alternative in an ADT a value is:</p>
+<pre><code>isRed = case c of
+            &lt;1&gt; -&gt; True  ;
+            &lt;2&gt; -&gt; False ;
+            &lt;3&gt; -&gt; False</code></pre>
+<h3 id="arithmetic">Arithmetic</h3>
+<p>Lastly, Core has arithmetic:</p>
+<pre><code>main = 1 + 1</code></pre>
+<p>And comparison:</p>
+<pre><code>main = if (2 &gt; 1) 2 1</code></pre>
+<h2 id="how-is-evaluation-done">How is evaluation done?</h2>
+<p>The G-machine works in terms of a stack and heap.</p>
+<p>A stack contains pointers to items in the heap, and heap contains nodes, representing numbers, application, etc.</p>
+<p>Given this example:</p>
+<pre><code>f g x = K (g x)</code></pre>
+<p>The machine will be in the state where the top of the stack is the function <code>f</code>, the next item is a pointer to an application of <code>f</code> to <code>g</code>, and the next item is a pointer to an application of <code>f g</code> to <code>x</code>.</p>
+<pre><code>[-]----&gt;  @
+         / \
+[-]--&gt;  @   x
+       / \
+[-]-&gt; f   g</code></pre>
+<p>The goal then becomes to evaluate the function <code>K (g x)</code>.</p>
+<p>To evaluate a function application, <code>g x</code>, the function and the arguments have to be pushed onto the stack first.</p>
+<p>This is done by using the <code>Push</code> instruction:</p>
+<pre><code>Push 1:
+
+[-]----&gt;  @
+         / \
+[-]--&gt;  @   x &lt;-\
+       / \      |
+[-]-&gt; f   g     |
+                |
+[-]-------------/</code></pre>
+<p>The way 1 is counted is to ignore the top of the stack, which is the supercombinator node, and to start counting from 0.</p>
+<p>Then <code>x</code> needs to be pushed onto the stack:</p>
+<pre><code>Push 1:
+
+[-]----&gt;  @
+         / \
+[-]--&gt;  @   x &lt;-\
+       / \      |
+[-]-&gt; f   g &lt;-\ |
+              | |
+[-]-----------+-/
+[-]-----------/</code></pre>
+<p>Now apply the function by creating an application node, using <code>Mkap</code>:</p>
+<pre><code>Mkap:
+
+[-]----&gt;  @
+         / \
+[-]--&gt;  @   x &lt;-\
+       / \      |
+[-]-&gt; f   g &lt;-\ |
+              | |
+[-]-&gt; @       | |
+     / \------+-/
+     \--------/</code></pre>
+<p><code>Mkap</code> creates an application node using the top two items of the stack.</p>
+<p>Now we need to apply <code>K</code> to <code>(g x)</code>, since <code>K</code> is a supercombinator, we can directly push it using <code>Pushglobal</code>:</p>
+<pre><code>Pushglobal K
+
+[-]----&gt;  @
+         / \
+[-]--&gt;  @   x &lt;-\
+       / \      |
+[-]-&gt; f   g &lt;-\ |
+              | |
+[-]-&gt; @       | |
+     / \------+-/
+     \--------/
+[-]-&gt; K</code></pre>
+<p>And use <code>Mkap</code> to apply <code>K</code> to its arguments:</p>
+<pre><code>Mkap:
+
+[-]----&gt;  @
+         / \
+[-]--&gt;  @   x &lt;-\
+       / \      |
+[-]-&gt; f   g &lt;-\ |
+              | |
+[-]-&gt; @       | |
+     / \      | |
+    K   @     | |
+       / \----+-/
+       \------/</code></pre>
+<p>Finally we have replaced <code>f g x</code> with its body <code>K (g x)</code>, so we can remove the old nodes:</p>
+<pre><code>Slide 3:
+
+[-]-&gt; @
+     / \
+    K   @
+       / \
+      g   x</code></pre>
+<p>In summary, the code generated for a supercombinator is to:</p>
+<ol style="list-style-type: decimal">
+<li>construct the rhs of the supercombinator</li>
+<li>Slide n + 1, where n is the arity of the supercombinator</li>
+<li>Unwind</li>
+</ol>
+<p>Where <code>Unwind</code> is the instruction to cause machine evaluation to continue.</p>
+<p>To recap, the key instructions are:</p>
+<ul>
+<li><code>Push</code></li>
+<li><code>Mkap</code></li>
+<li><code>Pushglobal</code></li>
+<li><code>Slide</code></li>
+<li><code>Unwind</code></li>
+</ul>
+<!-- Stack about stack access and the index changing -->
+<!-- Minimal G-machine -->
+</section>
+</body>
+</html>

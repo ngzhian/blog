@@ -1,0 +1,298 @@
+---
+title: G-machine
+date: 2017-06-17 22:02
+...
+
+This post is about using an abstract machine to
+implement a *non-strict functional language*.
+
+A non-strict language does not evaluate expressions until
+they are required.
+
+For example, `[1..]` is a valid expression,
+it's an infinite list of ascending integers starting from 1.
+
+A functional language allows you to name and pass functions around.
+For example `map add1 [1..10]` applies the function `add`
+to each element in the list.
+
+## Machines
+
+G-machine is a *compiler-based graph reduction machine*.
+
+This compiler takes as input a simple intermediate
+language called *Core*,
+and compiles the code into
+G-machine instructions.
+Then, these instructions can be run on the machine.
+
+This is in contrast with other implementation such as template
+instantiation, where you traverse some of the Core code only at run-time.
+
+## Core language
+
+The compilation works on Core, which is language simplified from
+a higher level non-strict functional language such as Haskell.
+
+### Supercombinators
+
+The following example Core program evaluates to 42:
+
+```
+main = double 21
+double x = x + x
+```
+
+This program has two supercombinator definitions.
+`main` and `double` are functions,
+the variables after that but before the equals sign
+are the arguments to the function,
+and the expression
+on the right-hand-side (rhs) is the body of the function.
+
+`main` is a special supercombinator: it is the starting point of
+program execution.
+
+### Local definitions
+
+Supercombinators can have local definitions in the form of
+`let` or `letrec` expressions
+
+```
+main = quadruple 20 ;
+quadruple x = let twice_x = x + x
+              in twice_x + twice_x
+
+infinite n = letrec ns = cons n ns
+             in ns
+```
+
+`quadruple` defines locally `twice_x`, to be used
+in the body of the let expression.
+This is useful for naming intermediate values and to
+avoid recomputing the same value twice.
+
+`infinite` declares `ns` and uses `ns` at the same time -
+the definition of `ns` is recursive.
+
+### Algebraic Data Types (ADTs)
+
+In many functional languages, such as OCaml in the example below,
+algebraic data types are defined
+by the user like so:
+
+```ocaml
+type colour = Red | Green | Blue
+type complex = Rect of int * int | Polar of int * int
+```
+
+`Red`, `Green`, `Blue`, `Rect`, and `Polar`, are called constructors,
+because you use them to construct values of the ADTs.
+
+We can pattern match on these ADTs using a match expression:
+
+```ocaml
+match colour with
+| Red   -> "Red"
+| Green -> "Green"
+| Blue  -> "Blue"
+```
+
+In Core, we use a simple, uniform representation for constructors,
+and transform pattern matching into simple case expressions.
+
+We use `Pack` to define constructors:
+
+```
+Red   = Pack{1,0}
+Green = Pack{2,0}
+Blue  = Pack{3,0}
+
+Rect  = Pack{1,2}
+Polar = Pack{2,2}
+```
+
+The first argument identifies a constructor in the ADT,
+and the second argument is the arity of the constructor,
+(how many arguments it requires).
+
+A `case` expression is used to determine alternative
+in an ADT a value is:
+
+```
+isRed = case c of
+            <1> -> True  ;
+            <2> -> False ;
+            <3> -> False
+```
+
+### Arithmetic
+
+Lastly, Core has arithmetic:
+
+```
+main = 1 + 1
+```
+
+And comparison:
+
+```
+main = if (2 > 1) 2 1
+```
+
+## How is evaluation done?
+
+The G-machine works in terms of a stack and heap.
+
+A stack contains pointers to items in the heap,
+and heap contains nodes, representing numbers, application, etc.
+
+Given this example:
+
+```
+f g x = K (g x)
+```
+
+The machine will be in the state where the top of the stack is
+the function `f`, the next item is a pointer to an application
+of `f` to `g`, and the next item is a pointer to an application
+of `f g` to `x`.
+
+```
+[-]---->  @
+         / \
+[-]-->  @   x
+       / \
+[-]-> f   g
+```
+
+The goal then becomes to evaluate the function `K (g x)`.
+
+To evaluate a function application, `g x`,
+the function and the arguments have to be pushed
+onto the stack first.
+
+This is done by using the `Push` instruction:
+
+```
+Push 1:
+
+[-]---->  @
+         / \
+[-]-->  @   x <-\
+       / \      |
+[-]-> f   g     |
+                |
+[-]-------------/
+```
+
+The way 1 is counted is to ignore the top of the stack,
+which is the supercombinator node,
+and to start counting from 0.
+
+Then `x` needs to be pushed onto the stack:
+
+```
+Push 1:
+
+[-]---->  @
+         / \
+[-]-->  @   x <-\
+       / \      |
+[-]-> f   g <-\ |
+              | |
+[-]-----------+-/
+[-]-----------/
+```
+
+Now apply the function by creating an application node,
+using `Mkap`:
+
+```
+Mkap:
+
+[-]---->  @
+         / \
+[-]-->  @   x <-\
+       / \      |
+[-]-> f   g <-\ |
+              | |
+[-]-> @       | |
+     / \------+-/
+     \--------/
+```
+
+`Mkap` creates an application node using the top two items
+of the stack.
+
+Now we need to apply `K` to `(g x)`, since `K` is a supercombinator,
+we can directly push it using `Pushglobal`:
+
+```
+Pushglobal K
+
+[-]---->  @
+         / \
+[-]-->  @   x <-\
+       / \      |
+[-]-> f   g <-\ |
+              | |
+[-]-> @       | |
+     / \------+-/
+     \--------/
+[-]-> K
+```
+
+And use `Mkap` to apply `K` to its arguments:
+
+
+```
+Mkap:
+
+[-]---->  @
+         / \
+[-]-->  @   x <-\
+       / \      |
+[-]-> f   g <-\ |
+              | |
+[-]-> @       | |
+     / \      | |
+    K   @     | |
+       / \----+-/
+       \------/
+```
+
+Finally we have replaced `f g x` with its body `K (g x)`,
+so we can remove the old nodes:
+
+```
+Slide 3:
+
+[-]-> @
+     / \
+    K   @
+       / \
+      g   x
+```
+
+In summary, the code generated for a supercombinator
+is to:
+
+1. construct the rhs of the supercombinator
+2. Slide n + 1, where n is the arity of the supercombinator
+3. Unwind
+
+Where `Unwind` is the instruction to cause machine evaluation
+to continue.
+
+To recap, the key instructions are:
+
+- `Push`
+- `Mkap`
+- `Pushglobal`
+- `Slide`
+- `Unwind`
+
+<!-- Stack about stack access and the index changing -->
+
+<!-- Minimal G-machine -->
