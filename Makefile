@@ -12,6 +12,9 @@ pages: $(destfiles)
 all: pages
 	ocs -i true
 
+clean:
+	rm -f *.html
+
 deploy:
 	git push origin HEAD
 	git checkout gh-pages
