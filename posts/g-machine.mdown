@@ -296,3 +296,6 @@ To recap, the key instructions are:
 <!-- Stack about stack access and the index changing -->
 
 <!-- Minimal G-machine -->
+
+## References
+[implementing Functional Languages: a tutorial](https://www.microsoft.com/en-us/research/publication/implementing-functional-languages-a-tutorial/)
