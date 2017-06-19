@@ -111,7 +111,7 @@ As a concluding thought, this is one of my favourite quote from Bartosz Milewski
 I will attempt a few of the challenges he has set:
 
 1. Is Facebook a category, with people as objects and friendships as morphisms? *No, friendships don't compose (see Rule 1); a friend (morphism from B to C) of my friend (morphism from A to B) is not immediately my friend (no morphism from A to C).*
-2. When is a direct graph a category? *When every node has an edge to itself (Rule 3), and there exists a transitive (if we think in terms of sets and relations) relationship (Rule 1) between nodes, i.e. if there is an edge from A to B, and an edge from B to C, there must be an edge from A to B.*
+2. When is a direct graph a category? *When every node has an edge to itself (Rule 3), and there exists a transitive (if we think in terms of sets and relations) relationship (Rule 1) between nodes, i.e. if there is an edge from A to B, and an edge from B to C, there must be an edge from A to C.*
 
 # Types and Functions
 
@@ -151,10 +151,10 @@ Here I tackle some challenges:
 1. How many different functions are there from `Bool` to `Bool`? 4, or 2 ^ 2:
 
     ```
-    True -> True
-    True -> False
-    False -> True
-    False -> False
+    id x = x
+    not x = ! x
+    true x = true
+    false x = false
     ```
 
 2. Draw a picture of a category whose only objects are the types `Void`, `()`, and `Bool`; with arrows corresponding to all possible functions between these types.

@@ -197,7 +197,7 @@ idA ∘ f = f</code></pre>
 <p>I will attempt a few of the challenges he has set:</p>
 <ol style="list-style-type: decimal">
 <li>Is Facebook a category, with people as objects and friendships as morphisms? <em>No, friendships don't compose (see Rule 1); a friend (morphism from B to C) of my friend (morphism from A to B) is not immediately my friend (no morphism from A to C).</em></li>
-<li>When is a direct graph a category? <em>When every node has an edge to itself (Rule 3), and there exists a transitive (if we think in terms of sets and relations) relationship (Rule 1) between nodes, i.e. if there is an edge from A to B, and an edge from B to C, there must be an edge from A to B.</em></li>
+<li>When is a direct graph a category? <em>When every node has an edge to itself (Rule 3), and there exists a transitive (if we think in terms of sets and relations) relationship (Rule 1) between nodes, i.e. if there is an edge from A to B, and an edge from B to C, there must be an edge from A to C.</em></li>
 </ol>
 <h1 id="types-and-functions">Types and Functions</h1>
 <p>From Bartosz Milewski's <a href="https://bartoszmilewski.com/2014/11/24/types-and-functions/">Types and Functions</a></p>
@@ -212,10 +212,10 @@ idA ∘ f = f</code></pre>
 <p>Here I tackle some challenges:</p>
 <ol style="list-style-type: decimal">
 <li><p>How many different functions are there from <code>Bool</code> to <code>Bool</code>? 4, or 2 ^ 2:</p>
-<pre><code>True -&gt; True
-True -&gt; False
-False -&gt; True
-False -&gt; False</code></pre></li>
+<pre><code>id x = x
+not x = ! x
+true x = true
+false x = false</code></pre></li>
 <li><p>Draw a picture of a category whose only objects are the types <code>Void</code>, <code>()</code>, and <code>Bool</code>; with arrows corresponding to all possible functions between these types.</p>
 <pre><code>Void ---id---&gt; Void # Rule 3
 Void -absurd-&gt; ()
