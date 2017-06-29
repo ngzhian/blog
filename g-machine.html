@@ -294,8 +294,35 @@ Polar = Pack{2,2}</code></pre>
 <li><code>Slide</code></li>
 <li><code>Unwind</code></li>
 </ul>
+<h2 id="minimal-g-machine">Minimal G-machine</h2>
+<p>The G-machine uses a five-tuple for it's state:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> gm_state =
+    gm_code    <span class="co">(* current instruction stream *)</span>
+  * gm_stack   <span class="co">(* current stack              *)</span>
+  * gm_heap    <span class="co">(* heap of nodes              *)</span>
+  * gm_globals <span class="co">(* global addresses in heap   *)</span>
+  * gm_stats   <span class="co">(* statistics of machine      *)</span></code></pre></div>
+<p><code>gm_code</code> is a list of machine instructions:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> gm_code = instruction <span class="dt">list</span></code></pre></div>
+<p>The <code>gm_stack</code> is a list of addresses in the heap:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> gm_stack = addr <span class="dt">list</span></code></pre></div>
+<p><code>gm_heap</code> is a heap mapping <code>addr</code> to <code>node</code>, and can be implemented as a list, with list index as <code>addr</code>.</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> gm_heap = node <span class="dt">list</span></code></pre></div>
+<p><code>gm_globals</code> is an association list of names to <code>addr</code> in heap:</p>
+<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">type</span> gm_globals = (name * addr) <span class="dt">list</span></code></pre></div>
+<p>The G-machine runs by dispatching on each instruction.</p>
+<p><code>Pushglobal</code> looks up the name in <code>gm_globals</code> and pushes the node in the heap onto the stack.</p>
+<p><code>Pushint</code> allocates an integer node on the heap, and pushes the address onto the stack.</p>
+<p><code>Mkap</code> uses two addresses at the top of the stack to build an application node in the heap.</p>
+<p><code>Push</code> is used to copy an argument that is passed to a function. It has to look at the application node at the (n+1)-th place, and look at the rhs of the node.</p>
+<p><code>Slide</code> tidies the stack by popping addresses off the stack.</p>
+<p><code>Unwind</code> is always the last instruction of a sequence, and will construct a new state based on what's on top of the stack.</p>
+<ol style="list-style-type: decimal">
+<li><code>NNum</code>, the G-machine has terminated</li>
+<li><code>NAp</code>, must continue unwinding from next node</li>
+<li><code>NGlobal</code>, jump to the supercombinator code by putting it onto <code>gm_code</code></li>
+</ol>
 <!-- Stack about stack access and the index changing -->
-<!-- Minimal G-machine -->
 <h2 id="references">References</h2>
 <p><a href="https://www.microsoft.com/en-us/research/publication/implementing-functional-languages-a-tutorial/">implementing Functional Languages: a tutorial</a></p>
 </section>

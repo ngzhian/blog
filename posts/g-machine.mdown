@@ -293,9 +293,69 @@ To recap, the key instructions are:
 - `Slide`
 - `Unwind`
 
+## Minimal G-machine
+
+The G-machine uses a five-tuple for it's state:
+
+
+```ocaml
+type gm_state =
+    gm_code    (* current instruction stream *)
+  * gm_stack   (* current stack              *)
+  * gm_heap    (* heap of nodes              *)
+  * gm_globals (* global addresses in heap   *)
+  * gm_stats   (* statistics of machine      *)
+```
+
+`gm_code` is a list of machine instructions:
+
+```ocaml
+type gm_code = instruction list
+```
+
+The `gm_stack` is a list of addresses in the heap:
+
+```ocaml
+type gm_stack = addr list
+```
+
+`gm_heap` is a heap mapping `addr` to `node`, and can be implemented as
+a list, with list index as `addr`.
+
+```ocaml
+type gm_heap = node list
+```
+
+`gm_globals` is an association list of names to `addr` in heap:
+
+```ocaml
+type gm_globals = (name * addr) list
+```
+
+The G-machine runs by dispatching on each instruction.
+
+`Pushglobal` looks up the name in `gm_globals` and pushes the node in the heap onto the stack.
+
+`Pushint` allocates an integer node on the heap, and pushes the address onto the stack.
+
+`Mkap` uses two addresses at the top of the stack to build an application node
+in the heap.
+
+`Push` is used to copy an argument that is passed to a function.
+It has to look at the application node at the (n+1)-th place, and look at the
+rhs of the node.
+
+`Slide` tidies the stack by popping addresses off the stack.
+
+`Unwind` is always the last instruction of a sequence,
+and will construct a new state based on what's on top of the stack.
+
+1. `NNum`, the G-machine has terminated
+2. `NAp`, must continue unwinding from next node
+3. `NGlobal`, jump to the supercombinator code by putting it onto `gm_code`
+
 <!-- Stack about stack access and the index changing -->
 
-<!-- Minimal G-machine -->
 
 ## References
 [implementing Functional Languages: a tutorial](https://www.microsoft.com/en-us/research/publication/implementing-functional-languages-a-tutorial/)
