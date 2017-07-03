@@ -165,14 +165,14 @@ False * False</code></pre>
 <p>A function of this type has to, for each member of the input type, <code>decision</code> with 3 members, give a member of the output type, <code>boolean</code> with 2 members.</p>
 <p>So the total number of unique functions of this type is 2 * 2 * 2 = 8, or equivalently, 2 ^ 3!</p>
 <ol style="list-style-type: decimal">
-<li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; True</li>
-<li>Decided True -&gt; True, Decided False -&gt; True, Undecided -&gt; False</li>
-<li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; True</li>
-<li>Decided True -&gt; True, Decided False -&gt; False, Undecided -&gt; False</li>
-<li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; True</li>
-<li>Decided True -&gt; False, Decided False -&gt; True, Undecided -&gt; False</li>
-<li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; True</li>
-<li>Decided True -&gt; False, Decided False -&gt; False, Undecided -&gt; False</li>
+<li>DT, DF, U -&gt; True</li>
+<li>DT, DF, U -&gt; False</li>
+<li>DT, DF -&gt; True, U -&gt; False</li>
+<li>DT, U -&gt; True, DF -&gt; False</li>
+<li>DF, U -&gt; True, DT -&gt; False</li>
+<li>DT -&gt; True, DF, U -&gt; False</li>
+<li>DF -&gt; True, DT, U -&gt; False</li>
+<li>U -&gt; True, DF, DT -&gt; False</li>
 </ol>
 <p>So you see, function types are also called <strong>exponential</strong> types.</p>
 <h2 id="dependent-sum-types-sigma-type">Dependent sum types / Sigma type</h2>

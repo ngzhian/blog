@@ -120,14 +120,14 @@ A function of this type has to, for each member of the input type, `decision` wi
 
 So the total number of unique functions of this type is 2 * 2 * 2 = 8, or equivalently, 2 ^ 3!
 
-1. Decided True -> True, Decided False -> True, Undecided -> True
-2. Decided True -> True, Decided False -> True, Undecided -> False
-3. Decided True -> True, Decided False -> False, Undecided -> True
-4. Decided True -> True, Decided False -> False, Undecided -> False
-5. Decided True -> False, Decided False -> True, Undecided -> True
-6. Decided True -> False, Decided False -> True, Undecided -> False
-7. Decided True -> False, Decided False -> False, Undecided -> True
-8. Decided True -> False, Decided False -> False, Undecided -> False
+1. DT, DF, U -> True
+2. DT, DF, U -> False
+3. DT, DF -> True, U -> False
+4. DT, U -> True, DF -> False
+5. DF, U -> True, DT -> False
+6. DT -> True, DF, U -> False
+7. DF -> True, DT, U -> False
+8. U  -> True, DF, DT -> False
 
 So you see, function types are also called **exponential** types.
 
