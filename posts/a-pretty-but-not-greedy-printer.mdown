@@ -1,0 +1,91 @@
+---
+title: A Pretty But Not Greedy Printer
+date: 2017-09-09 21:40
+...
+
+> This is a series of posts where I jot down my learnings from computer science papers I've read. Previously, [The Next 700 Programming Languages](./the-next-700-programming-languages-p-j-landin.html)
+
+[Paper](http://dl.acm.org/citation.cfm?id=3110250&CFID=970661859&CFTOKEN=65198118)
+
+A pretty printer outputs a data structure as human-readable text.
+
+A pretty printer should exhibit these behaviors, in order of importance:
+
+1. Visibility - layout output within the width
+2. Legibility - make appropriate use of layout so that it is easy for a human to read
+3. Frugality - use the least number of lines
+
+In other words, a pretty printer is an optimization problem that maximizes all three parameters.
+
+Pretty printers of the past (Hughes and Wadler) adopt a functional design, composing algebraic structures.
+To achieve all three, the resulting pretty printer will be unusably slow, O(2^n).
+Most pretty printers sacrifice one of these three goals.
+For example, Hughes library chooses a greedy algorithm, so most of the time it gives up 3,
+and Wadler's library is not expressive enough.
+
+Bernardy aims to, with this pretty printer, achieve all three goals, while doing it in a reasonable time.
+
+The basic API of the pretty printer is:
+
+1. `text`, turns string to a pretty printable document (`Doc`)
+2. `<>`, concat two `Doc`s horizontally
+3. `$$`, concat two `Doc`s vertically
+4. `<|>`, choose to concat two `Doc`s either horizontally or vertically
+
+More combinators can be defined in terms of those basic functions:
+
+1. `empty` is the empty `Doc`
+2. `<+>`, horizontal concatenation of two `Doc` with a space
+3. `hsep`, horizontal concatenation of many `Doc`s with separator
+4. `vcat`, vertical concatenation of many `Doc`s
+
+We can define a layout as a non-empty list of strings to print, then rendering the layout is as simple as joining the list of strings with newlines.
+
+`$$` is then adding a new string to the layout.
+
+`<>` has to deal with the last line of the first string, and the first line of the second string.
+For example
+
+```
+xxxxx   <> yyyyy
+xx         yyyyyyy
+
+= xxxxx
+  xxyyyyy
+    yyyyyyy
+```
+
+The core algorithm is to
+
+1. given a set of layouts,
+2. filter those that are visible,
+3. select the most frugal to render.
+
+However this algorithm is `O(2^n)` in terms of a `n` input with `n` choices (from the `<|>` operator).
+Every possible combination of the choice is first constructed, and then the shortest output is picked.
+
+The key techniques to achieving an efficient implementation are to:
+
+1. Recognize that a full layout does not need to be constructed to calculate its size
+2. Invalid results can be filtered out early
+3. Some results are *dominated* and thus can be trimmed away early.
+
+For 1, the important attributes are the maximum width of the layout, width of the last line, and the height.
+It can also be shown that this measurement (which ignores the content of the text)
+is a homomorphism to the layout structure described for
+actually laying out text (sans the rendering).
+
+The second relies on the fact that the validity of a document implies the validity of its part.
+
+The third relies on the fact that layout operators are monotonic with respect to the defined domination relation.
+If `a` dominates `b`, `op a` still dominates `op b`.
+Define a partial order as the dominance relation, by looking at all three attributes used for measuring in 1.
+The subset of non-dominated layouts is called the Pareto frontier.
+
+> Can think of this as a graph where `a -> b` if `a` dominates `b`, and the frontier
+> is the collection of nodes without in degree 0
+
+Benchmarks done on laying out full binary trees and random trees represented as S-Expressions.
+
+On a benchmark that uses randomly generated JSON, mimicking real life JSON files, this library performs
+ten times as slow as that of Wadler-Leijen, and about 4 tims as slow as the Hughes-PJ one.

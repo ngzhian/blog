@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>A Pretty But Not Greedy Printer</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">A Pretty But Not Greedy Printer</h1>
+<h3 class="date">2017-09-09 21:40</h3>
+</div>
+<blockquote>
+<p>This is a series of posts where I jot down my learnings from computer science papers I've read. Previously, <a href="./the-next-700-programming-languages-p-j-landin.html">The Next 700 Programming Languages</a></p>
+</blockquote>
+<p><a href="http://dl.acm.org/citation.cfm?id=3110250&amp;CFID=970661859&amp;CFTOKEN=65198118">Paper</a></p>
+<p>A pretty printer outputs a data structure as human-readable text.</p>
+<p>A pretty printer should exhibit these behaviors, in order of importance:</p>
+<ol style="list-style-type: decimal">
+<li>Visibility - layout output within the width</li>
+<li>Legibility - make appropriate use of layout so that it is easy for a human to read</li>
+<li>Frugality - use the least number of lines</li>
+</ol>
+<p>In other words, a pretty printer is an optimization problem that maximizes all three parameters.</p>
+<p>Pretty printers of the past (Hughes and Wadler) adopt a functional design, composing algebraic structures. To achieve all three, the resulting pretty printer will be unusably slow, O(2^n). Most pretty printers sacrifice one of these three goals. For example, Hughes library chooses a greedy algorithm, so most of the time it gives up 3, and Wadler's library is not expressive enough.</p>
+<p>Bernardy aims to, with this pretty printer, achieve all three goals, while doing it in a reasonable time.</p>
+<p>The basic API of the pretty printer is:</p>
+<ol style="list-style-type: decimal">
+<li><code>text</code>, turns string to a pretty printable document (<code>Doc</code>)</li>
+<li><code>&lt;&gt;</code>, concat two <code>Doc</code>s horizontally</li>
+<li><code>$$</code>, concat two <code>Doc</code>s vertically</li>
+<li><code>&lt;|&gt;</code>, choose to concat two <code>Doc</code>s either horizontally or vertically</li>
+</ol>
+<p>More combinators can be defined in terms of those basic functions:</p>
+<ol style="list-style-type: decimal">
+<li><code>empty</code> is the empty <code>Doc</code></li>
+<li><code>&lt;+&gt;</code>, horizontal concatenation of two <code>Doc</code> with a space</li>
+<li><code>hsep</code>, horizontal concatenation of many <code>Doc</code>s with separator</li>
+<li><code>vcat</code>, vertical concatenation of many <code>Doc</code>s</li>
+</ol>
+<p>We can define a layout as a non-empty list of strings to print, then rendering the layout is as simple as joining the list of strings with newlines.</p>
+<p><code>$$</code> is then adding a new string to the layout.</p>
+<p><code>&lt;&gt;</code> has to deal with the last line of the first string, and the first line of the second string. For example</p>
+<pre><code>xxxxx   &lt;&gt; yyyyy
+xx         yyyyyyy
+
+= xxxxx
+  xxyyyyy
+    yyyyyyy</code></pre>
+<p>The core algorithm is to</p>
+<ol style="list-style-type: decimal">
+<li>given a set of layouts,</li>
+<li>filter those that are visible,</li>
+<li>select the most frugal to render.</li>
+</ol>
+<p>However this algorithm is <code>O(2^n)</code> in terms of a <code>n</code> input with <code>n</code> choices (from the <code>&lt;|&gt;</code> operator). Every possible combination of the choice is first constructed, and then the shortest output is picked.</p>
+<p>The key techniques to achieving an efficient implementation are to:</p>
+<ol style="list-style-type: decimal">
+<li>Recognize that a full layout does not need to be constructed to calculate its size</li>
+<li>Invalid results can be filtered out early</li>
+<li>Some results are <em>dominated</em> and thus can be trimmed away early.</li>
+</ol>
+<p>For 1, the important attributes are the maximum width of the layout, width of the last line, and the height. It can also be shown that this measurement (which ignores the content of the text) is a homomorphism to the layout structure described for actually laying out text (sans the rendering).</p>
+<p>The second relies on the fact that the validity of a document implies the validity of its part.</p>
+<p>The third relies on the fact that layout operators are monotonic with respect to the defined domination relation. If <code>a</code> dominates <code>b</code>, <code>op a</code> still dominates <code>op b</code>. Define a partial order as the dominance relation, by looking at all three attributes used for measuring in 1. The subset of non-dominated layouts is called the Pareto frontier.</p>
+<blockquote>
+<p>Can think of this as a graph where <code>a -&gt; b</code> if <code>a</code> dominates <code>b</code>, and the frontier is the collection of nodes without in degree 0</p>
+</blockquote>
+<p>Benchmarks done on laying out full binary trees and random trees represented as S-Expressions.</p>
+<p>On a benchmark that uses randomly generated JSON, mimicking real life JSON files, this library performs ten times as slow as that of Wadler-Leijen, and about 4 tims as slow as the Hughes-PJ one.</p>
+</section>
+</body>
+</html>
