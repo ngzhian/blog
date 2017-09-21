@@ -1,0 +1,101 @@
+---
+title: Android startup tour - init
+date: 2017-09-20 22:20
+...
+
+I've been working on the
+[Android Go](https://www.youtube.com/watch?v=CHKfKChZSE0)
+team for close to two months now,
+our goal is to make Android run well on sub-$100 phones.
+
+As part of my work, I have to jump between different parts of Android -
+some days are spent profiling application code,
+other days digging into frameworks,
+sometimes looking at the kernel.
+
+One of my investigations recently was around Android startup,
+so the goal of this series of post is to summarize and
+highlight interesting/important points of the process.
+
+## Android's init
+
+If you've used Unix-like OS, you've probably heard of the `init` process.
+This is pid 1 on the OS. It is started by the kernel and runs as a daemon.
+Some init processes include
+[launchd](https://en.wikipedia.org/wiki/Launchd)
+(on Mac OS) and
+[systemd](https://en.wikipedia.org/wiki/Systemd)
+(on various Linux distributions like Ubuntu and Debian).
+
+Android has its own init process [^1], the source is found
+[here](https://android.googlesource.com/platform/system/core/+/master/init/).
+
+[^1]: I'm not sure about the history and rationale, would appreciate
+any links or documentation.
+
+## rc files
+
+The [README](https://android.googlesource.com/platform/system/core/+/master/init/README.md)
+goes into a lot more details about
+how it works, especially around the `rc` files,
+but here are the main points:
+
+1. Configuration for init is defined in `rc` files
+1. These files contain *actions* and *services*
+1. An action is a *trigger* and a list of *commands*
+1. Commands look like shell commands, e.g. `mkdir`, `chown`, `start`
+1. A service is a program, such a binary, that is started by init
+
+It's probably instructive to look at some example `rc` files:
+[this folder](https://android.googlesource.com/platform/system/core/+/master/rootdir/)
+contains some `rc` files for Android that are copied to the root
+of the Android device, and hence the folder name `rootdir`.
+
+## init.rc
+
+The primary file is `init.rc`. It isn't particularly long, at 700+ lines, and it's possible
+to trace through it to figure out what exactly it's doing.
+But here are high level overview:
+
+1. creates directories
+2. mounts device onto filesystem
+3. writes files the rest of the system needs
+4. changes ownership of files and directories
+
+## other rc files
+
+Looking at the top of `init.rc` we can see some `import` statements.
+
+    import /init.environ.rc
+    import /init.usb.rc
+    import /init.${ro.hardware}.rc
+    import /vendor/etc/init/hw/init.${ro.hardware}.rc
+    import /init.usb.configfs.rc
+    import /init.${ro.zygote}.rc
+
+The import strategy adopted by init is described in the
+[README](https://android.googlesource.com/platform/system/core/+/master/init/README.md#imports),
+and the simplified description is that it recursively traverses all the imported `rc` files
+to extend the configuration.
+
+The `init.${ro.hardware}.rc` file is a vendor specific file,
+for example marlin (the Google Pixel XL), has its `rc` file
+[here](https://android.googlesource.com/device/google/marlin/+/master/init.common.rc).
+
+There are also other `rc` files located in `system/core`, for example
+lmkd, the low memory killer, has a `rc` file
+[here](https://android.googlesource.com/platform/system/core/+/master/lmkd/lmkd.rc),
+which describes how to start lmkd,
+what class it is, what user group it should be started as, etc.
+
+## Starting up
+
+So here is a summary of what init process looks like:
+
+1. Run init
+1. Parse `init.rc` files
+1. Parse imported `rc` files recursively
+1. Triggers a bunch of actions
+1. Starts a bunch of services
+
+In another blog post we will look at a very important service called zygote.
