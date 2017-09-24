@@ -12,6 +12,20 @@
     </description>
     <item>
       <title>
+        Android startup tour - zygote
+      </title>
+      <link>
+        https://blog.ngzhian.com/android-startup-tour-zygote.html
+      </link>
+      <pubDate>
+        24 Sep 2017 07:00:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/android-startup-tour-zygote.html
+      </guid>
+    </item>
+    <item>
+      <title>
         Android startup tour - init
       </title>
       <link>

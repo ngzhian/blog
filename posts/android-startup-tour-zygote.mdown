@@ -1,0 +1,129 @@
+---
+title: Android startup tour - zygote
+date: 2017-09-24 11:30
+...
+
+The [previous blog post](./android-startup-tour-init.html) looked at Android's init process.
+Android has its own init system, which uses `rc` files to declare
+what services to start and when.
+One of the primary `rc` file is
+[init.rc](https://android.googlesource.com/platform/system/core/+/master/rootdir/init.rc).
+This configuration file starts various important system services such as
+ueventd, logd, netd, zygote, console, etc.
+
+In this post, we focus on the *zygote* process.
+
+## app_process
+
+The service zygote is declared in
+[init.zygote32.rc](https://android.googlesource.com/platform/system/core/+/master/rootdir/init.zygote32.rc).
+
+The command that is used to run zygote is:
+
+    /system/bin/app_process -Xzygote /system/bin --zygote --start-system-server
+
+<!-- hwservicemanager -->
+<!-- https://source.android.com/devices/architecture/hidl-cpp/interfaces -->
+
+<!-- vndservicemanager -->
+<!-- https://source.android.com/devices/architecture/hidl/binder-ipc#vndservicemanager -->
+
+This is shell syntax - run the `/system/bin/app_process` binary with the provided arguments. [^1]
+
+[^1]: The source of app_process can be found in
+[frameworks/base/cmds/app_process.cpp](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/app_process/app_main.cpp#187).
+and the comments in source goes into more details about what the arguments are used for.
+
+At a high level, app_process has two main responsibilities:
+
+1. [initialize](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/app_process/app_main.cpp#199) the Android runtime, and
+
+    ```cpp
+    AppRuntime runtime(argv[0], computeArgBlockSize(argc, argv));
+    ```
+
+1. use the runtime to [start zygote](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/app_process/app_main.cpp#350)
+via its [`main` method](https://android.googlesource.com/platform/frameworks/base/+/master/core/jni/AndroidRuntime.cpp#1111)
+
+    ```cpp
+    runtime.start("com.android.internal.os.ZygoteInit", args, zygote);
+
+    // calls into AndroidRuntime.cpp
+
+    jmethodID startMeth = env->GetStaticMethodID(startClass, "main",
+            "([Ljava/lang/String;)V");
+    // ...
+    env->CallStaticVoidMethod(startClass, startMeth, strArray);
+    ```
+
+The Android Runtime refers to [ART and Dalvik](https://source.android.com/devices/tech/dalvik/) -
+they run Android apps and some system services.
+
+Zygote is the base process from which every other Android process is forked from.
+This forking model helps to conserve memory on mobile devices,
+because a lot of resources can be shared.
+
+## zygote
+
+The entry point to zygote is in the `main` method of
+[ZygoteInit](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#681).
+
+Zygote has a number of very important responsibilities:
+
+1. [preloading](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#738)
+shared resources,
+
+    ```java
+    preloadClasses();
+    // ...
+    preloadResources();
+    // ...
+    preloadOpenGL();
+    // ...
+    preloadSharedLibraries();
+    preloadTextResources();
+    // ...
+    ```
+
+1. knowing when to
+[fork off a system server process](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#765)
+by looking at the arguments that `app_process` passed to it,
+1. [delegating to a ZygoteServer](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#779)
+which then listens to commands on a socket
+
+As mentioned, to save memory, processes on Android try to share as much resources as possible.
+For example, system class/dex files (like [String](https://android.googlesource.com/platform/frameworks/base/+/master/preloaded-classes#219))
+cannot change on a system, so those important code files are preloaded
+so every process can share them[^2]. Also,
+[resources](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/arrays.xml#24) like drawables and styles across the system can be shared by
+process as well.
+
+[^2]: the list of classes that zygote preloads is
+[hard-coded](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#111)
+to be `/system/etc/preloaded-classes`, and this file i found in [frameworks/base/preloaded-classes](https://android.googlesource.com/platform/frameworks/base/+/master/preloaded-classes).
+
+To fork off a system server, ZygoteInit delegates to Zygote,
+[calling forkSystemServer](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#643):
+
+``` java
+pid = Zygote.forkSystemServer(/* lots of args */);
+```
+
+This is in turn [implemented natively](https://android.googlesource.com/platform/frameworks/base/+/master/core/jni/com_android_internal_os_Zygote.cpp#752)
+via Android's Native Development Kit
+([NDK](https://developer.android.com/ndk/guides/index.html)):
+
+```cpp
+static jint com_android_internal_os_Zygote_nativeForkSystemServer(/* lots of args */) { /* body */  }
+```
+
+At the end of all these,
+the initial single ZygoteInit process is now
+[running as a ZygoteServer](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#779)[^3],
+and an additional process, forked from ZygoteInit, is running as
+[system server](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#765).
+
+[^3]: The ZygoteServer will [poll for events](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteServer.java#158)
+on file descriptors and dispatch commands appropriately.
+
+In the next blog post we will look at the system server, one of the first and most important system services to be started.
