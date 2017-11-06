@@ -1,5 +1,5 @@
 ---
-title: A Pretty But Not Greedy Printer
+title: A Pretty But Not Greedy Printer by Jean-Philippe Bernardy
 date: 2017-09-09 21:40
 ...
 

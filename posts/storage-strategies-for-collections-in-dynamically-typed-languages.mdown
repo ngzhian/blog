@@ -4,7 +4,7 @@ date: 2017-11-05 18:50
 ...
 
 > This is a series of posts where I jot down my learnings from computer science papers I've read.
-Previously, [The Next 700 Programming Languages by P. J. Landin](./the-next-700-programming-languages-p-j-landin.html)
+Previously, [A Pretty But Not Greedy Printer](./a-pretty-but-not-greedy-printer.html)
 
 [Paper (pdf)](http://tratt.net/laurie/research/pubs/html/bolz_diekmann_tratt__storage_strategies_for_collections_in_dynamically_typed_languages/)
 
