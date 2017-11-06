@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Storage strategies for collections in dynamically typed languages - Bolz, Diekmann, Tratt</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Storage strategies for collections in dynamically typed languages - Bolz, Diekmann, Tratt</h1>
+<h3 class="date">2017-11-05 18:50</h3>
+</div>
+<blockquote>
+<p>This is a series of posts where I jot down my learnings from computer science papers I’ve read. Previously, <a href="./the-next-700-programming-languages-p-j-landin.html">The Next 700 Programming Languages by P. J. Landin</a></p>
+</blockquote>
+<p><a href="http://tratt.net/laurie/research/pubs/html/bolz_diekmann_tratt__storage_strategies_for_collections_in_dynamically_typed_languages/">Paper (pdf)</a></p>
+<h2 id="background">Background</h2>
+<p>In a dynamically typed language, a variable can reference any type of objects. One way to implement this is to <em>box</em> objects, which is to allocate objects on the heap with a common header. Now, every object has a simple and common representation, simplifying VM implementation. However, the trade-off is that this is inefficient.</p>
+<p>We can compare a dynamic language, like PyPy, to a static language, like C.</p>
+<p>In C, an integer typically occupies one word in memory. In PyPy, it takes up three words: - one for garbage collector, - one to specify the type of object, - one for the actual integer value. That’s two words for overhead, compared to C, for <strong>each</strong> integer.</p>
+<p>Another example is a list of <em>n</em> integers. In C, it is usually a contiguous area of memory which takes up <em>n</em> words. In PyPy, the list object will have a pointer to a storage area, and in the storage area will be <em>n</em> pointers to the three-word integer:</p>
+<pre><code>+------------------+
+||GC |List |Storage|
++------------------+
+              |
+            +-v------------------+
+            |GC |Length |  |  |  |
+            +--------------------+
+                          |  |  |
+         +----------------+  |  +---------+
+         |               +---+            |
+         |               |                |
+      +--v--------+   +--v--------+   +---v-------+
+      |GC |Int |1 |   |GC |Int |2 |   |GC |Int |3 |
+      +-----------+   +-----------+   +-----------+</code></pre>
+<p>This will probably have poor cache locality when traversing the list since each integer can potentially be spread around the heap.</p>
+<p>We can save some of this space using a technique called <em>pointer tagging</em>. Pointers to objects in heaps are typically aligned to multiples of 4 or 8, i.e. you cannot address objects in heap by each byte. So for each pointer, 2 or 4 (least significant) bits are unused. You can store information in these unused bits, such as the type of the object. For example, if the least significant bit is set, the object is an integer. Then when dereferencing the pointer you can <em>and</em> away the lower bits. Thus, objects that can fit into a word no longer needs to be allocated on the heap.</p>
+<p>There are trade-offs to this technique: - every access of a tagged pointer requires a check of tag type, has implications on branch prediction - large code changes are required adding pointer tagging, because pointer access happen frequently in many parts of the VM code base - finite amount of unused bits, thus there is a small limit to the possible number of tagged types</p>
+<h2 id="storage-strategies">Storage strategies</h2>
+<p>The focus of this paper is to optimize performance and memory usage of collections of a single primitive type. The optimizations are based on the following hypotheses about bottlenecks in real-world programs:</p>
+<pre><code>1. A collection with items of one primitive type (homogeneously-typed collection)
+will usually stay that way (will not dehomogenise)
+2. If a homogenously-typed collection dehomogenises, this transition happens
+after only a small number of elements have been added</code></pre>
+<p>The design is as follows: Each collection references a <em>storage strategy</em> and a <em>storage area</em>. The strategy controls how data is laid out in the area. Operations on the collection are handed over strategy to perform. A collection can only have one strategy at any point, but the strategy can change over time.</p>
+<p>Strategies can also be implemented as singleton or static classes to allow sharing.</p>
+<p>An example of a strategy is the <code>EmptyStrategy</code>, which is a placeholder for when the collection is empty. The <code>ObjectStrategy</code> is the usual boxed layout that a VM without strategy will employ. An <code>IntegerStrategy</code> is an optimized strategy that will unbox the integers in a list and keep them in the storage area.</p>
+<p>The overhead of this technique is a single extra pointer to a strategy object. Operations on collections need one extra method call on the strategy, but this cost is offset by the lesser number of boxing required.</p>
+<h2 id="storage-strategies-in-pypy">Storage strategies in PyPy</h2>
+<p>The authors implemented storage strategies in PyPy for lists, sets, and dictionaries, for integers, floats, and strings. For lists and sets, the implementation is as describe before. For dictionaries, the strategies only affect the keys, the values are left boxed. For each collection X, the strategies <code>EmptyXStrategy</code>, <code>ObjectXStrategy</code>, <code>IntegerXStrategy</code>, <code>FloatXStrategy</code>, and <code>StringXStrategy</code> are implemented.</p>
+<p>Compared to the pre-storage strategies of the VM, storing a list of integers saves three words per element because the integers can be unboxed and kept inline.</p>
+<pre><code>       +-----------------------------+       +-----------------------------+
+       |GC |List|Storage  |Strategy  |       |GC |List|Storage  |Strategy  |
+       +---------+-----------+-------+       +----------+---------+--------+
+                 |           |                          |         |
+ +---------------+       +---+                          |         |
+ |                       | +--------------------------------------+
+ |                       | |                            |
++v-------------------+  +v-v--------------------+    +--v-----------------+
+|GC |length |1 |2 |3 |  |GC |IntegerListStrategy|    |GC |length |4 |2 |3 |
++--------------------+  +-----------------------+    +--------------------+</code></pre>
+<p>The user of a list of integers can, at any time, add a non-integer to the list. When this happens, the integers in the list are boxed, and the strategy transitions to an <code>ObjectStrategy</code>, and the storage section needs to be rewritten appropriately, essentially looking like what the original boxed implementation looks like.</p>
+<p>Besides the describe <em><Type><Collection>Strategy</em>, there are some other useful strategies. One interesting storage strategy is used by the <code>range</code> function. <code>range(i, j, s)</code> generates a list of integers from <code>i</code> to <code>j</code> in steps of <code>s</code> lazily. It does not build a full list, that would be wasteful, because most uses of <code>range</code> do not make use of the full list. A special <code>RangeListStrategy</code> is used by <code>range</code> – it only stores three words of information: <code>start</code>, <code>stop</code>, and <code>step</code>, and produces the desired integer by calculating.</p>
+<p>A special fast path for choosing and initializing a strategy is implemented for functions which the return type is fixed and known in advance. For example, <code>split(d)</code> on a string will return a list of strings, so a <code>StringListStrategy</code> is immediately selected.</p>
+<p>In cases where there are optimized type-based operations, a strategy can have and optimized implementation of a method. For example, the <code>contains(o)</code> method can be optimized to perform a fast machine word comparison when used in an <code>IntegerListStrategy</code>.</p>
+<h2 id="evaluation-of-performance">Evaluation of performance</h2>
+<p>The evaluation of storage strategies focus on execution speed and memory usage using a variety of benchmarks. These benchmarks are run on various variants of PyPy with different groups of strategies enabled, ranging from <em>pypy-all</em>, which has all strategies enabled, and <em>pypy-none</em> which has no strategies enabled.</p>
+<p>Each benchmark is executed 35 times, and the first 5 is discarded, to try and get close to steady-state of the VM.</p>
+<p>Overall, <em>pypy-all</em> improves performance by 18%. It also leads to useful savings in peak memory usage, because, in essence, the strategies cause objects to be shorter-lived on average.</p>
+<p>The results measure steady-state, which holds true when using JIT VM in a server-like environment. For short-lived programs, these numbers might not hold up, and measuring that is hard because the impact of the JIT itself can be significant.</p>
+</section>
+</body>
+</html>
