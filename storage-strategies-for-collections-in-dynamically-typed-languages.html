@@ -132,10 +132,10 @@
 <p>There are trade-offs to this technique: - every access of a tagged pointer requires a check of tag type, has implications on branch prediction - large code changes are required adding pointer tagging, because pointer access happen frequently in many parts of the VM code base - finite amount of unused bits, thus there is a small limit to the possible number of tagged types</p>
 <h2 id="storage-strategies">Storage strategies</h2>
 <p>The focus of this paper is to optimize performance and memory usage of collections of a single primitive type. The optimizations are based on the following hypotheses about bottlenecks in real-world programs:</p>
-<pre><code>1. A collection with items of one primitive type (homogeneously-typed collection)
-will usually stay that way (will not dehomogenise)
-2. If a homogenously-typed collection dehomogenises, this transition happens
-after only a small number of elements have been added</code></pre>
+<ol type="1">
+<li>A collection with items of one primitive type (homogeneously-typed collection) will usually stay that way (will not dehomogenise)</li>
+<li>If a homogenously-typed collection dehomogenises, this transition happens after only a small number of elements have been added</li>
+</ol>
 <p>The design is as follows: Each collection references a <em>storage strategy</em> and a <em>storage area</em>. The strategy controls how data is laid out in the area. Operations on the collection are handed over strategy to perform. A collection can only have one strategy at any point, but the strategy can change over time.</p>
 <p>Strategies can also be implemented as singleton or static classes to allow sharing.</p>
 <p>An example of a strategy is the <code>EmptyStrategy</code>, which is a placeholder for when the collection is empty. The <code>ObjectStrategy</code> is the usual boxed layout that a VM without strategy will employ. An <code>IntegerStrategy</code> is an optimized strategy that will unbox the integers in a list and keep them in the storage area.</p>

@@ -75,10 +75,10 @@ collections of a single primitive type.
 The optimizations are based on the following hypotheses about bottlenecks
 in real-world programs:
 
-    1. A collection with items of one primitive type (homogeneously-typed collection)
-    will usually stay that way (will not dehomogenise)
-    2. If a homogenously-typed collection dehomogenises, this transition happens
-    after only a small number of elements have been added
+1. A collection with items of one primitive type (homogeneously-typed collection)
+will usually stay that way (will not dehomogenise)
+2. If a homogenously-typed collection dehomogenises, this transition happens
+after only a small number of elements have been added
 
 The design is as follows:
 Each collection references a *storage strategy* and a *storage area*.
