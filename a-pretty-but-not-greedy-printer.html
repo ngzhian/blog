@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title>A Pretty But Not Greedy Printer</title>
+  <title>A Pretty But Not Greedy Printer by Jean-Philippe Bernardy</title>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -101,32 +101,32 @@
 <section class="content">
 <a class="home" href="./index.html">Home</a>
 <div id="header">
-<h1 class="title">A Pretty But Not Greedy Printer</h1>
+<h1 class="title">A Pretty But Not Greedy Printer by Jean-Philippe Bernardy</h1>
 <h3 class="date">2017-09-09 21:40</h3>
 </div>
 <blockquote>
-<p>This is a series of posts where I jot down my learnings from computer science papers I've read. Previously, <a href="./the-next-700-programming-languages-p-j-landin.html">The Next 700 Programming Languages</a></p>
+<p>This is a series of posts where I jot down my learnings from computer science papers I’ve read. Previously, <a href="./the-next-700-programming-languages-p-j-landin.html">The Next 700 Programming Languages</a></p>
 </blockquote>
 <p><a href="http://dl.acm.org/citation.cfm?id=3110250&amp;CFID=970661859&amp;CFTOKEN=65198118">Paper</a></p>
 <p>A pretty printer outputs a data structure as human-readable text.</p>
 <p>A pretty printer should exhibit these behaviors, in order of importance:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Visibility - layout output within the width</li>
 <li>Legibility - make appropriate use of layout so that it is easy for a human to read</li>
 <li>Frugality - use the least number of lines</li>
 </ol>
 <p>In other words, a pretty printer is an optimization problem that maximizes all three parameters.</p>
-<p>Pretty printers of the past (Hughes and Wadler) adopt a functional design, composing algebraic structures. To achieve all three, the resulting pretty printer will be unusably slow, O(2^n). Most pretty printers sacrifice one of these three goals. For example, Hughes library chooses a greedy algorithm, so most of the time it gives up 3, and Wadler's library is not expressive enough.</p>
+<p>Pretty printers of the past (Hughes and Wadler) adopt a functional design, composing algebraic structures. To achieve all three, the resulting pretty printer will be unusably slow, O(2^n). Most pretty printers sacrifice one of these three goals. For example, Hughes library chooses a greedy algorithm, so most of the time it gives up 3, and Wadler’s library is not expressive enough.</p>
 <p>Bernardy aims to, with this pretty printer, achieve all three goals, while doing it in a reasonable time.</p>
 <p>The basic API of the pretty printer is:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>text</code>, turns string to a pretty printable document (<code>Doc</code>)</li>
 <li><code>&lt;&gt;</code>, concat two <code>Doc</code>s horizontally</li>
 <li><code>$$</code>, concat two <code>Doc</code>s vertically</li>
 <li><code>&lt;|&gt;</code>, choose to concat two <code>Doc</code>s either horizontally or vertically</li>
 </ol>
 <p>More combinators can be defined in terms of those basic functions:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>empty</code> is the empty <code>Doc</code></li>
 <li><code>&lt;+&gt;</code>, horizontal concatenation of two <code>Doc</code> with a space</li>
 <li><code>hsep</code>, horizontal concatenation of many <code>Doc</code>s with separator</li>
@@ -142,14 +142,14 @@ xx         yyyyyyy
   xxyyyyy
     yyyyyyy</code></pre>
 <p>The core algorithm is to</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>given a set of layouts,</li>
 <li>filter those that are visible,</li>
 <li>select the most frugal to render.</li>
 </ol>
 <p>However this algorithm is <code>O(2^n)</code> in terms of a <code>n</code> input with <code>n</code> choices (from the <code>&lt;|&gt;</code> operator). Every possible combination of the choice is first constructed, and then the shortest output is picked.</p>
 <p>The key techniques to achieving an efficient implementation are to:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Recognize that a full layout does not need to be constructed to calculate its size</li>
 <li>Invalid results can be filtered out early</li>
 <li>Some results are <em>dominated</em> and thus can be trimmed away early.</li>

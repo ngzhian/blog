@@ -12,6 +12,20 @@
     </description>
     <item>
       <title>
+        Storage strategies for collections in dynamically typed languages - Bolz, Diekmann, Tratt
+      </title>
+      <link>
+        https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html
+      </link>
+      <pubDate>
+        05 Nov 2017 07:00:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html
+      </guid>
+    </item>
+    <item>
+      <title>
         Android startup tour - zygote
       </title>
       <link>
@@ -40,7 +54,7 @@
     </item>
     <item>
       <title>
-        A Pretty But Not Greedy Printer
+        A Pretty But Not Greedy Printer by Jean-Philippe Bernardy
       </title>
       <link>
         https://blog.ngzhian.com/a-pretty-but-not-greedy-printer.html
