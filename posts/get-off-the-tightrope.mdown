@@ -1,0 +1,76 @@
+---
+title: Get Off the Tightrope - Tom Stuart
+date: 2017-12-09 16:10
+...
+
+This post is about a talk by
+[Tom Stuart](http://codon.com) titled
+[Get Off the Tightrope at RubyConf 2017](https://www.youtube.com/watch?v=TdBELZG0UMY).
+
+Tom talks about a problem he observes in developers:
+*trying to do a big thing all at one go*.
+
+Imagine having a large task, there is a lot to hold in your head.
+It feels like a long, precarious walk on a tightrope.
+You become prone to going down rabbit holes, because problem boundaries are unclear.
+You will also learn to hate distractions, because they are costly.
+These are the symptoms of the problem.
+
+Some causes of this problem are:
+
+- eager to make progress, diving into big problem
+- unsure of how big the problem will be
+
+Distractions have an upside, opportunities for empathy and collaboration
+no distractions, isolated from other people, might help you focus right now, but not helpful for long term
+
+
+Tom suggests some strategies for managing problems.
+
+The first is planning. He gives the example of *story mapping*.
+
+- given a user story
+- write down things user might do
+- arrange tasks chronologically across a timeline
+- vertically stack tasks that are roughly the same step in the timeline
+- this can help identify holes in story (missing features)
+- pick minimum set of tasks that should be implemented, slicing the story
+- implement those
+- repeatedly slice and implement
+
+This helps to break down big problems into small, achievable, iterative steps.
+
+The second is to learn to use Git:
+
+- make small focused commits.
+- write good commit messages to explain thinking.
+- keep branch in good shape
+    - rebase onto master often (minimize divergence)
+    - cherry pick changes onto master to keep branch small
+    - squash to have shorter, relevant history
+
+You can practice this switching between branches, working on different features.
+If you come back to a branch and find it hard to pick up where you last left off,
+then it probably needs to be reworked slightly.
+
+The third is applicable to TDD:
+
+- switch between mental modes of red-green-refactor and be disciplined in each phase
+- leave your desk when tests are red, when you come back you know what to do
+
+The last is to take notes and write down questions as you find them.
+Practice explaining your train of thought.
+Talk to other people about what you are doing and why.
+This is usually done through pairing, code reviews, water cooler chat, etc.
+
+The main takeaway of the talk is to notice risks, and break them down.
+
+Tom notices that great developers do this, and suggests that
+this is a skill that can be practiced, and gets better with practice.
+
+As a programmer who just started my first job, I find Tom's talk helpful and inspiring,
+with many actionable steps I can take to grow and mature.
+I find the story mapping part particularly interesting, and would like to
+use that the next time I'm implementing a feature.
+I'm quite happy with the way I use Git, it's close to what he is suggested.
+At work I'm regularly switching between 3-5 branches, so that keeps me fluent in Git.

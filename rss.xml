@@ -12,6 +12,20 @@
     </description>
     <item>
       <title>
+        Get Off the Tightrope - Tom Stuart
+      </title>
+      <link>
+        https://blog.ngzhian.com/get-off-the-tightrope.html
+      </link>
+      <pubDate>
+        09 Dec 2017 08:00:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/get-off-the-tightrope.html
+      </guid>
+    </item>
+    <item>
+      <title>
         Storage strategies for collections in dynamically typed languages - Bolz, Diekmann, Tratt
       </title>
       <link>
@@ -74,7 +88,7 @@
         https://blog.ngzhian.com/uni-reflections.html
       </link>
       <pubDate>
-        25 Jun 2017 16:00:00 +0000
+        26 Jun 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/uni-reflections.html
@@ -88,7 +102,7 @@
         https://blog.ngzhian.com/g-machine.html
       </link>
       <pubDate>
-        16 Jun 2017 16:00:00 +0000
+        17 Jun 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/g-machine.html
@@ -102,7 +116,7 @@
         https://blog.ngzhian.com/ski2.html
       </link>
       <pubDate>
-        26 May 2017 16:00:00 +0000
+        27 May 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/ski2.html
@@ -116,7 +130,7 @@
         https://blog.ngzhian.com/ski.html
       </link>
       <pubDate>
-        11 May 2017 16:00:00 +0000
+        12 May 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/ski.html
@@ -130,7 +144,7 @@
         https://blog.ngzhian.com/category-theory.html
       </link>
       <pubDate>
-        04 May 2017 16:00:00 +0000
+        05 May 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/category-theory.html
@@ -144,7 +158,7 @@
         https://blog.ngzhian.com/algebraic-structures.html
       </link>
       <pubDate>
-        02 May 2017 16:00:00 +0000
+        03 May 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/algebraic-structures.html
@@ -158,7 +172,7 @@
         https://blog.ngzhian.com/zippers.html
       </link>
       <pubDate>
-        28 Apr 2017 16:00:00 +0000
+        29 Apr 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/zippers.html
@@ -172,7 +186,7 @@
         https://blog.ngzhian.com/some-type-about-sum-type-and-more.html
       </link>
       <pubDate>
-        21 Mar 2017 16:00:00 +0000
+        22 Mar 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/some-type-about-sum-type-and-more.html
@@ -186,7 +200,7 @@
         https://blog.ngzhian.com/bookmarks-for-a-programming-language-enthusiast.html
       </link>
       <pubDate>
-        20 Mar 2017 16:00:00 +0000
+        21 Mar 2017 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/bookmarks-for-a-programming-language-enthusiast.html
@@ -200,7 +214,7 @@
         https://blog.ngzhian.com/2d-physics-systems-in-the-wild.html
       </link>
       <pubDate>
-        11 Mar 2017 16:00:00 +0000
+        12 Mar 2017 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/2d-physics-systems-in-the-wild.html
@@ -214,7 +228,7 @@
         https://blog.ngzhian.com/the-next-700-programming-languages-p-j-landin.html
       </link>
       <pubDate>
-        10 Mar 2017 16:00:00 +0000
+        11 Mar 2017 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/the-next-700-programming-languages-p-j-landin.html
@@ -228,7 +242,7 @@
         https://blog.ngzhian.com/dates-with-javascript.html
       </link>
       <pubDate>
-        02 Jan 2017 16:00:00 +0000
+        03 Jan 2017 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/dates-with-javascript.html
@@ -242,7 +256,7 @@
         https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html
       </link>
       <pubDate>
-        03 Dec 2016 16:00:00 +0000
+        04 Dec 2016 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html
@@ -256,7 +270,7 @@
         https://blog.ngzhian.com/how-we-let-you-be-you.html
       </link>
       <pubDate>
-        15 Nov 2016 16:00:00 +0000
+        16 Nov 2016 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/how-we-let-you-be-you.html
@@ -270,7 +284,7 @@
         https://blog.ngzhian.com/chrome-offline-network-emulation-websocket.html
       </link>
       <pubDate>
-        14 Nov 2016 16:00:00 +0000
+        15 Nov 2016 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/chrome-offline-network-emulation-websocket.html
@@ -284,7 +298,7 @@
         https://blog.ngzhian.com/how-we-deploy.html
       </link>
       <pubDate>
-        11 Nov 2016 16:00:00 +0000
+        12 Nov 2016 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/how-we-deploy.html
@@ -298,7 +312,7 @@
         https://blog.ngzhian.com/tdd.html
       </link>
       <pubDate>
-        27 Oct 2016 16:00:00 +0000
+        28 Oct 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/tdd.html
@@ -312,7 +326,7 @@
         https://blog.ngzhian.com/environment.html
       </link>
       <pubDate>
-        22 Oct 2016 16:00:00 +0000
+        23 Oct 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/environment.html
@@ -326,7 +340,7 @@
         https://blog.ngzhian.com/iterative-development.html
       </link>
       <pubDate>
-        17 Oct 2016 16:00:00 +0000
+        18 Oct 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/iterative-development.html
@@ -340,7 +354,7 @@
         https://blog.ngzhian.com/three-internships.html
       </link>
       <pubDate>
-        17 Sep 2016 16:00:00 +0000
+        18 Sep 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/three-internships.html
@@ -354,7 +368,7 @@
         https://blog.ngzhian.com/framework-vs-library.html
       </link>
       <pubDate>
-        26 Aug 2016 16:00:00 +0000
+        27 Aug 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/framework-vs-library.html
@@ -368,7 +382,7 @@
         https://blog.ngzhian.com/road-to-react.html
       </link>
       <pubDate>
-        26 Aug 2016 16:00:00 +0000
+        27 Aug 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/road-to-react.html
@@ -382,7 +396,7 @@
         https://blog.ngzhian.com/resume-tips.html
       </link>
       <pubDate>
-        03 May 2016 16:00:00 +0000
+        04 May 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/resume-tips.html
@@ -396,7 +410,7 @@
         https://blog.ngzhian.com/ocaml-opam-errors.html
       </link>
       <pubDate>
-        02 May 2016 16:00:00 +0000
+        03 May 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/ocaml-opam-errors.html
@@ -410,7 +424,7 @@
         https://blog.ngzhian.com/install-ocaml.html
       </link>
       <pubDate>
-        01 May 2016 16:00:00 +0000
+        02 May 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/install-ocaml.html
@@ -424,7 +438,7 @@
         https://blog.ngzhian.com/static-site.html
       </link>
       <pubDate>
-        23 Apr 2016 16:00:00 +0000
+        24 Apr 2016 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/static-site.html
@@ -438,7 +452,7 @@
         https://blog.ngzhian.com/haskell-pattern-matching.html
       </link>
       <pubDate>
-        10 Sep 2015 16:00:00 +0000
+        11 Sep 2015 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/haskell-pattern-matching.html
@@ -452,7 +466,7 @@
         https://blog.ngzhian.com/coursera-compilers-1.html
       </link>
       <pubDate>
-        24 May 2015 16:00:00 +0000
+        25 May 2015 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/coursera-compilers-1.html
@@ -466,7 +480,7 @@
         https://blog.ngzhian.com/ffmpeg.html
       </link>
       <pubDate>
-        16 May 2015 16:00:00 +0000
+        17 May 2015 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/ffmpeg.html
@@ -480,7 +494,7 @@
         https://blog.ngzhian.com/vagrant-virtualbox-dev-tips.html
       </link>
       <pubDate>
-        07 May 2015 16:00:00 +0000
+        08 May 2015 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/vagrant-virtualbox-dev-tips.html
@@ -494,7 +508,7 @@
         https://blog.ngzhian.com/peephole-1.html
       </link>
       <pubDate>
-        27 Apr 2015 16:00:00 +0000
+        28 Apr 2015 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/peephole-1.html
@@ -508,7 +522,7 @@
         https://blog.ngzhian.com/vim-javascript-development.html
       </link>
       <pubDate>
-        23 Apr 2015 16:00:00 +0000
+        24 Apr 2015 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/vim-javascript-development.html
@@ -522,7 +536,7 @@
         https://blog.ngzhian.com/closure-compiler-1.html
       </link>
       <pubDate>
-        19 Apr 2015 16:00:00 +0000
+        20 Apr 2015 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/closure-compiler-1.html
@@ -536,7 +550,7 @@
         https://blog.ngzhian.com/jenkins-setup.html
       </link>
       <pubDate>
-        17 Jan 2015 16:00:00 +0000
+        18 Jan 2015 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/jenkins-setup.html
@@ -550,7 +564,7 @@
         https://blog.ngzhian.com/noc-financials.html
       </link>
       <pubDate>
-        08 Jan 2015 16:00:00 +0000
+        09 Jan 2015 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/noc-financials.html
@@ -564,7 +578,7 @@
         https://blog.ngzhian.com/noc-soc-mc-mapping.html
       </link>
       <pubDate>
-        01 Jan 2015 16:00:00 +0000
+        02 Jan 2015 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/noc-soc-mc-mapping.html
@@ -578,7 +592,7 @@
         https://blog.ngzhian.com/time-inc-hack-2014.html
       </link>
       <pubDate>
-        19 Nov 2014 16:00:00 +0000
+        20 Nov 2014 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/time-inc-hack-2014.html
@@ -592,7 +606,7 @@
         https://blog.ngzhian.com/yahoo-flickr.html
       </link>
       <pubDate>
-        23 May 2014 16:00:00 +0000
+        24 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/yahoo-flickr.html
@@ -606,7 +620,7 @@
         https://blog.ngzhian.com/mbeanscanner.html
       </link>
       <pubDate>
-        18 May 2014 16:00:00 +0000
+        19 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/mbeanscanner.html
@@ -620,7 +634,7 @@
         https://blog.ngzhian.com/attlist-attributes-of-xml-element.html
       </link>
       <pubDate>
-        09 May 2014 16:00:00 +0000
+        10 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/attlist-attributes-of-xml-element.html
@@ -634,7 +648,7 @@
         https://blog.ngzhian.com/explore-apache-karaf-mbeans-using-jconsole.html
       </link>
       <pubDate>
-        09 May 2014 16:00:00 +0000
+        10 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/explore-apache-karaf-mbeans-using-jconsole.html
@@ -648,7 +662,7 @@
         https://blog.ngzhian.com/using-jconsole-to-monitor-mbeans.html
       </link>
       <pubDate>
-        07 May 2014 16:00:00 +0000
+        08 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/using-jconsole-to-monitor-mbeans.html
@@ -662,7 +676,7 @@
         https://blog.ngzhian.com/gsoc-jmxetric.html
       </link>
       <pubDate>
-        06 May 2014 16:00:00 +0000
+        07 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/gsoc-jmxetric.html
@@ -676,7 +690,7 @@
         https://blog.ngzhian.com/jmx-mbeans.html
       </link>
       <pubDate>
-        06 May 2014 16:00:00 +0000
+        07 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/jmx-mbeans.html
@@ -690,7 +704,7 @@
         https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html
       </link>
       <pubDate>
-        03 May 2014 16:00:00 +0000
+        04 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html
@@ -704,7 +718,7 @@
         https://blog.ngzhian.com/rps-haskell.html
       </link>
       <pubDate>
-        30 Apr 2014 16:00:00 +0000
+        01 May 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/rps-haskell.html
@@ -718,7 +732,7 @@
         https://blog.ngzhian.com/how-java-sorts-objects.html
       </link>
       <pubDate>
-        27 Apr 2014 16:00:00 +0000
+        28 Apr 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/how-java-sorts-objects.html
@@ -732,7 +746,7 @@
         https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html
       </link>
       <pubDate>
-        27 Apr 2014 16:00:00 +0000
+        28 Apr 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html
@@ -746,7 +760,7 @@
         https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html
       </link>
       <pubDate>
-        26 Apr 2014 16:00:00 +0000
+        27 Apr 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html
@@ -760,7 +774,7 @@
         https://blog.ngzhian.com/dont-waste-users-time.html
       </link>
       <pubDate>
-        25 Apr 2014 16:00:00 +0000
+        26 Apr 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/dont-waste-users-time.html
@@ -774,7 +788,7 @@
         https://blog.ngzhian.com/configuring-xmonad.html
       </link>
       <pubDate>
-        24 Apr 2014 16:00:00 +0000
+        25 Apr 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/configuring-xmonad.html
@@ -788,7 +802,7 @@
         https://blog.ngzhian.com/planes-airports-and-monads.html
       </link>
       <pubDate>
-        19 Apr 2014 16:00:00 +0000
+        20 Apr 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/planes-airports-and-monads.html
@@ -802,7 +816,7 @@
         https://blog.ngzhian.com/learn-haskell-through-maybe-functors.html
       </link>
       <pubDate>
-        17 Apr 2014 16:00:00 +0000
+        18 Apr 2014 07:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/learn-haskell-through-maybe-functors.html
@@ -816,7 +830,7 @@
         https://blog.ngzhian.com/should-news-agencies-ask-google-to-pay.html
       </link>
       <pubDate>
-        03 Mar 2013 16:00:00 +0000
+        04 Mar 2013 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/should-news-agencies-ask-google-to-pay.html
@@ -830,7 +844,7 @@
         https://blog.ngzhian.com/notes-on-thinking-forth.html
       </link>
       <pubDate>
-        02 Mar 2013 16:00:00 +0000
+        03 Mar 2013 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/notes-on-thinking-forth.html
@@ -844,7 +858,7 @@
         https://blog.ngzhian.com/thanksgiving.html
       </link>
       <pubDate>
-        01 Mar 2013 16:00:00 +0000
+        02 Mar 2013 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/thanksgiving.html
@@ -858,7 +872,7 @@
         https://blog.ngzhian.com/hacknroll2013.html
       </link>
       <pubDate>
-        02 Feb 2013 16:00:00 +0000
+        03 Feb 2013 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/hacknroll2013.html
@@ -872,7 +886,7 @@
         https://blog.ngzhian.com/what-i-learned-about-fonts.html
       </link>
       <pubDate>
-        10 Jan 2013 16:00:00 +0000
+        11 Jan 2013 08:00:00 +0000
       </pubDate>
       <guid isPermaLink="true">
         https://blog.ngzhian.com/what-i-learned-about-fonts.html

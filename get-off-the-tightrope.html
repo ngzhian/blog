@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Get Off the Tightrope - Tom Stuart</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Get Off the Tightrope - Tom Stuart</h1>
+<h3 class="date">2017-12-09 16:10</h3>
+</div>
+<p>This post is about a talk by <a href="http://codon.com">Tom Stuart</a> titled <a href="https://www.youtube.com/watch?v=TdBELZG0UMY">Get Off the Tightrope at RubyConf 2017</a>.</p>
+<p>Tom talks about a problem he observes in developers: <em>trying to do a big thing all at one go</em>.</p>
+<p>Imagine having a large task, there is a lot to hold in your head. It feels like a long, precarious walk on a tightrope. You become prone to going down rabbit holes, because problem boundaries are unclear. You will also learn to hate distractions, because they are costly. These are the symptoms of the problem.</p>
+<p>Some causes of this problem are:</p>
+<ul>
+<li>eager to make progress, diving into big problem</li>
+<li>unsure of how big the problem will be</li>
+</ul>
+<p>Distractions have an upside, opportunities for empathy and collaboration no distractions, isolated from other people, might help you focus right now, but not helpful for long term</p>
+<p>Tom suggests some strategies for managing problems.</p>
+<p>The first is planning. He gives the example of <em>story mapping</em>.</p>
+<ul>
+<li>given a user story</li>
+<li>write down things user might do</li>
+<li>arrange tasks chronologically across a timeline</li>
+<li>vertically stack tasks that are roughly the same step in the timeline</li>
+<li>this can help identify holes in story (missing features)</li>
+<li>pick minimum set of tasks that should be implemented, slicing the story</li>
+<li>implement those</li>
+<li>repeatedly slice and implement</li>
+</ul>
+<p>This helps to break down big problems into small, achievable, iterative steps.</p>
+<p>The second is to learn to use Git:</p>
+<ul>
+<li>make small focused commits.</li>
+<li>write good commit messages to explain thinking.</li>
+<li>keep branch in good shape
+<ul>
+<li>rebase onto master often (minimize divergence)</li>
+<li>cherry pick changes onto master to keep branch small</li>
+<li>squash to have shorter, relevant history</li>
+</ul></li>
+</ul>
+<p>You can practice this switching between branches, working on different features. If you come back to a branch and find it hard to pick up where you last left off, then it probably needs to be reworked slightly.</p>
+<p>The third is applicable to TDD:</p>
+<ul>
+<li>switch between mental modes of red-green-refactor and be disciplined in each phase</li>
+<li>leave your desk when tests are red, when you come back you know what to do</li>
+</ul>
+<p>The last is to take notes and write down questions as you find them. Practice explaining your train of thought. Talk to other people about what you are doing and why. This is usually done through pairing, code reviews, water cooler chat, etc.</p>
+<p>The main takeaway of the talk is to notice risks, and break them down.</p>
+<p>Tom notices that great developers do this, and suggests that this is a skill that can be practiced, and gets better with practice.</p>
+<p>As a programmer who just started my first job, I find Tom’s talk helpful and inspiring, with many actionable steps I can take to grow and mature. I find the story mapping part particularly interesting, and would like to use that the next time I’m implementing a feature. I’m quite happy with the way I use Git, it’s close to what he is suggested. At work I’m regularly switching between 3-5 branches, so that keeps me fluent in Git.</p>
+</section>
+</body>
+</html>
