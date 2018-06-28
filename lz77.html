@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Serif:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>LZ77</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Serif', 'Open Serif', sans-serif;
+        font-size: 18px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">LZ77</h1>
+<h3 class="date">2018-06-26 21:00</h3>
+</div>
+<p>LZ77 is a compression algorithm by Abramham Lampel and Jacob Ziv published in a paper in 1977 (<a href="http://www.nemenmanlab.org/~ilya/images/e/e9/Ziv-lempel-77.pdf">pdf</a>). It is the basis of many algorithms used in places like PNG and ZIP. I thought it would be interesting to see how it works.</p>
+<p>The paper is only 6 pages long, and packed with mathematics I don’t fully understand. This will be about the compression and decompression algorithms described in the paper, without much mention of the mathematics and analysis.</p>
+<p><em>I will try to explain things in simpler terms. To be consistent with the paper and make it easier to follow, I will refer to notations in the paper using italics.</em></p>
+<p>At a high level, the algorithm performs two steps:</p>
+<ol type="1">
+<li>Parse a <em>source</em>, <span class="math inline"><em>S</em></span>, into <em>words</em></li>
+<li>Map <em>words</em> into <em>codewords</em> using a <em>coding scheme</em></li>
+</ol>
+<p><em>The source is a string of symbols from a finite alphabet, <span class="math inline"><em>A</em></span>, of cardinality <span class="math inline"><em>α</em></span>. Words are of at most <span class="math inline"><em>L</em><sub><em>s</em></sub></span> length. The codewords are of fixed length <span class="math inline"><em>L</em><sub><em>c</em></sub></span>, over the same <span class="math inline"><em>A</em></span></em></p>
+<p>The parsing step is done by filling a buffer, or <em>window</em>, of size <span class="math inline"><em>n</em></span>, with symbols, and finding a <em>reproducible extension</em>.</p>
+<p>To figure out what a <em>reproducible extension</em> is, let’s look at an example string. Let</p>
+<ul>
+<li><span class="math inline"><em>S</em> = 00101011</span>,</li>
+<li><span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)</span> denote the length of <span class="math inline"><em>S</em></span>, thus <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)=8</span></li>
+</ul>
+<p>A <em>substring</em> of <span class="math inline"><em>S</em></span> starting at position <span class="math inline"><em>i</em></span> until <span class="math inline"><em>j</em></span> is denoted <span class="math inline"><em>S</em>(<em>i</em>, <em>j</em>)</span>, <span class="math inline"><em>S</em>(3, 5)=101</span> is a substring of <span class="math inline"><em>S</em></span>. For simplicity, <span class="math inline"><em>S</em>(<em>i</em>)=<em>S</em>(<em>i</em>, <em>i</em>)</span>.</p>
+<!-- ``` -->
+<!-- S = 00101011 -->
+<!--       ^ ^ -->
+<!--     S(3,5) is a substring -->
+<!-- ``` -->
+<p>A <em>prefix</em> of <span class="math inline"><em>S</em></span> is a substring starting from position <span class="math inline">1</span> until position <span class="math inline"><em>j</em></span>, where <span class="math inline"><em>j</em> &lt; <em>l</em><em>e</em><em>n</em>(<em>S</em>)</span>. For example, <span class="math inline"><em>S</em>(1, 5)=00101</span> is a prefix of <span class="math inline"><em>S</em></span>.</p>
+<!-- ``` -->
+<!-- S = 00101011 -->
+<!--     ^   ^ -->
+<!--   S(1,  5) is a prefix -->
+<!-- ``` -->
+<p>An <em>extension</em> of the substring <span class="math inline"><em>S</em>(1, <em>j</em>)</span> into <span class="math inline"><em>S</em></span> is:</p>
+<ul>
+<li>a substring starting at position <span class="math inline"><em>j</em> + 1</span>,</li>
+<li>which matches some substring of <span class="math inline"><em>S</em></span> that begins before or at <span class="math inline"><em>j</em></span>.</li>
+</ul>
+<p>In our example, with <span class="math inline"><em>j</em> = 3</span>, the extensions of <span class="math inline"><em>S</em>(1, <em>j</em>)</span> into <span class="math inline"><em>S</em></span> (which must begin at <span class="math inline"><em>j</em> + 1 = 4</span>) are:</p>
+<ul>
+<li><span class="math inline"><em>S</em>(4, 4)=0</span>, matches <span class="math inline"><em>S</em>(1, 1)</span></li>
+<li><span class="math inline"><em>S</em>(4, 5)=01</span>, matches <span class="math inline"><em>S</em>(2, 3)</span></li>
+<li><span class="math inline"><em>S</em>(4, 6)=010</span>, matches <span class="math inline"><em>S</em>(2, 4)</span></li>
+<li><span class="math inline"><em>S</em>(4, 7)=0101</span>, matches <span class="math inline"><em>S</em>(2, 5)</span></li>
+</ul>
+<p>The <em>reproducible extension</em> is the longest of these extensions, which is <span class="math inline"><em>S</em>(4, 7)</span>, since <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>(4, 7)) = 4</span>, and the match is <span class="math inline"><em>S</em>(2, 5)</span>.</p>
+<p>And the <em>pointer of reproduction</em>, denoted <span class="math inline"><em>p</em></span>, is where the matched substring begins, which is <span class="math inline">2</span>.</p>
+<p>With this, we can now dive deeper into the encoding algorithm:</p>
+<ol type="1">
+<li>Begin with a string of <span class="math inline"><em>n</em> − <em>L</em><sub><em>s</em></sub></span> zeroes, followed the first <span class="math inline"><em>L</em><sub><em>s</em></sub></span> symbols from the source, call this <span class="math inline"><em>B</em><sub>1</sub></span></li>
+<li>Find the reproducible extension of the prefix <span class="math inline"><em>B</em><sub>1</sub>(1, <em>n</em> − <em>L</em><sub><em>s</em></sub>)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, <em>n</em> − 1)</span>, with length <span class="math inline"><em>l</em><sub>1</sub> − 1</span> and <span class="math inline"><em>p</em><sub>1</sub></span> as the pointer of reproduction</li>
+<li>The source word, <span class="math inline"><em>S</em><sub>1</sub></span> where <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em><sub>1</sub>)=<em>l</em><sub>1</sub> − 1</span>, is the reproducible extension, with 1 more symbol added to the end, i.e. <span class="math inline"><em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub>1</sub>)</span></li>
+<li>Convert source word into codeword (details described later)</li>
+<li>Update the contents of the buffer by shifting out the first <span class="math inline"><em>l</em><sub>1</sub></span> symbols, and adding the next <span class="math inline"><em>l</em><sub>1</sub></span> symbols from the source</li>
+<li>Repeat</li>
+</ol>
+<p>An example to help illustrate these steps (underscores don’t mean anything and serves as reading guide):</p>
+<ul>
+<li>Given:
+<ul>
+<li><span class="math inline"><em>S</em> = 001010210210212021021200...</span></li>
+<li><span class="math inline"><em>L</em><sub><em>s</em></sub> = 9</span></li>
+<li><span class="math inline"><em>n</em> = 18</span></li>
+<li><span class="math inline"><em>B</em><sub>1</sub> = 000000000_001010210</span>, 9 zeros and the first 9 symbols of <span class="math inline"><em>S</em></span></li>
+</ul></li>
+<li>The reproducible extension of <span class="math inline"><em>B</em><sub>1</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, 17)</span>, is <span class="math inline"><em>B</em><sub>1</sub>(10, 11)=00</span>, with length 2, thus <span class="math inline"><em>l</em><sub>1</sub> = 3</span>,</li>
+<li><span class="math inline"><em>p</em><sub>1</sub></span> can be anywhere from <span class="math inline">0</span> to <span class="math inline">9</span>, let’s pick <span class="math inline"><em>p</em><sub>1</sub> = 9</span></li>
+<li>The source word <span class="math inline"><em>S</em><sub>1</sub></span> is <span class="math inline"><em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub><em>i</em></sub>)=<em>B</em><sub>1</sub>(10, 12)=001</span></li>
+<li>The code word is made up of three parts, <span class="math inline"><em>C</em><sub><em>i</em></sub> = <em>C</em><sub><em>i</em>1</sub><em>C</em><sub><em>i</em>2</sub><em>C</em><sub><em>i</em>3</sub></span>
+<ul>
+<li><span class="math inline"><em>C</em><sub><em>i</em>1</sub></span> is <span class="math inline"><em>p</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(9 − 1)<sub>3</sub> = 22</span>, of length <span class="math inline">⌈log(<em>n</em> − <em>L</em><sub><em>s</em></sub>)⌉</span></li>
+<li><span class="math inline"><em>C</em><sub><em>i</em>2</sub></span> is <span class="math inline"><em>l</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(3 − 1)<sub>3</sub> = 02</span>, of length <span class="math inline">⌈log(<em>L</em><sub><em>s</em></sub>)⌉</span></li>
+<li><span class="math inline"><em>C</em><sub><em>i</em>3</sub></span> is the last symbol of the source word, which is <span class="math inline">1</span></li>
+</ul></li>
+<li>The code word <span class="math inline"><em>C</em><sub>1</sub> = 22_02_1</span></li>
+<li>Shift the first <span class="math inline">3</span> symbols from the buffer, to get <span class="math inline">000000001010210</span>, and add the next <span class="math inline">3</span> symbols from <span class="math inline"><em>S</em></span>, to get <span class="math inline"><em>B</em><sub>2</sub> = 000000_001010210_210</span></li>
+</ul>
+<p>If we continue, we will have:</p>
+<ul>
+<li><span class="math inline"><em>B</em><sub>2</sub> = 000000001_010210210</span>, reproducible extension of <span class="math inline"><em>B</em><sub>2</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>2</sub>(1, 17)</span> is <span class="math inline"><em>B</em>(10, 12)</span> of length 3, <span class="math inline"><em>l</em><sub>2</sub> = 4</span>, <span class="math inline"><em>p</em> = 8</span>, <span class="math inline"><em>C</em><sub>2</sub> = 21102</span></li>
+<li><span class="math inline"><em>B</em><sub>3</sub> = 000010102_102102120</span>, reproducible extension of <span class="math inline"><em>B</em><sub>3</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>3</sub>(1, 17)</span> is <span class="math inline"><em>B</em>(10, 16)</span> of length 7, <span class="math inline"><em>l</em><sub>3</sub> = 8</span>, <span class="math inline"><em>p</em> = 7</span>, <span class="math inline"><em>C</em><sub>3</sub> = 20212</span></li>
+<li><span class="math inline"><em>B</em><sub>4</sub> = 210210212_021021200</span>, reproducible extension of <span class="math inline"><em>B</em><sub>4</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>4</sub>(1, 17)</span> is <span class="math inline"><em>B</em>(10, 17)</span> of length 8, <span class="math inline"><em>l</em><sub>4</sub> = 9</span>, <span class="math inline"><em>p</em> = 3</span>, <span class="math inline"><em>C</em><sub>4</sub> = 02220</span></li>
+</ul>
+<p>Decompression is doing these steps in reverse:</p>
+<ul>
+<li>Given the codeword <span class="math inline"><em>C</em> = 2202121102...</span> (determined above)</li>
+<li>Load the initial decoding buffer <span class="math inline"><em>D</em><sub>1</sub></span> of length <span class="math inline"><em>n</em> − <em>L</em><sub><em>s</em></sub></span> with zeroes, so <span class="math inline"><em>D</em><sub>1</sub> = 000000000</span></li>
+<li>Decode code word into <span class="math inline"><em>p</em><sub>1</sub></span> and <span class="math inline"><em>l</em><sub>1</sub></span> and last symbol of <span class="math inline"><em>S</em><sub>1</sub></span></li>
+<li>Shift buffer left by <span class="math inline"><em>l</em><sub>1</sub></span> times, each time adding <span class="math inline"><em>D</em><sub>1</sub>(<em>p</em><sub>1</sub>)</span> to the end of buffer, except the last shift, which adds the last symbol of <span class="math inline"><em>S</em><sub>1</sub></span></li>
+<li>The last <span class="math inline"><em>l</em><sub>1</sub></span> symbols will be <span class="math inline"><em>S</em><sub>1</sub></span></li>
+</ul>
+<p>Decoding our code word from the example above, with <span class="math inline"><em>C</em><sub>1</sub> = 22021</span>, <span class="math inline"><em>p</em><sub>1</sub> = 9</span>, <span class="math inline"><em>l</em><sub>1</sub> = 3</span>, and the last symbol is <span class="math inline">1</span>:</p>
+<ul>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>1</sub>(9)</span>, <span class="math inline">000000000 → 000000000</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>1</sub>(9)</span>, <span class="math inline">000000000 → 000000000</span></li>
+<li>shift left once, and add last symbol, <span class="math inline">000000000 → 000000001</span></li>
+<li>the last <span class="math inline">3</span> symbols, <span class="math inline"><em>S</em><sub>1</sub></span> is <span class="math inline">001</span></li>
+</ul>
+<p>With <span class="math inline"><em>C</em><sub>2</sub> = 21102</span>, <span class="math inline"><em>p</em><sub>2</sub> = 8</span>, <span class="math inline"><em>l</em><sub>2</sub> = 4</span>, last symbol is <span class="math inline">2</span>:</p>
+<ul>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(8)</span>, <span class="math inline">000000001 → 000000010</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(8)</span>, <span class="math inline">000000010 → 000000100</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(8)</span>, <span class="math inline">000000100 → 000001001</span></li>
+<li>shift left once, and add last symbol, <span class="math inline">000001001 → 000010102</span></li>
+<li>the last <span class="math inline">4</span> symbols <span class="math inline"><em>S</em><sub>2</sub></span> is <span class="math inline">0102</span></li>
+</ul>
+<p>With <span class="math inline"><em>C</em><sub>3</sub> = 20212</span>, <span class="math inline"><em>p</em><sub>3</sub> = 7</span>, <span class="math inline"><em>l</em><sub>3</sub> = 8</span>, last symbol is <span class="math inline">2</span>:</p>
+<ul>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">000010102 → 000101021</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">000101021 → 001010210</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">001010210 → 010102102</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">010102102 → 101021021</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">101021021 → 010210210</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">010210210 → 102102102</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">102102102 → 021021021</span></li>
+<li>shift left once, and add last symbol, <span class="math inline">021021021 → 210210212</span></li>
+<li>the last <span class="math inline">8</span> symbols <span class="math inline">10210212</span> is <span class="math inline"><em>S</em><sub>3</sub></span></li>
+</ul>
+<p>With <span class="math inline"><em>C</em><sub>4</sub> = 02220</span>, <span class="math inline"><em>p</em><sub>4</sub> = 3</span>, <span class="math inline"><em>l</em><sub>3</sub> = 9</span>, last symbol is <span class="math inline">0</span>:</p>
+<ul>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">210210212 → 102102120</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">102102120 → 021021202</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">021021202 → 210212021</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">210212021 → 102120210</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">102120210 → 021202102</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">021202102 → 212021021</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">212021021 → 120210212</span></li>
+<li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">120210212 → 202102120</span></li>
+<li>shift left once, and add last symbol, <span class="math inline">202102120 → 021021200</span></li>
+<li>the last <span class="math inline">9</span> symbols <span class="math inline">021021200</span> is <span class="math inline"><em>S</em><sub>4</sub></span></li>
+</ul>
+<!--
+D_i(n - L_s - l_{i-1} + 1, n - L_s) = D_i(9 - 3 + 1, 9) = D_i(7, 9)
+
+$S_1 = 001
+
+    The reproducible extension beginning at position 10 is $S(10,11) = 00$, set the first source word to $S(10,11+1) = 001$, let the length be $l$, and set the pointer to 9 (it could be anything form 1 to 9)
+beginning at the position where the (non-zero) symbols start, this is the source word that is parsed.
+    The codeword is made up of three parts:
+    1. radix-$\alpha$ representation of $p-1$, so 22
+    2. radix-$\alpha$ representation of $l - 1$, so 02
+    3. last symbol of source word, so 1
+    Shift out the first $l$ symbols from the buffer, then append the next $l$ symbols from the source
+
+Test 
+
+1. Parse a string of symbols from a finite alphabet *A*, of cardinality *alpha*, into substrings (words) of at most *L_s* length
+2. Use a *coding scheme* to map these substrings into uniquely decipherable codewords of fixed length *L_c* over the same *A*
+
+The formula that relates *L_s*, *n*, and *L_c* is:
+where *n* is the length of the buffer used at the encoding end, also known as the *window*.
+
+We need some definitions to help illustrate the algorithm:
+
+- alphabet `A = {0, 1}` *alpha* is 2, the word `S = 00101011` has length 8, `l(S) = 8`
+- a substring of S from position *i* to *j* is `S(i,j)`, thus `S(1,4) = 0010`
+- when `i > j`, `S(i,j) = null`, where null is the empty word
+- given strings *Q* and *R*, a new string `S = QR`, the concatenation of *Q* and *R*
+- naturally, `l(S) = l(Q) + l(R)`, and `S(1,l(Q)) = Q` and `S(l(Q)+1, l(Q) + l(R)) = R`
+- for each `0 <= j <= l(S)`, `S(i,j)` is a prefix of S, `0`, `00`, `00101011` are all prefixes of S
+- if `j < l(S)`, `S(i,j)` is a *proper prefix*, `0` and `00` are proper prefixes of S, `00101011` is not
+- given a proper prefix `S(1,j)`, and `i` such that `i <= j`, `L(i)` is the largest non-negative integer `l <= l(S) - j` such that `S(i,i+l-1) = S(j+1,j+l)`
+
+```
+  +-- j = 3
+  V
+00101011
+^^^
+|||
+||+- if i = 3, L(i) = 0
+|+-- if i = 2, L(i) = 4
++--- if i = 1, L(i) = 1
+```
+
+- starting from any `i <= j`, what is the longest shared word with the word starting at position *j*
+- the position where `L(j)` is maximized is denoted *p*, in the example this is 2
+- `S(j+1,j+L(p))` is called the *reproducible extension* of `S(1,j)` into *S*, and *p* is the *pointer* of the reproduction
+- `S(3+1,3+4) = 0101` is the reproducible extension of `S(1,3) = 001` into S with pointer `p = 2`
+
+```
+ +----- p = 2
+ ||---- j = 3
+ VV
+00101011
+   \  /
+    \/
+    reproducible extension of S(1,j) into S
+```
+
+The encoding then proceeds in four steps:
+
+1. Initially, set `B_1 = 0^{n-L_s}S(1,L_s)`, a string of `n-L_s` zeroes, followed by the first `L_s` symbols of `S`
+2. Set `S_i`, the *i*-th source word to `S_i = B_i(n-L_s+1,n-L_s+l_i)`, the prefix of `B_i` starting at the first symbol of `S`, of length `l_i`,
+where `l_i - 1` is the length of the prefix of `S_i` which is the reproducible extension of `B_i(1,n-L_s)` into `B_i(1,n-1)`
+3. If `p_i` is the pointer of reproduction in step 2, the codeword `C_i` for `S_i` is:""
+4. Shift out the first `l_i` positions of the buffer, and append the next `l_i` symbols from S
+
+An example will help:
+
+1. Given `S = 001010210210212021021200...`, `L_s = 9`, `n = 18` (arbitrarily chosen)`
+2. Thus `L_c = 5`
+3. The initial buffer has 9 zeroes followed by the first 9 symbols of S, `000000000001010210`
+4. Find the reproducible extension of starting at position `L_s + 1`, in this case it is `S(10,11) = 00`, so `S_1 = 001` and `l_i = 3`
+5. Calculate code word
+6. Shift by 3, and add next 3 symbols of S, to get `000000001010210210`
+
+
+
+
+
+
+ -->
+</section>
+</body>
+</html>
