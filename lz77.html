@@ -117,24 +117,25 @@
 <p>To figure out what a <em>reproducible extension</em> is, let’s look at an example string. Let</p>
 <ul>
 <li><span class="math inline"><em>S</em> = 00101011</span>,</li>
-<li><span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)</span> denote the length of <span class="math inline"><em>S</em></span>, thus <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)=8</span></li>
+<li><span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)</span> is the length of <span class="math inline"><em>S</em></span>, so <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)=8</span></li>
 </ul>
-<p>A <em>substring</em> of <span class="math inline"><em>S</em></span> starting at position <span class="math inline"><em>i</em></span> until <span class="math inline"><em>j</em></span> is denoted <span class="math inline"><em>S</em>(<em>i</em>, <em>j</em>)</span>, <span class="math inline"><em>S</em>(3, 5)=101</span> is a substring of <span class="math inline"><em>S</em></span>. For simplicity, <span class="math inline"><em>S</em>(<em>i</em>)=<em>S</em>(<em>i</em>, <em>i</em>)</span>.</p>
+<p><span class="math inline"><em>S</em>(<em>i</em>, <em>j</em>)</span> is a substring of <span class="math inline"><em>S</em></span> starting from position <span class="math inline"><em>i</em></span> until position <span class="math inline"><em>j</em></span> (inclusive). As a shortcut <span class="math inline"><em>S</em>(<em>i</em>)=<em>S</em>(<em>i</em>, <em>i</em>)</span>.</p>
 <!-- ``` -->
 <!-- S = 00101011 -->
 <!--       ^ ^ -->
 <!--     S(3,5) is a substring -->
 <!-- ``` -->
-<p>A <em>prefix</em> of <span class="math inline"><em>S</em></span> is a substring starting from position <span class="math inline">1</span> until position <span class="math inline"><em>j</em></span>, where <span class="math inline"><em>j</em> &lt; <em>l</em><em>e</em><em>n</em>(<em>S</em>)</span>. For example, <span class="math inline"><em>S</em>(1, 5)=00101</span> is a prefix of <span class="math inline"><em>S</em></span>.</p>
+<p>A <em>prefix</em> of <span class="math inline"><em>S</em></span> is a substring starting from position <span class="math inline">1</span> until position <span class="math inline"><em>j</em></span>, where <span class="math inline"><em>j</em> &lt; <em>l</em><em>e</em><em>n</em>(<em>S</em>)</span>. For example, <span class="math inline"><em>S</em>(1, 5)=00101</span> is a prefix of <span class="math inline"><em>S</em></span>, and <span class="math inline"><em>S</em></span> is not a prefix of itself.</p>
 <!-- ``` -->
 <!-- S = 00101011 -->
 <!--     ^   ^ -->
 <!--   S(1,  5) is a prefix -->
 <!-- ``` -->
-<p>An <em>extension</em> of the substring <span class="math inline"><em>S</em>(1, <em>j</em>)</span> into <span class="math inline"><em>S</em></span> is:</p>
+<p>An <em>extension</em> of the prefix <span class="math inline"><em>S</em>(1, <em>j</em>)</span> into <span class="math inline"><em>S</em></span> is:</p>
 <ul>
-<li>a substring starting at position <span class="math inline"><em>j</em> + 1</span>,</li>
-<li>which matches some substring of <span class="math inline"><em>S</em></span> that begins before or at <span class="math inline"><em>j</em></span>.</li>
+<li>a substring <span class="math inline"><em>S</em>(<em>j</em> + 1, <em>k</em>)</span>, (where <span class="math inline"><em>j</em> + 1 ≤ <em>k</em> ≤ <em>l</em><em>e</em><em>n</em>(<em>S</em>)</span>),</li>
+<li>which matches some other substring <span class="math inline"><em>S</em>(<em>p</em>, <em>q</em>)</span> that begins before or at <span class="math inline"><em>j</em></span> (<span class="math inline"><em>p</em> ≤ <em>j</em></span>)</li>
+<li>and since these substrings must be the same length, <span class="math inline"><em>q</em> = <em>p</em> + <em>k</em> − <em>j</em></span></li>
 </ul>
 <p>In our example, with <span class="math inline"><em>j</em> = 3</span>, the extensions of <span class="math inline"><em>S</em>(1, <em>j</em>)</span> into <span class="math inline"><em>S</em></span> (which must begin at <span class="math inline"><em>j</em> + 1 = 4</span>) are:</p>
 <ul>
@@ -149,7 +150,7 @@
 <ol type="1">
 <li>Begin with a string of <span class="math inline"><em>n</em> − <em>L</em><sub><em>s</em></sub></span> zeroes, followed the first <span class="math inline"><em>L</em><sub><em>s</em></sub></span> symbols from the source, call this <span class="math inline"><em>B</em><sub>1</sub></span></li>
 <li>Find the reproducible extension of the prefix <span class="math inline"><em>B</em><sub>1</sub>(1, <em>n</em> − <em>L</em><sub><em>s</em></sub>)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, <em>n</em> − 1)</span>, with length <span class="math inline"><em>l</em><sub>1</sub> − 1</span> and <span class="math inline"><em>p</em><sub>1</sub></span> as the pointer of reproduction</li>
-<li>The source word, <span class="math inline"><em>S</em><sub>1</sub></span> where <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em><sub>1</sub>)=<em>l</em><sub>1</sub> − 1</span>, is the reproducible extension, with 1 more symbol added to the end, i.e. <span class="math inline"><em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub>1</sub>)</span></li>
+<li>Set the source word, <span class="math inline"><em>S</em><sub>1</sub></span>, to be the reproducible extension, with 1 more symbol added to the end, i.e. <span class="math inline"><em>S</em><sub>1</sub> = <em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub>1</sub>)</span>, thus <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em><sub>1</sub>)=<em>l</em><sub>1</sub> − 1</span></li>
 <li>Convert source word into codeword (details described later)</li>
 <li>Update the contents of the buffer by shifting out the first <span class="math inline"><em>l</em><sub>1</sub></span> symbols, and adding the next <span class="math inline"><em>l</em><sub>1</sub></span> symbols from the source</li>
 <li>Repeat</li>
@@ -161,50 +162,68 @@
 <li><span class="math inline"><em>S</em> = 001010210210212021021200...</span></li>
 <li><span class="math inline"><em>L</em><sub><em>s</em></sub> = 9</span></li>
 <li><span class="math inline"><em>n</em> = 18</span></li>
-<li><span class="math inline"><em>B</em><sub>1</sub> = 000000000_001010210</span>, 9 zeros and the first 9 symbols of <span class="math inline"><em>S</em></span></li>
 </ul></li>
-<li>The reproducible extension of <span class="math inline"><em>B</em><sub>1</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, 17)</span>, is <span class="math inline"><em>B</em><sub>1</sub>(10, 11)=00</span>, with length 2, thus <span class="math inline"><em>l</em><sub>1</sub> = 3</span>,</li>
-<li><span class="math inline"><em>p</em><sub>1</sub></span> can be anywhere from <span class="math inline">0</span> to <span class="math inline">9</span>, let’s pick <span class="math inline"><em>p</em><sub>1</sub> = 9</span></li>
+</ul>
+<ol type="1">
+<li><span class="math inline"><em>B</em><sub>1</sub> = 000000000_001010210</span>, 9 zeros and the first 9 symbols of <span class="math inline"><em>S</em></span></li>
+<li>The reproducible extension of <span class="math inline"><em>B</em><sub>1</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, 17)</span>, is <span class="math inline"><em>B</em><sub>1</sub>(10, 11)=00</span>, with length 2, thus <span class="math inline"><em>l</em><sub>1</sub> = 3</span>. <span class="math inline"><em>p</em><sub>1</sub></span> can be anywhere from <span class="math inline">0</span> to <span class="math inline">9</span>, let’s pick <span class="math inline"><em>p</em><sub>1</sub> = 9</span></li>
 <li>The source word <span class="math inline"><em>S</em><sub>1</sub></span> is <span class="math inline"><em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub><em>i</em></sub>)=<em>B</em><sub>1</sub>(10, 12)=001</span></li>
-<li>The code word is made up of three parts, <span class="math inline"><em>C</em><sub><em>i</em></sub> = <em>C</em><sub><em>i</em>1</sub><em>C</em><sub><em>i</em>2</sub><em>C</em><sub><em>i</em>3</sub></span>
+<li>The code word <span class="math inline"><em>C</em><sub>1</sub> = 22_02_1</span>, calculate like so:
 <ul>
+<li>it is made up of three parts, <span class="math inline"><em>C</em><sub><em>i</em></sub> = <em>C</em><sub><em>i</em>1</sub><em>C</em><sub><em>i</em>2</sub><em>C</em><sub><em>i</em>3</sub></span></li>
 <li><span class="math inline"><em>C</em><sub><em>i</em>1</sub></span> is <span class="math inline"><em>p</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(9 − 1)<sub>3</sub> = 22</span>, of length <span class="math inline">⌈log(<em>n</em> − <em>L</em><sub><em>s</em></sub>)⌉</span></li>
 <li><span class="math inline"><em>C</em><sub><em>i</em>2</sub></span> is <span class="math inline"><em>l</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(3 − 1)<sub>3</sub> = 02</span>, of length <span class="math inline">⌈log(<em>L</em><sub><em>s</em></sub>)⌉</span></li>
 <li><span class="math inline"><em>C</em><sub><em>i</em>3</sub></span> is the last symbol of the source word, which is <span class="math inline">1</span></li>
 </ul></li>
-<li>The code word <span class="math inline"><em>C</em><sub>1</sub> = 22_02_1</span></li>
 <li>Shift the first <span class="math inline">3</span> symbols from the buffer, to get <span class="math inline">000000001010210</span>, and add the next <span class="math inline">3</span> symbols from <span class="math inline"><em>S</em></span>, to get <span class="math inline"><em>B</em><sub>2</sub> = 000000_001010210_210</span></li>
-</ul>
-<p>If we continue, we will have:</p>
+<li>Repeat
 <ul>
 <li><span class="math inline"><em>B</em><sub>2</sub> = 000000001_010210210</span>, reproducible extension of <span class="math inline"><em>B</em><sub>2</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>2</sub>(1, 17)</span> is <span class="math inline"><em>B</em>(10, 12)</span> of length 3, <span class="math inline"><em>l</em><sub>2</sub> = 4</span>, <span class="math inline"><em>p</em> = 8</span>, <span class="math inline"><em>C</em><sub>2</sub> = 21102</span></li>
 <li><span class="math inline"><em>B</em><sub>3</sub> = 000010102_102102120</span>, reproducible extension of <span class="math inline"><em>B</em><sub>3</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>3</sub>(1, 17)</span> is <span class="math inline"><em>B</em>(10, 16)</span> of length 7, <span class="math inline"><em>l</em><sub>3</sub> = 8</span>, <span class="math inline"><em>p</em> = 7</span>, <span class="math inline"><em>C</em><sub>3</sub> = 20212</span></li>
 <li><span class="math inline"><em>B</em><sub>4</sub> = 210210212_021021200</span>, reproducible extension of <span class="math inline"><em>B</em><sub>4</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>4</sub>(1, 17)</span> is <span class="math inline"><em>B</em>(10, 17)</span> of length 8, <span class="math inline"><em>l</em><sub>4</sub> = 9</span>, <span class="math inline"><em>p</em> = 3</span>, <span class="math inline"><em>C</em><sub>4</sub> = 02220</span></li>
-</ul>
+</ul></li>
+</ol>
 <p>Decompression is doing these steps in reverse:</p>
-<ul>
+<ol type="1">
 <li>Given the codeword <span class="math inline"><em>C</em> = 2202121102...</span> (determined above)</li>
 <li>Load the initial decoding buffer <span class="math inline"><em>D</em><sub>1</sub></span> of length <span class="math inline"><em>n</em> − <em>L</em><sub><em>s</em></sub></span> with zeroes, so <span class="math inline"><em>D</em><sub>1</sub> = 000000000</span></li>
 <li>Decode code word into <span class="math inline"><em>p</em><sub>1</sub></span> and <span class="math inline"><em>l</em><sub>1</sub></span> and last symbol of <span class="math inline"><em>S</em><sub>1</sub></span></li>
 <li>Shift buffer left by <span class="math inline"><em>l</em><sub>1</sub></span> times, each time adding <span class="math inline"><em>D</em><sub>1</sub>(<em>p</em><sub>1</sub>)</span> to the end of buffer, except the last shift, which adds the last symbol of <span class="math inline"><em>S</em><sub>1</sub></span></li>
 <li>The last <span class="math inline"><em>l</em><sub>1</sub></span> symbols will be <span class="math inline"><em>S</em><sub>1</sub></span></li>
-</ul>
-<p>Decoding our code word from the example above, with <span class="math inline"><em>C</em><sub>1</sub> = 22021</span>, <span class="math inline"><em>p</em><sub>1</sub> = 9</span>, <span class="math inline"><em>l</em><sub>1</sub> = 3</span>, and the last symbol is <span class="math inline">1</span>:</p>
+</ol>
+<p>Decoding our code words from the example above:</p>
+<ol type="1">
+<li><span class="math inline"><em>C</em><sub>1</sub> = 22021</span></li>
+<li><span class="math inline"><em>D</em><sub>1</sub> = 000000000</span></li>
+<li><span class="math inline"><em>p</em><sub>1</sub> = 9</span>, <span class="math inline"><em>l</em><sub>1</sub> = 3</span>, and the last symbol is <span class="math inline">1</span></li>
+<li>shift and add to buffer
 <ul>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>1</sub>(9)</span>, <span class="math inline">000000000 → 000000000</span></li>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>1</sub>(9)</span>, <span class="math inline">000000000 → 000000000</span></li>
 <li>shift left once, and add last symbol, <span class="math inline">000000000 → 000000001</span></li>
+</ul></li>
 <li>the last <span class="math inline">3</span> symbols, <span class="math inline"><em>S</em><sub>1</sub></span> is <span class="math inline">001</span></li>
-</ul>
-<p>With <span class="math inline"><em>C</em><sub>2</sub> = 21102</span>, <span class="math inline"><em>p</em><sub>2</sub> = 8</span>, <span class="math inline"><em>l</em><sub>2</sub> = 4</span>, last symbol is <span class="math inline">2</span>:</p>
+</ol>
+<p>The second code word:</p>
+<ol type="1">
+<li><span class="math inline"><em>C</em><sub>2</sub> = 21102</span></li>
+<li><span class="math inline"><em>D</em><sub>2</sub> = 000000001</span></li>
+<li><span class="math inline"><em>p</em><sub>2</sub> = 8</span>, <span class="math inline"><em>l</em><sub>2</sub> = 4</span>, last symbol is <span class="math inline">2</span></li>
+<li>shift and add to buffer
 <ul>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(8)</span>, <span class="math inline">000000001 → 000000010</span></li>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(8)</span>, <span class="math inline">000000010 → 000000100</span></li>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(8)</span>, <span class="math inline">000000100 → 000001001</span></li>
 <li>shift left once, and add last symbol, <span class="math inline">000001001 → 000010102</span></li>
+</ul></li>
 <li>the last <span class="math inline">4</span> symbols <span class="math inline"><em>S</em><sub>2</sub></span> is <span class="math inline">0102</span></li>
-</ul>
-<p>With <span class="math inline"><em>C</em><sub>3</sub> = 20212</span>, <span class="math inline"><em>p</em><sub>3</sub> = 7</span>, <span class="math inline"><em>l</em><sub>3</sub> = 8</span>, last symbol is <span class="math inline">2</span>:</p>
+</ol>
+<p>The third code word:</p>
+<ol type="1">
+<li><span class="math inline"><em>C</em><sub>3</sub> = 20212</span></li>
+<li><span class="math inline"><em>D</em><sub>3</sub> = 000010102</span></li>
+<li><span class="math inline"><em>p</em><sub>3</sub> = 7</span>, <span class="math inline"><em>l</em><sub>3</sub> = 8</span>, last symbol is <span class="math inline">2</span></li>
+<li>shift and add to buffer
 <ul>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">000010102 → 000101021</span></li>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">000101021 → 001010210</span></li>
@@ -214,9 +233,15 @@
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">010210210 → 102102102</span></li>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">102102102 → 021021021</span></li>
 <li>shift left once, and add last symbol, <span class="math inline">021021021 → 210210212</span></li>
+</ul></li>
 <li>the last <span class="math inline">8</span> symbols <span class="math inline">10210212</span> is <span class="math inline"><em>S</em><sub>3</sub></span></li>
-</ul>
-<p>With <span class="math inline"><em>C</em><sub>4</sub> = 02220</span>, <span class="math inline"><em>p</em><sub>4</sub> = 3</span>, <span class="math inline"><em>l</em><sub>3</sub> = 9</span>, last symbol is <span class="math inline">0</span>:</p>
+</ol>
+<p>The last code word:</p>
+<ol type="1">
+<li><span class="math inline"><em>C</em><sub>4</sub> = 02220</span></li>
+<li><span class="math inline"><em>D</em><sub>4</sub> = 210210212</span></li>
+<li><span class="math inline"><em>p</em><sub>4</sub> = 3</span>, <span class="math inline"><em>l</em><sub>3</sub> = 9</span>, last symbol is <span class="math inline">0</span></li>
+<li>shift and add to buffer
 <ul>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">210210212 → 102102120</span></li>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">102102120 → 021021202</span></li>
@@ -227,8 +252,9 @@
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">212021021 → 120210212</span></li>
 <li>shift left once, and add <span class="math inline"><em>D</em><sub>2</sub>(7)</span>, <span class="math inline">120210212 → 202102120</span></li>
 <li>shift left once, and add last symbol, <span class="math inline">202102120 → 021021200</span></li>
+</ul></li>
 <li>the last <span class="math inline">9</span> symbols <span class="math inline">021021200</span> is <span class="math inline"><em>S</em><sub>4</sub></span></li>
-</ul>
+</ol>
 <!--
 D_i(n - L_s - l_{i-1} + 1, n - L_s) = D_i(9 - 3 + 1, 9) = D_i(7, 9)
 

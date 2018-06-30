@@ -24,9 +24,9 @@ The parsing step is done by filling a buffer, or *window*, of size $n$, with sym
 To figure out what a *reproducible extension* is, let's look at an example string. Let
 
 - $S = 00101011$,
-- $len(S)$ denote the length of $S$, thus $len(S) = 8$
+- $len(S)$ is the length of $S$, so $len(S) = 8$
 
-A *substring* of $S$ starting at position $i$ until $j$ is denoted $S(i,j)$, $S(3,5)=101$ is a substring of $S$. For simplicity, $S(i) = S(i,i)$.
+$S(i,j)$ is a substring of $S$ starting from position $i$ until position $j$ (inclusive). As a shortcut $S(i) = S(i,i)$.
 
 <!-- ``` -->
 <!-- S = 00101011 -->
@@ -35,7 +35,7 @@ A *substring* of $S$ starting at position $i$ until $j$ is denoted $S(i,j)$, $S(
 <!-- ``` -->
 
 A *prefix* of $S$ is a substring starting from position $1$ until position $j$, where $j < len(S)$.
-For example, $S(1,5) = 00101$ is a prefix of $S$.
+For example, $S(1,5) = 00101$ is a prefix of $S$, and $S$ is not a prefix of itself.
 
 <!-- ``` -->
 <!-- S = 00101011 -->
@@ -43,10 +43,11 @@ For example, $S(1,5) = 00101$ is a prefix of $S$.
 <!--   S(1,  5) is a prefix -->
 <!-- ``` -->
 
-An *extension* of the substring $S(1,j)$ into $S$ is:
+An *extension* of the prefix $S(1,j)$ into $S$ is:
 
-- a substring starting at position $j+1$,
-- which matches some substring of $S$ that begins before or at $j$.
+- a substring $S(j+1, k)$, (where $j+1 \leq k \leq len(S)$),
+- which matches some other substring $S(p, q)$ that begins before or at $j$ ($p \leq j$)
+- and since these substrings must be the same length, $q = p + k - j$
 
 In our example, with $j = 3$, the extensions of $S(1,j)$ into $S$ (which must begin at $j + 1 = 4$) are:
 
@@ -63,7 +64,7 @@ With this, we can now dive deeper into the encoding algorithm:
 
 1. Begin with a string of $n - L_s$ zeroes, followed the first $L_s$ symbols from the source, call this $B_1$
 2. Find the reproducible extension of the prefix $B_1(1, n-L_s)$ into $B_1(1,n-1)$, with length $l_1 - 1$ and $p_1$ as the pointer of reproduction
-3. The source word, $S_1$ where $len(S_1) = l_1 - 1$, is the reproducible extension, with 1 more symbol added to the end, i.e. $B_1(n-L_s+1,n-L_s+l_1)$
+3. Set the source word, $S_1$, to be the reproducible extension, with 1 more symbol added to the end, i.e. $S_1 = B_1(n-L_s+1,n-L_s+l_1)$, thus $len(S_1) = l_1 - 1$
 4. Convert source word into codeword (details described later)
 5. Update the contents of the buffer by shifting out the first $l_1$ symbols, and adding the next $l_1$ symbols from the source
 6. Repeat
@@ -74,71 +75,85 @@ An example to help illustrate these steps (underscores don't mean anything and s
     - $S = 001010210210212021021200...$
     - $L_s = 9$
     - $n = 18$
-    - $B_1 = 000000000\_001010210$, 9 zeros and the first 9 symbols of $S$
-- The reproducible extension of $B_1(1, 9)$ into $B_1(1,17)$, is $B_1(10,11) = 00$, with length 2, thus $l_1 = 3$,
-- $p_1$ can be anywhere from $0$ to $9$, let's pick $p_1 = 9$
-- The source word $S_1$ is $B_1(n - L_s + 1, n - L_s + l_i) = B_1(10, 12) = 001$
-- The code word is made up of three parts, $C_i = C_{i1}C_{i2}C_{i3}$
+
+1. $B_1 = 000000000\_001010210$, 9 zeros and the first 9 symbols of $S$
+2. The reproducible extension of $B_1(1, 9)$ into $B_1(1,17)$, is $B_1(10,11) = 00$, with length 2, thus $l_1 = 3$. $p_1$ can be anywhere from $0$ to $9$, let's pick $p_1 = 9$
+3. The source word $S_1$ is $B_1(n - L_s + 1, n - L_s + l_i) = B_1(10, 12) = 001$
+4. The code word $C_1 = 22\_02\_1$, calculate like so:
+    - it is made up of three parts, $C_i = C_{i1}C_{i2}C_{i3}$
     - $C_{i1}$ is $p_i - 1$ in base-$\alpha$, which is $(9-1)_3 = 22$, of length $\lceil \log(n - L_s)\rceil$
     - $C_{i2}$ is $l_i - 1$ in base-$\alpha$, which is $(3-1)_3 = 02$, of length $\lceil \log(L_s)\rceil$
     - $C_{i3}$ is the last symbol of the source word, which is $1$
-- The code word $C_1 = 22\_02\_1$
-- Shift the first $3$ symbols from the buffer, to get $000000001010210$, and add the next $3$ symbols from $S$, to get $B_2 = 000000\_001010210\_210$
-
-If we continue, we will have:
-
-- $B_2 = 000000001\_010210210$, reproducible extension of $B_2(1,9)$ into $B_2(1,17)$ is $B(10,12)$ of length 3, $l_2=4$, $p = 8$, $C_2 = 21102$
-- $B_3 = 000010102\_102102120$, reproducible extension of $B_3(1,9)$ into $B_3(1,17)$ is $B(10,16)$ of length 7, $l_3=8$, $p = 7$, $C_3 = 20212$
-- $B_4 = 210210212\_021021200$, reproducible extension of $B_4(1,9)$ into $B_4(1,17)$ is $B(10,17)$ of length 8, $l_4=9$, $p = 3$, $C_4 = 02220$
+5. Shift the first $3$ symbols from the buffer, to get $000000001010210$, and add the next $3$ symbols from $S$, to get $B_2 = 000000\_001010210\_210$
+6. Repeat
+    - $B_2 = 000000001\_010210210$, reproducible extension of $B_2(1,9)$ into $B_2(1,17)$ is $B(10,12)$ of length 3, $l_2=4$, $p = 8$, $C_2 = 21102$
+    - $B_3 = 000010102\_102102120$, reproducible extension of $B_3(1,9)$ into $B_3(1,17)$ is $B(10,16)$ of length 7, $l_3=8$, $p = 7$, $C_3 = 20212$
+    - $B_4 = 210210212\_021021200$, reproducible extension of $B_4(1,9)$ into $B_4(1,17)$ is $B(10,17)$ of length 8, $l_4=9$, $p = 3$, $C_4 = 02220$
 
 
 Decompression is doing these steps in reverse:
 
-- Given the codeword $C = 2202121102...$ (determined above)
-- Load the initial decoding buffer $D_1$ of length $n - L_s$ with zeroes, so $D_1 = 000000000$
-- Decode code word into $p_1$ and $l_1$ and last symbol of $S_1$
-- Shift buffer left by $l_1$ times, each time adding $D_1(p_1)$ to the end of buffer, except the last shift, which adds the last symbol of $S_1$
-- The last $l_1$ symbols will be $S_1$
+1. Given the codeword $C = 2202121102...$ (determined above)
+2. Load the initial decoding buffer $D_1$ of length $n - L_s$ with zeroes, so $D_1 = 000000000$
+3. Decode code word into $p_1$ and $l_1$ and last symbol of $S_1$
+4. Shift buffer left by $l_1$ times, each time adding $D_1(p_1)$ to the end of buffer, except the last shift, which adds the last symbol of $S_1$
+5. The last $l_1$ symbols will be $S_1$
 
-Decoding our code word from the example above, with $C_1 = 22021$, $p_1 = 9$, $l_1 = 3$, and the last symbol is $1$:
+Decoding our code words from the example above:
 
-- shift left once, and add $D_1(9)$, $000000000 \rightarrow 000000000$
-- shift left once, and add $D_1(9)$, $000000000 \rightarrow 000000000$
-- shift left once, and add last symbol, $000000000 \rightarrow 000000001$
-- the last $3$ symbols, $S_1$ is $001$
+1. $C_1 = 22021$
+2. $D_1 = 000000000$
+3. $p_1 = 9$, $l_1 = 3$, and the last symbol is $1$
+4. shift and add to buffer
+    - shift left once, and add $D_1(9)$, $000000000 \rightarrow 000000000$
+    - shift left once, and add $D_1(9)$, $000000000 \rightarrow 000000000$
+    - shift left once, and add last symbol, $000000000 \rightarrow 000000001$
+5. the last $3$ symbols, $S_1$ is $001$
 
-With $C_2 = 21102$, $p_2 = 8$, $l_2 = 4$, last symbol is $2$:
+The second code word:
 
-- shift left once, and add $D_2(8)$, $000000001 \rightarrow 000000010$
-- shift left once, and add $D_2(8)$, $000000010 \rightarrow 000000100$
-- shift left once, and add $D_2(8)$, $000000100 \rightarrow 000001001$
-- shift left once, and add last symbol, $000001001 \rightarrow 000010102$
-- the last $4$ symbols $S_2$ is $0102$
+1. $C_2 = 21102$
+2. $D_2 = 000000001$
+3. $p_2 = 8$, $l_2 = 4$, last symbol is $2$
+4. shift and add to buffer
+    - shift left once, and add $D_2(8)$, $000000001 \rightarrow 000000010$
+    - shift left once, and add $D_2(8)$, $000000010 \rightarrow 000000100$
+    - shift left once, and add $D_2(8)$, $000000100 \rightarrow 000001001$
+    - shift left once, and add last symbol, $000001001 \rightarrow 000010102$
+5. the last $4$ symbols $S_2$ is $0102$
 
-With $C_3 = 20212$, $p_3 = 7$, $l_3 = 8$, last symbol is $2$:
+The third code word:
 
-- shift left once, and add $D_2(7)$, $000010102 \rightarrow 000101021$
-- shift left once, and add $D_2(7)$, $000101021 \rightarrow 001010210$
-- shift left once, and add $D_2(7)$, $001010210 \rightarrow 010102102$
-- shift left once, and add $D_2(7)$, $010102102 \rightarrow 101021021$
-- shift left once, and add $D_2(7)$, $101021021 \rightarrow 010210210$
-- shift left once, and add $D_2(7)$, $010210210 \rightarrow 102102102$
-- shift left once, and add $D_2(7)$, $102102102 \rightarrow 021021021$
-- shift left once, and add last symbol, $021021021 \rightarrow 210210212$
-- the last $8$ symbols $10210212$ is $S_3$
+1. $C_3 = 20212$
+2. $D_3 = 000010102$
+3.  $p_3 = 7$, $l_3 = 8$, last symbol is $2$
+4. shift and add to buffer
+    - shift left once, and add $D_2(7)$, $000010102 \rightarrow 000101021$
+    - shift left once, and add $D_2(7)$, $000101021 \rightarrow 001010210$
+    - shift left once, and add $D_2(7)$, $001010210 \rightarrow 010102102$
+    - shift left once, and add $D_2(7)$, $010102102 \rightarrow 101021021$
+    - shift left once, and add $D_2(7)$, $101021021 \rightarrow 010210210$
+    - shift left once, and add $D_2(7)$, $010210210 \rightarrow 102102102$
+    - shift left once, and add $D_2(7)$, $102102102 \rightarrow 021021021$
+    - shift left once, and add last symbol, $021021021 \rightarrow 210210212$
+5. the last $8$ symbols $10210212$ is $S_3$
 
-With $C_4 = 02220$, $p_4 = 3$, $l_3 = 9$, last symbol is $0$:
+The last code word:
 
-- shift left once, and add $D_2(7)$, $210210212 \rightarrow 102102120$
-- shift left once, and add $D_2(7)$, $102102120 \rightarrow 021021202$
-- shift left once, and add $D_2(7)$, $021021202 \rightarrow 210212021$
-- shift left once, and add $D_2(7)$, $210212021 \rightarrow 102120210$
-- shift left once, and add $D_2(7)$, $102120210 \rightarrow 021202102$
-- shift left once, and add $D_2(7)$, $021202102 \rightarrow 212021021$
-- shift left once, and add $D_2(7)$, $212021021 \rightarrow 120210212$
-- shift left once, and add $D_2(7)$, $120210212 \rightarrow 202102120$
-- shift left once, and add last symbol, $202102120 \rightarrow 021021200$
-- the last $9$ symbols $021021200$ is $S_4$
+1. $C_4 = 02220$
+2. $D_4 = 210210212$
+3. $p_4 = 3$, $l_3 = 9$, last symbol is $0$
+4. shift and add to buffer
+    - shift left once, and add $D_2(7)$, $210210212 \rightarrow 102102120$
+    - shift left once, and add $D_2(7)$, $102102120 \rightarrow 021021202$
+    - shift left once, and add $D_2(7)$, $021021202 \rightarrow 210212021$
+    - shift left once, and add $D_2(7)$, $210212021 \rightarrow 102120210$
+    - shift left once, and add $D_2(7)$, $102120210 \rightarrow 021202102$
+    - shift left once, and add $D_2(7)$, $021202102 \rightarrow 212021021$
+    - shift left once, and add $D_2(7)$, $212021021 \rightarrow 120210212$
+    - shift left once, and add $D_2(7)$, $120210212 \rightarrow 202102120$
+    - shift left once, and add last symbol, $202102120 \rightarrow 021021200$
+5. the last $9$ symbols $021021200$ is $S_4$
 
 <!--
 D_i(n - L_s - l_{i-1} + 1, n - L_s) = D_i(9 - 3 + 1, 9) = D_i(7, 9)
