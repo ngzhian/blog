@@ -34,7 +34,7 @@ a:hover {
 }
 
 .content {
-    padding: 30px;
+    padding: 10px 0 10px 0;
     max-width: 768px;
     margin: auto auto;
 }
@@ -45,12 +45,13 @@ a:hover {
 
 @media (max-width: 600px) {
   #post-list tr td:nth-child(1)  {
-    display: none;
   }
 }
 
 #post-list tr td:nth-child(1)  {
   white-space: nowrap;
+  vertical-align: top;
+  /* useful for top aligning this when titles span more than one row in the table */
 }
 
 /* date published on index page */
