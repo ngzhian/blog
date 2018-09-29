@@ -1,0 +1,24 @@
+- CPU
+- GPU
+
+GPU
+
+- overdraw
+    - unnecessary background declared
+    - developer settings -> visualize cpu overdraw
+- clipping
+    - drawing views that are not visible
+    - more common for custom views
+    - clipRect and quickReject
+- complicated layouts
+    - measure, layout, draw
+    - nesting
+    - linear layout v.s. relative layout
+    - hierarchy viewer
+
+CPU
+
+- traceview
+    - profile your app, look at where computations happen
+- batch and cache
+- don't block UI thread

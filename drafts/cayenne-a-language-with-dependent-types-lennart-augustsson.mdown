@@ -1,0 +1,43 @@
+Cayenne is a language that combines dependent types and first class types - types can be used like values, the syntax for types and values are the same.
+
+One thing that comes out of this is that Cayenne only has one notion, value, types, modules all look the same.
+
+In most languages, the `printf` function cannot be given a proper type, because the type depends on the input:
+
+```
+printf "%s" :: String -> String
+printf "%d" :: Int -> String
+```
+
+In Cayenne, the type of `printf` can be computed from the first argument:
+
+```
+PrintfType :: String -> #
+PrintfType "" = String
+PrintfType ('%':'d':cs) = Int -> PrintfType cs
+PrintfType ('%':'s':cs) = String -> PrintfType cs
+...
+
+printf :: (fmt::String) -> PrintfType fmt
+```
+
+In the signature of `printf`, the first argument, of type String, has the name `fmt`, which can be used in the type expression.
+
+## Syntax
+
+Data types do not have to be given a name, e.g. `data False | True` is the type of booleans.
+
+Visibility for record components, `private` (does not show up in the type of the record), `public abstract` (only type shows up in type of record), `public` (both type and value).
+
+## Hidden Arguments
+
+Many functions have type arguments, like:
+
+```
+if :: (a :: #) -> Bool -> a -> a -> a
+```
+
+This means that the two branches must have the same type, and each usage of `if` must be given the first type argument.
+Cayenne allows leaving out these hidden arguments when calling functions. When defining the function it must be present to aid compiler insertion of hidden arguments.
+
+## Syntactic Sugar

@@ -1,0 +1,10 @@
+---
+title: Embeddable languages
+date: 2018-07-08 17:00
+...
+
+- [Lua](https://www.lua.org/)
+- [Wren](http://wren.io/)
+- [Potion](https://github.com/perl11/potion)
+- [Gravity](https://marcobambini.github.io/gravity/#/)
+

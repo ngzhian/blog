@@ -1,0 +1,97 @@
+`cat a/b.c`
+
+First, resolve path names. `a` is a dentry. `b.c` is also a dentry, and is also a file that can be opened.
+`b.c` is open, inode is created to hold the metadata for this file (such as the size).
+This file is added to the list of open files for process.
+`struct file` holds the offset within this file.
+
+A `struct page` is created for this.
+
+`VFS` will attempt to read data into this page.
+
+`inode` becomes the `struct address_space` that owns the page.
+
+Filesystem-specific functions are invoked to read data into page.
+
+Filesystem will create bio requests.
+
+Bio requests scheduled by I/O scheduler, sent to block device drivers to be fulfilled.
+
+Data will end up on the page.
+
+Each process has its own virtual address space. It can pretend that it has access to the whole memory. The OS takes care of mapping virtual memory to physical memory.
+
+Each process has an address space represented by `mm_struct`. This is shared by threads in the same process.
+
+This space contains multiple `struct vm_area_struct`, page-aligned memory regions.
+
+Each `vm_area_struct` represents pages that share the same protection and purpose. These areas never overlap.
+See the full list of mapped regions at `/proc/<pid>/maps`.
+
+`vm_area_struct` has prot and flags (e.g. madvise flags)
+
+`vma->vm_ops` is a `vm_operations_struct` with function pointers to support `open`, `close` and `nopage`.
+`nopage` is called during a page-fault, or by `do_no_page()`. This function is responsible for locating a page in the page cache, or allocating a page and populating the page with data before returning it.
+There is a `generic_file_vm_ops` for most files that are mapped.
+
+If a `vm_area_struct` is backed by a file, its `vm_file` field will be set.
+
+`vm_file->f_dentry->d_inode->i_mapping`, we can get from the region to the `address_space`, which has the filesystem specific information for dealing with reading/writing files.
+
+kernel threads have no `mm_struct`, since they will never page fault or access userspace.
+
+`mmap()` will create a new memory region.
+
+When a process asks for memory, space is reserved in the `vm_area_struct`. No allocations are done immediately.
+Linux has a *demand fetching* policy - a page is only fetched from the backing device (e.g. block disk) when hardware raises a page fault exception.
+This exception is raised when the process first accesses the page that has been reserved but not allocated.
+The exception is caught by the kernel, and it allocates a page.
+
+A major page fault occurs when data has to be read from disk, a minor (or soft) otherwise.
+
+When a process accesses a page the first time, the page has to be allocated and populated with data (demand allocation).
+
+If the page is backed by a file, `filemap_nopage()` is usually called to allocate a page, and read page-sized data from backing device.
+
+Reading a byte from a file.
+
+```
+char[1] buf;
+file = "filename"
+fd = open(file);
+read(fd, buf, 1);
+```
+
+open
+add file to open file table
+do_filp_open namei.c
+takes care of pathname lookup and returning a file
+do_last (final part of the pathname, the file!)
+lookup_open
+dir_inode->i_op->create
+create an inode structure for the file (this is provided by filesystem)
+inode->i_op
+inode->i_fop
+inode->i_data->a_ops
+
+
+read
+fs/read_write.c#L586
+ksys_read
+    - get current pos in file
+    - call vfs_read, returns bytes read
+        - check access/perms/overflow/security
+        - call __vfs_read
+            - uses file->f_op->read to read
+            or
+            - uses file->f_op->readiter to read
+        - if read success, fsnotify, do accounting
+
+
+generic_file_buffered_read
+
+find page for file
+page fault
+kernel catches fault
+filemap_nopage
+
