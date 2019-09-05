@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>For loops in bash and memory usage</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">For loops in bash and memory usage</h1>
+<h3 class="date">2019-09-04 21:56</h3>
+</div>
+<p>There are multiple ways to write a <code>for</code>-loop in bash. According to one of my <a href="https://www.cyberciti.biz/faq/bash-for-loop/">favourite resource</a>, nixCraft, there are at least 3 ways.</p>
+<p>For loop</p>
+<pre><code>for i in {1..10}; do
+  echo &quot;$i&quot;
+done</code></pre>
+<p>Seq</p>
+<pre><code>for i in $(seq 10); do
+  echo &quot;$i&quot;
+done</code></pre>
+<p>Three-expression syntax</p>
+<pre><code>for (( i=1; i&lt;=10; i++)); do
+  echo &quot;$i&quot;
+done</code></pre>
+<p>The simples way is probably the first way, it’s easy to read.</p>
+<p>However, it has a drawback, when given a large sequence, it takes up a lot of memory:</p>
+<pre><code>for i in {1..10000000}; do true; done &amp;
+# check top for process memory</code></pre>
+<p>I’ve seen it shoot up to 900MB on a Macbook.</p>
+<pre><code>for (( i=0; i&lt;=10000000; i++ )); do true; done &amp;
+# check top for process memory</code></pre>
+<p>The memory usage hovers around 424K.</p>
+<p>This is probably because the three-expression syntax only needs to keep a single variable around, whereas the for loop builds up the entire sequence of 10,000,000 numbers.</p>
+</section>
+</body>
+</html>
