@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>WebAssembly SIMD and endianness</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">WebAssembly SIMD and endianness</h1>
+<h3 class="date">2019-09-11 22:13</h3>
+</div>
+<p>Today I got very confused about how SIMD lanes are numbered, and with the help of my colleagues, managed to get clarity on this. So I’m documenting it here to help future self.</p>
+<p><a href="https://en.wikipedia.org/wiki/SIMD">Single Instruction Multiple Data (SIMD)</a>, involves having large vectors that contain multiple data elements, and performing a single operation on these multiple data elements at one go.</p>
+<p>WebAssembly is gaining support for SIMD in a <a href="https://github.com/WebAssembly/simd/">ongoing proposal</a>. It introduces a new data type, <code>v128</code>, that basically maps down to a 128-bit hardware register.</p>
+<blockquote>
+<p>On x86 and x86-64 this is an SSE register (xmm), for arm and arm64 this is a fp register.</p>
+</blockquote>
+<p>These 128-bit registers can be interpreted as multiple elements of the same data type, for example, 2 64-bit integers, aka <code>i64x2</code>. This register can be said to have 2 lanes, each lane can be interpreted as a 64-bit integer. The interpretation is determined by the SIMD operations - this allows a single <code>v128</code> type to support multiple interpretations, from <code>f64x2</code>, down to <code>i8x16</code>.</p>
+<p>In the Intel architecture reference manual, and also in many references, the bits in a register can be numbered from 0 to size of register. For a 128-bit register, it would be:</p>
+<pre><code>[127|126|...|63|62|61|...|3|2|1|0]</code></pre>
+<p>According to the WebAssembly SIMD spec, for a <code>i64x2</code>:</p>
+<blockquote>
+<p>“Lane n corresponds to bits 64n – 64n+63.”</p>
+</blockquote>
+<p>Thus:</p>
+<pre><code>[ 64-bit number, lane 1 | 64-bit number, lane 0 ]</code></pre>
+<p>One of the operations supported is <a href="https://github.com/WebAssembly/simd/blob/master/proposals/simd/SIMD.md#extract-lane-as-a-scalar">extract_lane</a>, which extracts a single element from a vector register. The pseudocode for this is:</p>
+<pre><code>def S.extract_lane(a, i):
+    return a[i]</code></pre>
+<p>And this is where I got confused. Given a 128-bit register with the value <code>0x00010002000300040005000600070008</code>, if we interpret this as a i32x4, and extract lane 0, we should get <code>0x00070008</code>:</p>
+<pre><code>[ 0x00010002 | 0x00030004 | 0x00050006 | 0x00070008 ]
+[   lane 3   |   lane 2   |   lane 1   |   lane 0   ]</code></pre>
+<p>But based on the pseudocode, it looked like we would get index 0 of array <code>a</code>. Now, if were to simply treat each lane as an element in <code>a</code>, it could look like:</p>
+<pre><code>a = [0x00010002, 0x00030004, 0x00050006, 0x00070008]</code></pre>
+<p>And then <code>a[0]</code> will give us <code>0x00010002</code>, which is different from what we got previously.</p>
+<p>The point I was missing is that WebAssembly is a little endian system, and this means that in memory, the least significant byte comes first.</p>
+<p>If we store a 128-bit register into memory, it would take up 16 bytes, and the least significant byte would be first, i.e. 0x08 would be first. So really, <code>a</code> would look more like:</p>
+<pre><code>a = [ 0x08, 0x00, 0x07, 0x00
+      0x06, 0x00, 0x05, 0x00
+      0x04, 0x00, 0x03, 0x00
+      0x02, 0x00, 0x01, 0x00]</code></pre>
+<p>And <code>a[0]</code>, when <code>a</code> is interpreted as <code>i32x4</code>, will take the first four bytes, <code>0x08, 0x00, 0x07, 0x00</code>, treat as little endian, and get <code>0x00070008</code>, which is the same result.</p>
+<blockquote>
+<p>Another way I’ve seen people discuss this is to think that the individual data elements are stored little endian, and the bytes within the data are stored little endian too. So the least significant lane (0) comes first, and within the lane, the least significant byte comes first.</p>
+</blockquote>
+<p>It is quite important to differentiate what a number looks like in a register, and how it looks like in memory. And my confusion was a result of not being able to clearly tell this apart.</p>
+</section>
+</body>
+</html>

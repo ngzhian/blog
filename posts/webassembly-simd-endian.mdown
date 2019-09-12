@@ -1,0 +1,69 @@
+---
+title: WebAssembly SIMD and endianness
+date: 2019-09-11 22:13
+...
+
+Today I got very confused about how SIMD lanes are numbered, and with the help of my colleagues, managed to get clarity on this. So I'm documenting it here to help future self.
+
+[Single Instruction Multiple Data (SIMD)](https://en.wikipedia.org/wiki/SIMD), involves having large vectors that contain multiple data elements, and performing a single operation on these multiple data elements at one go.
+
+WebAssembly is gaining support for SIMD in a [ongoing proposal](https://github.com/WebAssembly/simd/). It introduces a new data type, `v128`, that basically maps down to a 128-bit hardware register.
+
+> On x86 and x86-64 this is an SSE register (xmm), for arm and arm64 this is a fp register.
+
+These 128-bit registers can be interpreted as multiple elements of the same data type, for example, 2 64-bit integers, aka `i64x2`. This register can be said to have 2 lanes, each lane can be interpreted as a 64-bit integer. The interpretation is determined by the SIMD operations - this allows a single `v128` type to support multiple interpretations, from `f64x2`, down to `i8x16`.
+
+In the Intel architecture reference manual, and also in many references, the bits in a register can be numbered from 0 to size of register. For a 128-bit register, it would be:
+
+```
+[127|126|...|63|62|61|...|3|2|1|0]
+```
+
+According to the WebAssembly SIMD spec, for a `i64x2`:
+
+> "Lane n corresponds to bits 64n – 64n+63."
+
+Thus:
+
+```
+[ 64-bit number, lane 1 | 64-bit number, lane 0 ]
+```
+
+One of the operations supported is [extract_lane](https://github.com/WebAssembly/simd/blob/master/proposals/simd/SIMD.md#extract-lane-as-a-scalar), which extracts a single element from a vector register. The pseudocode for this is:
+
+```
+def S.extract_lane(a, i):
+    return a[i]
+```
+
+And this is where I got confused. Given a 128-bit register with the value `0x00010002000300040005000600070008`, if we interpret this as a i32x4, and extract lane 0, we should get `0x00070008`:
+
+```
+[ 0x00010002 | 0x00030004 | 0x00050006 | 0x00070008 ]
+[   lane 3   |   lane 2   |   lane 1   |   lane 0   ]
+```
+
+But based on the pseudocode, it looked like we would get index 0 of array `a`. Now, if were to simply treat each lane as an element in `a`, it could look like:
+
+```
+a = [0x00010002, 0x00030004, 0x00050006, 0x00070008]
+```
+
+And then `a[0]` will give us `0x00010002`, which is different from what we got previously.
+
+The point I was missing is that WebAssembly is a little endian system, and this means that in memory, the least significant byte comes first.
+
+If we store a 128-bit register into memory, it would take up 16 bytes, and the least significant byte would be first, i.e. 0x08 would be first. So really, `a` would look more like:
+
+```
+a = [ 0x08, 0x00, 0x07, 0x00
+      0x06, 0x00, 0x05, 0x00
+      0x04, 0x00, 0x03, 0x00
+      0x02, 0x00, 0x01, 0x00]
+```
+
+And `a[0]`, when `a` is interpreted as `i32x4`, will take the first four bytes, `0x08, 0x00, 0x07, 0x00`, treat as little endian, and get `0x00070008`, which is the same result.
+
+> Another way I've seen people discuss this is to think that the individual data elements are stored little endian, and the bytes within the data are stored little endian too. So the least significant lane (0) comes first, and within the lane, the least significant byte comes first.
+
+It is quite important to differentiate what a number looks like in a register, and how it looks like in memory. And my confusion was a result of not being able to clearly tell this apart.

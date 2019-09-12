@@ -12,6 +12,34 @@
     </description>
     <item>
       <title>
+        WebAssembly SIMD and endianness
+      </title>
+      <link>
+        https://blog.ngzhian.com/webassembly-simd-endian.html
+      </link>
+      <pubDate>
+        11 Sep 2019 21:13:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/webassembly-simd-endian.html
+      </guid>
+    </item>
+    <item>
+      <title>
+        For loops in bash and memory usage
+      </title>
+      <link>
+        https://blog.ngzhian.com/for-loop-bash.html
+      </link>
+      <pubDate>
+        04 Sep 2019 21:56:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/for-loop-bash.html
+      </guid>
+    </item>
+    <item>
+      <title>
         Guy Steele - It's Time for a New Old Language
       </title>
       <link>
