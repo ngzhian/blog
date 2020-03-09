@@ -1,0 +1,226 @@
+---
+title: 64x2 integer multiplication
+date: 2020-03-09 18:13
+...
+
+We can multiply two 64-bit numbers using 32-bit multiplication operations (or in general 2n-bit numbers using n-bit multiplication), by breaking the number into 32-bit halves, then performing multiplication on each half.
+
+```
+x = a*2^32 + b
+y = c*2^32 + d
+x * y = (a*2^32 + b) * (c*2^32 + d)
+      = (a*2^32 * c*2^32) + (a*2^32 * d) + (c*2^32 * b) + (bd)
+      = 2^64*ac + 2^32*ad + 2^32*bc + bd
+      = 2^32*(ad + bc) + bd (result is 64-bit, ignore 2^64*ac)
+```
+
+To perform a 2x64 multiplication, we can apply this algorithm once to each lane. The problem is the number of operations, just counting arithmetic (ignore moves), we will need ~7 for each lane, totaling 14. There is a better way, using SIMD instructions.
+
+To summarize our goal, given two 64x2 integers (in SIMD 128-bit registers), we would like to perform 64-bit multiplication, lane-wise.
+
+```
+x = [a*2^32 + b | c*2^32 + d]
+y = [e*2^32 + f | g*2^32 + h]
+x * y = [2^32*(af + be) + bf | 2^32*(ch + dg) + dh]
+```
+
+In this representation, the vertical bar, `|`, is a separation between two 64-bit lanes. Later we will use a comma, `,`, as the separator between 32-bit halves of a 64-bit number, like so `[a, b | c, d]`.
+
+Below we walk through implementations on x64, ARM64, and ARM (deep dive). The inputs, `x` and `y` in the example above, are in the registers named `left` and `right`. Temporaries are prefixed with `tmp`, and `dst` is the output register.
+
+## x64
+
+On x64, we can do a [pretty okay job](https://source.chromium.org/chromium/_/chromium/v8/v8.git/+/d4ed59c4ed609eacc9062bd22ebca409ef7c6d1c:src/compiler/backend/x64/code-generator-x64.cc;l=2687?originalUrl=https:%2F%2Fcodesearch.chromium.org%2F), using 8 instructions (excluding 2 moves). This algorithm uses 2 temporaries.
+
+```
+__ Movaps(tmp1, left);   // tmp1 = left =  [a, b | c, d]
+__ Movaps(tmp2, right);  // tmp2 = right = [e, f | g, h]
+
+// Multiply high dword of each qword of left with right.
+__ Psrlq(tmp1, 32);      // tmp1 = [0, a | 0, c]
+__ Pmuludq(tmp1, right); // tmp1 = [af | ch]
+
+// Multiply high dword of each qword of right with left.
+__ Psrlq(tmp2, 32);      // tmp2 = [0, e| 0, g]
+__ Pmuludq(tmp2, left);  // tmp2 = [be | dg]
+
+__ Paddq(tmp2, tmp1);    // tmp2 = [be + af | dg + ch]
+__ Psllq(tmp2, 32);      // tmp2 = [be + af, 0, dg + ch, 0]
+
+__ Pmuludq(left, right); // left = [bf | dh]
+__ Paddq(left, tmp2);
+// dst = left = [(be+af)*2^32 + bf | (dg+ch)*2^32) + dh]
+```
+
+## Arm64
+
+On ARM64, we do an [even better job](https://chromium-review.googlesource.com/c/v8/v8/+/1781696), with just 7 (total) instructions. I won't repeat the algorithm here, the comment is awesome and does a good job explaning things.
+
+## ARM
+
+The final solution uses 6 instructions (excluding 2 moves). I want to discuss how I arrived at this solution. (I should have copied the ARM64 one, but I forgot about it, and came up with my own way of doing this.)
+
+Below, we will walk through 4 versions of the algorithm, starting with the naive, lane wise 32-bit multiplication, and finally arriving at the one that is merged. I like to follow the "make it work, make it right, make it fast" rule ([Kent Beck](https://wiki.c2.com/?MakeItWorkMakeItRightMakeItFast)), which is why there are multiple versions.
+
+First version (16 instructions), which multiply each lane separately, uses 4 temporaries. `vmull` on ARM takes 2 D registers (64-bit) and multiplies corresponding 32-bit numbers in each register, and keeps the 64-bit result. Compared to `pmuludq` on x64, which takes 2 XMM registers. So there's more work to be done on ARM.
+
+```
+vmull   (a, b)        (e, f)        = [ae | bf]
+pmuludq [a, b | c, d] [e, f | g, h] = [bf | dh]
+```
+
+### Version 1
+
+```
+// Multiply high of left with right, keep in tmp1.
+// left = [a, b | c, d]
+// right = [e, f | g, h]
+// tmp1 = [0, a | 0, c]
+__ vshr(NeonU64, tmp1, left, 32);
+// tmp2 = [ 0 | af ]
+__ vmull(NeonU32, tmp2, tmp1.high(), right.high());
+// td = af
+__ vmov(td, tmp2.low());
+// tmp1 = [0 | ch]
+__ vmull(NeonU32, tmp1, tmp1.low(), right.low());
+// tmp1 = [af | ch]
+__ vmov(tmp1.high(), td);
+
+// Multiply high of right with left, keep in tmp2
+__ vshr(NeonU64, tmp2, right, 32);
+__ vmull(NeonU32, tmp3, tmp2.high(), left.high());
+__ vmov(td, tmp3.low());
+__ vmull(NeonU32, tmp2, tmp2.low(), left.low());
+// tmp2 = [be, dg]
+__ vmov(tmp2.high(), td);
+// dst = [af + be | ch + dg]
+__ vadd(Neon64, dst, tmp1, tmp2);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+// tmp1 = [cg | dh]
+__ vmull(NeonU32, tmp1, left.low(), right.low());
+// tmp2 = [ae | bf]
+__ vmull(NeonU32, tmp2, left.high(), right.high());
+// tmp1 = [bf | dh]
+__ vmov(tmp1.high(), tmp2.low());
+// dst = [(af + be)*2^32 + bf | (ch + dg)*2^32 + dh]
+__ vadd(Neon64, dst, dst, tmp1);
+```
+
+### Version 2 (`vuzp`)
+
+A lot of moving and shifting high and lows around, maybe there is a better way to do that. We can try using `vunzp`, which [unzips two vector registers](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473c/CJAIJHFC.html).
+
+```
+// left = [a, b | c, d]
+// right = [e, f | g, h]
+// tmp1 = [0, a | 0, c]
+__ vshr(NeonU64, tmp1, left, 32);
+// tmp2 = [e, f | g, h]
+__ vmov(tmp2, right);
+// tmp1 = [f, h| a ,c], tmp2 = [e, g | 0, 0]
+__ vuzp(Neon32, tmp1, tmp2);
+// tmp1 = [ af | ch]
+__ vmull(NeonU32, tmp1, tmp1.low(), tmp1.high());
+
+// tmp2 = [0, e | 0, g]]
+__ vshr(NeonU64, tmp2, right, 32);
+// tmp3 =  [a, b | c, d]
+__ vmov(tmp3, left);
+// tmp2 = [b, d | e, g], tmp3 = [a, c | 0, 0]
+__ vuzp(Neon32, tmp2, tmp3);
+// tmp2 = [be | dg]
+__ vmull(NeonU32, tmp2, tmp2.low(), tmp2.high());
+
+// now add those up
+// tmp1 = [af + be | ch + dg]
+__ vadd(Neon64, dst, tmp1, tmp2);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+// same as version 1
+__ vmull(NeonU32, tmp1, left.low(), right.low());
+__ vmull(NeonU32, tmp2, left.high(), right.high());
+__ vmov(tmp1.high(), tmp2.low());
+__ vadd(Neon64, dst, dst, tmp1);
+```
+
+### Version 3 (`vtrn`)
+
+We can use a more efficient instruction, vtrn, instead of shifting, moving, then unzipping:
+
+```
+Third version (vtrn)
+// left = [a, b | c, d]
+// right = [e, f | g, h]
+// tmp1 = [a, b | c, d]
+__ vmov(tmp1, left);
+// tmp1 = [a, c | b, d]
+__ vtrn(Neon32, tmp1.low(), tmp1.high());
+// tmp2 = [e, f | g, h]
+__ vmov(tmp2, right);
+// tmp2 = [e, g | f, h]
+__ vtrn(Neon32, tmp2.low(), tmp2.high());
+// dst = [be | dg]
+__ vmull(NeonU32, dst, tmp1.low(), tmp2.high());
+// tmp2 = [af, | ch]
+__ vmull(NeonU32, tmp2, tmp1.high(), tmp2.low());
+// dst = [af + be | dg + ch]
+__ vadd(Neon64, dst, dst, tmp2);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+
+// same as version 2
+__ vmull(NeonU32, tmp1, left.low(), right.low());
+__ vmull(NeonU32, tmp2, left.high(), right.high());
+__ vmov(tmp1.high(), tmp2.low());
+__ vadd(Neon64, dst, dst, tmp1);
+```
+
+### Version 4
+
+For the next version, we reuse tmp1 and tmp2, since we have already unzipped those 32-bit numbers into the correct position for vmull to get `bf` and `dh`
+```
+__ vmov(tmp1, left);
+// tmp1 = [a, c | b, d]
+__ vtrn(Neon32, tmp1.low(), tmp1.high());
+
+__ vmov(tmp2, right);
+// tmp2 = [e, g | f, h]
+__ vtrn(Neon32, tmp2.low(), tmp2.high());
+// dst = [be | dg]
+__ vmull(NeonU32, dst, tmp1.low(), tmp2.high());
+// tmp3 = [af, | ch]
+__ vmull(NeonU32, tmp3, tmp1.high(), tmp2.low());
+
+__ vadd(Neon64, dst, dst, tmp3);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+
+// tmp3 = [bf | dh]
+__ vmull(NeonU32, tmp3, tmp1.low(), tmp2.low());
+// dst = [(af + be)*2^32 + bf | (ch + dg)*2^32 + dh]
+__ vadd(Neon64, dst, dst, tmp3);
+```
+
+### Version 5 (`vmlal`)
+
+For the final version, we make use of a multiply accumulate instruction, `vmlal`, to remove each case of `vmull+vadd`.
+```
+__ vmov(tmp1, left);
+// tmp1 = [a, c | b, d]
+__ vtrn(Neon32, tmp1.low(), tmp1.high());
+
+__ vmov(tmp2, right);
+// tmp2 = [e, g | f, h]
+__ vtrn(Neon32, tmp2.low(), tmp2.high());
+
+// dst = [be | dg]
+__ vmull(NeonU32, dst, tmp1.low(), tmp2.high());
+// dst = [af + be | ch + dg]
+__ vmlal(NeonU32, dst, tmp1.high(), tmp2.low());
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+// dst = [(af + be)*2^32 + bf | (ch + dg)*2^32 + dh]
+__ vmlal(NeonU32, dst, tmp1.low(), tmp2.low());
+```
+

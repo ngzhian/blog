@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>64x2 integer multiplication</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">64x2 integer multiplication</h1>
+<h3 class="date">2020-03-09 18:13</h3>
+</div>
+<p>We can multiply two 64-bit numbers using 32-bit multiplication operations (or in general 2n-bit numbers using n-bit multiplication), by breaking the number into 32-bit halves, then performing multiplication on each half.</p>
+<pre><code>x = a*2^32 + b
+y = c*2^32 + d
+x * y = (a*2^32 + b) * (c*2^32 + d)
+      = (a*2^32 * c*2^32) + (a*2^32 * d) + (c*2^32 * b) + (bd)
+      = 2^64*ac + 2^32*ad + 2^32*bc + bd
+      = 2^32*(ad + bc) + bd (result is 64-bit, ignore 2^64*ac)</code></pre>
+<p>To perform a 2x64 multiplication, we can apply this algorithm once to each lane. The problem is the number of operations, just counting arithmetic (ignore moves), we will need ~7 for each lane, totaling 14. There is a better way, using SIMD instructions.</p>
+<p>To summarize our goal, given two 64x2 integers (in SIMD 128-bit registers), we would like to perform 64-bit multiplication, lane-wise.</p>
+<pre><code>x = [a*2^32 + b | c*2^32 + d]
+y = [e*2^32 + f | g*2^32 + h]
+x * y = [2^32*(af + be) + bf | 2^32*(ch + dg) + dh]</code></pre>
+<p>In this representation, the vertical bar, <code>|</code>, is a separation between two 64-bit lanes. Later we will use a comma, <code>,</code>, as the separator between 32-bit halves of a 64-bit number, like so <code>[a, b | c, d]</code>.</p>
+<p>Below we walk through implementations on x64, ARM64, and ARM (deep dive). The inputs, <code>x</code> and <code>y</code> in the example above, are in the registers named <code>left</code> and <code>right</code>. Temporaries are prefixed with <code>tmp</code>, and <code>dst</code> is the output register.</p>
+<h2 id="x64">x64</h2>
+<p>On x64, we can do a <a href="https://source.chromium.org/chromium/_/chromium/v8/v8.git/+/d4ed59c4ed609eacc9062bd22ebca409ef7c6d1c:src/compiler/backend/x64/code-generator-x64.cc;l=2687?originalUrl=https:%2F%2Fcodesearch.chromium.org%2F">pretty okay job</a>, using 8 instructions (excluding 2 moves). This algorithm uses 2 temporaries.</p>
+<pre><code>__ Movaps(tmp1, left);   // tmp1 = left =  [a, b | c, d]
+__ Movaps(tmp2, right);  // tmp2 = right = [e, f | g, h]
+
+// Multiply high dword of each qword of left with right.
+__ Psrlq(tmp1, 32);      // tmp1 = [0, a | 0, c]
+__ Pmuludq(tmp1, right); // tmp1 = [af | ch]
+
+// Multiply high dword of each qword of right with left.
+__ Psrlq(tmp2, 32);      // tmp2 = [0, e| 0, g]
+__ Pmuludq(tmp2, left);  // tmp2 = [be | dg]
+
+__ Paddq(tmp2, tmp1);    // tmp2 = [be + af | dg + ch]
+__ Psllq(tmp2, 32);      // tmp2 = [be + af, 0, dg + ch, 0]
+
+__ Pmuludq(left, right); // left = [bf | dh]
+__ Paddq(left, tmp2);
+// dst = left = [(be+af)*2^32 + bf | (dg+ch)*2^32) + dh]</code></pre>
+<h2 id="arm64">Arm64</h2>
+<p>On ARM64, we do an <a href="https://chromium-review.googlesource.com/c/v8/v8/+/1781696">even better job</a>, with just 7 (total) instructions. I won’t repeat the algorithm here, the comment is awesome and does a good job explaning things.</p>
+<h2 id="arm">ARM</h2>
+<p>The final solution uses 6 instructions (excluding 2 moves). I want to discuss how I arrived at this solution. (I should have copied the ARM64 one, but I forgot about it, and came up with my own way of doing this.)</p>
+<p>Below, we will walk through 4 versions of the algorithm, starting with the naive, lane wise 32-bit multiplication, and finally arriving at the one that is merged. I like to follow the “make it work, make it right, make it fast” rule (<a href="https://wiki.c2.com/?MakeItWorkMakeItRightMakeItFast">Kent Beck</a>), which is why there are multiple versions.</p>
+<p>First version (16 instructions), which multiply each lane separately, uses 4 temporaries. <code>vmull</code> on ARM takes 2 D registers (64-bit) and multiplies corresponding 32-bit numbers in each register, and keeps the 64-bit result. Compared to <code>pmuludq</code> on x64, which takes 2 XMM registers. So there’s more work to be done on ARM.</p>
+<pre><code>vmull   (a, b)        (e, f)        = [ae | bf]
+pmuludq [a, b | c, d] [e, f | g, h] = [bf | dh]</code></pre>
+<h3 id="version-1">Version 1</h3>
+<pre><code>// Multiply high of left with right, keep in tmp1.
+// left = [a, b | c, d]
+// right = [e, f | g, h]
+// tmp1 = [0, a | 0, c]
+__ vshr(NeonU64, tmp1, left, 32);
+// tmp2 = [ 0 | af ]
+__ vmull(NeonU32, tmp2, tmp1.high(), right.high());
+// td = af
+__ vmov(td, tmp2.low());
+// tmp1 = [0 | ch]
+__ vmull(NeonU32, tmp1, tmp1.low(), right.low());
+// tmp1 = [af | ch]
+__ vmov(tmp1.high(), td);
+
+// Multiply high of right with left, keep in tmp2
+__ vshr(NeonU64, tmp2, right, 32);
+__ vmull(NeonU32, tmp3, tmp2.high(), left.high());
+__ vmov(td, tmp3.low());
+__ vmull(NeonU32, tmp2, tmp2.low(), left.low());
+// tmp2 = [be, dg]
+__ vmov(tmp2.high(), td);
+// dst = [af + be | ch + dg]
+__ vadd(Neon64, dst, tmp1, tmp2);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+// tmp1 = [cg | dh]
+__ vmull(NeonU32, tmp1, left.low(), right.low());
+// tmp2 = [ae | bf]
+__ vmull(NeonU32, tmp2, left.high(), right.high());
+// tmp1 = [bf | dh]
+__ vmov(tmp1.high(), tmp2.low());
+// dst = [(af + be)*2^32 + bf | (ch + dg)*2^32 + dh]
+__ vadd(Neon64, dst, dst, tmp1);</code></pre>
+<h3 id="version-2-vuzp">Version 2 (<code>vuzp</code>)</h3>
+<p>A lot of moving and shifting high and lows around, maybe there is a better way to do that. We can try using <code>vunzp</code>, which <a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0473c/CJAIJHFC.html">unzips two vector registers</a>.</p>
+<pre><code>// left = [a, b | c, d]
+// right = [e, f | g, h]
+// tmp1 = [0, a | 0, c]
+__ vshr(NeonU64, tmp1, left, 32);
+// tmp2 = [e, f | g, h]
+__ vmov(tmp2, right);
+// tmp1 = [f, h| a ,c], tmp2 = [e, g | 0, 0]
+__ vuzp(Neon32, tmp1, tmp2);
+// tmp1 = [ af | ch]
+__ vmull(NeonU32, tmp1, tmp1.low(), tmp1.high());
+
+// tmp2 = [0, e | 0, g]]
+__ vshr(NeonU64, tmp2, right, 32);
+// tmp3 =  [a, b | c, d]
+__ vmov(tmp3, left);
+// tmp2 = [b, d | e, g], tmp3 = [a, c | 0, 0]
+__ vuzp(Neon32, tmp2, tmp3);
+// tmp2 = [be | dg]
+__ vmull(NeonU32, tmp2, tmp2.low(), tmp2.high());
+
+// now add those up
+// tmp1 = [af + be | ch + dg]
+__ vadd(Neon64, dst, tmp1, tmp2);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+// same as version 1
+__ vmull(NeonU32, tmp1, left.low(), right.low());
+__ vmull(NeonU32, tmp2, left.high(), right.high());
+__ vmov(tmp1.high(), tmp2.low());
+__ vadd(Neon64, dst, dst, tmp1);</code></pre>
+<h3 id="version-3-vtrn">Version 3 (<code>vtrn</code>)</h3>
+<p>We can use a more efficient instruction, vtrn, instead of shifting, moving, then unzipping:</p>
+<pre><code>Third version (vtrn)
+// left = [a, b | c, d]
+// right = [e, f | g, h]
+// tmp1 = [a, b | c, d]
+__ vmov(tmp1, left);
+// tmp1 = [a, c | b, d]
+__ vtrn(Neon32, tmp1.low(), tmp1.high());
+// tmp2 = [e, f | g, h]
+__ vmov(tmp2, right);
+// tmp2 = [e, g | f, h]
+__ vtrn(Neon32, tmp2.low(), tmp2.high());
+// dst = [be | dg]
+__ vmull(NeonU32, dst, tmp1.low(), tmp2.high());
+// tmp2 = [af, | ch]
+__ vmull(NeonU32, tmp2, tmp1.high(), tmp2.low());
+// dst = [af + be | dg + ch]
+__ vadd(Neon64, dst, dst, tmp2);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+
+// same as version 2
+__ vmull(NeonU32, tmp1, left.low(), right.low());
+__ vmull(NeonU32, tmp2, left.high(), right.high());
+__ vmov(tmp1.high(), tmp2.low());
+__ vadd(Neon64, dst, dst, tmp1);</code></pre>
+<h3 id="version-4">Version 4</h3>
+<p>For the next version, we reuse tmp1 and tmp2, since we have already unzipped those 32-bit numbers into the correct position for vmull to get <code>bf</code> and <code>dh</code></p>
+<pre><code>__ vmov(tmp1, left);
+// tmp1 = [a, c | b, d]
+__ vtrn(Neon32, tmp1.low(), tmp1.high());
+
+__ vmov(tmp2, right);
+// tmp2 = [e, g | f, h]
+__ vtrn(Neon32, tmp2.low(), tmp2.high());
+// dst = [be | dg]
+__ vmull(NeonU32, dst, tmp1.low(), tmp2.high());
+// tmp3 = [af, | ch]
+__ vmull(NeonU32, tmp3, tmp1.high(), tmp2.low());
+
+__ vadd(Neon64, dst, dst, tmp3);
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+
+// tmp3 = [bf | dh]
+__ vmull(NeonU32, tmp3, tmp1.low(), tmp2.low());
+// dst = [(af + be)*2^32 + bf | (ch + dg)*2^32 + dh]
+__ vadd(Neon64, dst, dst, tmp3);</code></pre>
+<h3 id="version-5-vmlal">Version 5 (<code>vmlal</code>)</h3>
+<p>For the final version, we make use of a multiply accumulate instruction, <code>vmlal</code>, to remove each case of <code>vmull+vadd</code>.</p>
+<pre><code>__ vmov(tmp1, left);
+// tmp1 = [a, c | b, d]
+__ vtrn(Neon32, tmp1.low(), tmp1.high());
+
+__ vmov(tmp2, right);
+// tmp2 = [e, g | f, h]
+__ vtrn(Neon32, tmp2.low(), tmp2.high());
+
+// dst = [be | dg]
+__ vmull(NeonU32, dst, tmp1.low(), tmp2.high());
+// dst = [af + be | ch + dg]
+__ vmlal(NeonU32, dst, tmp1.high(), tmp2.low());
+// dst = [(af + be)*2^32 | (ch + dg)*2^32]
+__ vshl(NeonU64, dst, dst, 32);
+// dst = [(af + be)*2^32 + bf | (ch + dg)*2^32 + dh]
+__ vmlal(NeonU32, dst, tmp1.low(), tmp2.low());</code></pre>
+</section>
+</body>
+</html>
