@@ -12,6 +12,34 @@
     </description>
     <item>
       <title>
+        Vim keys
+      </title>
+      <link>
+        https://blog.ngzhian.com/vim-keys.html
+      </link>
+      <pubDate>
+        16 May 2020 21:00:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/vim-keys.html
+      </guid>
+    </item>
+    <item>
+      <title>
+        64x2 integer multiplication
+      </title>
+      <link>
+        https://blog.ngzhian.com/i64x2mul.html
+      </link>
+      <pubDate>
+        09 Mar 2020 18:13:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/i64x2mul.html
+      </guid>
+    </item>
+    <item>
+      <title>
         WebAssembly SIMD and endianness
       </title>
       <link>
