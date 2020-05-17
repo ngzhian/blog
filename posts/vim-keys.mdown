@@ -1,0 +1,97 @@
+---
+title: Vim keys
+date: 2020-05-16 21:00
+...
+
+I decided to check on my knowledge on what each key does in Vim, to find gaps in my knowledge and see if efficiency and proficiency can be improved.
+
+- `q`, record macro, takes a register name
+- `Q`, enter command (Ex) mode
+- `w`, move forward to start of next word
+- `W`, same as w, but uses a different match for word boundary
+- `e`, to end of word
+- `E`, same as e, but different boundary
+- `r`, replace current char, takes another letter
+- `R`, replace with overwrite
+- `t`, not sure what it does by itself, usually as part of another command, to indicate until, like dtw, delete until the letter w
+- `T`, no idea
+- `y`, copy (or yank)
+- `Y`, copy current line (to register ")
+- `u`, undo
+- `U`, no idea
+- `i`, enter insert mode before cursor
+- `I`, enter insert mode at the start of current line
+- `o`, start an empty new line after current cursor and enter insert mode
+- `O`, start an empty new line before current cursor and enter insert mode
+- `p`, paste (from register ")
+- `P`, paste before cursor
+- `[,` not sure what it does by itself, usually with another key
+- `{,` jump to previous paragraph (new line delimited)
+- `],` not sure
+- `},` jump to next paragraph (new line delimited)
+- `\,` no idea
+- `|,` no idea,
+- `a`, enter insert mode after cursor
+- `A`, enter insert mode at end of current line
+- `s`, delete char at cursor and enter insert mode
+- `S`, not sure
+- `d`, delete, takes a motion
+- `D`, delete till end of line
+- `f`, takes another letter, jump to next letter on current line
+- `F`, takes another letter, jump to previous letter on current line
+- `g`, does nothing by itself, takes a letter like g (start of document) or G, (end of document) and jumps there
+    - with u, make lowercase
+    - with U, make uppercase
+    - with g, go to first line
+- `G`, go to end of document
+- `h`, move cursor left
+- `H`, no idea
+- `j`, move cursor down
+- `J`, join line
+- `k`, move cursor up
+- `K`, look up current word in man pages
+- `l`, move cursor right
+- `L`, no idea
+- `;,` does nothing, mostly mapped to a leader
+- `:,` enter command
+- `',` takes a mark (usually letters, but there are special symbols), and jumps to it
+- `",` no idea
+- `z`, takes another letter, usually have to do with folding
+- `Z`, no idea
+- `x`, delete char under cursor
+- `X`, not sure
+- `c`, takes a motion key, changes till motion, a combination of `d` and `i`
+- `C`, changes till end of line
+- `v`, enter visual move
+- `V`, visually select current line
+- `b`, go back a word
+- `B`, not sure, probably back a word but with different word boundary
+- `n`, next match (after a search)
+- `N`, previous match (after a search)
+- `m`, takes a letter, bookmark current line
+- `M`, not sure
+- `,`, not sure what it does by default, this is my localleader
+- `<`, not sure what it does by itself, i use << for indent left
+- `.`, repeat last action
+- `>`, not sure what it does by itself, i use >> for indent right
+- `/`, search forward
+- `?`, search backward
+- `1` to 101, used as part of a command to specify repetition, like `d3w`, delete 3 words
+- `, not sure, something mark related
+- `~`, change case
+- `!`, not sure
+- `@`, takes a key, run macro
+- `#`, search backward for word under cursor
+- `$`, jump end of line 
+- `%`, jump to matching parens/brackets/brace
+- `^`, jump to start of line
+- `&`, not sure
+- `*`, search forward for word under cursor
+- `(`, not sure, probably like {
+- `)`, not sure, probably like }
+- `-`, not sure
+- `_`, not sure 
+- `=`, takes a motion, indents
+- `+`, not sure
+
+The next step is to figure out what those keys that I am unsure about actually do.

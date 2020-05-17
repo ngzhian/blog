@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Vim keys</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Vim keys</h1>
+<h3 class="date">2020-05-16 21:00</h3>
+</div>
+<p>I decided to check on my knowledge on what each key does in Vim, to find gaps in my knowledge and see if efficiency and proficiency can be improved.</p>
+<ul>
+<li><code>q</code>, record macro, takes a register name</li>
+<li><code>Q</code>, enter command (Ex) mode</li>
+<li><code>w</code>, move forward to start of next word</li>
+<li><code>W</code>, same as w, but uses a different match for word boundary</li>
+<li><code>e</code>, to end of word</li>
+<li><code>E</code>, same as e, but different boundary</li>
+<li><code>r</code>, replace current char, takes another letter</li>
+<li><code>R</code>, replace with overwrite</li>
+<li><code>t</code>, not sure what it does by itself, usually as part of another command, to indicate until, like dtw, delete until the letter w</li>
+<li><code>T</code>, no idea</li>
+<li><code>y</code>, copy (or yank)</li>
+<li><code>Y</code>, copy current line (to register “)</li>
+<li><code>u</code>, undo</li>
+<li><code>U</code>, no idea</li>
+<li><code>i</code>, enter insert mode before cursor</li>
+<li><code>I</code>, enter insert mode at the start of current line</li>
+<li><code>o</code>, start an empty new line after current cursor and enter insert mode</li>
+<li><code>O</code>, start an empty new line before current cursor and enter insert mode</li>
+<li><code>p</code>, paste (from register “)</li>
+<li><code>P</code>, paste before cursor</li>
+<li><code>[,</code> not sure what it does by itself, usually with another key</li>
+<li><code>{,</code> jump to previous paragraph (new line delimited)</li>
+<li><code>],</code> not sure</li>
+<li><code>},</code> jump to next paragraph (new line delimited)</li>
+<li><code>\,</code> no idea</li>
+<li><code>|,</code> no idea,</li>
+<li><code>a</code>, enter insert mode after cursor</li>
+<li><code>A</code>, enter insert mode at end of current line</li>
+<li><code>s</code>, delete char at cursor and enter insert mode</li>
+<li><code>S</code>, not sure</li>
+<li><code>d</code>, delete, takes a motion</li>
+<li><code>D</code>, delete till end of line</li>
+<li><code>f</code>, takes another letter, jump to next letter on current line</li>
+<li><code>F</code>, takes another letter, jump to previous letter on current line</li>
+<li><code>g</code>, does nothing by itself, takes a letter like g (start of document) or G, (end of document) and jumps there
+<ul>
+<li>with u, make lowercase</li>
+<li>with U, make uppercase</li>
+<li>with g, go to first line</li>
+</ul></li>
+<li><code>G</code>, go to end of document</li>
+<li><code>h</code>, move cursor left</li>
+<li><code>H</code>, no idea</li>
+<li><code>j</code>, move cursor down</li>
+<li><code>J</code>, join line</li>
+<li><code>k</code>, move cursor up</li>
+<li><code>K</code>, look up current word in man pages</li>
+<li><code>l</code>, move cursor right</li>
+<li><code>L</code>, no idea</li>
+<li><code>;,</code> does nothing, mostly mapped to a leader</li>
+<li><code>:,</code> enter command</li>
+<li><code>',</code> takes a mark (usually letters, but there are special symbols), and jumps to it</li>
+<li><code>&quot;,</code> no idea</li>
+<li><code>z</code>, takes another letter, usually have to do with folding</li>
+<li><code>Z</code>, no idea</li>
+<li><code>x</code>, delete char under cursor</li>
+<li><code>X</code>, not sure</li>
+<li><code>c</code>, takes a motion key, changes till motion, a combination of <code>d</code> and <code>i</code></li>
+<li><code>C</code>, changes till end of line</li>
+<li><code>v</code>, enter visual move</li>
+<li><code>V</code>, visually select current line</li>
+<li><code>b</code>, go back a word</li>
+<li><code>B</code>, not sure, probably back a word but with different word boundary</li>
+<li><code>n</code>, next match (after a search)</li>
+<li><code>N</code>, previous match (after a search)</li>
+<li><code>m</code>, takes a letter, bookmark current line</li>
+<li><code>M</code>, not sure</li>
+<li><code>,</code>, not sure what it does by default, this is my localleader</li>
+<li><code>&lt;</code>, not sure what it does by itself, i use &lt;&lt; for indent left</li>
+<li><code>.</code>, repeat last action</li>
+<li><code>&gt;</code>, not sure what it does by itself, i use &gt;&gt; for indent right</li>
+<li><code>/</code>, search forward</li>
+<li><code>?</code>, search backward</li>
+<li><code>1</code> to 101, used as part of a command to specify repetition, like <code>d3w</code>, delete 3 words</li>
+<li>`, not sure, something mark related</li>
+<li><code>~</code>, change case</li>
+<li><code>!</code>, not sure</li>
+<li><code>@</code>, takes a key, run macro</li>
+<li><code>#</code>, search backward for word under cursor</li>
+<li><code>$</code>, jump end of line</li>
+<li><code>%</code>, jump to matching parens/brackets/brace</li>
+<li><code>^</code>, jump to start of line</li>
+<li><code>&amp;</code>, not sure</li>
+<li><code>*</code>, search forward for word under cursor</li>
+<li><code>(</code>, not sure, probably like {</li>
+<li><code>)</code>, not sure, probably like }</li>
+<li><code>-</code>, not sure</li>
+<li><code>_</code>, not sure</li>
+<li><code>=</code>, takes a motion, indents</li>
+<li><code>+</code>, not sure</li>
+</ul>
+<p>The next step is to figure out what those keys that I am unsure about actually do.</p>
+</section>
+</body>
+</html>
