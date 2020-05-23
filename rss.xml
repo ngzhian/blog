@@ -12,6 +12,20 @@
     </description>
     <item>
       <title>
+        IEEE 754 summary
+      </title>
+      <link>
+        https://blog.ngzhian.com/ieee754-summary.html
+      </link>
+      <pubDate>
+        23 May 2020 12:30:00 +0000
+      </pubDate>
+      <guid isPermaLink="true">
+        https://blog.ngzhian.com/ieee754-summary.html
+      </guid>
+    </item>
+    <item>
+      <title>
         Vim keys
       </title>
       <link>

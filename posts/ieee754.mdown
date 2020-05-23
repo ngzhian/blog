@@ -1,0 +1,113 @@
+---
+title: IEEE 754 summary
+date: 2020-05-23 12:30
+...
+
+[IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) is the standard that defines the float and doubles we use in most
+programming languages. I had to deal with these quite a bit during my work, so
+I wanted make down a quick summary of what it specifies.
+
+I mostly deal with 32-bit floating-point, aka floats, and 64-bit
+floating-point, aka doubles.
+
+Both are made up of 3 components:
+
+- sign (1 bit)
+- exponent (8 or 11 bits)
+- significand (23 or 53 bits)
+
+There are broadly 3 categories of floating-point:
+
+- finite numbers, including +0.0 and -0.0
+- +infinity, -infinity
+- NaNs
+
+Infinities have all bits in the exponent set and significand 0, i.e. there are
+only 2 possible bit patterns for infinities:
+
+- +infinity == `0x7f80 0000`
+- -infinity == `0xff80 0000`
+
+NaNs have all bits in the exponent set and significand non-zero, i.e. there are
+2^24 - 1 or 2^54 - 1 (sign + significand - infinities) possible bit patterns.
+
+For example:
+
+
+NaNs:
+
+- `0x7fc0 0001`
+- `0x7f80 0001`
+- `0xffc0 0001`
+- `0xff80 0001`
+- etc.
+
+For some architectures, the NaNs are canonicalized.  For example, ARM uses the
+[default
+NaN](https://developer.arm.com/docs/ddi0290/latest/vfp-programmers-model/compliance-with-the-ieee-754-standard/ieee-754-standard-implementation-choices#Chdbbbhc)
+of [`0x7fc0 0000`](https://float.exposed/0x7fc00000).
+
+For many operations, the behavior depends on the categories:
+
+- -0.0 and +0.0 are not distinguished by comparisons
+- +infinity is larger than every finite number, and -infinity
+- -infinity is smaller than every finite number, and +infinity
+- NaNs compare unordered with everything
+
+This list should give a reasonable understanding of how arithmetic and
+comparison operations behave when given different floating-point operands.
+
+## Min/max
+
+This is where it gets a bit tricky. Different architectures implement this
+slightly differently.
+
+The [minps](https://www.felixcloutier.com/x86/minps) on x86 systems does
+`minps(NaN,0.0) = 0.0`.
+
+Whereas on ARM, the
+[vmin](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489c/CIHDEEBE.html)
+does `vmin(NaN, 0.0) = NaN`
+
+Similarly for zeroes,
+
+- `maxps(+0.0, -0.0) = -0.0`, but
+- `vmax(+0.0, -0.0) = +0.0`.
+
+This difference across platforms is one reason why `f32x4.min` and `f64x2.min`
+has such [asymmetric codegen
+counts](https://github.com/zeux/wasm-simd/blob/master/Instructions.md).
+
+What does Cpp do in this case? We refer to the implementation of
+[`std::min`](https://en.cppreference.com/w/cpp/algorithm/min).
+
+```
+template<class T>
+const T& min(const T& a, const T& b)
+{
+        return (b < a) ? b : a;
+}
+```
+
+`std::min(NaN, 0.0) = NaN`, since `b < a == false` as NaN compares unordered,
+not less than.
+
+And this is what a [recent
+proposal](https://github.com/WebAssembly/simd/pull/122) is introducing to
+WebAssembly SIMD.
+
+## Rounding
+
+I think of rounding in terms of the C
+[functions](https://en.cppreference.com/w/cpp/numeric/math): `ceil`, `floor`,
+`trunc`, `rint`, `round`. They are referred to differently in IEEE 754.
+
+- Round towards +infinity == `ceil`
+- Round towards -infinity == `floor`
+- Round towards zero == `truncate`
+- Round to nearest, ties to even == `rint` or `nearbyint`
+- Round to nearest, ties away from zero == `round`
+
+## Links
+
+- [Visualization tool used in links on this page](https://float.exposed/)

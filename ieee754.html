@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>IEEE 754 summary</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">IEEE 754 summary</h1>
+<h3 class="date">2020-05-23 12:15</h3>
+</div>
+<p><a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</a> is the standard that defines the float and doubles we use in most programming languages. I had to deal with these quite a bit during my work, so I wanted make down a quick summary of what it specifies.</p>
+<p>I mostly deal with 32-bit floating-point, aka floats, and 64-bit floating-point, aka doubles.</p>
+<p>Both are made up of 3 components:</p>
+<ul>
+<li>sign (1 bit)</li>
+<li>exponent (8 or 11 bits)</li>
+<li>significand (23 or 53 bits)</li>
+</ul>
+<p>There are broadly 3 categories of floating-point:</p>
+<ul>
+<li>finite numbers, including +0.0 and -0.0</li>
+<li>+infinity, -infinity</li>
+<li>NaNs</li>
+</ul>
+<p>Infinities have all bits in the exponent set and significand 0, i.e. there are only 2 possible bit patterns for infinities:</p>
+<ul>
+<li>+infinity == <code>0x7f80 0000</code></li>
+<li>-infinity == <code>0xff80 0000</code></li>
+</ul>
+<p>NaNs have all bits in the exponent set and significand non-zero, i.e. there are 2^24 - 1 or 2^54 - 1 (sign + significand - infinities) possible bit patterns.</p>
+<p>For example:</p>
+<p>NaNs:</p>
+<ul>
+<li><code>0x7fc0 0001</code></li>
+<li><code>0x7f80 0001</code></li>
+<li><code>0xffc0 0001</code></li>
+<li><code>0xff80 0001</code></li>
+<li>etc.</li>
+</ul>
+<p>For some architectures, the NaNs are canonicalized. For example, ARM uses the <a href="https://developer.arm.com/docs/ddi0290/latest/vfp-programmers-model/compliance-with-the-ieee-754-standard/ieee-754-standard-implementation-choices#Chdbbbhc">default NaN</a> of <a href="https://float.exposed/0x7fc00000"><code>0x7fc0 0000</code></a>.</p>
+<p>For many operations, the behavior depends on the categories:</p>
+<ul>
+<li>-0.0 and +0.0 are not distinguished by comparisons</li>
+<li>+infinity is larger than every finite number, and -infinity</li>
+<li>-infinity is smaller than every finite number, and +infinity</li>
+<li>NaNs compare unordered with everything</li>
+</ul>
+<p>This list should give a reasonable understanding of how arithmetic and comparison operations behave when given different floating-point operands.</p>
+<h2 id="minmax">Min/max</h2>
+<p>This is where it gets a bit tricky. Different architectures implement this slightly differently.</p>
+<p>The <a href="https://www.felixcloutier.com/x86/minps">minps</a> on x86 systems does <code>minps(NaN,0.0) = 0.0</code>.</p>
+<p>Whereas on ARM, the <a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489c/CIHDEEBE.html">vmin</a> does <code>vmin(NaN, 0.0) = NaN</code></p>
+<p>Similarly for zeroes,</p>
+<ul>
+<li><code>maxps(+0.0, -0.0) = -0.0</code>, but</li>
+<li><code>vmax(+0.0, -0.0) = +0.0</code>.</li>
+</ul>
+<p>This difference across platforms is one reason why <code>f32x4.min</code> and <code>f64x2.min</code> has such <a href="https://github.com/zeux/wasm-simd/blob/master/Instructions.md">asymmetric codegen counts</a>.</p>
+<p>What does Cpp do in this case? We refer to the implementation of <a href="https://en.cppreference.com/w/cpp/algorithm/min"><code>std::min</code></a>.</p>
+<pre><code>template&lt;class T&gt;
+const T&amp; min(const T&amp; a, const T&amp; b)
+{
+        return (b &lt; a) ? b : a;
+}</code></pre>
+<p><code>std::min(NaN, 0.0) = NaN</code>, since <code>b &lt; a == false</code> as NaN compares unordered, not less than.</p>
+<p>And this is what a <a href="https://github.com/WebAssembly/simd/pull/122">recent proposal</a> is introducing to WebAssembly SIMD.</p>
+<h2 id="rounding">Rounding</h2>
+<p>I think of rounding in terms of the C <a href="https://en.cppreference.com/w/cpp/numeric/math">functions</a>: <code>ceil</code>, <code>floor</code>, <code>trunc</code>, <code>rint</code>, <code>round</code>. They are referred to differently in IEEE 754.</p>
+<ul>
+<li>Round towards +infinity == <code>ceil</code></li>
+<li>Round towards -infinity == <code>floor</code></li>
+<li>Round towards zero == <code>truncate</code></li>
+<li>Round to nearest, ties to even == <code>rint</code> or <code>nearbyint</code></li>
+<li>Round to nearest, ties away from zero == <code>round</code></li>
+</ul>
+<h2 id="links">Links</h2>
+<ul>
+<li><a href="https://float.exposed/">Visualization tool used in links on this page</a></li>
+</ul>
+</section>
+</body>
+</html>
