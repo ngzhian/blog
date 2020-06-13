@@ -1,0 +1,376 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Porting PBRT to WebAssembly</title>
+  <style type="text/css">
+    body {
+        font-family: 'Pt Sans', 'Open Sans', sans-serif;
+        font-size: 20px;
+        line-height: 1.6;
+        background: #fcfcfc;
+        color: #333;
+    }
+
+    ul {
+        list-style-type: circle;
+    }
+
+    a {
+        color: #4A4A4A;
+    }
+
+    .entry-content a {
+        color: #9FBF2E;
+    }
+
+    blockquote {
+        border-left: 2px solid #eee;
+        padding-left: 1rem;
+        color: #666;
+    }
+
+    a:hover {
+        color: #7A7A7A;
+    }
+
+    /* link to home at the top of each post */
+    .home {
+        font-size: 0.8em;
+        color: #888;
+    }
+
+    .content {
+        padding: 30px;
+        max-width: 768px;
+        margin: auto auto;
+    }
+
+    #post-list td {
+        padding: 5px;
+    }
+
+    @media (max-width: 600px) {
+      #post-list tr td:nth-child(1)  {
+        display: none;
+      }
+    }
+
+    #post-list tr td:nth-child(1)  {
+      white-space: nowrap;
+    }
+
+    /* date published on index page */
+    .published, .date {
+        font-weight: normal;
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    pre {
+        border: solid 1px #d9d9d9;
+        border-radius: 5px;
+        background: #f0f0f0;
+        padding: 12px;
+        font-size: 18px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        overflow-x: auto;
+    }
+
+    footer {
+        margin: 80px 0 20px 0;
+        font-size: 14px;
+    }
+
+    code{
+        white-space: pre;
+    }
+
+    p code {
+        background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Porting PBRT to WebAssembly</h1>
+<h3 class="date">2020-06-13 13:00</h3>
+</div>
+<h1 id="porting-to-webassembly">Porting to WebAssembly</h1>
+<p>This is a log of steps to port <a href="https://github.com/mmp/pbrt-v3">pbrt</a> to Wasm.</p>
+<p>I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git submodules, which I will extract as diffs here, and also hacking in the CMakeLists.txt. <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<h2 id="clone-and-setup-env">Clone and setup env</h2>
+<p>Set up Emscripten using emsdk:</p>
+<pre><code>git clone https://github.com/emscripten-core/emsdk
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+source emsdk_env.sh</code></pre>
+<p>Clone pbrt:</p>
+<pre><code>git clone --recursive https://github.com/mmp/pbrt-v3/
+cd pbrt-v3</code></pre>
+<p>The rest of the commands will assume you are in <code>pbrt-v3/</code>.</p>
+<h2 id="emcmake-and-emmake">Emcmake and emmake</h2>
+<p>Emscripten provides <a href="https://emscripten.org/docs/compiling/Building-Projects.html">wrappers</a> around <code>cmake</code> and <code>make</code>, these will set the variables defining the C++ compiler to the right values so that we can target Wasm.</p>
+<pre><code># create a folder for build outputs
+mkdir wasm-build 
+cd wasm-build
+emcmake cmake ..
+emmake make -j</code></pre>
+<h2 id="pthreads">Pthreads</h2>
+<p>Here we hit our first error:</p>
+<pre><code>wasm-ld: error: &#39;atomics&#39; feature is used by CMakeFiles/eLut.dir/eLut.cpp.o, so --shared-memory must
+be used
+em++: error: &#39;/Users/ngzhian/src/emsdk/upstream/bin/wasm-ld -o
+/var/folders/1n/02brqmc95d51bdrmzz8hhmrc0000gn/T/emscripten_temp_j5v5tu4f/eLut.wasm
+CMakeFiles/eLut.dir/eLut.cpp.o -L/Users/ngzhian/src/emsdk/upstream/emscripten/system/local/lib
+-L/Users/ngzhian/src/emsdk/upstream/emscripten/system/lib
+-L/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libc.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libcompiler_rt.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libc-wasm.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libc++-noexcept.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libc++abi-noexcept.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libdlmalloc.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libpthread_stub.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libc_rt_wasm.a
+/Users/ngzhian/src/emsdk/upstream/emscripten/cache/wasm/libsockets.a -mllvm
+-combiner-global-alias-analysis=false -mllvm -enable-emscripten-sjlj -mllvm -disable-lsr
+--allow-undefined --import-memory --import-table --strip-debug --export main --export malloc
+--export free --export __data_end --export __wasm_call_ctors --export __errno_location -z
+stack-size=5242880 --initial-memory=16777216 --no-entry --max-memory=16777216 --global-base=1024&#39;
+failed (1)</code></pre>
+<p>This error tells us that <code>eLut</code> was using <a href="https://emscripten.org/docs/porting/pthreads.html">pthreads</a>, but we did not pass <code>-s USE_PTHREADS=1</code> when compiling and linking.</p>
+<p>The easiest way to fix this is to use <code>CMAKE_CXX_FLAGS</code>. For now we hack it inside of the check that the compiler is Clang, since Emscripten uses Clang. <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1a7fef9..bba4da2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -75,6 +75,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
+ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)
+   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)
+   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -Wno-deprecated-register&quot;)
++  SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -s USE_PTHREADS=1&quot;)
++  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)
+ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)
+   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</code></pre>
+<h2 id="sharedarraybuffer">SharedArrayBuffer</h2>
+<p>The second error we hit is</p>
+<pre><code>...
+requested a shared WebAssembly.Memory but the returned buffer is not a SharedArrayBuffer, indicating that while the browser has SharedArrayBuffer it does not have WebAssembly threads support - you may need to set a flag</code></pre>
+<p>Emscripten translates <code>pthreads</code> into use of <code>SharedArrayBuffer</code>. <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer"><code>SharedArrayBuffer</code></a> is a shared memory, and for security reasons, is not enabled by default.</p>
+<p>Here, <code>toFloat.cpp</code> is compiled to <code>toFloat.js</code>, and <code>toFloat.js</code> is ran using node in order to generate <code>toFloat.h</code>. <code>toFloat</code> uses pthreads to parallelize the generation of some constant values. So, in order to run it correctly, we need to pass the <code>--experimental-wasm-threads</code> flag to node.</p>
+<p>We know that <code>node</code> is found and decided by <a href="https://github.com/emscripten-core/emscripten/blob/master/cmake/Modules/Platform/Emscripten.cmake#L397"><code>Emscripten.cmake</code></a>, so we can set this variable ourselves. I couldn’t even find this variable in CMake 3.1.0 <a href="https://cmake.org/cmake/help/v3.1/manual/cmake-variables.7.html">docs</a>, so I’m quite surprised it even worked, and this is one reason why this project should upgrade the CMake version.</p>
+<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1a7fef9..b41c368 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,6 +4,8 @@
+ 
+ CMAKE_MINIMUM_REQUIRED ( VERSION 3.1.0 )
+ 
++SET(CMAKE_CROSSCOMPILING_EMULATOR &quot;${CMAKE_SOURCE_DIR}/node-wrapper&quot; CACHE STRING &quot;Path to the emulator for the target system.&quot; FORCE)
++
+ # For sanitizers
+ SET (CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_DIR}/cmake&quot; ${CMAKE_MODULE_PATH})</code></pre>
+<p><code>node-wrapper</code> literally wraps node, passing it the appropriate flag:</p>
+<pre><code>$ cat ../node-wrapper
+#!/bin/bash
+
+/path/to/emsdk/node/12.9.1_64bit/bin/node --experimental-wasm-threads &quot;$@&quot;</code></pre>
+<h2 id="hacking-submodules">Hacking submodules</h2>
+<p>The next error is quite cryptic:</p>
+<pre><code>/bin/sh: ./dwaLookups: No such file or directory</code></pre>
+<p>For this we need to dig into <a href="https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/OpenEXR/IlmImf/CMakeLists.txt#L33"><code>src/ext/openexr/OpenEXR/IlmImf/CMakeLists.txt</code></a>:</p>
+<pre><code>ADD_CUSTOM_COMMAND (
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+  DEPENDS dwaLookups
+)</code></pre>
+<p>Like <code>toFloat.js</code>, here an executable <code>dwaLookups.js</code> is generated, and ran using <a href="https://cmake.org/cmake/help/v3.17/prop_tgt/CROSSCOMPILING_EMULATOR.html#prop_tgt:CROSSCOMPILING_EMULATOR"><code>CMAKE_CROSSCOMPILING_EMULATOR</code></a>. However, I suspect that the way this custom command was defined broke something. Comparing it to <a href="https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/IlmBase/Half/CMakeLists.txt#L15"><code>toFloat</code></a>:</p>
+<pre><code>ADD_CUSTOM_COMMAND(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
+  COMMAND toFloat ARGS &gt; ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
+  DEPENDS toFloat
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )</code></pre>
+<p>See how it only uses <code>toFloat</code> instead of trying to construct a path? I tried to look at the upstream for a fix, but they don’t even do this way of generating the header files anymore (these header files are precomputed values), they <a href="https://github.com/AcademySoftwareFoundation/openexr/blob/master/OpenEXR/IlmImf/CMakeLists.txt">check it in</a> directly.</p>
+<p>So the fix is to change the <code>CMakeLists.txt</code>, and while we are here, also fix up the potential issue with <code>b44ExpLogTable</code>:</p>
+<pre><code>diff --git a/OpenEXR/IlmImf/CMakeLists.txt b/OpenEXR/IlmImf/CMakeLists.txt
+index 74ab6d5..9a50f53 100644
+--- a/OpenEXR/IlmImf/CMakeLists.txt
++++ b/OpenEXR/IlmImf/CMakeLists.txt
+@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES ( b44ExpLogTable
+
+ ADD_CUSTOM_COMMAND (
+   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
+-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/b44ExpLogTable &gt; ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
++  COMMAND b44ExpLogTable &gt; ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
+   DEPENDS b44ExpLogTable
+ )
+
+@@ -32,7 +32,7 @@ TARGET_LINK_LIBRARIES ( dwaLookups
+
+ ADD_CUSTOM_COMMAND (
+   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
++  COMMAND dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+   DEPENDS dwaLookups
+ )</code></pre>
+<p>I much prefer <code>dwaLookups.h</code> to be checked in, I think it’s a static file anyway, and it takes a long time for the generated <code>dwaLookups.js</code> to run. (Maybe a performance issue worth looking into, but probably not given upstream has checked in the header.)</p>
+<p>At this point or later if you rebuild, you see that <code>dwaLookups.h</code> take a really long time to complete. I suspect there is a deadlock somewhere, since generating <code>dwaLookups.h</code> uses pthreads, but the library wasn’t necessary written with Emscripten in mind. The quick fix is to make it single-threaded:</p>
+<pre><code>diff --git a/OpenEXR/IlmImf/dwaLookups.cpp b/OpenEXR/IlmImf/dwaLookups.cpp
+index 19ec831..cac958a 100644
+--- a/OpenEXR/IlmImf/dwaLookups.cpp
++++ b/OpenEXR/IlmImf/dwaLookups.cpp
+@@ -492,7 +492,7 @@ generateLutHeader()
+         }
+     }
+
+-    if (IlmThread::supportsThreads()) {
++    if (false &amp;&amp; IlmThread::supportsThreads()) {
+         std::vector&lt;LutHeaderWorker::Runner*&gt; runners;
+         for (size_t i=0; i&lt;workers.size(); ++i) {
+             runners.push_back( new LutHeaderWorker::Runner(*workers[i], (i==0)) );</code></pre>
+<p>It should now complete (but still takes a while).</p>
+<h2 id="glog">glog</h2>
+<p>The next error we have is:</p>
+<pre><code>/Users/ngzhian/src/pbrt-v3-wasm/src/ext/glog/src/raw_logging.cc:153:3: error: use of undeclared identifier &#39;syscall&#39;
+  safe_write(STDERR_FILENO, buffer, strlen(buffer));
+  ^
+/Users/ngzhian/src/pbrt-v3-wasm/src/ext/glog/src/raw_logging.cc:63:34: note: expanded from macro &#39;safe_write&#39;
+# define safe_write(fd, s, len)  syscall(SYS_write, fd, s, len)</code></pre>
+<p>Emscripten defines some syscalls, but not <a href="https://github.com/emscripten-core/emscripten/issues/6708">all</a>.</p>
+<p>I don’t understand what this code is doing, so the fix is to set <code>HAVE_SYSCALL_H</code> and <code>HAVE_SYS_SYSCALL_H</code> to false.</p>
+<pre><code>SET(HAVE_SYSCALL_H 0 CACHE INTERNAL &quot;Hack for glog&quot; FORCE)
+SET(HAVE_SYS_SYSCALL_H 0 CACHE INTERNAL &quot;Hack for glog&quot; FORCE)</code></pre>
+<h2 id="undefined-symbols">undefined symbols</h2>
+<p>The next error is has to do with undefined symbol, <code>popen</code>:</p>
+<pre><code>error: undefined symbol: popen (referenced by top-level compiled C/C++ code)
+warning: Link with `-s LLD_REPORT_UNDEFINED` to get more information on undefined symbols
+warning: To disable errors for undefined symbols use `-s ERROR_ON_UNDEFINED_SYMBOLS=0`
+warning: _popen may need to be added to EXPORTED_FUNCTIONS if it arrives from a system library
+Error: Aborting compilation due to previous errors
+em++: error: &#39;/Users/ngzhian/src/emsdk/node/12.9.1_64bit/bin/node /Users/ngzhian/src/emsdk/upstream/emscripten/src/compiler.js /var/folders/1n/02brqmc95d51bdrmzz8hhmrc0000gn/T/tmpvw86fm__.txt&#39; failed (1)</code></pre>
+<p>It tells us that we can disable this error, so let’s try it with:</p>
+<pre><code>SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)</code></pre>
+<h2 id="inline-data-files">Inline data files</h2>
+<p>With all these changes, the compilation succeeds. We can try running <code>pbrt.js</code> with node, but nothing really happens, because we need to pass it an input file.</p>
+<pre><code>$ node --experimental-wasm-threads pbrt.js &lt; ../scenes/killeroo-simple.pbrt
+&lt;stdin&gt;:45:37: Error: geometry/killeroo.pbrt: No such file or directory
+&lt;stdin&gt;:49:37: Error: geometry/killeroo.pbrt: No such file or directory
+...</code></pre>
+<p>The input file <code>killeroo-simple.pbrt</code> uses an <code>include</code> statement to include a geometery file (this a DSL specific to pbrt). There are two paths we can do there:</p>
+<ol type="1">
+<li><a href="https://emscripten.org/docs/porting/files/packaging_files.html#packaging-files">preload/embed</a> the files using Emscripten, or</li>
+<li>inline <code>geometry/killeroo.pbrt</code> - literally copy paste the contents</li>
+</ol>
+<p>The second option seeemed easier so I just did that.</p>
+<h2 id="oom">OOM</h2>
+<p>After this, we get OOM messages. It helpfully suggests us to rebuild with <code>-s ASSERTIONS=1</code>.</p>
+<p>In general, building with this flag is useful, it emits warnings and suggests fixes. In this case, I know what the problem is: the program uses malloc to allocate memory for the large amounts of data structures required for rendering, and at some point we run out of memory. When running on the web, you don’t have access to all of the memory the machine has, there is a cap of 2 or 4 Gb. Emscripten sets the limit to even lower, 256 Wasm pages (64KB) or 16 Mb, so programs hit OOM even earlier. We can compile with the ability to dynamically ask for more memory, or we can compile with a higher initial memory. We do the latter here:</p>
+<pre><code>SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)</code></pre>
+<p>Then after this, it should run fine, with</p>
+<pre><code>$ node --experimental-wasm-threads pbrt.js &lt; ../scenes/killeroo-simple.pbrt</code></pre>
+<h2 id="infinite-loop">Infinite loop?</h2>
+<p>Well, not really, there’s not much progress, we don’t see any output, so let’s turn up the verbosity (these are flags provided by the glog library that pbrt uses):</p>
+<pre><code>$ node --experimental-wasm-threads pbrt.js --logtostderr --minloglevel 0 &lt; ../scenes/killeroo-simple.pbrt
+...
+I0607 15:18:39.470999 2969088 film.cpp:60] Created film with full resolution [ 700, 700 ]. Crop
+window of [ [ 0, 0 ] - [ 1, 1 ] ] -&gt; croppedPixelBounds [ [ 0, 0 ] - [ 700, 700 ] ]
+I0607 15:18:39.954999 2969088 bvh.cpp:210] BVH created with 118377 nodes for 66533 primitives (3.61
+MB), arena allocated 6.00 MB</code></pre>
+<p>We see that this is stuck after <code>BVH</code> creation. BVH is a data structure to accelerate ray tracing, the details are not important here.</p>
+<p>After some debugging, I found that where this was getting stuck is in the creation of <code>ProgressReporter</code>, called by the <a href="https://github.com/mmp/pbrt-v3/blob/master/src/core/integrator.cpp#L238">SamplerIntegrator</a>. The constructor of <code>ProgressReporter</code> uses some synchronization primitives to disable profiling, using a barrier, and I think that’s not working well. The role of the <code>ProgressReporter</code> is to, well, report progress using a pretty progress bar in the terminal. Fortunately, this logic is guarded by a flag, so we can pass <code>--quiet</code> to ignore this.</p>
+<pre><code>$ node --experimental-wasm-threads pbrt.js --logtostderr --minloglevel 0 --quiet &lt;
+../scenes/killeroo-simple.pbrt
+... bunch of output with &quot;image tile&quot;</code></pre>
+<h2 id="writing-to-stdout">Writing to stdout</h2>
+<p>And then after that it should run fine. But we don’t really see anything. This is because pbrt writes the output file to the filesytem. But since Emscripten emulates the file system using an <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html#memfs">in-memory file system</a>, the file is ephemeral and disappears after pbrt.js runs to the end. One fix is to write to stdout, but we need to be aware that other parts of the program can be writing to stdout too. So let’s run with with all the logging removed and the quiet flag set:</p>
+<pre><code>$ node --experimental-wasm-threads pbrt.js --quiet &lt; ../scenes/killeroo-simple.pbrt &gt; test.pbm</code></pre>
+<blockquote>
+<p>Note: Emscripten supports other kinds of filesystem, e.g. <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html#nodefs">NODEFS</a> for use when running on node, and will be able to persist files written onto disk. I found this out just as I was editing this blog post after I finished writing it… If I had discovered this earlier, I would have used it. I chose to not update this blog spot, since I’ve already wrote the following chapters, and they contain useful tidbits, like UTF-8 when writing to stdout.</p>
+</blockquote>
+<h2 id="utf-8-output">UTF-8 output</h2>
+<p>However, if we open <code>test.pbm</code>, we see something nonsensical, just a bunch of noise. It is obviously not what we want.</p>
+<p>The problem here is, whenever we print/write something to stdout, Emscripten converts it into UTF-8, since that’s what JavaScript understands. So the buffer passed to <code>fwrite</code> is treated as a UTF-8 encoded bytes, checked for valid encoding, and written out. However, our bytes are arbitrary floats, so we end up with nonsense.</p>
+<p>I don’t have a great way to fix this, so what we will do is post-process the output. Instead of writing bytes, we write ASCII values of the bytes, then have a postprocessing step outside of Emscripten that converts them back into actual bytes.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>The change to write the hex values to stdout is:</p>
+<pre><code>$ git diff -- src/core/imageio.cpp
+diff --git a/src/core/imageio.cpp b/src/core/imageio.cpp
+index 28f5c99..33bc0bb 100644
+--- a/src/core/imageio.cpp
++++ b/src/core/imageio.cpp
+@@ -439,7 +439,7 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,
+     FILE *fp;
+     float scale;
+
+-    fp = fopen(filename.c_str(), &quot;wb&quot;);
++    fp = fopen(&quot;/dev/stdout&quot;, &quot;wb&quot;);
+     if (!fp) {
+         Error(&quot;Unable to open output PFM file \&quot;%s\&quot;&quot;, filename.c_str());
+         return false;
+@@ -465,11 +465,12 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,
+     for (int y = height - 1; y &gt;= 0; y--) {
+         // in case Float is &#39;double&#39;, copy into a staging buffer that&#39;s
+         // definitely a 32-bit float...
+-        for (int x = 0; x &lt; 3 * width; ++x)
++        for (int x = 0; x &lt; 3 * width; ++x) {
+             scanline[x] = rgb[y * width * 3 + x];
+-        if (fwrite(&amp;scanline[0], sizeof(float), width * 3, fp) &lt;
+-            (size_t)(width * 3))
+-            goto fail;
++            int i;
++            memcpy(&amp;i, &amp;scanline[x], sizeof(float));
++            fprintf(fp, &quot;%.8x&quot;, i);
++        }
+     }
+
+     fclose(fp);</code></pre>
+<p>The <code>%.8x</code> is important, it ensures that we always write 8 chars. If we have a float whose whose top 4 bits are 0, we will end up only writing 7 characters. This was a bug that I encountered.</p>
+<h2 id="post-processing">Post-processing</h2>
+<p>The post-processing is a little Python script to read in the floats written out in their hex form, and then write out the actual bytes.</p>
+<pre><code># postprocess.py
+with open(&#39;test.pfm&#39;) as f:
+    with open(&#39;out.pfm&#39;, &#39;wb&#39;) as o:
+        # read headers
+        for i in range(3):
+            o.write(bytearray(f.readline(), encoding=&#39;utf-8&#39;))
+        # last byte is new line, don&#39;t need it
+        data = f.readline()[:-1]
+        # read 8 characters at a time, they form a single float
+        for i in range(0, len(data), 8):
+            fp = data[i:i+8];
+            # write out in little endian
+            ints = [int(fp[i*2:i*2+2], 16) for i in range(3,-1,-1)]
+            o.write(bytearray(ints))</code></pre>
+<h2 id="success">Success</h2>
+<p>With that, we get <code>out.pfm</code> that is a valid file! And it looks very similar to the one generate from the native version of pbrt. If you dump the hex and diff them, you see that they differ slightly, I attribute that to floating points, maybe there is some precision error that happened during the conversion.</p>
+<h2 id="next-steps">Next steps</h2>
+<p>At the end, we have a JS file that we can run using node, but this isn’t really done yet, because we can’t run it in a browser yet. If we include this JS file in a HTML page, all that is is going to do is print to console a series of ASCII-encoded bytes.</p>
+<p>What we would like to do instead is show the PBM image somehow. One idea is to draw the PBM onto a canvas. We will try that a future blog post.</p>
+<h2 id="concluding-thoughts">Concluding thoughts</h2>
+<p>This was a relatively fun exercise in porting a good sized project to WebAssembly. I hope this step by step exercise gives you an idea of what sort of issues you might encounter while porting, and also tips on how to look at the error messages and figure out how to fix things.</p>
+<p>Emscripten is a big project and contains many useful flags to help you port. Turning them (<code>ASSERTIONS</code>) on during the porting process can probably save you some time. The website contains a lot of useful information, and also test cases in the Emscripten codebase shows how APIs can be used. Those will serve as good examples for porting.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Ideally the submodule versions should be upgraded, but I’m not familiar with the changes the authors made (the submodules are all forked versions of the upstream). Also the CMake version is quite old, so I’ll be doing some hacks that won’t be necessary or look very different if CMake version used was upgraded<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>If a newer Cmake version was used, we can use <a href="https://cmake.org/cmake/help/v3.17/command/target_compile_options.html"><code>target_compile_options</code></a>.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>Actually if we had turned <code>ASSERTIONS</code> on, we would have seen:</p>
+<pre><code>Invalid UTF-8 leading byte 0x-79 encountered when deserializing a UTF-8 string on the asm.js/wasm
+heap to a JS string!</code></pre>
+<p>and this is an indication that what we are trying might not work.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
+</section>
+</section>
+</body>
+</html>
