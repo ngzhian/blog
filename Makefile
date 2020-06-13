@@ -10,7 +10,7 @@ destfiles := $(patsubst posts/%.mdown,%.html,$(srcfiles))
 pages: $(destfiles)
 
 all: pages
-	ocs -i true
+	./gen-index.sh
 
 clean:
 	rm -f *.html
