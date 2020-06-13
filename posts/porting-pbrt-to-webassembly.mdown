@@ -155,7 +155,7 @@ The next error is quite cryptic:
 ```
 
 For this we need to dig into
-[`src/ext/openexr/OpenEXR/IlmImf/CMakeLists.txt`](https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/OpenEXR/IlmImf/CMakeLists.txt#L33):
+[OpenEXR/IlmImf/CMakeLists.txt](https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/OpenEXR/IlmImf/CMakeLists.txt#L33):
 
 ```
 ADD_CUSTOM_COMMAND (

@@ -189,7 +189,7 @@ index 1a7fef9..b41c368 100644
 <h2 id="hacking-submodules">Hacking submodules</h2>
 <p>The next error is quite cryptic:</p>
 <pre><code>/bin/sh: ./dwaLookups: No such file or directory</code></pre>
-<p>For this we need to dig into <a href="https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/OpenEXR/IlmImf/CMakeLists.txt#L33"><code>src/ext/openexr/OpenEXR/IlmImf/CMakeLists.txt</code></a>:</p>
+<p>For this we need to dig into <a href="https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/OpenEXR/IlmImf/CMakeLists.txt#L33">OpenEXR/IlmImf/CMakeLists.txt</a>:</p>
 <pre><code>ADD_CUSTOM_COMMAND (
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
   COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
