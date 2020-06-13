@@ -105,8 +105,8 @@
 <h3 class="date">2020-06-13 13:00</h3>
 </div>
 <h1 id="porting-to-webassembly">Porting to WebAssembly</h1>
-<p>This is a log of steps to port <a href="https://github.com/mmp/pbrt-v3">pbrt</a> to Wasm.</p>
-<p>I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git submodules, which I will extract as diffs here, and also hacking in the CMakeLists.txt. <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>This is a log of steps to port <a href="https://github.com/mmp/pbrt-v3">pbrt</a> to Wasm. The final result is on the <a href="https://github.com/ngzhian/pbrt-v3/tree/wasm-port">wasm-port branch of my fork</a>.</p>
+<p>I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git submodules, extracted as diffs here, and also hacking in the CMakeLists.txt <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <h2 id="clone-and-setup-env">Clone and setup env</h2>
 <p>Set up Emscripten using emsdk:</p>
 <pre><code>git clone https://github.com/emscripten-core/emsdk
@@ -293,13 +293,25 @@ MB), arena allocated 6.00 MB</code></pre>
 <pre><code>$ node --experimental-wasm-threads pbrt.js --logtostderr --minloglevel 0 --quiet &lt;
 ../scenes/killeroo-simple.pbrt
 ... bunch of output with &quot;image tile&quot;</code></pre>
+<h2 id="emscriptens-virtual-filesystem">Emscripten’s virtual filesystem</h2>
+<p>And then after that it should run fine. But we don’t really see anything. This is because pbrt writes the output file to the filesytem. But since Emscripten emulates the file system using an <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html#memfs">in-memory file system</a>, the file is ephemeral and disappears after pbrt.js runs to the end.</p>
+<p>There are two fixes here:</p>
+<ol type="1">
+<li>write directly to stdout</li>
+<li>use <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html#nodefs">NODEFS</a>, this maps local directories onto Emscripten’s virtual filesystem via node’s API, this will only work on node, or</li>
+</ol>
+<p>I initially went with writing directly to stdout, but afterwards discovered NODEFS, which is a much simpler solution. We’ll cover both cases here:</p>
+<ul>
+<li><a href="#writing-to-stdout">write to stdout</a>, or</li>
+<li><a href="#nodefs">use NODEFS</a></li>
+</ul>
 <h2 id="writing-to-stdout">Writing to stdout</h2>
-<p>And then after that it should run fine. But we don’t really see anything. This is because pbrt writes the output file to the filesytem. But since Emscripten emulates the file system using an <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html#memfs">in-memory file system</a>, the file is ephemeral and disappears after pbrt.js runs to the end. One fix is to write to stdout, but we need to be aware that other parts of the program can be writing to stdout too. So let’s run with with all the logging removed and the quiet flag set:</p>
+<p>We need to be aware that other parts of the program can be writing to stdout too. So let’s run with with all the logging removed and the quiet flag set:</p>
 <pre><code>$ node --experimental-wasm-threads pbrt.js --quiet &lt; ../scenes/killeroo-simple.pbrt &gt; test.pbm</code></pre>
 <blockquote>
 <p>Note: Emscripten supports other kinds of filesystem, e.g. <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html#nodefs">NODEFS</a> for use when running on node, and will be able to persist files written onto disk. I found this out just as I was editing this blog post after I finished writing it… If I had discovered this earlier, I would have used it. I chose to not update this blog spot, since I’ve already wrote the following chapters, and they contain useful tidbits, like UTF-8 when writing to stdout.</p>
 </blockquote>
-<h2 id="utf-8-output">UTF-8 output</h2>
+<h3 id="utf-8-output">UTF-8 output</h3>
 <p>However, if we open <code>test.pbm</code>, we see something nonsensical, just a bunch of noise. It is obviously not what we want.</p>
 <p>The problem here is, whenever we print/write something to stdout, Emscripten converts it into UTF-8, since that’s what JavaScript understands. So the buffer passed to <code>fwrite</code> is treated as a UTF-8 encoded bytes, checked for valid encoding, and written out. However, our bytes are arbitrary floats, so we end up with nonsense.</p>
 <p>I don’t have a great way to fix this, so what we will do is post-process the output. Instead of writing bytes, we write ASCII values of the bytes, then have a postprocessing step outside of Emscripten that converts them back into actual bytes.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
@@ -336,7 +348,7 @@ index 28f5c99..33bc0bb 100644
 
      fclose(fp);</code></pre>
 <p>The <code>%.8x</code> is important, it ensures that we always write 8 chars. If we have a float whose whose top 4 bits are 0, we will end up only writing 7 characters. This was a bug that I encountered.</p>
-<h2 id="post-processing">Post-processing</h2>
+<h3 id="post-processing">Post-processing</h3>
 <p>The post-processing is a little Python script to read in the floats written out in their hex form, and then write out the actual bytes.</p>
 <pre><code># postprocess.py
 with open(&#39;test.pfm&#39;) as f:
@@ -352,8 +364,26 @@ with open(&#39;test.pfm&#39;) as f:
             # write out in little endian
             ints = [int(fp[i*2:i*2+2], 16) for i in range(3,-1,-1)]
             o.write(bytearray(ints))</code></pre>
-<h2 id="success">Success</h2>
+<p>Now, to put these two steps together:</p>
+<pre><code>../node-wrapper pbrt.js --quiet &lt; ../scenes/killeroo-simple.pbrt &gt; test.pbm
+python3 ../postprocess.py</code></pre>
 <p>With that, we get <code>out.pfm</code> that is a valid file! And it looks very similar to the one generate from the native version of pbrt. If you dump the hex and diff them, you see that they differ slightly, I attribute that to floating points, maybe there is some precision error that happened during the conversion.</p>
+<h2 id="nodefs">NODEFS</h2>
+<p>To use NODEFS, we need to pass <code>-s NODERAWFS=1</code> to Emscripten<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
+<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8650ce0..a575ea4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -84,6 +84,7 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)
+   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)
+   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)
+   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)
++  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s NODERAWFS=1&quot;)
+ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)
+   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</code></pre>
+<p>And to run it:</p>
+<pre><code>../node-wrapper pbrt.js --quiet &lt; ../scenes/killeroo-simple.pbrt</code></pre>
+<p>After a few moments, you should see killeroo-simple.exr<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
 <h2 id="next-steps">Next steps</h2>
 <p>At the end, we have a JS file that we can run using node, but this isn’t really done yet, because we can’t run it in a browser yet. If we include this JS file in a HTML page, all that is is going to do is print to console a series of ASCII-encoded bytes.</p>
 <p>What we would like to do instead is show the PBM image somehow. One idea is to draw the PBM onto a canvas. We will try that a future blog post.</p>
@@ -363,12 +393,14 @@ with open(&#39;test.pfm&#39;) as f:
 <section class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Ideally the submodule versions should be upgraded, but I’m not familiar with the changes the authors made (the submodules are all forked versions of the upstream). Also the CMake version is quite old, so I’ll be doing some hacks that won’t be necessary or look very different if CMake version used was upgraded<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Ideally the submodule versions should be upgraded, but I’m not familiar with the changes the authors made (the submodules are all forked versions of the upstream). Also the CMake version is quite old, so I’ll be doing some hacks that won’t be necessary or look very different if CMake version used was upgraded].<a href="#fnref1" class="footnote-back">↩</a></p></li>
 <li id="fn2"><p>If a newer Cmake version was used, we can use <a href="https://cmake.org/cmake/help/v3.17/command/target_compile_options.html"><code>target_compile_options</code></a>.<a href="#fnref2" class="footnote-back">↩</a></p></li>
 <li id="fn3"><p>Actually if we had turned <code>ASSERTIONS</code> on, we would have seen:</p>
 <pre><code>Invalid UTF-8 leading byte 0x-79 encountered when deserializing a UTF-8 string on the asm.js/wasm
 heap to a JS string!</code></pre>
 <p>and this is an indication that what we are trying might not work.<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>I looked this up in Emscripten’s <a href="https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L837">settings.js</a>. This is the file where all arguments to <code>-s</code> is set, so you can find <code>USE_PTHREADS</code>, <code>ASSERTIONS</code> here too.<a href="#fnref4" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p>If you can’t open exr files, you can overwrite the output file format by specifying <code>--outfile output.pfm</code>.<a href="#fnref5" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 </section>

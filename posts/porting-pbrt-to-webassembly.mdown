@@ -6,13 +6,16 @@ date: 2020-06-13 13:00
 # Porting to WebAssembly
 
 This is a log of steps to port [pbrt](https://github.com/mmp/pbrt-v3) to Wasm.
+The final result is on the [wasm-port branch of my
+fork](https://github.com/ngzhian/pbrt-v3/tree/wasm-port).
 
 I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git
-submodules, which I will extract as diffs here, and also hacking in the CMakeLists.txt.
-^[Ideally the submodule versions should be upgraded,
-but I'm not familiar with the changes the authors made (the submodules are all forked versions of
-the upstream). Also the CMake version is quite old, so I'll be doing some hacks that won't be
-necessary or look very different if CMake version used was upgraded].
+submodules, extracted as diffs here, and also hacking in the CMakeLists.txt [^hacking]
+
+[^hacking]: Ideally the submodule versions should be upgraded, but I'm not familiar with the changes
+  the authors made (the submodules are all forked versions of the upstream). Also the CMake version
+  is quite old, so I'll be doing some hacks that won't be necessary or look very different if CMake
+  version used was upgraded].
 
 ## Clone and setup env
 
@@ -343,13 +346,30 @@ $ node --experimental-wasm-threads pbrt.js --logtostderr --minloglevel 0 --quiet
 ... bunch of output with "image tile"
 ```
 
-## Writing to stdout
+## Emscripten's virtual filesystem
 
 And then after that it should run fine. But we don't really see anything. This is because pbrt
 writes the output file to the filesytem. But since Emscripten emulates the file system using an
-[in-memory file system](https://emscripten.org/docs/api_reference/Filesystem-API.html#memfs), the file is ephemeral and disappears after pbrt.js runs to the end. One fix
-is to write to stdout, but we need to be aware that other parts of the program can be writing to
-stdout too. So let's run with with all the logging removed and the quiet flag set:
+[in-memory file system](https://emscripten.org/docs/api_reference/Filesystem-API.html#memfs), the
+file is ephemeral and disappears after pbrt.js runs to the end.
+
+There are two fixes here:
+
+1. write directly to stdout
+1. use [NODEFS](https://emscripten.org/docs/api_reference/Filesystem-API.html#nodefs), this maps
+  local directories onto Emscripten's virtual filesystem via node's API, this will only work on
+  node, or
+
+I initially went with writing directly to stdout, but afterwards discovered NODEFS, which is a much
+simpler solution. We'll cover both cases here:
+
+- [write to stdout](#writing-to-stdout), or
+- [use NODEFS](#nodefs)
+
+## Writing to stdout
+
+We need to be aware that other parts of the program can be writing to stdout too. So let's run with
+with all the logging removed and the quiet flag set:
 
 ```
 $ node --experimental-wasm-threads pbrt.js --quiet < ../scenes/killeroo-simple.pbrt > test.pbm
@@ -362,7 +382,7 @@ $ node --experimental-wasm-threads pbrt.js --quiet < ../scenes/killeroo-simple.p
 > would have used it. I chose to not update this blog spot, since I've already wrote the following
 > chapters, and they contain useful tidbits, like UTF-8 when writing to stdout.
 
-## UTF-8 output
+### UTF-8 output
 
 However, if we open `test.pbm`, we see something nonsensical, just a bunch of noise. It is obviously
 not what we want.
@@ -423,7 +443,7 @@ index 28f5c99..33bc0bb 100644
 
 The `%.8x` is important, it ensures that we always write 8 chars. If we have a float whose whose top 4 bits are 0, we will end up only writing 7 characters. This was a bug that I encountered.
 
-## Post-processing
+### Post-processing
 
 The post-processing is a little Python script to read in the floats written out in their hex form,
 and then write out the actual bytes.
@@ -445,12 +465,51 @@ with open('test.pfm') as f:
             o.write(bytearray(ints))
 ```
 
-## Success
+Now, to put these two steps together:
+
+```
+../node-wrapper pbrt.js --quiet < ../scenes/killeroo-simple.pbrt > test.pbm
+python3 ../postprocess.py
+```
 
 With that, we get `out.pfm` that is a valid file! And it looks very similar to the one generate from
 the native version of pbrt. If you dump the hex and diff them, you see that they differ slightly, I
 attribute that to floating points, maybe there is some precision error that happened during the
 conversion.
+
+## NODEFS
+
+To use NODEFS, we need to pass `-s NODERAWFS=1` to Emscripten[^noderawfs]
+
+[^noderawfs]: I looked this up in Emscripten's
+  [settings.js](https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L837).
+  This is the file where all arguments to `-s` is set, so you can find `USE_PTHREADS`, `ASSERTIONS`
+  here too.
+
+```
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8650ce0..a575ea4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -84,6 +84,7 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1")
+   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0")
+   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728")
++  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s NODERAWFS=1")
+ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+```
+
+And to run it:
+
+```
+../node-wrapper pbrt.js --quiet < ../scenes/killeroo-simple.pbrt
+```
+
+After a few moments, you should see killeroo-simple.exr[^pfm].
+
+[^pfm]: If you can't open exr files, you can overwrite the output file format by specifying
+  `--outfile output.pfm`.
 
 ## Next steps
 
