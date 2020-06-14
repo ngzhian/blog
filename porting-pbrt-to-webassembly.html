@@ -384,9 +384,174 @@ index 8650ce0..a575ea4 100644
 <p>And to run it:</p>
 <pre><code>../node-wrapper pbrt.js --quiet &lt; ../scenes/killeroo-simple.pbrt</code></pre>
 <p>After a few moments, you should see killeroo-simple.exr<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
-<h2 id="next-steps">Next steps</h2>
-<p>At the end, we have a JS file that we can run using node, but this isn’t really done yet, because we can’t run it in a browser yet. If we include this JS file in a HTML page, all that is is going to do is print to console a series of ASCII-encoded bytes.</p>
-<p>What we would like to do instead is show the PBM image somehow. One idea is to draw the PBM onto a canvas. We will try that a future blog post.</p>
+<h2 id="running-in-a-browser">Running in a browser</h2>
+<p>So far what we have achieved is to able to run pbrt as a command line tool, which is its original use case. However, part of porting to WebAssembly is to enable it to run on the Web (browser). So let’s tackle that now.</p>
+<h3 id="compiling-to-html">Compiling to HTML</h3>
+<p>If we were using <code>emcc</code> as a standalone tool, we can specify <code>-o output.html</code> to request a HTML to be generated (along with the usual .js and .wasm file). With CMake, it is a bit more tricky. We can set the CMake variable <code>CMAKE_EXECUTABLE_SUFFIX</code> to be <code>.html</code>, but this will cause our <code>dwaLookups</code> and <code>b44ExpLogTable</code> to be generated as <code>.html</code>, and then we will end up calling node with the html files, which is wrong. I suspect this has something to do with the CMake version. So, our hacky way is to continue to use CMake to build all the .js files, but then for the final “link” step to generate a HTML, we run the command manually:</p>
+<pre><code>em++ -std=c++11 -Wno-deprecated-register -s USE_PTHREADS=1 \
+  -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s INITIAL_MEMORY=134217728 \
+  @CMakeFiles/pbrt_exe.dir/objects1.rsp -o pbrt.html \
+  @CMakeFiles/pbrt_exe.dir/linklibs.rsp</code></pre>
+<p>I got this command from this file that CMake generated: CMakeFiles/pbrt_exe.dir/link.txt.</p>
+<p>The first thing we need to do is remove <code>NODERAWFS</code> from our CMakeLists.txt, since we will no no longer be running in node environment:</p>
+<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a575ea4..8650ce0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -84,7 +84,6 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)
+   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)
+   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)
+   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)
+-  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s NODERAWFS=1&quot;)
+ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)
+   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</code></pre>
+<h3 id="blocking-on-main-thread">Blocking on main thread</h3>
+<p>After we build, we should get a pbrt.html file. We cannot simply open this in the browser, Wasm files <a href="https://developer.mozilla.org/en-US/docs/WebAssembly/C_to_wasm#Running_your_example">need to be served via a web server</a>. So, spin up a simple server:</p>
+<pre><code>python -m SimpleHTTPServer</code></pre>
+<p>Then go to <code>localhost:8000</code>, and open up the DevTools console, and you will see this message:</p>
+<pre><code>Blocking on the main thread is very dangerous, see https://emscripten.org/docs/porting/pthreads.html#blocking-on-the-main-browser-thread</code></pre>
+<p>That link provides more details on what the browser main thread is, and why it is dangerous to block on the main thread.</p>
+<p>For our purposes, pbrt does a lot of work on the main thread, like parsing the input file, and doing the actual rendering. The behavior we observe is that the spinner on the top of the page keeps spinning, and the page becomes unresponsive.</p>
+<p>It will require a bit of rearchitecting of pbrt to properly fix this, so we will use a tip given by the link above, which is to proxy our main thread to a pthread. This moves <code>main()</code> onto a pthread (web worker), which we can enable with the flag <code>PROXY_TO_PTHREAD</code>.</p>
+<pre><code>em++ -std=c++11 -Wno-deprecated-register -s USE_PTHREADS=1 \
+  -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s INITIAL_MEMORY=134217728 \
+  @CMakeFiles/pbrt_exe.dir/objects1.rsp -o pbrt.html \
+  @CMakeFiles/pbrt_exe.dir/linklibs.rsp \
+  -s PROXY_TO_PTHREAD</code></pre>
+<p>Opening pbrt.html, now we see an input prompt. When not given any arguments, pbrt defaults to reading from stdin, and Emscripten will compile that to reading from a page’s input prompt. I guess we <em>could</em> copy and paste the entire killeroo-simple.pbrt file into the prompt, but let’s do this in a more convenient way.</p>
+<h3 id="passing-arguments">Passing arguments</h3>
+<p>When we had the js file, running via node was simple. Arguments passed to node was forwarded to the underlying script. With a HTML file, it’s not as straightforward. Luckily for us, Emscripten provides the <a href="https://emscripten.org/docs/api_reference/module.html#Module.arguments">Module</a> object.</p>
+<p>Opening up pbrt.html<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>, we can see <code>var Module = { ... }</code>. Now, we can directly edit this file to add a <code>arguments</code> property, but every time we run <code>em++</code>, our changes will be lost. Emscripten has a way for us to systematically add properties to Module via the <a href="https://emscripten.org/docs/tools_reference/emcc.html#emcc-pre-js"><code>--pre-js</code></a>:</p>
+<pre><code>$ cat pre.js
+Module[&#39;arguments&#39;] = [&#39;scenes/killeroo-simple.pbrt&#39;];
+
+$ em++ -std=c++11 -Wno-deprecated-register -s USE_PTHREADS=1 \
+  -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s INITIAL_MEMORY=134217728 \
+  @CMakeFiles/pbrt_exe.dir/objects1.rsp -o pbrt.html \
+  @CMakeFiles/pbrt_exe.dir/linklibs.rsp \
+  -s PROXY_TO_PTHREAD \
+  --pre-js pre.js</code></pre>
+<p>And we see a (familiar error message in the console):</p>
+<pre><code>Error: scenes/killeroo-simple.pbrt: No such file or directory</code></pre>
+<h3 id="preloading-files">Preloading files</h3>
+<p>We saw this error previously because killeroo-simple.pbrt was including geometry/killeroo.pbrt, and we “fixed” it by copy pasting. Now we need to fix it a bit more correctly.</p>
+<p>Emscripten allows you to package files into your compiled output via <a href="https://emscripten.org/docs/porting/files/packaging_files.html#packaging-using-emcc"><code>--preload-file</code></a>, these files will be added to the virtual filesystem and available to your compiled code:</p>
+<pre><code>em++ -std=c++11 -Wno-deprecated-register -s USE_PTHREADS=1 \
+  -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s INITIAL_MEMORY=134217728 \
+  @CMakeFiles/pbrt_exe.dir/objects1.rsp -o pbrt.html \
+  @CMakeFiles/pbrt_exe.dir/linklibs.rsp \
+  -s PROXY_TO_PTHREAD \
+  --pre-js pre.js \
+  --preload-file ../scenes</code></pre>
+<p>With this, we should see that our renderer runs successfully, but nothing really is happening. We expect that <code>killeroo-simple.exr</code> is written out, so we can check this with Emscripten’s Filesystem API. Open up the DevTools console, and run:</p>
+<pre><code>FS.stat(&quot;killeroo-simple.exr&quot;)
+{dev: 1, ino: 27, mode: 33206, nlink: 1, uid: 0, …}</code></pre>
+<h3 id="drawing-onto-the-canvas">Drawing onto the canvas</h3>
+<p>Having the file on the filesystem is a sign of success, and it will be cooler to actually have something visible on screen. The HTML page generated by Emscripten has a canvas right in the middle, so let’s attempt to draw the output image onto the canvas.</p>
+<p>By default, a <code>exr</code> file is generated. We also have the option of generating a <code>pfm</code> file, which is the <a href="https://en.wikipedia.org/wiki/Netpbm">Netpbm</a> format. This is a simpler format to work with and we will directly read and parse the written file, convert it into pixel data for the canvas:</p>
+<pre><code>$ cat pre.js
+const outputFile = &#39;output.pfm&#39;;
+
+Module[&#39;arguments&#39;] = [&#39;--outfile&#39;, outputFile, &#39;scenes/killeroo-simple.pbrt&#39;];</code></pre>
+<p>We could use <a href="https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html#interacting-with-code-call-javascript-from-native"><code>EM_ASM</code></a> to directly “paint” to the canvas, but if we try accessing <code>Module.canvas</code> directly, we will very quickly see that it is undefined. Since our <code>main()</code> is now on a worker thread, worker threads don’t have access to the DOM, and so <code>Module.canvas</code> is inaccessible!</p>
+<p>There is a workaround for this. Looking around settings.js, we see <a href="https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1527"><code>OFFSCREENCANVAS_SUPPORT</code></a>, this allows us to transfer the canvas to a worker thread. I initially tried this, but found that the I couldn’t access the FS properly from the worker thread with this. scenes/killeroo-simple.pbrt was not found, and neither was output.pfm.</p>
+<p>Another way of doing this is with the <code>MAIN_THREAD_EM_ASM</code> macro, this runs a snippet of JS on the main thread:</p>
+<pre><code>diff --git a/src/core/imageio.cpp b/src/core/imageio.cpp
+index 28f5c99..adb6b8c 100644
+--- a/src/core/imageio.cpp
++++ b/src/core/imageio.cpp
+@@ -40,6 +40,10 @@
+ #include &lt;ImfRgba.h&gt;
+ #include &lt;ImfRgbaFile.h&gt;
+
++#if __EMSCRIPTEN__
++#include &quot;emscripten.h&quot;
++#endif  // __EMSCRIPTEN__
++
+ namespace pbrt {
+
+ // ImageIO Local Declarations
+@@ -473,6 +477,13 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,
+     }
+
+     fclose(fp);
++
++#if __EMSCRIPTEN__
++    MAIN_THREAD_EM_ASM({
++        drawPFMToCanvas($0, $1);
++    }, width, height);
++#endif //  __EMSCRIPTEN__
++
+     return true;
+
+ fail:</code></pre>
+<p>After writing to output.pfm, and <code>fclose</code> is called to completely flush all the bytes, we will call a JS function (defined later by us), passing it the width and height of our image. This will make our canvas flexible to different sizes.</p>
+<p>What remains is to define <code>drawPFMToCanvas</code>. What this function will do is:</p>
+<ol type="1">
+<li>Use Emscripten’s FS api to read the output file (output.pfm)</li>
+<li>Parse Netpbm 32-bit float format</li>
+<li>Convert into pixel data</li>
+<li>Copy pixel data into canvas</li>
+</ol>
+<p>There are many ways to write this, I went with this:</p>
+<pre><code>function drawPFMToCanvas(width, height) {
+  Module.canvas.width = width;
+  Module.canvas.height = height;
+  var ctx = Module.canvas.getContext(&#39;2d&#39;);
+  var imageData = ctx.createImageData(width, height);
+
+  var contents = FS.readFile(outputFile);
+  // netpbm format (https://en.wikipedia.org/wiki/Netpbm#32-bit_extensions)
+  // PF\n
+  // width height\n
+  // endian\n
+  // 32-bit floats...
+  // Skip 3 new lines.
+  const nl = 10;  // Uint8 representing new line (ASCII).
+  const lastNewLine = contents.indexOf(nl, contents.indexOf(nl, contents.indexOf(nl, 0) + 1) + 1);
+  const data = contents.slice(lastNewLine+1);
+
+  // Each pixel is made up of 3 (RGB) 32-bit floats.
+  if (data.byteLength != width * height * 3 * 4) {
+    throw &#39;Mismatch in size&#39;;
+  }
+
+  // Uses platform endianness, to be more robust, we should check the endianness encoded in the pfm file.
+  const floats = new Float32Array(data.buffer);
+  for (let y = 0; y &lt; height; y++) {
+    for (let x = 0; x &lt; width; x++) {
+      // r g b
+      imageData.data[(height-y-1) * width * 4 + (x * 4 + 0)] = floats[y * width * 3 + (x * 3 + 0)] * 255;
+      imageData.data[(height-y-1) * width * 4 + (x * 4 + 1)] = floats[y * width * 3 + (x * 3 + 1)] * 255;
+      imageData.data[(height-y-1) * width * 4 + (x * 4 + 2)] = floats[y * width * 3 + (x * 3 + 2)] * 255;
+      imageData.data[(height-y-1) * width * 4 + (x * 4 + 3)] = 255;  // Full alpha.
+    }
+  }
+  ctx.putImageData(imageData, 0, 0);
+}</code></pre>
+<p>There are a couple of canvas specific logic in this code, if you are interested in what’s happening, I encourage you to look at <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">MDN’s documentation on Canvas</a>. The important bits are:</p>
+<ul>
+<li>Netpbm format starts with 3 lines of header, ‘’ delimited, followed by 32-bit floats, describing the image in RGB format, so there will be (width * height * 3) 32-bit floats in total.</li>
+<li>The pixel data backing a cavans is specified in RGBA format, 1 byte for each channel, with valid values between 0 and 255.</li>
+<li>The confusing arithmetic has to do with the different ways Netpbm and canvans describes pixel data:
+<ul>
+<li>Netpbm goes left to right, bottom to top</li>
+<li>Canvas goes left to right, top to bottom</li>
+</ul>
+Hence the <code>height-y-1</code> logic. The <code>A</code> channel should always be 255, otherwise it defaults to 0, full alpha transparency, so the entire image will be black.</li>
+</ul>
+<p>With this, linking everything together:</p>
+<pre><code>em++ -std=c++11 -Wno-deprecated-register -s USE_PTHREADS=1 \
+  -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s INITIAL_MEMORY=134217728 \
+  @CMakeFiles/pbrt_exe.dir/objects1.rsp -o pbrt.html \
+  @CMakeFiles/pbrt_exe.dir/linklibs.rsp \
+  -s PROXY_TO_PTHREAD \
+  --pre-js pre.js \
+  --preload-file ../scenes</code></pre>
+<p>Opening the file, we should see some output in the console, and eventually<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> the canvas will be updated with our rendered image:</p>
+<figure>
+<img src="pbrt-wasm-result.png" alt="Image rendered onto canvas, using WebAssembly port of pbrt" /><figcaption>Image rendered onto canvas, using WebAssembly port of pbrt</figcaption>
+</figure>
 <h2 id="concluding-thoughts">Concluding thoughts</h2>
 <p>This was a relatively fun exercise in porting a good sized project to WebAssembly. I hope this step by step exercise gives you an idea of what sort of issues you might encounter while porting, and also tips on how to look at the error messages and figure out how to fix things.</p>
 <p>Emscripten is a big project and contains many useful flags to help you port. Turning them (<code>ASSERTIONS</code>) on during the porting process can probably save you some time. The website contains a lot of useful information, and also test cases in the Emscripten codebase shows how APIs can be used. Those will serve as good examples for porting.</p>
@@ -401,6 +566,8 @@ heap to a JS string!</code></pre>
 <p>and this is an indication that what we are trying might not work.<a href="#fnref3" class="footnote-back">↩</a></p></li>
 <li id="fn4"><p>I looked this up in Emscripten’s <a href="https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L837">settings.js</a>. This is the file where all arguments to <code>-s</code> is set, so you can find <code>USE_PTHREADS</code>, <code>ASSERTIONS</code> here too.<a href="#fnref4" class="footnote-back">↩</a></p></li>
 <li id="fn5"><p>If you can’t open exr files, you can overwrite the output file format by specifying <code>--outfile output.pfm</code>.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn6"><p>The pbrt.html file is minified if we are compiling with <code>-O3</code>, all whitespaces and newlines are stripped, making it really hard to read. If you want to take a closer look, either pass it to a HTML formatter, or compile with <code>-O1</code>.<a href="#fnref6" class="footnote-back">↩</a></p></li>
+<li id="fn7"><p>To speed up the rendering, so you can see output faster to determine if something is wrong, you can change the resolution of the output image. Edit killeroo-simple.pbrt, look for the line with <code>integer xresolution</code>, change the values <code>700</code> to something like <code>50</code>. Then rendering should only take a couple of seconds.<a href="#fnref7" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 </section>
