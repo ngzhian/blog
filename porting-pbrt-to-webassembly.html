@@ -105,7 +105,12 @@
 <h3 class="date">2020-06-13 13:00</h3>
 </div>
 <h1 id="porting-to-webassembly">Porting to WebAssembly</h1>
-<p>This is a log of steps to port <a href="https://github.com/mmp/pbrt-v3">pbrt</a> to Wasm. The final result is on the <a href="https://github.com/ngzhian/pbrt-v3/tree/wasm-port">wasm-port branch of my fork</a>.</p>
+<p>This is a log of steps to port <a href="https://github.com/mmp/pbrt-v3">pbrt</a> to Wasm. The final results are on <a href="https://github.com/ngzhian/pbrt-v3">my fork of the pbrt project</a>:</p>
+<ul>
+<li>the version that runs using nodejs and a postprocessing step is on <a href="https://github.com/ngzhian/pbrt-v3/tree/wasm-port">wasm-port</a></li>
+<li>the version that runs using just nodejs (without postprocessing) is <a href="https://github.com/ngzhian/pbrt-v3/tree/wasm-port-nodejs-fs">wasm-port-nodejs-fs</a></li>
+<li>the version that runs in browser and draws to a canvas is <a href="https://github.com/ngzhian/pbrt-v3/tree/wasm-port-web">wasm-port-web</a></li>
+</ul>
 <p>I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git submodules, extracted as diffs here, and also hacking in the CMakeLists.txt <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <h2 id="clone-and-setup-env">Clone and setup env</h2>
 <p>Set up Emscripten using emsdk:</p>

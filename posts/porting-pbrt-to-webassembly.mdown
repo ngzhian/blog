@@ -7,8 +7,15 @@ updated: 2020-06-14 16:28
 # Porting to WebAssembly
 
 This is a log of steps to port [pbrt](https://github.com/mmp/pbrt-v3) to Wasm.
-The final result is on the [wasm-port branch of my
-fork](https://github.com/ngzhian/pbrt-v3/tree/wasm-port).
+The final results are on [my fork of the pbrt
+project](https://github.com/ngzhian/pbrt-v3):
+
+- the version that runs using nodejs and a postprocessing step is on
+  [wasm-port](https://github.com/ngzhian/pbrt-v3/tree/wasm-port)
+- the version that runs using just nodejs (without postprocessing) is
+  [wasm-port-nodejs-fs](https://github.com/ngzhian/pbrt-v3/tree/wasm-port-nodejs-fs)
+- the version that runs in browser and draws to a canvas is
+  [wasm-port-web](https://github.com/ngzhian/pbrt-v3/tree/wasm-port-web)
 
 I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git
 submodules, extracted as diffs here, and also hacking in the CMakeLists.txt [^hacking]
