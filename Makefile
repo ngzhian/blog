@@ -1,6 +1,10 @@
 default: all
 
-.PHONY: deploy pages
+.PHONY: deploy pages minify-css
+
+# https://cssminifier.com/curl
+minify-css:
+	@curl -X POST -s --data-urlencode 'input@styles.css' https://cssminifier.com/raw > styles.css
 
 %.html: posts/%.mdown
 	pandoc --from markdown --template template/custom -o $*.html $<
