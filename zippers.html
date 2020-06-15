@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Zippers</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,50 +151,23 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
     }
-  </style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
+    }
   </style>
 </head>
 <body>
@@ -142,63 +178,63 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3 class="date">2017-04-29 14:00</h3>
 </div>
 <p>A zipper is a technique for implementing data structures (such as lists and trees) with some idea of a <em>focus</em> on one particular element, at the same time allowing for fast, functional (immutable) updates of a <em>specific point</em> in the structure.</p>
-<p>Let's try building a list in the style of a zipper.</p>
+<p>Let’s try building a list in the style of a zipper.</p>
 <p>First we define a data type for a list zipper.</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(** A list zipper.</span>
-<span class="co">    It maintains focus on 1 particular element in the list. *)</span>
-<span class="kw">type</span> &#39;a list_zipper = &#39;a <span class="dt">list</span> * &#39;a <span class="dt">list</span></code></pre></div>
-<p>Strange enough, a list zipper is made up of 2 lists, let's call it <em>back</em> and <em>front</em>. (This may seem strange, but we will see the benefits soon.)</p>
-<p>Let's have a convenience function to build a list zipper from a normal list.</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(** Builds a list zipper from a list. *)</span>
-<span class="kw">let</span> zipper_of_list xs = ([], xs)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">(** A list zipper.</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">    It maintains focus on 1 particular element in the list. *)</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">type</span> &#39;a list_zipper = &#39;a <span class="dt">list</span> * &#39;a <span class="dt">list</span></span></code></pre></div>
+<p>Strange enough, a list zipper is made up of 2 lists, let’s call it <em>back</em> and <em>front</em>. (This may seem strange, but we will see the benefits soon.)</p>
+<p>Let’s have a convenience function to build a list zipper from a normal list.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">(** Builds a list zipper from a list. *)</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">let</span> zipper_of_list xs = ([], xs)</span></code></pre></div>
 <p>The initial focus of the list zipper will be the first element of the front.</p>
 <p>We can move the focus <em>forward</em> on to the next element of the front</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(** Move the focus in the list zipper forward *)</span>
-<span class="kw">let</span> forward z =
-  <span class="kw">match</span> z <span class="kw">with</span>
-  | (bs, x::xs) -&gt; <span class="dt">Some</span> (x::bs, xs)
-  | (_, []) -&gt; <span class="dt">None</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">(** Move the focus in the list zipper forward *)</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">let</span> forward z =</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="kw">match</span> z <span class="kw">with</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>  | (bs, x::xs) -&gt; <span class="dt">Some</span> (x::bs, xs)</span>
+<span id="cb3-5"><a href="#cb3-5"></a>  | (_, []) -&gt; <span class="dt">None</span></span></code></pre></div>
 <p>The interesting here is that the back list is actually reversed. Given a list <code>[1; 2; 3; 4]</code>, if we build a zipper and focused on 3, the front and back list will look like this:</p>
 <pre><code>front = [2; 1]
 back = [3; 4]</code></pre>
 <p>Notice how we cannot concatenate the front and the back list to get the original list. In fact, to reconstruct the original list, the easy way is:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(** Converts a list zipper back into a list. *)</span>
-<span class="kw">let</span> list_of_zipper (z : &#39;a list_zipper) =
-  <span class="kw">match</span> z <span class="kw">with</span>
-  | xs, ys -&gt; <span class="dt">List</span>.rev xs @ ys</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">(** Converts a list zipper back into a list. *)</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">let</span> list_of_zipper (z : &#39;a list_zipper) =</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="kw">match</span> z <span class="kw">with</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>  | xs, ys -&gt; <span class="dt">List</span>.rev xs @ ys</span></code></pre></div>
 <p>This reversed form is how we get moving focus to be efficient.</p>
 <p>And similarly, we can move the focus <em>backwards</em>.</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(** Move the focus in the list zipper backward *)</span>
-<span class="kw">let</span> backward z =
-  <span class="kw">match</span> z <span class="kw">with</span>
-  | (b::bs, xs) -&gt; <span class="dt">Some</span> (bs, b::xs)
-  | ([], _) -&gt; <span class="dt">None</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">(** Move the focus in the list zipper backward *)</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw">let</span> backward z =</span>
+<span id="cb6-3"><a href="#cb6-3"></a>  <span class="kw">match</span> z <span class="kw">with</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>  | (b::bs, xs) -&gt; <span class="dt">Some</span> (bs, b::xs)</span>
+<span id="cb6-5"><a href="#cb6-5"></a>  | ([], _) -&gt; <span class="dt">None</span></span></code></pre></div>
 <p>Here, the <code>::</code> operator (like <code>cons</code>), is fast and we can only do this if the back list is reversed.</p>
 <p>The last operation the list zipper supports is changing the focused element.</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(** Set the current focused value in the list to x *)</span>
-<span class="kw">let</span> set x z =
-  <span class="kw">match</span> z <span class="kw">with</span>
-  | (bs, _::xs) -&gt; <span class="dt">Some</span> (bs, x::xs)
-  | (_, []) -&gt; <span class="dt">None</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">(** Set the current focused value in the list to x *)</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw">let</span> set x z =</span>
+<span id="cb7-3"><a href="#cb7-3"></a>  <span class="kw">match</span> z <span class="kw">with</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>  | (bs, _::xs) -&gt; <span class="dt">Some</span> (bs, x::xs)</span>
+<span id="cb7-5"><a href="#cb7-5"></a>  | (_, []) -&gt; <span class="dt">None</span></span></code></pre></div>
 <p>With this data structure and the operations defined, you can get fast, functional updates on a list:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* construct a simple list zipper *)</span>
-<span class="kw">let</span> z = zipper_of_list [<span class="dv">1</span>; <span class="dv">2</span>; <span class="dv">3</span>; <span class="dv">4</span>]
-
-<span class="kw">let</span> twice_forward_once_backward_and_set =
-  z
-  |&gt; forward
-  |&gt; and_then forward
-  |&gt; and_then backward
-  |&gt; and_then (set <span class="dv">5</span>)
-<span class="co">(* z remains unchanged *)</span>
-<span class="co">(* twice_forward_once_backward_and_set is now [1; 5; 3; 4] *)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">(* construct a simple list zipper *)</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">let</span> z = zipper_of_list [<span class="dv">1</span>; <span class="dv">2</span>; <span class="dv">3</span>; <span class="dv">4</span>]</span>
+<span id="cb8-3"><a href="#cb8-3"></a></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">let</span> twice_forward_once_backward_and_set =</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  z</span>
+<span id="cb8-6"><a href="#cb8-6"></a>  |&gt; forward</span>
+<span id="cb8-7"><a href="#cb8-7"></a>  |&gt; and_then forward</span>
+<span id="cb8-8"><a href="#cb8-8"></a>  |&gt; and_then backward</span>
+<span id="cb8-9"><a href="#cb8-9"></a>  |&gt; and_then (set <span class="dv">5</span>)</span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co">(* z remains unchanged *)</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">(* twice_forward_once_backward_and_set is now [1; 5; 3; 4] *)</span></span></code></pre></div>
 <p>If this was instead performed on a normal cons-nil list, you would only be able to get fast updates on the next cons cell (instead of the currently focused one), or you would have to traverse up till the cell before the current.</p>
 <p>The examples in this post have are available <a href="https://github.com/ngzhian/zippers">here</a>. You can also find a experimental implementation of a tree with zipper in the repository.</p>
 <h2 id="references">References</h2>
-<p><a href="https://en.wikipedia.org/wiki/Zipper_(data_structure)" class="uri">https://en.wikipedia.org/wiki/Zipper_(data_structure)</a></p>
-<p><a href="http://learnyouahaskell.com/zippers" class="uri">http://learnyouahaskell.com/zippers</a></p>
-<p><a href="http://conway.rutgers.edu/~ccshan/wiki/blog/posts/WalkZip1/" class="uri">http://conway.rutgers.edu/~ccshan/wiki/blog/posts/WalkZip1/</a></p>
-<p><a href="http://okmij.org/ftp/continuations/zipper.html" class="uri">http://okmij.org/ftp/continuations/zipper.html</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Zipper_(data_structure)">https://en.wikipedia.org/wiki/Zipper_(data_structure)</a></p>
+<p><a href="http://learnyouahaskell.com/zippers">http://learnyouahaskell.com/zippers</a></p>
+<p><a href="http://conway.rutgers.edu/~ccshan/wiki/blog/posts/WalkZip1/">http://conway.rutgers.edu/~ccshan/wiki/blog/posts/WalkZip1/</a></p>
+<p><a href="http://okmij.org/ftp/continuations/zipper.html">http://okmij.org/ftp/continuations/zipper.html</a></p>
 </section>
 </body>
 </html>

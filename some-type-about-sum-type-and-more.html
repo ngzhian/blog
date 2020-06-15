@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Some type about Sum types (and more)</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -105,12 +114,12 @@
 <h3 class="date">2017-03-22 19:00</h3>
 </div>
 <p>A computer stores bits, and 8 bits make a byte.</p>
-<p>Some bytes are not like other bytes -- bytes can mean different things.</p>
+<p>Some bytes are not like other bytes – bytes can mean different things.</p>
 <p>Some bytes mean an integer, some bytes mean a list; we say that they have different types.</p>
 <h2 id="a-type-is-a-group-of-things">A type is a group of things</h2>
 <p>An <code>integer</code> is a group of integers, like 1, 2, 3, and so on, and so forth.</p>
 <p>A <code>boolean</code> is a group that has 2 members, True and False.</p>
-<p>But we're getting ahead of ourselves, so let's start from 0.</p>
+<p>But we’re getting ahead of ourselves, so let’s start from 0.</p>
 <p>A <code>void</code> type has no members. It is void.</p>
 <p>A <code>unit</code> type has only 1 member, and the member is called <code>unit</code>. You see it as <code>()</code> in many places.</p>
 <p>What type has 2 members?</p>
@@ -118,10 +127,10 @@
 <p><code>True</code> and <code>False</code> are both members of <code>boolean</code>. <code>True</code> is not <code>False</code>, and <code>False</code> is not <code>True</code>. But they are both <code>boolean</code>.</p>
 <p>We can write it as such</p>
 <pre><code>type boolean = True | False</code></pre>
-<p>This reads as: &quot;The type boolean has 2 members, it can either be True or False&quot;.</p>
+<p>This reads as: “The type boolean has 2 members, it can either be True or False”.</p>
 <p>(In OCaml, the type <code>boolean</code> is actually spelled <code>bool</code>.)</p>
 <h2 id="sum-types">Sum types</h2>
-<p>Suppose you're deciding if you should continue reading.</p>
+<p>Suppose you’re deciding if you should continue reading.</p>
 <pre><code>type decision =
   | Decided of boolean
   | Undecided</code></pre>
@@ -137,9 +146,9 @@
 <p>In the <code>Undecided</code> case, there is 1 member, similar to <code>Unit</code>.</p>
 <p>How did we get 3? A <code>decision</code> can be <code>Decided</code> (2) <strong>or</strong> <code>Undecided</code> (1). 2 <strong>+</strong> 1 = 3.</p>
 <p>See how <strong>or</strong> and <code>+</code> works in similar ways.</p>
-<p>That's why they call it a sum type!</p>
+<p>That’s why they call it a sum type!</p>
 <h2 id="product-types">Product types</h2>
-<p>Let's make a <code>Pair</code> of <code>boolean</code>s.</p>
+<p>Let’s make a <code>Pair</code> of <code>boolean</code>s.</p>
 <pre><code>type pair = Pair of boolean * boolean;</code></pre>
 <p>How many members are in this type? 4!</p>
 <pre><code>True * True
@@ -150,21 +159,21 @@ False * False</code></pre>
 <p>For the first boolean, there are 2 members, True and False.</p>
 <p>And for each of these 2 members, the second boolean can be True or False.</p>
 <p>2 * 2 = 4</p>
-<p>And that's where the name <strong>product</strong> comes from.</p>
+<p>And that’s where the name <strong>product</strong> comes from.</p>
 <p>(Notice how the OCaml syntax for defining a product type, or a tuple, is using the <code>*</code> operator, which in many cases mean product)</p>
 <h2 id="exponential-types">Exponential types</h2>
-<p>You've made a decision, and depending on the decision you will either continue reading, or not.</p>
-<p>Here's one particular way to encode this decision-to-action process.</p>
+<p>You’ve made a decision, and depending on the decision you will either continue reading, or not.</p>
+<p>Here’s one particular way to encode this decision-to-action process.</p>
 <pre><code>let continue = function
     | Decided True -&gt; True
     | Decided False -&gt; False
     | Undecided -&gt; True</code></pre>
 <p>If you have decided, you follow your decision. If you are undecided, you continue reading and see what happens.</p>
 <p><code>continue</code> is a function, its type is <code>decision -&gt; boolean</code>.</p>
-<p>Let's ask the same question: how many members are there in the <code>decision -&gt; boolean</code> type?</p>
+<p>Let’s ask the same question: how many members are there in the <code>decision -&gt; boolean</code> type?</p>
 <p>A function of this type has to, for each member of the input type, <code>decision</code> with 3 members, give a member of the output type, <code>boolean</code> with 2 members.</p>
 <p>So the total number of unique functions of this type is 2 * 2 * 2 = 8, or equivalently, 2 ^ 3!</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>DT, DF, U -&gt; True</li>
 <li>DT, DF, U -&gt; False</li>
 <li>DT, DF -&gt; True, U -&gt; False</li>
@@ -177,7 +186,7 @@ False * False</code></pre>
 <p>So you see, function types are also called <strong>exponential</strong> types.</p>
 <h2 id="dependent-sum-types-sigma-type">Dependent sum types / Sigma type</h2>
 <p>A <code>Pair boolean integer</code> is a type, but a <code>Pair boolean a'</code>, where <code>a'</code> depends on what <code>boolean</code> actually is, <code>True</code> or <code>False</code>, is called a dependent sum type.</p>
-<p>Here's an example (not actual valid OCaml code):</p>
+<p>Here’s an example (not actual valid OCaml code):</p>
 <pre><code>type pair = Pair of (b : boolean) * a&#39;
 where Pair of True * boolean
       Pair of False * integer</code></pre>
@@ -199,10 +208,10 @@ where continue Decided True : integer
       continue Undecided : boolean</code></pre>
 <p>This says that when the type of <code>continue</code> depends on the value of the argument.</p>
 <p>When <code>decision</code> is <code>Decided True</code>, <code>continue</code> returns an integer, when <code>Decided False</code> or <code>Undecided</code>, it returns a boolean.</p>
-<p>Let's count how many members type has. Recall how we counted the number of members a function type has previously, we multiplied the number of members in the output type n times, where n is the number of member in the input type.</p>
+<p>Let’s count how many members type has. Recall how we counted the number of members a function type has previously, we multiplied the number of members in the output type n times, where n is the number of member in the input type.</p>
 <p>In this case, since the number of members in the output type changes, we have to multiply them one by one instead of taking an exponent, to get 256 * 2 * 2 = 1024.</p>
 <p>Why is this called pi? Because you are taking the product of all possible types across all values of the type being depended on (argument of the function).</p>
-<p>And actually, the function space is a special case of the pi type, where the return type is constant, i.e. does not depend on the value of the argument.</p>
+<p>And actually, the function space is a special case of the pi type, where the return type is constant, i.e. does not depend on the value of the argument.</p>
 <h2 id="a-little-theory-behind-this">A little theory behind this</h2>
 <p>We can think of types as a set of things. We say that some value is of that type when it is a member in that set.</p>
 <p>For example, <code>boolean</code> is the set of things, which contains <code>True</code> and <code>False</code>.</p>

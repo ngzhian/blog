@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>SKI combinators - Lambda to SKI</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,50 +151,23 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
     }
-  </style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
+    }
   </style>
 </head>
 <body>
@@ -148,154 +184,154 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2 id="lambda-calculus">Lambda Calculus</h2>
 <p>The <a href="https://en.wikipedia.org/wiki/Lambda_calculus">lambda calculus</a> is a simple Turing-complete language.</p>
 <p>Lambda calculus is made up of three terms:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Variable, such as <code>x</code>,</li>
 <li>Lambda abstraction, such as <code>fun x -&gt; x</code>,</li>
 <li>Application, such as <code>(y x)</code>.</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* lambda calculus AST *)</span>
-<span class="kw">type</span> name = <span class="dt">string</span>
-<span class="kw">type</span> lambda =
-  | Var <span class="kw">of</span> name
-  | App <span class="kw">of</span> lambda * lambda
-  | Abs <span class="kw">of</span> name * lambda</code></pre></div>
-<p>Here's an example lambda term, representing the application of an identity function to an identity function:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml">App (Abs (<span class="ch">&#39;x&#39;</span>, Var <span class="ch">&#39;x&#39;</span>), Abs (<span class="ch">&#39;y&#39;</span>, Var <span class="ch">&#39;y&#39;</span>))</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">(* lambda calculus AST *)</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">type</span> name = <span class="dt">string</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">type</span> lambda =</span>
+<span id="cb1-4"><a href="#cb1-4"></a>  | Var <span class="kw">of</span> name</span>
+<span id="cb1-5"><a href="#cb1-5"></a>  | App <span class="kw">of</span> lambda * lambda</span>
+<span id="cb1-6"><a href="#cb1-6"></a>  | Abs <span class="kw">of</span> name * lambda</span></code></pre></div>
+<p>Here’s an example lambda term, representing the application of an identity function to an identity function:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb2-1"><a href="#cb2-1"></a>App (Abs (<span class="ch">&#39;x&#39;</span>, Var <span class="ch">&#39;x&#39;</span>), Abs (<span class="ch">&#39;y&#39;</span>, Var <span class="ch">&#39;y&#39;</span>))</span></code></pre></div>
 <h2 id="translating-lambda-to-ski">Translating lambda to SKI</h2>
 <p>Let us conjure an ideal function that will do such a translation, it should take a lambda term to an SKI term:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="kw">let</span> convert (e : lambda) : ski = (??)</code></pre></div>
-<p>What this means is that we can either have a lambda term, or an ski term, with no in-betweens, i.e. we cannot have a lambda term containing an ski term.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">let</span> convert (e : lambda) : ski = (??)</span></code></pre></div>
+<p>What this means is that we can either have a lambda term, or an ski term, with no in-betweens, i.e. we cannot have a lambda term containing an ski term.</p>
 <p>However, if we look at the translation rules, we find that we will need a intermediate structure that can hold both lambda terms and ski terms.</p>
 <p>For example in clause 5, <code>T[λx.λy.E] =&gt; T[λx.T[λy.E]]</code>, the translated term <code>T[λy.E]</code>, which by definition is an SKI term, is the body of a lambda abstraction.</p>
 <p>So it is helpful to define such a structure, which allows lambda calculus terms and SKI terms to coexist:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Intermediate AST for converting lambda calculus into SKI combinators.</span>
-<span class="co"> * This is needed because when converting, intermediate terms can be</span>
-<span class="co"> * a mixture of both lambda terms and SKI terms, for example</span>
-<span class="co"> * a lambda expression with a SKI body, \x . K</span>
-<span class="co"> * *)</span>
-<span class="kw">type</span> ls =
-  | Var <span class="kw">of</span> name
-  | App <span class="kw">of</span> ls * ls
-  | Abs <span class="kw">of</span> name * ls
-  | Sl
-  | Kl
-  | Il
-  | Tl <span class="kw">of</span> ls * ls
-
-<span class="co">(* String representation of ls *)</span>
-<span class="kw">let</span> <span class="kw">rec</span> string_of_ls (l : ls) : <span class="dt">string</span> = <span class="kw">match</span> l <span class="kw">with</span>
-    | Var x -&gt; x
-    | App (e1, e2) -&gt; <span class="st">&quot;(&quot;</span> ^ (string_of_ls e1) ^ (string_of_ls e2) ^ <span class="st">&quot;)&quot;</span>
-    | Abs (x, e) -&gt; <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> ^ x ^ (string_of_ls e)
-    | Sl  -&gt; <span class="st">&quot;S&quot;</span>
-    | Kl  -&gt; <span class="st">&quot;K&quot;</span>
-    | Il  -&gt; <span class="st">&quot;I&quot;</span>
-    | Tl (e1, e2) -&gt;  <span class="st">&quot;(T &quot;</span> ^ (string_of_ls e1) ^ (string_of_ls e2) ^ <span class="st">&quot;)&quot;</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">(* Intermediate AST for converting lambda calculus into SKI combinators.</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co"> * This is needed because when converting, intermediate terms can be</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co"> * a mixture of both lambda terms and SKI terms, for example</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"> * a lambda expression with a SKI body, \x . K</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co"> * *)</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="kw">type</span> ls =</span>
+<span id="cb4-7"><a href="#cb4-7"></a>  | Var <span class="kw">of</span> name</span>
+<span id="cb4-8"><a href="#cb4-8"></a>  | App <span class="kw">of</span> ls * ls</span>
+<span id="cb4-9"><a href="#cb4-9"></a>  | Abs <span class="kw">of</span> name * ls</span>
+<span id="cb4-10"><a href="#cb4-10"></a>  | Sl</span>
+<span id="cb4-11"><a href="#cb4-11"></a>  | Kl</span>
+<span id="cb4-12"><a href="#cb4-12"></a>  | Il</span>
+<span id="cb4-13"><a href="#cb4-13"></a>  | Tl <span class="kw">of</span> ls * ls</span>
+<span id="cb4-14"><a href="#cb4-14"></a></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co">(* String representation of ls *)</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="kw">let</span> <span class="kw">rec</span> string_of_ls (l : ls) : <span class="dt">string</span> = <span class="kw">match</span> l <span class="kw">with</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>    | Var x -&gt; x</span>
+<span id="cb4-18"><a href="#cb4-18"></a>    | App (e1, e2) -&gt; <span class="st">&quot;(&quot;</span> ^ (string_of_ls e1) ^ (string_of_ls e2) ^ <span class="st">&quot;)&quot;</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a>    | Abs (x, e) -&gt; <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> ^ x ^ (string_of_ls e)</span>
+<span id="cb4-20"><a href="#cb4-20"></a>    | Sl  -&gt; <span class="st">&quot;S&quot;</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a>    | Kl  -&gt; <span class="st">&quot;K&quot;</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a>    | Il  -&gt; <span class="st">&quot;I&quot;</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a>    | Tl (e1, e2) -&gt;  <span class="st">&quot;(T &quot;</span> ^ (string_of_ls e1) ^ (string_of_ls e2) ^ <span class="st">&quot;)&quot;</span></span></code></pre></div>
 <p>We will also need a helper function to determine if a variable is free in an expression:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Is x free in the expression e? *)</span>
-<span class="kw">let</span> free x (e : ls) =
-  <span class="co">(* Get free variables of an expression *)</span>
-  <span class="kw">let</span> <span class="kw">rec</span> fv (e : ls) = <span class="kw">match</span> e <span class="kw">with</span>
-    | Var x -&gt; [x]
-    | App (e1, e2) -&gt; fv e1 @ fv e2
-    | Abs (x, e) -&gt; <span class="dt">List</span>.filter (<span class="kw">fun</span> v -&gt; v != x) (fv e)
-    | Tl (e1, e2) -&gt; fv e1 @ fv e2
-    | _ -&gt; []
-  <span class="kw">in</span>
-  <span class="dt">List</span>.mem x (fv e)</code></pre></div>
-<p>The core translation algorithm then follows the translation scheme described in the <a href="https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis">Wikipedia article</a>. We make use of the intermediate structure, <code>ls</code>, when translating. The signature of this structure doesn't say much, it looks like an identity function, but the assumption is that the input term is converted from a lambda term, made up of <code>Var</code>, <code>App</code>, and <code>Abs</code>, and the output term will only contain <code>Sl</code>, <code>Kl</code>, <code>Il</code>, and <code>Tl</code>, i.e. the terms that can be converted directly into the SKI combinators.</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* This is the core algorithm to translate ls terms (made up of lambda)</span>
-<span class="co"> * into ls terms (made up of SKI combinators).</span>
-<span class="co"> * The clauses described here follows the rules of the T function described at</span>
-<span class="co"> * https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis</span>
-<span class="co"> * *)</span>
-<span class="kw">let</span> <span class="kw">rec</span> translate (e : ls) : ls = <span class="kw">match</span> e <span class="kw">with</span>
-  <span class="co">(* clause 1. *)</span>
-  <span class="co">(* you can&#39;t do much with a variable *)</span>
-  | Var x -&gt;
-    Var x
-  <span class="co">(* clause 2. *)</span>
-  <span class="co">(* an application remains an application, but with the terms translated *)</span>
-  | App (e1, e2) -&gt;
-    App (translate e1, translate e2)
-  <span class="co">(* clause 3. *)</span>
-  <span class="co">(* when x is not free in e, there can be two cases:</span>
-<span class="co">   * 1. x does not appear in e at all,</span>
-<span class="co">   * 2. x appears bound in e, Abs (x, e&#39;) is in e</span>
-<span class="co">   * In both cases, whatever you apply this lambda term to will not affect</span>
-<span class="co">   * the result of application:</span>
-<span class="co">   * 1. since x is not used, you can ignore it</span>
-<span class="co">   * 2. the x is bound to an inner argument, so it&#39;s really a different x from this</span>
-<span class="co">   * hence this is really a constant term e,</span>
-<span class="co">   * which is the same as the K combinator with e as the first argument.</span>
-<span class="co">   * (recall that: K x y = x) *)</span>
-  | Abs (x, e) <span class="kw">when</span> <span class="dt">not</span> (free x e) -&gt;
-    App (Kl, translate e)
-  <span class="co">(* clause 4. *)</span>
-  | Abs (x, Var x&#39;) -&gt;
-    <span class="co">(* this is the identity function, which is the I combinator *)</span>
-    <span class="kw">if</span> x = x&#39;
-    <span class="kw">then</span> Il
-    <span class="co">(* we will never hit this case because, when x != x&#39;,</span>
-<span class="co">     * we end up in clause 3, as x is not free in Var x&#39; *)</span>
-    <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span>
-  <span class="co">(* clause 5. *)</span>
-  | Abs (x, Abs (y, e)) -&gt;
-    <span class="co">(* when x is free in e, the x in e is the argument,</span>
-<span class="co">     * we first translate the body into a combinator, to eliminate a layer of abstraction *)</span>
-    <span class="kw">if</span> free x e
-    <span class="kw">then</span> translate (Abs (x, translate (Abs (y, e))))
-    <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span>
-  <span class="co">(* clause 6. *)</span>
-  | Abs (x, App (e1, e2)) -&gt;
-    <span class="co">(* eliminate the abstraction via application *)</span>
-    <span class="co">(* Recall that S x y z = x z (y z),</span>
-<span class="co">     * so applying the term Abs (x, App (e1, e2)) to an argument x</span>
-<span class="co">     * will result in substituting x into the body of e1, x z,</span>
-<span class="co">     * and e2, y z, and applying e1 to e2, x z (y z) *)</span>
-    <span class="kw">if</span> free x e1 || free x e2
-    <span class="kw">then</span> App (App (Sl, (translate (Abs (x, e1)))), translate (Abs (x, e2)))
-    <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span>
-  | Kl -&gt; Kl
-  | Sl -&gt; Sl
-  | Il -&gt; Il
-  | _ -&gt;
-    <span class="dt">failwith</span> (<span class="st">&quot;no matches for &quot;</span> ^ (string_of_ls e))</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">(* Is x free in the expression e? *)</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">let</span> free x (e : ls) =</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="co">(* Get free variables of an expression *)</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="kw">let</span> <span class="kw">rec</span> fv (e : ls) = <span class="kw">match</span> e <span class="kw">with</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    | Var x -&gt; [x]</span>
+<span id="cb5-6"><a href="#cb5-6"></a>    | App (e1, e2) -&gt; fv e1 @ fv e2</span>
+<span id="cb5-7"><a href="#cb5-7"></a>    | Abs (x, e) -&gt; <span class="dt">List</span>.filter (<span class="kw">fun</span> v -&gt; v != x) (fv e)</span>
+<span id="cb5-8"><a href="#cb5-8"></a>    | Tl (e1, e2) -&gt; fv e1 @ fv e2</span>
+<span id="cb5-9"><a href="#cb5-9"></a>    | _ -&gt; []</span>
+<span id="cb5-10"><a href="#cb5-10"></a>  <span class="kw">in</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>  <span class="dt">List</span>.mem x (fv e)</span></code></pre></div>
+<p>The core translation algorithm then follows the translation scheme described in the <a href="https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis">Wikipedia article</a>. We make use of the intermediate structure, <code>ls</code>, when translating. The signature of this structure doesn’t say much, it looks like an identity function, but the assumption is that the input term is converted from a lambda term, made up of <code>Var</code>, <code>App</code>, and <code>Abs</code>, and the output term will only contain <code>Sl</code>, <code>Kl</code>, <code>Il</code>, and <code>Tl</code>, i.e. the terms that can be converted directly into the SKI combinators.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">(* This is the core algorithm to translate ls terms (made up of lambda)</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co"> * into ls terms (made up of SKI combinators).</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co"> * The clauses described here follows the rules of the T function described at</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="co"> * https://en.wikipedia.org/wiki/Combinatory_logic#Completeness_of_the_S-K_basis</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co"> * *)</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="kw">let</span> <span class="kw">rec</span> translate (e : ls) : ls = <span class="kw">match</span> e <span class="kw">with</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>  <span class="co">(* clause 1. *)</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>  <span class="co">(* you can&#39;t do much with a variable *)</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>  | Var x -&gt;</span>
+<span id="cb6-10"><a href="#cb6-10"></a>    Var x</span>
+<span id="cb6-11"><a href="#cb6-11"></a>  <span class="co">(* clause 2. *)</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>  <span class="co">(* an application remains an application, but with the terms translated *)</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>  | App (e1, e2) -&gt;</span>
+<span id="cb6-14"><a href="#cb6-14"></a>    App (translate e1, translate e2)</span>
+<span id="cb6-15"><a href="#cb6-15"></a>  <span class="co">(* clause 3. *)</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>  <span class="co">(* when x is not free in e, there can be two cases:</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">   * 1. x does not appear in e at all,</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="co">   * 2. x appears bound in e, Abs (x, e&#39;) is in e</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">   * In both cases, whatever you apply this lambda term to will not affect</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="co">   * the result of application:</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="co">   * 1. since x is not used, you can ignore it</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a><span class="co">   * 2. the x is bound to an inner argument, so it&#39;s really a different x from this</span></span>
+<span id="cb6-23"><a href="#cb6-23"></a><span class="co">   * hence this is really a constant term e,</span></span>
+<span id="cb6-24"><a href="#cb6-24"></a><span class="co">   * which is the same as the K combinator with e as the first argument.</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a><span class="co">   * (recall that: K x y = x) *)</span></span>
+<span id="cb6-26"><a href="#cb6-26"></a>  | Abs (x, e) <span class="kw">when</span> <span class="dt">not</span> (free x e) -&gt;</span>
+<span id="cb6-27"><a href="#cb6-27"></a>    App (Kl, translate e)</span>
+<span id="cb6-28"><a href="#cb6-28"></a>  <span class="co">(* clause 4. *)</span></span>
+<span id="cb6-29"><a href="#cb6-29"></a>  | Abs (x, Var x&#39;) -&gt;</span>
+<span id="cb6-30"><a href="#cb6-30"></a>    <span class="co">(* this is the identity function, which is the I combinator *)</span></span>
+<span id="cb6-31"><a href="#cb6-31"></a>    <span class="kw">if</span> x = x&#39;</span>
+<span id="cb6-32"><a href="#cb6-32"></a>    <span class="kw">then</span> Il</span>
+<span id="cb6-33"><a href="#cb6-33"></a>    <span class="co">(* we will never hit this case because, when x != x&#39;,</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a><span class="co">     * we end up in clause 3, as x is not free in Var x&#39; *)</span></span>
+<span id="cb6-35"><a href="#cb6-35"></a>    <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span></span>
+<span id="cb6-36"><a href="#cb6-36"></a>  <span class="co">(* clause 5. *)</span></span>
+<span id="cb6-37"><a href="#cb6-37"></a>  | Abs (x, Abs (y, e)) -&gt;</span>
+<span id="cb6-38"><a href="#cb6-38"></a>    <span class="co">(* when x is free in e, the x in e is the argument,</span></span>
+<span id="cb6-39"><a href="#cb6-39"></a><span class="co">     * we first translate the body into a combinator, to eliminate a layer of abstraction *)</span></span>
+<span id="cb6-40"><a href="#cb6-40"></a>    <span class="kw">if</span> free x e</span>
+<span id="cb6-41"><a href="#cb6-41"></a>    <span class="kw">then</span> translate (Abs (x, translate (Abs (y, e))))</span>
+<span id="cb6-42"><a href="#cb6-42"></a>    <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a>  <span class="co">(* clause 6. *)</span></span>
+<span id="cb6-44"><a href="#cb6-44"></a>  | Abs (x, App (e1, e2)) -&gt;</span>
+<span id="cb6-45"><a href="#cb6-45"></a>    <span class="co">(* eliminate the abstraction via application *)</span></span>
+<span id="cb6-46"><a href="#cb6-46"></a>    <span class="co">(* Recall that S x y z = x z (y z),</span></span>
+<span id="cb6-47"><a href="#cb6-47"></a><span class="co">     * so applying the term Abs (x, App (e1, e2)) to an argument x</span></span>
+<span id="cb6-48"><a href="#cb6-48"></a><span class="co">     * will result in substituting x into the body of e1, x z,</span></span>
+<span id="cb6-49"><a href="#cb6-49"></a><span class="co">     * and e2, y z, and applying e1 to e2, x z (y z) *)</span></span>
+<span id="cb6-50"><a href="#cb6-50"></a>    <span class="kw">if</span> free x e1 || free x e2</span>
+<span id="cb6-51"><a href="#cb6-51"></a>    <span class="kw">then</span> App (App (Sl, (translate (Abs (x, e1)))), translate (Abs (x, e2)))</span>
+<span id="cb6-52"><a href="#cb6-52"></a>    <span class="kw">else</span> <span class="dt">failwith</span> <span class="st">&quot;error&quot;</span></span>
+<span id="cb6-53"><a href="#cb6-53"></a>  | Kl -&gt; Kl</span>
+<span id="cb6-54"><a href="#cb6-54"></a>  | Sl -&gt; Sl</span>
+<span id="cb6-55"><a href="#cb6-55"></a>  | Il -&gt; Il</span>
+<span id="cb6-56"><a href="#cb6-56"></a>  | _ -&gt;</span>
+<span id="cb6-57"><a href="#cb6-57"></a>    <span class="dt">failwith</span> (<span class="st">&quot;no matches for &quot;</span> ^ (string_of_ls e))</span></code></pre></div>
 <p>Finally we can write the top level <code>convert</code> function we imagined earlier:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Converts a lambda term into an SKI term *)</span>
-<span class="kw">let</span> convert (e : lambda) : ski =
-  <span class="co">(* Convert lambda term into intermediate ls term *)</span>
-  <span class="kw">let</span> <span class="kw">rec</span> ls_of_lambda (e : lambda) =
-    <span class="kw">match</span> e <span class="kw">with</span>
-    | Var x -&gt; Var x
-    | App (e1, e2) -&gt; App (ls_of_lambda e1, ls_of_lambda e2)
-    | Abs (x, e) -&gt; Abs (x, ls_of_lambda e)
-  <span class="kw">in</span>
-  <span class="co">(* Convert intermediate ls term into ski term *)</span>
-  <span class="kw">let</span> <span class="kw">rec</span> ski_of_ls (e : ls) : ski =
-    <span class="kw">match</span> e <span class="kw">with</span>
-    | Var _ -&gt; <span class="dt">failwith</span> <span class="st">&quot;should not have Var anymore&quot;</span>
-    | Abs _ -&gt; <span class="dt">failwith</span> <span class="st">&quot;should not have Abs anymore&quot;</span>
-    | App (e1, e2) -&gt; T (ski_of_ls e1, ski_of_ls e2)
-    | Sl  -&gt; S
-    | Kl  -&gt; K
-    | Il  -&gt; I
-    | Tl (e1, e2) -&gt; T (ski_of_ls e1, ski_of_ls e2)
-  <span class="kw">in</span>
-  <span class="co">(* convert lambda term into ls term *)</span>
-  <span class="kw">let</span> ls_term = ls_of_lambda e <span class="kw">in</span>
-  <span class="co">(* translate ls term of lambda into ls term of combinators *)</span>
-  <span class="kw">let</span> ls_comb = translate ls_term <span class="kw">in</span>
-  <span class="co">(* convert ls term into ski *)</span>
-  ski_of_ls ls_comb</code></pre></div>
-<p>Let's try it with the example given by Wikipedia:</p>
-<div class="sourceCode"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span class="co">(* Example lambda terms *)</span>
-<span class="kw">let</span> l2 : lambda = Abs (<span class="st">&quot;x&quot;</span>, Abs (<span class="st">&quot;y&quot;</span>, App (Var <span class="st">&quot;y&quot;</span>, Var <span class="st">&quot;x&quot;</span>)))
-
-<span class="kw">let</span> _ = <span class="dt">print_endline</span> (string_of_ski (convert l2))</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">(* Converts a lambda term into an SKI term *)</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw">let</span> convert (e : lambda) : ski =</span>
+<span id="cb7-3"><a href="#cb7-3"></a>  <span class="co">(* Convert lambda term into intermediate ls term *)</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>  <span class="kw">let</span> <span class="kw">rec</span> ls_of_lambda (e : lambda) =</span>
+<span id="cb7-5"><a href="#cb7-5"></a>    <span class="kw">match</span> e <span class="kw">with</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>    | Var x -&gt; Var x</span>
+<span id="cb7-7"><a href="#cb7-7"></a>    | App (e1, e2) -&gt; App (ls_of_lambda e1, ls_of_lambda e2)</span>
+<span id="cb7-8"><a href="#cb7-8"></a>    | Abs (x, e) -&gt; Abs (x, ls_of_lambda e)</span>
+<span id="cb7-9"><a href="#cb7-9"></a>  <span class="kw">in</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>  <span class="co">(* Convert intermediate ls term into ski term *)</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a>  <span class="kw">let</span> <span class="kw">rec</span> ski_of_ls (e : ls) : ski =</span>
+<span id="cb7-12"><a href="#cb7-12"></a>    <span class="kw">match</span> e <span class="kw">with</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a>    | Var _ -&gt; <span class="dt">failwith</span> <span class="st">&quot;should not have Var anymore&quot;</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>    | Abs _ -&gt; <span class="dt">failwith</span> <span class="st">&quot;should not have Abs anymore&quot;</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a>    | App (e1, e2) -&gt; T (ski_of_ls e1, ski_of_ls e2)</span>
+<span id="cb7-16"><a href="#cb7-16"></a>    | Sl  -&gt; S</span>
+<span id="cb7-17"><a href="#cb7-17"></a>    | Kl  -&gt; K</span>
+<span id="cb7-18"><a href="#cb7-18"></a>    | Il  -&gt; I</span>
+<span id="cb7-19"><a href="#cb7-19"></a>    | Tl (e1, e2) -&gt; T (ski_of_ls e1, ski_of_ls e2)</span>
+<span id="cb7-20"><a href="#cb7-20"></a>  <span class="kw">in</span></span>
+<span id="cb7-21"><a href="#cb7-21"></a>  <span class="co">(* convert lambda term into ls term *)</span></span>
+<span id="cb7-22"><a href="#cb7-22"></a>  <span class="kw">let</span> ls_term = ls_of_lambda e <span class="kw">in</span></span>
+<span id="cb7-23"><a href="#cb7-23"></a>  <span class="co">(* translate ls term of lambda into ls term of combinators *)</span></span>
+<span id="cb7-24"><a href="#cb7-24"></a>  <span class="kw">let</span> ls_comb = translate ls_term <span class="kw">in</span></span>
+<span id="cb7-25"><a href="#cb7-25"></a>  <span class="co">(* convert ls term into ski *)</span></span>
+<span id="cb7-26"><a href="#cb7-26"></a>  ski_of_ls ls_comb</span></code></pre></div>
+<p>Let’s try it with the example given by Wikipedia:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">(* Example lambda terms *)</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">let</span> l2 : lambda = Abs (<span class="st">&quot;x&quot;</span>, Abs (<span class="st">&quot;y&quot;</span>, App (Var <span class="st">&quot;y&quot;</span>, Var <span class="st">&quot;x&quot;</span>)))</span>
+<span id="cb8-3"><a href="#cb8-3"></a></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">let</span> _ = <span class="dt">print_endline</span> (string_of_ski (convert l2))</span></code></pre></div>
 <p>The output <code>T(T(S,T(K,T(S,I))),T(T(S,T(K,K)),I))</code>, is the same as <code>(S (K (S I)) (S (K K) I))</code>.</p>
 <h2 id="references">References</h2>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Wikipedia <a href="https://en.wikipedia.org/wiki/SKI_combinator_calculus">SKI Combinator calculus</a></li>
 <li>Wikipedia <a href="https://en.wikipedia.org/wiki/Combinatory_logic">Combinatory Logic</a></li>
 <li>Wikipedia <a href="https://en.wikipedia.org/wiki/Lambda_calculus#Free_variables">Lambda Calculus</a></li>

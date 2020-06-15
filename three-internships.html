@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>My experience interning at 3 companies</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -109,29 +118,28 @@
 </blockquote>
 <p>From Oct 2015 to Aug 2016, I had the good fortune of interning at 3 respectable companies: Google, Stripe, and Uber.</p>
 <p>In this post I wish to share my experiences at the 3 different places.</p>
-<div class="figure">
-<img src="images/google-nyc.jpg" alt="New York" />
-<p class="caption">New York</p>
-</div>
+<figure>
+<img src="images/google-nyc.jpg" alt="" /><figcaption>New York</figcaption>
+</figure>
 <h2 id="interview-process">Interview process</h2>
-<p>The interview processes at the 3 companies were pretty similar, with a initial HR phone call, followed by multiple technical screens. Of special note is Stripe's, who flew me from Singapore to San Francisco for an on-site interview.</p>
+<p>The interview processes at the 3 companies were pretty similar, with a initial HR phone call, followed by multiple technical screens. Of special note is Stripe’s, who flew me from Singapore to San Francisco for an on-site interview.</p>
 <h3 id="google">Google</h3>
 <p>Initial HR phone call with recruiter, followed by 3 back-to-back technical interviews via phone and Google Docs on the same day. After I passed the technical interviews, there are N phone calls with teams that are interested to pick up an intern. For me, N = 1, but it can vary.</p>
 <h3 id="stripe">Stripe</h3>
-<p>Initial HR phone call with recruiter, technical interview via Skype and shared screen coding, on site with 3 or 4 (can't remember) technical interviews and a lunch with an engineering manager. More details on the on site can be found in this <a href="https://www.quora.com/What-is-the-engineering-interview-process-like-at-Stripe">Quora post</a>.</p>
+<p>Initial HR phone call with recruiter, technical interview via Skype and shared screen coding, on site with 3 or 4 (can’t remember) technical interviews and a lunch with an engineering manager. More details on the on site can be found in this <a href="https://www.quora.com/What-is-the-engineering-interview-process-like-at-Stripe">Quora post</a>.</p>
 <h3 id="uber">Uber</h3>
 <p>Initial HR phone call with recruiter, followed by 2 technical phone calls with online collaborative IDE, and 1 phone call with a manager.</p>
 <h2 id="team-i-was-in-projects-i-worked-on">Team I was in, projects I worked on</h2>
 <p>Details will be scarce in this section due to confidentiality, but I try to give a higher level look as to the kind of work interns got at each company.</p>
 <h3 id="google-1">Google</h3>
 <p>Internal tool to convert a service written in old framework style into a service written in the new framework style. This was a internship task that my mentor scoped out for me. I finished this ahead of time, so I went on to another task related to a bot that comments on the internal bug tracker when certain conditions are met.</p>
-<p>My project was clearly scoped out to be an intern project: it wasn't anything critical, but was something that an Intern could do and would be helpful to the team. Throughout my internship, I was not involved in the projects that my colleagues were doing.</p>
+<p>My project was clearly scoped out to be an intern project: it wasn’t anything critical, but was something that an Intern could do and would be helpful to the team. Throughout my internship, I was not involved in the projects that my colleagues were doing.</p>
 <h3 id="stripe-1">Stripe</h3>
-<p>I was initially given smaller tasks that were on the sprints to get warmed up, so I dealt a little with merchant search (that's the search feature you see if you are a logged into your Stripe dashboard), and also a little with API permission. I had 2 big tasks scoped out by my mentor, the first had to do with the frontend of a new <a href="https://stripe.com/connect">Connect</a> feature, the second has to do with creating a new data pipeline to calculate fees.</p>
-<p>The features that I was tasked with are additions to the core product, especially the data pipeline with actually affects the company's earnings! I felt like the entire team trusts me. My team ran a 2 week sprint system, with weekly sprint meetings, and I was encouraged to participate like a full timer.</p>
+<p>I was initially given smaller tasks that were on the sprints to get warmed up, so I dealt a little with merchant search (that’s the search feature you see if you are a logged into your Stripe dashboard), and also a little with API permission. I had 2 big tasks scoped out by my mentor, the first had to do with the frontend of a new <a href="https://stripe.com/connect">Connect</a> feature, the second has to do with creating a new data pipeline to calculate fees.</p>
+<p>The features that I was tasked with are additions to the core product, especially the data pipeline with actually affects the company’s earnings! I felt like the entire team trusts me. My team ran a 2 week sprint system, with weekly sprint meetings, and I was encouraged to participate like a full timer.</p>
 <h3 id="uber-1">Uber</h3>
 <p>The first task was to run an experiment on web <a href="https://get.uber.com/">sign up form</a> to get warmed up. While this was in progress (experiments take a while to run), I was in discussion with my mentor for subsequent tasks. Eventually we settled extracting a microservice, which was the work the rest of my team was going to be working on for the subsequent months.</p>
-<p>My team runs a weekly sprint system, and the bigger team that we're part of has a 2-week sprint cycle. I mostly worked within my immediate team, knocking tasks of a task board we set up to track our own tasks.</p>
+<p>My team runs a weekly sprint system, and the bigger team that we’re part of has a 2-week sprint cycle. I mostly worked within my immediate team, knocking tasks of a task board we set up to track our own tasks.</p>
 <h2 id="tech-stack">Tech stack</h2>
 <h3 id="google-2">Google</h3>
 <p>Well known for its giant <a href="https://www.wired.com/2015/09/google-2-billion-lines-codeand-one-place/">monorepo</a>, has extremely well thought out tools for developing, building, testing, etc. Main languages used are C++, Java, Python. A lot of internal tools that are slowly being open sourced, build tool <a href="http://bazel.io">bazel</a>, code search <a href="https://kythe.io/">kythe</a>, etc. Uses internal tool for running servers, open sourced as <a href="http://kubernetes.io/">kubernetes</a>.</p>
@@ -146,7 +154,7 @@
 <p>All 3 companies had a weekly all hands meeting as well, where there would be some presentation and a Q&amp;A with heads of the company.</p>
 <p>There are tech talks too, and the frequency correlates with the size of the company.</p>
 <p>Office hours are really flexible at all companies, they care more about your output than your hours. Time off can be taken as needed with advance notification.</p>
-<h2 id="thats-all-folks">That's all folks</h2>
+<h2 id="thats-all-folks">That’s all folks</h2>
 <p>I had a really good time at all 3 companies, I felt technically challenged, learned a lot, had very good mentors. If you are interested in applying for an internship and am not sure where to start, check out <a href="https://ymichael.github.io/projectintern/">Project Intern</a>.</p>
 </section>
 </body>

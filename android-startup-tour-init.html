@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Android startup tour - init</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -104,25 +113,25 @@
 <h1 class="title">Android startup tour - init</h1>
 <h3 class="date">2017-09-20 22:20</h3>
 </div>
-<p>I've been working on the <a href="https://www.youtube.com/watch?v=CHKfKChZSE0">Android Go</a> team for close to two months now, our goal is to make Android run well on sub-$100 phones.</p>
+<p>I’ve been working on the <a href="https://www.youtube.com/watch?v=CHKfKChZSE0">Android Go</a> team for close to two months now, our goal is to make Android run well on sub-$100 phones.</p>
 <p>As part of my work, I have to jump between different parts of Android - some days are spent profiling application code, other days digging into frameworks, sometimes looking at the kernel.</p>
 <p>One of my investigations recently was around Android startup, so the goal of this series of post is to summarize and highlight interesting/important points of the process.</p>
-<h2 id="androids-init">Android's init</h2>
-<p>If you've used Unix-like OS, you've probably heard of the <code>init</code> process. This is pid 1 on the OS. It is started by the kernel and runs as a daemon. Some init processes include <a href="https://en.wikipedia.org/wiki/Launchd">launchd</a> (on Mac OS) and <a href="https://en.wikipedia.org/wiki/Systemd">systemd</a> (on various Linux distributions like Ubuntu and Debian).</p>
-<p>Android has its own init process <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>, the source is found <a href="https://android.googlesource.com/platform/system/core/+/master/init/">here</a>.</p>
+<h2 id="androids-init">Android’s init</h2>
+<p>If you’ve used Unix-like OS, you’ve probably heard of the <code>init</code> process. This is pid 1 on the OS. It is started by the kernel and runs as a daemon. Some init processes include <a href="https://en.wikipedia.org/wiki/Launchd">launchd</a> (on Mac OS) and <a href="https://en.wikipedia.org/wiki/Systemd">systemd</a> (on various Linux distributions like Ubuntu and Debian).</p>
+<p>Android has its own init process <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, the source is found <a href="https://android.googlesource.com/platform/system/core/+/master/init/">here</a>.</p>
 <h2 id="rc-files">rc files</h2>
 <p>The <a href="https://android.googlesource.com/platform/system/core/+/master/init/README.md">README</a> goes into a lot more details about how it works, especially around the <code>rc</code> files, but here are the main points:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Configuration for init is defined in <code>rc</code> files</li>
 <li>These files contain <em>actions</em> and <em>services</em></li>
 <li>An action is a <em>trigger</em> and a list of <em>commands</em></li>
-<li>Commands look like shell commands, e.g. <code>mkdir</code>, <code>chown</code>, <code>start</code></li>
+<li>Commands look like shell commands, e.g. <code>mkdir</code>, <code>chown</code>, <code>start</code></li>
 <li>A service is a program, such a binary, that is started by init</li>
 </ol>
-<p>It's probably instructive to look at some example <code>rc</code> files: <a href="https://android.googlesource.com/platform/system/core/+/master/rootdir/">this folder</a> contains some <code>rc</code> files for Android that are copied to the root of the Android device, and hence the folder name <code>rootdir</code>.</p>
+<p>It’s probably instructive to look at some example <code>rc</code> files: <a href="https://android.googlesource.com/platform/system/core/+/master/rootdir/">this folder</a> contains some <code>rc</code> files for Android that are copied to the root of the Android device, and hence the folder name <code>rootdir</code>.</p>
 <h2 id="init.rc">init.rc</h2>
-<p>The primary file is <code>init.rc</code>. It isn't particularly long, at 700+ lines, and it's possible to trace through it to figure out what exactly it's doing. But here are high level overview:</p>
-<ol style="list-style-type: decimal">
+<p>The primary file is <code>init.rc</code>. It isn’t particularly long, at 700+ lines, and it’s possible to trace through it to figure out what exactly it’s doing. But here are high level overview:</p>
+<ol type="1">
 <li>creates directories</li>
 <li>mounts device onto filesystem</li>
 <li>writes files the rest of the system needs</li>
@@ -141,7 +150,7 @@ import /init.${ro.zygote}.rc</code></pre>
 <p>There are also other <code>rc</code> files located in <code>system/core</code>, for example lmkd, the low memory killer, has a <code>rc</code> file <a href="https://android.googlesource.com/platform/system/core/+/master/lmkd/lmkd.rc">here</a>, which describes how to start lmkd, what class it is, what user group it should be started as, etc.</p>
 <h2 id="starting-up">Starting up</h2>
 <p>So here is a summary of what init process looks like:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Run init</li>
 <li>Parse <code>init.rc</code> files</li>
 <li>Parse imported <code>rc</code> files recursively</li>
@@ -149,12 +158,12 @@ import /init.${ro.zygote}.rc</code></pre>
 <li>Starts a bunch of services</li>
 </ol>
 <p>In another blog post we will look at a very important service called zygote.</p>
-<div class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>I'm not sure about the history and rationale, would appreciate any links or documentation.<a href="#fnref1">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>I’m not sure about the history and rationale, would appreciate any links or documentation.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</div>
+</section>
 </section>
 </body>
 </html>

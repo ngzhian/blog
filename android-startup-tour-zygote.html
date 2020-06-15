@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Android startup tour - zygote</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,50 +151,23 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
     }
-  </style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
+    }
   </style>
 </head>
 <body>
@@ -141,7 +177,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">Android startup tour - zygote</h1>
 <h3 class="date">2017-09-24 11:30</h3>
 </div>
-<p>The <a href="./android-startup-tour-init.html">previous blog post</a> looked at Android's init process. Android has its own init system, which uses <code>rc</code> files to declare what services to start and when. One of the primary <code>rc</code> file is <a href="https://android.googlesource.com/platform/system/core/+/master/rootdir/init.rc">init.rc</a>. This configuration file starts various important system services such as ueventd, logd, netd, zygote, console, etc.</p>
+<p>The <a href="./android-startup-tour-init.html">previous blog post</a> looked at Android’s init process. Android has its own init system, which uses <code>rc</code> files to declare what services to start and when. One of the primary <code>rc</code> file is <a href="https://android.googlesource.com/platform/system/core/+/master/rootdir/init.rc">init.rc</a>. This configuration file starts various important system services such as ueventd, logd, netd, zygote, console, etc.</p>
 <p>In this post, we focus on the <em>zygote</em> process.</p>
 <h2 id="app_process">app_process</h2>
 <p>The service zygote is declared in <a href="https://android.googlesource.com/platform/system/core/+/master/rootdir/init.zygote32.rc">init.zygote32.rc</a>.</p>
@@ -151,55 +187,55 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <!-- https://source.android.com/devices/architecture/hidl-cpp/interfaces -->
 <!-- vndservicemanager -->
 <!-- https://source.android.com/devices/architecture/hidl/binder-ipc#vndservicemanager -->
-<p>This is shell syntax - run the <code>/system/bin/app_process</code> binary with the provided arguments. <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
+<p>This is shell syntax - run the <code>/system/bin/app_process</code> binary with the provided arguments. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p>At a high level, app_process has two main responsibilities:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><a href="https://android.googlesource.com/platform/frameworks/base/+/master/cmds/app_process/app_main.cpp#199">initialize</a> the Android runtime, and</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">AppRuntime runtime(argv[<span class="dv">0</span>], computeArgBlockSize(argc, argv));</code></pre></div></li>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a>AppRuntime runtime(argv[<span class="dv">0</span>], computeArgBlockSize(argc, argv));</span></code></pre></div></li>
 <li><p>use the runtime to <a href="https://android.googlesource.com/platform/frameworks/base/+/master/cmds/app_process/app_main.cpp#350">start zygote</a> via its <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/jni/AndroidRuntime.cpp#1111"><code>main</code> method</a></p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">runtime.start(<span class="st">&quot;com.android.internal.os.ZygoteInit&quot;</span>, args, zygote);
-
-<span class="co">// calls into AndroidRuntime.cpp</span>
-
-jmethodID startMeth = env-&gt;GetStaticMethodID(startClass, <span class="st">&quot;main&quot;</span>,
-        <span class="st">&quot;([Ljava/lang/String;)V&quot;</span>);
-<span class="co">// ...</span>
-env-&gt;CallStaticVoidMethod(startClass, startMeth, strArray);</code></pre></div></li>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1"></a>runtime.start(<span class="st">&quot;com.android.internal.os.ZygoteInit&quot;</span>, args, zygote);</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">// calls into AndroidRuntime.cpp</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a></span>
+<span id="cb3-5"><a href="#cb3-5"></a>jmethodID startMeth = env-&gt;GetStaticMethodID(startClass, <span class="st">&quot;main&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6"></a>        <span class="st">&quot;([Ljava/lang/String;)V&quot;</span>);</span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">// ...</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>env-&gt;CallStaticVoidMethod(startClass, startMeth, strArray);</span></code></pre></div></li>
 </ol>
 <p>The Android Runtime refers to <a href="https://source.android.com/devices/tech/dalvik/">ART and Dalvik</a> - they run Android apps and some system services.</p>
 <p>Zygote is the base process from which every other Android process is forked from. This forking model helps to conserve memory on mobile devices, because a lot of resources can be shared.</p>
 <h2 id="zygote">zygote</h2>
 <p>The entry point to zygote is in the <code>main</code> method of <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#681">ZygoteInit</a>.</p>
 <p>Zygote has a number of very important responsibilities:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#738">preloading</a> shared resources,</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="fu">preloadClasses</span>();
-<span class="co">// ...</span>
-<span class="fu">preloadResources</span>();
-<span class="co">// ...</span>
-<span class="fu">preloadOpenGL</span>();
-<span class="co">// ...</span>
-<span class="fu">preloadSharedLibraries</span>();
-<span class="fu">preloadTextResources</span>();
-<span class="co">// ...</span></code></pre></div></li>
-<li>knowing when to <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#765">fork off a system server process</a> by looking at the arguments that <code>app_process</code> passed to it,</li>
+<div class="sourceCode" id="cb4"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">preloadClasses</span>();</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co">// ...</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="fu">preloadResources</span>();</span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">// ...</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="fu">preloadOpenGL</span>();</span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">// ...</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="fu">preloadSharedLibraries</span>();</span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="fu">preloadTextResources</span>();</span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">// ...</span></span></code></pre></div></li>
+<li><p>knowing when to <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#765">fork off a system server process</a> by looking at the arguments that <code>app_process</code> passed to it,</p></li>
 <li><p><a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#779">delegating to a ZygoteServer</a> which then listens to commands on a socket</p></li>
 </ol>
-<p>As mentioned, to save memory, processes on Android try to share as much resources as possible. For example, system class/dex files (like <a href="https://android.googlesource.com/platform/frameworks/base/+/master/preloaded-classes#219">String</a>) cannot change on a system, so those important code files are preloaded so every process can share them<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>. Also, <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/arrays.xml#24">resources</a> like drawables and styles across the system can be shared by process as well.</p>
+<p>As mentioned, to save memory, processes on Android try to share as much resources as possible. For example, system class/dex files (like <a href="https://android.googlesource.com/platform/frameworks/base/+/master/preloaded-classes#219">String</a>) cannot change on a system, so those important code files are preloaded so every process can share them<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Also, <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/arrays.xml#24">resources</a> like drawables and styles across the system can be shared by process as well.</p>
 <p>To fork off a system server, ZygoteInit delegates to Zygote, <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#643">calling forkSystemServer</a>:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">pid = Zygote.<span class="fu">forkSystemServer</span>(<span class="co">/* lots of args */</span>);</code></pre></div>
-<p>This is in turn <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/jni/com_android_internal_os_Zygote.cpp#752">implemented natively</a> via Android's Native Development Kit (<a href="https://developer.android.com/ndk/guides/index.html">NDK</a>):</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="at">static</span> jint com_android_internal_os_Zygote_nativeForkSystemServer(<span class="co">/* lots of args */</span>) { <span class="co">/* body */</span>  }</code></pre></div>
-<p>At the end of all these, the initial single ZygoteInit process is now <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#779">running as a ZygoteServer</a><a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>, and an additional process, forked from ZygoteInit, is running as <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#765">system server</a>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1"></a>pid = Zygote.<span class="fu">forkSystemServer</span>(<span class="co">/* lots of args */</span>);</span></code></pre></div>
+<p>This is in turn <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/jni/com_android_internal_os_Zygote.cpp#752">implemented natively</a> via Android’s Native Development Kit (<a href="https://developer.android.com/ndk/guides/index.html">NDK</a>):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1"></a><span class="at">static</span> jint com_android_internal_os_Zygote_nativeForkSystemServer(<span class="co">/* lots of args */</span>) { <span class="co">/* body */</span>  }</span></code></pre></div>
+<p>At the end of all these, the initial single ZygoteInit process is now <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#779">running as a ZygoteServer</a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, and an additional process, forked from ZygoteInit, is running as <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#765">system server</a>.</p>
 <p>In the next blog post we will look at the system server, one of the first and most important system services to be started.</p>
-<div class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>The source of app_process can be found in <a href="https://android.googlesource.com/platform/frameworks/base/+/master/cmds/app_process/app_main.cpp#187">frameworks/base/cmds/app_process.cpp</a>. and the comments in source goes into more details about what the arguments are used for.<a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>the list of classes that zygote preloads is <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#111">hard-coded</a> to be <code>/system/etc/preloaded-classes</code>, and this file i found in <a href="https://android.googlesource.com/platform/frameworks/base/+/master/preloaded-classes">frameworks/base/preloaded-classes</a>.<a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p>The ZygoteServer will <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteServer.java#158">poll for events</a> on file descriptors and dispatch commands appropriately.<a href="#fnref3">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>The source of app_process can be found in <a href="https://android.googlesource.com/platform/frameworks/base/+/master/cmds/app_process/app_main.cpp#187">frameworks/base/cmds/app_process.cpp</a>. and the comments in source goes into more details about what the arguments are used for.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>the list of classes that zygote preloads is <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteInit.java#111">hard-coded</a> to be <code>/system/etc/preloaded-classes</code>, and this file i found in <a href="https://android.googlesource.com/platform/frameworks/base/+/master/preloaded-classes">frameworks/base/preloaded-classes</a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>The ZygoteServer will <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/com/android/internal/os/ZygoteServer.java#158">poll for events</a> on file descriptors and dispatch commands appropriately.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
-</div>
+</section>
 </section>
 </body>
 </html>

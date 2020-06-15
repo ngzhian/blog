@@ -1,13 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title>Notes on &quot;Thinking Forth&quot;</title>
+  <title>Notes on “Thinking Forth”</title>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -101,10 +110,10 @@
 <section class="content">
 <a class="home" href="./index.html">Home</a>
 <div id="header">
-<h1 class="title">Notes on &quot;Thinking Forth&quot;</h1>
+<h1 class="title">Notes on “Thinking Forth”</h1>
 <h3 class="date">2013-03-03 18:00</h3>
 </div>
-<h1 id="notes-on-thinking-forth">Notes on &quot;Thinking Forth&quot;</h1>
+<h1 id="notes-on-thinking-forth">Notes on “Thinking Forth”</h1>
 <p>I saw a mention of <a href="http://thinking-forth.sourceforge.net/">Thinking Forth</a> online sometime back, and downloaded it. I finally got down to reading it this lazy Sunday afternoon, and made some notes. To quote from the homepage</p>
 <blockquote>
 <p>Thinking Forth is a book about the philosophy of problem solving and programming style, applied to the unique programming language <a href="https://en.wikipedia.org/wiki/Forth_(programming_language)">Forth</a>.</p>
@@ -114,10 +123,10 @@
 <p><strong>Component programming</strong> is about <em>minimizing</em> the impact of any change. A component is a resource, which can be a piece of hardware or a software resource (such as a queue or stack). This idea is in contrast to Sequential or Hierachical Design. An example was given by the author: updating a record. However when designing by components, we think in terms of the components which describe the structure of the records, provide a set of editing commands, and provide read/write methods to storage.</p>
 <h2 id="analysis">Analysis</h2>
 <p>Thinking Forth talks about the <strong>Nine Phases of the Programming Cycle</strong>, I took special note of the first two: discovering requirements and constraints, and building a conceptual model of the solution. To build a conceptual model, we can follow these steps:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Define interfaces By using Data Flow Diagrams for example.</li>
 <li>Define rules By using English, Decision Tree, Tables. And subsequently simplify the rules so that it can be easily understood and coded</li>
-<li>Define data structures. This is a description of the structures’ conceptual model, i.e. what attributes to keep.</li>
+<li>Define data structures. This is a description of the structures’ conceptual model, i.e. what attributes to keep.</li>
 </ol>
 <h2 id="problem-solving">Problem Solving</h2>
 <p>These are general ways we can use to approach problem solving. - Determine you goal - Picture the problem as a whole - Develop a plan (e.g. work backwards) - Step back from the problem - Believe</p>

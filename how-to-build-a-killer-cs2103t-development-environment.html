@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Setting up a killer development environment for CS2103T</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -143,64 +152,64 @@
 <table>
 <tbody>
 <tr class="odd">
-<td align="left"><code>Ctrl+Shift+L</code></td>
-<td align="left">quick view of shortcuts</td>
+<td style="text-align: left;"><code>Ctrl+Shift+L</code></td>
+<td style="text-align: left;">quick view of shortcuts</td>
 </tr>
 <tr class="even">
-<td align="left"><code>Ctrl+Shift+L</code> again</td>
-<td align="left">open shortcuts preferences page</td>
+<td style="text-align: left;"><code>Ctrl+Shift+L</code> again</td>
+<td style="text-align: left;">open shortcuts preferences page</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>Ctrl+1</code></td>
-<td align="left">quick fix</td>
+<td style="text-align: left;"><code>Ctrl+1</code></td>
+<td style="text-align: left;">quick fix</td>
 </tr>
 <tr class="even">
-<td align="left"><code>Ctrl+Shift+R</code></td>
-<td align="left">open resource or any file</td>
+<td style="text-align: left;"><code>Ctrl+Shift+R</code></td>
+<td style="text-align: left;">open resource or any file</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>Ctrl+F11</code></td>
-<td align="left">run</td>
+<td style="text-align: left;"><code>Ctrl+F11</code></td>
+<td style="text-align: left;">run</td>
 </tr>
 <tr class="even">
-<td align="left"><code>F11</code></td>
-<td align="left">debug</td>
+<td style="text-align: left;"><code>F11</code></td>
+<td style="text-align: left;">debug</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>Ctrl+Space</code></td>
-<td align="left">offer content assist/completion</td>
+<td style="text-align: left;"><code>Ctrl+Space</code></td>
+<td style="text-align: left;">offer content assist/completion</td>
 </tr>
 <tr class="even">
-<td align="left"><code>Ctrl+M</code></td>
-<td align="left">maximize/minimize current tab</td>
+<td style="text-align: left;"><code>Ctrl+M</code></td>
+<td style="text-align: left;">maximize/minimize current tab</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>Alt+Left</code></td>
-<td align="left">go to previous place u edited</td>
+<td style="text-align: left;"><code>Alt+Left</code></td>
+<td style="text-align: left;">go to previous place u edited</td>
 </tr>
 <tr class="even">
-<td align="left"><code>Alt+Right</code></td>
-<td align="left">symmetry of <code>Alt-Left</code></td>
+<td style="text-align: left;"><code>Alt+Right</code></td>
+<td style="text-align: left;">symmetry of <code>Alt-Left</code></td>
 </tr>
 <tr class="odd">
-<td align="left"><code>Ctrl+O</code></td>
-<td align="left">code outline</td>
+<td style="text-align: left;"><code>Ctrl+O</code></td>
+<td style="text-align: left;">code outline</td>
 </tr>
 <tr class="even">
-<td align="left"><code>F2</code></td>
-<td align="left">open tooltip</td>
+<td style="text-align: left;"><code>F2</code></td>
+<td style="text-align: left;">open tooltip</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>F3</code></td>
-<td align="left">show declaration</td>
+<td style="text-align: left;"><code>F3</code></td>
+<td style="text-align: left;">show declaration</td>
 </tr>
 <tr class="even">
-<td align="left"><code>Alt+Shift+T</code></td>
-<td align="left">open refactoring dropdown</td>
+<td style="text-align: left;"><code>Alt+Shift+T</code></td>
+<td style="text-align: left;">open refactoring dropdown</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>Alt+Shift+M</code></td>
-<td align="left">extract method (good for refactoring)</td>
+<td style="text-align: left;"><code>Alt+Shift+M</code></td>
+<td style="text-align: left;">extract method (good for refactoring)</td>
 </tr>
 </tbody>
 </table>

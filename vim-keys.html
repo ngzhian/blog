@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Vim keys</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -117,14 +126,14 @@
 <li><code>t</code>, not sure what it does by itself, usually as part of another command, to indicate until, like dtw, delete until the letter w</li>
 <li><code>T</code>, no idea</li>
 <li><code>y</code>, copy (or yank)</li>
-<li><code>Y</code>, copy current line (to register “)</li>
+<li><code>Y</code>, copy current line (to register ")</li>
 <li><code>u</code>, undo</li>
 <li><code>U</code>, no idea</li>
 <li><code>i</code>, enter insert mode before cursor</li>
 <li><code>I</code>, enter insert mode at the start of current line</li>
 <li><code>o</code>, start an empty new line after current cursor and enter insert mode</li>
 <li><code>O</code>, start an empty new line before current cursor and enter insert mode</li>
-<li><code>p</code>, paste (from register “)</li>
+<li><code>p</code>, paste (from register ")</li>
 <li><code>P</code>, paste before cursor</li>
 <li><code>[,</code> not sure what it does by itself, usually with another key</li>
 <li><code>{,</code> jump to previous paragraph (new line delimited)</li>
@@ -158,7 +167,7 @@
 <li><code>;,</code> does nothing, mostly mapped to a leader</li>
 <li><code>:,</code> enter command</li>
 <li><code>',</code> takes a mark (usually letters, but there are special symbols), and jumps to it</li>
-<li><code>&quot;,</code> no idea</li>
+<li><code>",</code> no idea</li>
 <li><code>z</code>, takes another letter, usually have to do with folding</li>
 <li><code>Z</code>, no idea</li>
 <li><code>x</code>, delete char under cursor</li>

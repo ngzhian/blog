@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>So I set up a Jenkins CI server today</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,50 +151,23 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
     }
-  </style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
+    }
   </style>
 </head>
 <body>
@@ -146,50 +182,46 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>There are many reasons to run test, and there are also many excuses not to run. For me it is because I forget, and am too eager to push code.</p>
 <p>So how did I solve this? By setting up a local Jenkins CI server.</p>
 <h1 id="what-is-jenkins-to-me">What is Jenkins? (to me)</h1>
-<p>To me Jenkins is a way to build my project and run tests easily, because it doesn't require any interaction from me (beyond setting it up). This leaves me with <strong>no</strong> excuse not to run my tests. My goal was to set up Jenkins such that everytime a commit is made to my working Git repository, my tests will run. If you're wondering what CI is... <a href="http://www.martinfowler.com/articles/continuousIntegration.html">here</a></p>
+<p>To me Jenkins is a way to build my project and run tests easily, because it doesn’t require any interaction from me (beyond setting it up). This leaves me with <strong>no</strong> excuse not to run my tests. My goal was to set up Jenkins such that everytime a commit is made to my working Git repository, my tests will run. If you’re wondering what CI is… <a href="http://www.martinfowler.com/articles/continuousIntegration.html">here</a></p>
 <h1 id="installing-jenkins">Installing Jenkins</h1>
-<p>I had a lot of help setting this up, refer to the bottom for a list. Here I'm just going to list the steps I went through and point out the challenges.</p>
+<p>I had a lot of help setting this up, refer to the bottom for a list. Here I’m just going to list the steps I went through and point out the challenges.</p>
 <p>First, I develop in a Vagrant box running Ubuntu. Jenkins has a Ubuntu package that makes installation simple, and they actually have <a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu">instructions there</a>. Basically it involves adding a new apt source and then installing Jenkins from there.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key <span class="kw">|</span> <span class="fu">sudo</span> apt-key add -
-<span class="fu">sudo</span> sh -c <span class="st">&#39;echo deb http://pkg.jenkins-ci.org/debian binary/ &gt; /etc/apt/sources.list.d/jenkins.list&#39;</span>
-<span class="fu">sudo</span> apt-get update
-<span class="fu">sudo</span> apt-get install jenkins</code></pre></div>
-<p>After this you can navigate to localhost:8080 on your browser to see Jenkin's web interface.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">wget</span> -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key <span class="kw">|</span> <span class="fu">sudo</span> apt-key add -</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">sudo</span> sh -c <span class="st">&#39;echo deb http://pkg.jenkins-ci.org/debian binary/ &gt; /etc/apt/sources.list.d/jenkins.list&#39;</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">sudo</span> apt-get update</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">sudo</span> apt-get install jenkins</span></code></pre></div>
+<p>After this you can navigate to localhost:8080 on your browser to see Jenkin’s web interface.</p>
 <p><em>Note</em>: Since I develop in a Vagrant box, to access the Jenkins web interface I had to forward the ports. Jenkins listens on localhost:8080, so in my Vagrant file forwards 8080 (guest) to 8081 (host), and I can access Jenkins from my host at localhost:8081</p>
 <h1 id="installing-plugins">Installing Plugins</h1>
-<p>My project resides in a Git repository, and Jenkins doesn't offer Git support out of the box. There's a plugin to help though. Detailed plugin instructions are <a href="https://wiki.jenkins-ci.org/display/JENKINS/Plugins">here</a></p>
-<p>Go to Jenkins interface &gt; manage jenkins &gt; manage plugins, and install Git Plugin. After installing, you can configure your job. Here are the settings I use: - Repository URL is a path passed to <code>git clone</code>, and my project is mounted onto <code>/vagrant</code> - Shallow clone, I don't need the full history of the repository, so this should make things speedier</p>
-<div class="figure">
-<img src="images/jenkins-git.png" alt="Git configuration" />
-<p class="caption">Git configuration</p>
-</div>
-<p>The setup for the Git means that your local git repo will be cloned down to Jenkin's <em>workspace</em> before each build. A workspace is the directory Jenkins is processing the build in, and for me it is <code>/var/lib/jenkins/jobs/project/workspace</code> where project is the name of the Jenkin's job. More information on the folder structure used by Jenkins can be found <a href="https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins">here</a></p>
+<p>My project resides in a Git repository, and Jenkins doesn’t offer Git support out of the box. There’s a plugin to help though. Detailed plugin instructions are <a href="https://wiki.jenkins-ci.org/display/JENKINS/Plugins">here</a></p>
+<p>Go to Jenkins interface &gt; manage jenkins &gt; manage plugins, and install Git Plugin. After installing, you can configure your job. Here are the settings I use: - Repository URL is a path passed to <code>git clone</code>, and my project is mounted onto <code>/vagrant</code> - Shallow clone, I don’t need the full history of the repository, so this should make things speedier</p>
+<figure>
+<img src="images/jenkins-git.png" alt="" /><figcaption>Git configuration</figcaption>
+</figure>
+<p>The setup for the Git means that your local git repo will be cloned down to Jenkin’s <em>workspace</em> before each build. A workspace is the directory Jenkins is processing the build in, and for me it is <code>/var/lib/jenkins/jobs/project/workspace</code> where project is the name of the Jenkin’s job. More information on the folder structure used by Jenkins can be found <a href="https://wiki.jenkins-ci.org/display/JENKINS/Administering+Jenkins">here</a></p>
 <h1 id="the-first-build">The first build!</h1>
 <p>Next up we need to actually run the tests. This can be configured in the <em>Build</em> section further down the page. Before Jenkins, how I was running my tests was just a shellscript, which is a simple wrapper around <code>manage.py test</code> to pass in the right parameters. So for Jenkins, all I needed to do was to call the shell script.</p>
-<div class="figure">
-<img src="images/jenkins-build.png" alt="Build" />
-<p class="caption">Build</p>
-</div>
-<p>Click Build Now, and then navigate to the console output to enjoy your success! I hope. That's your first Jenkin's build :)</p>
+<figure>
+<img src="images/jenkins-build.png" alt="" /><figcaption>Build</figcaption>
+</figure>
+<p>Click Build Now, and then navigate to the console output to enjoy your success! I hope. That’s your first Jenkin’s build :)</p>
 <h1 id="report-coverage-with-cobertura">Report coverage with Cobertura</h1>
 <p>I use <code>coverage.py</code> to generate reports for my tests, and it also has <a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting">the ability</a> to generate XML file that Cobertura can regonize.</p>
-<div class="figure">
-<img src="images/jenkins-cobertura.png" alt="Cobertura" />
-<p class="caption">Cobertura</p>
-</div>
-<p>So again install Cobertura, and set it up by pointing it to the name of your coverage file. After this, click Build Now and you should be able to view the report from your build's status page.</p>
+<figure>
+<img src="images/jenkins-cobertura.png" alt="" /><figcaption>Cobertura</figcaption>
+</figure>
+<p>So again install Cobertura, and set it up by pointing it to the name of your coverage file. After this, click Build Now and you should be able to view the report from your build’s status page.</p>
 <h1 id="automate">Automate!</h1>
 <p>The final step is to set it up such that any changes you make (commit) will cause a build. We can do this is to set up a Build Trigger to Poll SCM (Git), on a 5 min schedule. So every 5 minutes, if Jenkins detects a change to the Git repository, it will run a new build.</p>
-<div class="figure">
-<img src="images/jenkins-build-trigger.png" alt="Build Triggers" />
-<p class="caption">Build Triggers</p>
-</div>
+<figure>
+<img src="images/jenkins-build-trigger.png" alt="" /><figcaption>Build Triggers</figcaption>
+</figure>
 <p>setup a local jenkins</p>
 <h1 id="references">References</h1>
 <ul>
-<li><a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu" class="uri">https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu</a></li>
-<li><a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial" class="uri">https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial</a></li>
-<li><a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting" class="uri">http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting</a></li>
+<li><a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu">https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu</a></li>
+<li><a href="https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial">https://sites.google.com/site/kmmbvnr/home/django-jenkins-tutorial</a></li>
+<li><a href="http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting">http://nedbatchelder.com/code/coverage/cmd.html#h_xml_reporting</a></li>
 </ul>
 </section>
 </body>

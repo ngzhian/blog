@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>LZ77</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -117,15 +126,15 @@
 <p>To figure out what a <em>reproducible extension</em> is, let’s look at an example string. Let</p>
 <ul>
 <li><span class="math inline"><em>S</em> = 00101011</span>,</li>
-<li><span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)</span> is the length of <span class="math inline"><em>S</em></span>, so <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)=8</span></li>
+<li><span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>)</span> is the length of <span class="math inline"><em>S</em></span>, so <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>) = 8</span></li>
 </ul>
-<p><span class="math inline"><em>S</em>(<em>i</em>, <em>j</em>)</span> is a substring of <span class="math inline"><em>S</em></span> starting from position <span class="math inline"><em>i</em></span> until position <span class="math inline"><em>j</em></span> (inclusive). As a shortcut <span class="math inline"><em>S</em>(<em>i</em>)=<em>S</em>(<em>i</em>, <em>i</em>)</span>.</p>
+<p><span class="math inline"><em>S</em>(<em>i</em>, <em>j</em>)</span> is a substring of <span class="math inline"><em>S</em></span> starting from position <span class="math inline"><em>i</em></span> until position <span class="math inline"><em>j</em></span> (inclusive). As a shortcut <span class="math inline"><em>S</em>(<em>i</em>) = <em>S</em>(<em>i</em>, <em>i</em>)</span>.</p>
 <!-- ``` -->
 <!-- S = 00101011 -->
 <!--       ^ ^ -->
 <!--     S(3,5) is a substring -->
 <!-- ``` -->
-<p>A <em>prefix</em> of <span class="math inline"><em>S</em></span> is a substring starting from position <span class="math inline">1</span> until position <span class="math inline"><em>j</em></span>, where <span class="math inline"><em>j</em> &lt; <em>l</em><em>e</em><em>n</em>(<em>S</em>)</span>. For example, <span class="math inline"><em>S</em>(1, 5)=00101</span> is a prefix of <span class="math inline"><em>S</em></span>, and <span class="math inline"><em>S</em></span> is not a prefix of itself.</p>
+<p>A <em>prefix</em> of <span class="math inline"><em>S</em></span> is a substring starting from position <span class="math inline">1</span> until position <span class="math inline"><em>j</em></span>, where <span class="math inline"><em>j</em> &lt; <em>l</em><em>e</em><em>n</em>(<em>S</em>)</span>. For example, <span class="math inline"><em>S</em>(1, 5) = 00101</span> is a prefix of <span class="math inline"><em>S</em></span>, and <span class="math inline"><em>S</em></span> is not a prefix of itself.</p>
 <!-- ``` -->
 <!-- S = 00101011 -->
 <!--     ^   ^ -->
@@ -139,10 +148,10 @@
 </ul>
 <p>In our example, with <span class="math inline"><em>j</em> = 3</span>, the extensions of <span class="math inline"><em>S</em>(1, <em>j</em>)</span> into <span class="math inline"><em>S</em></span> (which must begin at <span class="math inline"><em>j</em> + 1 = 4</span>) are:</p>
 <ul>
-<li><span class="math inline"><em>S</em>(4, 4)=0</span>, matches <span class="math inline"><em>S</em>(1, 1)</span></li>
-<li><span class="math inline"><em>S</em>(4, 5)=01</span>, matches <span class="math inline"><em>S</em>(2, 3)</span></li>
-<li><span class="math inline"><em>S</em>(4, 6)=010</span>, matches <span class="math inline"><em>S</em>(2, 4)</span></li>
-<li><span class="math inline"><em>S</em>(4, 7)=0101</span>, matches <span class="math inline"><em>S</em>(2, 5)</span></li>
+<li><span class="math inline"><em>S</em>(4, 4) = 0</span>, matches <span class="math inline"><em>S</em>(1, 1)</span></li>
+<li><span class="math inline"><em>S</em>(4, 5) = 01</span>, matches <span class="math inline"><em>S</em>(2, 3)</span></li>
+<li><span class="math inline"><em>S</em>(4, 6) = 010</span>, matches <span class="math inline"><em>S</em>(2, 4)</span></li>
+<li><span class="math inline"><em>S</em>(4, 7) = 0101</span>, matches <span class="math inline"><em>S</em>(2, 5)</span></li>
 </ul>
 <p>The <em>reproducible extension</em> is the longest of these extensions, which is <span class="math inline"><em>S</em>(4, 7)</span>, since <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em>(4, 7)) = 4</span>, and the match is <span class="math inline"><em>S</em>(2, 5)</span>.</p>
 <p>And the <em>pointer of reproduction</em>, denoted <span class="math inline"><em>p</em></span>, is where the matched substring begins, which is <span class="math inline">2</span>.</p>
@@ -150,7 +159,7 @@
 <ol type="1">
 <li>Begin with a string of <span class="math inline"><em>n</em> − <em>L</em><sub><em>s</em></sub></span> zeroes, followed the first <span class="math inline"><em>L</em><sub><em>s</em></sub></span> symbols from the source, call this <span class="math inline"><em>B</em><sub>1</sub></span></li>
 <li>Find the reproducible extension of the prefix <span class="math inline"><em>B</em><sub>1</sub>(1, <em>n</em> − <em>L</em><sub><em>s</em></sub>)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, <em>n</em> − 1)</span>, with length <span class="math inline"><em>l</em><sub>1</sub> − 1</span> and <span class="math inline"><em>p</em><sub>1</sub></span> as the pointer of reproduction</li>
-<li>Set the source word, <span class="math inline"><em>S</em><sub>1</sub></span>, to be the reproducible extension, with 1 more symbol added to the end, i.e. <span class="math inline"><em>S</em><sub>1</sub> = <em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub>1</sub>)</span>, thus <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em><sub>1</sub>)=<em>l</em><sub>1</sub> − 1</span></li>
+<li>Set the source word, <span class="math inline"><em>S</em><sub>1</sub></span>, to be the reproducible extension, with 1 more symbol added to the end, i.e. <span class="math inline"><em>S</em><sub>1</sub> = <em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub>1</sub>)</span>, thus <span class="math inline"><em>l</em><em>e</em><em>n</em>(<em>S</em><sub>1</sub>) = <em>l</em><sub>1</sub> − 1</span></li>
 <li>Convert source word into codeword (details described later)</li>
 <li>Update the contents of the buffer by shifting out the first <span class="math inline"><em>l</em><sub>1</sub></span> symbols, and adding the next <span class="math inline"><em>l</em><sub>1</sub></span> symbols from the source</li>
 <li>Repeat</li>
@@ -166,13 +175,13 @@
 </ul>
 <ol type="1">
 <li><span class="math inline"><em>B</em><sub>1</sub> = 000000000_001010210</span>, 9 zeros and the first 9 symbols of <span class="math inline"><em>S</em></span></li>
-<li>The reproducible extension of <span class="math inline"><em>B</em><sub>1</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, 17)</span>, is <span class="math inline"><em>B</em><sub>1</sub>(10, 11)=00</span>, with length 2, thus <span class="math inline"><em>l</em><sub>1</sub> = 3</span>. <span class="math inline"><em>p</em><sub>1</sub></span> can be anywhere from <span class="math inline">0</span> to <span class="math inline">9</span>, let’s pick <span class="math inline"><em>p</em><sub>1</sub> = 9</span></li>
-<li>The source word <span class="math inline"><em>S</em><sub>1</sub></span> is <span class="math inline"><em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub><em>i</em></sub>)=<em>B</em><sub>1</sub>(10, 12)=001</span></li>
+<li>The reproducible extension of <span class="math inline"><em>B</em><sub>1</sub>(1, 9)</span> into <span class="math inline"><em>B</em><sub>1</sub>(1, 17)</span>, is <span class="math inline"><em>B</em><sub>1</sub>(10, 11) = 00</span>, with length 2, thus <span class="math inline"><em>l</em><sub>1</sub> = 3</span>. <span class="math inline"><em>p</em><sub>1</sub></span> can be anywhere from <span class="math inline">0</span> to <span class="math inline">9</span>, let’s pick <span class="math inline"><em>p</em><sub>1</sub> = 9</span></li>
+<li>The source word <span class="math inline"><em>S</em><sub>1</sub></span> is <span class="math inline"><em>B</em><sub>1</sub>(<em>n</em> − <em>L</em><sub><em>s</em></sub> + 1, <em>n</em> − <em>L</em><sub><em>s</em></sub> + <em>l</em><sub><em>i</em></sub>) = <em>B</em><sub>1</sub>(10, 12) = 001</span></li>
 <li>The code word <span class="math inline"><em>C</em><sub>1</sub> = 22_02_1</span>, calculate like so:
 <ul>
 <li>it is made up of three parts, <span class="math inline"><em>C</em><sub><em>i</em></sub> = <em>C</em><sub><em>i</em>1</sub><em>C</em><sub><em>i</em>2</sub><em>C</em><sub><em>i</em>3</sub></span></li>
-<li><span class="math inline"><em>C</em><sub><em>i</em>1</sub></span> is <span class="math inline"><em>p</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(9 − 1)<sub>3</sub> = 22</span>, of length <span class="math inline">⌈log(<em>n</em> − <em>L</em><sub><em>s</em></sub>)⌉</span></li>
-<li><span class="math inline"><em>C</em><sub><em>i</em>2</sub></span> is <span class="math inline"><em>l</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(3 − 1)<sub>3</sub> = 02</span>, of length <span class="math inline">⌈log(<em>L</em><sub><em>s</em></sub>)⌉</span></li>
+<li><span class="math inline"><em>C</em><sub><em>i</em>1</sub></span> is <span class="math inline"><em>p</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(9 − 1)<sub>3</sub> = 22</span>, of length <span class="math inline">⌈log (<em>n</em> − <em>L</em><sub><em>s</em></sub>)⌉</span></li>
+<li><span class="math inline"><em>C</em><sub><em>i</em>2</sub></span> is <span class="math inline"><em>l</em><sub><em>i</em></sub> − 1</span> in base-<span class="math inline"><em>α</em></span>, which is <span class="math inline">(3 − 1)<sub>3</sub> = 02</span>, of length <span class="math inline">⌈log (<em>L</em><sub><em>s</em></sub>)⌉</span></li>
 <li><span class="math inline"><em>C</em><sub><em>i</em>3</sub></span> is the last symbol of the source word, which is <span class="math inline">1</span></li>
 </ul></li>
 <li>Shift the first <span class="math inline">3</span> symbols from the buffer, to get <span class="math inline">000000001010210</span>, and add the next <span class="math inline">3</span> symbols from <span class="math inline"><em>S</em></span>, to get <span class="math inline"><em>B</em><sub>2</sub> = 000000_001010210_210</span></li>

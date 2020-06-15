@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Suggest - My Hack for TimeIncHack2014</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -104,28 +113,24 @@
 <h1 class="title">Suggest - My Hack for TimeIncHack2014</h1>
 <h3 class="date">2014-11-20 08:00</h3>
 </div>
-<p>Over the weekend of 15-16 Nov, I took part in TimeIncHack2014, organized by Time Inc. The theme was about getting millenials to consume content, but I took off on a tangent right after hearing the problem description by the organizers: instead of building applications or services that media consumers will use, I was interested in making an internal tool for content creators to write articles that are more relevant.</p>
+<p>Over the weekend of 15-16 Nov, I took part in TimeIncHack2014, organized by Time Inc. The theme was about getting millenials to consume content, but I took off on a tangent right after hearing the problem description by the organizers: instead of building applications or services that media consumers will use, I was interested in making an internal tool for content creators to write articles that are more relevant.</p>
 <p>Born out of around 20 hours of hacking (18 of which was while standing), I built <a href="http://128.199.204.208/">Suggest</a>, a tool that analyzes what has been written so far and tries to grab articles that are relevant.</p>
 <p>It begins with a simple textarea where you can type (or just copy and paste an article to test it out) into.</p>
-<div class="figure">
-<img src="http://i.imgur.com/JH2FObx.png?1" alt="simple textarea for your content" />
-<p class="caption">simple textarea for your content</p>
-</div>
+<figure>
+<img src="http://i.imgur.com/JH2FObx.png?1" alt="" /><figcaption>simple textarea for your content</figcaption>
+</figure>
 <p>It will perform entity recognition on the content, grabbing <em>Nouns</em>, such as people, organizations, places, and list them at the bottom.</p>
-<div class="figure">
-<img src="http://i.imgur.com/lctBs56.png?1" alt="live entity recognition" />
-<p class="caption">live entity recognition</p>
-</div>
+<figure>
+<img src="http://i.imgur.com/lctBs56.png?1" alt="" /><figcaption>live entity recognition</figcaption>
+</figure>
 <p>When you press the <code>Suggest</code> button, it will perform a keyword analysis on your content, pull from new sources other articles that are relevant based on the keywords, and show them by the side, under the <code>Relevant</code> tab.</p>
-<div class="figure">
-<img src="http://i.imgur.com/FGlk8Vo.png?1" alt="related articles" />
-<p class="caption">related articles</p>
-</div>
+<figure>
+<img src="http://i.imgur.com/FGlk8Vo.png?1" alt="" /><figcaption>related articles</figcaption>
+</figure>
 <p>The <code>Tag</code> tab suggests articles from Time Inc that are tagged under the same category as what Suggest thinks the current content should be under.</p>
-<div class="figure">
-<img src="http://i.imgur.com/gjaboQT.png?1" alt="tags" />
-<p class="caption">tags</p>
-</div>
+<figure>
+<img src="http://i.imgur.com/gjaboQT.png?1" alt="" /><figcaption>tags</figcaption>
+</figure>
 <p>All of the hard work (keyword analysis and entity extraction) is powered by <a href="http://www.alchemyapi.com/">AlchemyAPI</a>, which has a super simple way (and easy to use python sdk) to do all these. Thanks to them for the wonderful work and increasing my API calls limit for the hackathon! The articles are pulled from <a href="http://developer.nytimes.com/">New York Times</a>, who have a superb restful developers endpoint, and also <a href="http://time.com/">Time Inc</a>, lovely organizers of this hackathon.</p>
 <p>The code is <a href="https://github.com/ngzhian/suggest">open source</a>, feel free to check it out and throw suggestions at me. For the code to run you basically need to register with AlchemyAPI and New York Times for api keys - which is a super simple process.</p>
 </section>

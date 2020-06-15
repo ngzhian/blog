@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Dates with JavaScript</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -105,10 +114,10 @@
 <h3 class="date">2017-01-03 13:35</h3>
 </div>
 <p>This post is about the various ways you can create a <code>Date</code> in JavaScript, both documented and undocumented, how it works under the hood, and the (maybe surprising) results you get.</p>
-<p>I first came across this while working on <a href="v3.nusmods.com">NUSMods</a> and <a href="https://flowtype.org">Flow</a> warned that passing an array of values to <code>Date</code> is not valid. However if you actually try it, say in <code>node</code> interpreter or in your browser's console, it works:</p>
+<p>I first came across this while working on <a href="v3.nusmods.com">NUSMods</a> and <a href="https://flowtype.org">Flow</a> warned that passing an array of values to <code>Date</code> is not valid. However if you actually try it, say in <code>node</code> interpreter or in your browser’s console, it works:</p>
 <pre><code>new Date([2016, 8, 8])
 &gt; Mon Aug 08 2016 00:00:00 GMT+0800 (SGT)</code></pre>
-<p>And indeed, this is not a specified way of constructing a <code>Date</code> - you don't see it in <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Date">MDN reference for <code>Date</code></a>.</p>
+<p>And indeed, this is not a specified way of constructing a <code>Date</code> - you don’t see it in <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Date">MDN reference for <code>Date</code></a>.</p>
 <p>However, my code still ran fine. And when I tried to change it to use multiple arguments instead, the result was different:</p>
 <pre><code>new Date(2016, 8, 8)
 &gt; Thu Sep 08 2016 00:00:00 GMT+0800 (SGT)</code></pre>
@@ -123,7 +132,7 @@
 </blockquote>
 <p>Creating a <code>Date</code> looks pretty straightforward in JavaScript, you call the constructor with the <code>new</code> keyword - <code>new Date()</code>.</p>
 <p>There are 4 specified ways, of varying convenience, that you can call the constructor.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>No arguments, gives you the current time: <code>new Date()</code></p></li>
 <li><p>Integer value (really a number) - treated as milliseconds since epoch (1 January 1970 00:00:00 UTC): <code>new Date(1483372800000)</code></p></li>
 <li><p>String representing a date - parsed by <code>Date.parse()</code>: <code>new Date('2017-01-03')</code></p></li>
@@ -142,7 +151,7 @@
 <pre><code>new Date(Date.parse(&#39;2016, 8, 8&#39;))
 &gt; Mon Aug 08 2016 00:00:00 GMT+0800 (SGT)</code></pre>
 <p>The month is treated more naturally, in this case 8 is parsed as August.</p>
-<p>So what's left is the case when an <code>array</code> is passed into <code>Date</code>.</p>
+<p>So what’s left is the case when an <code>array</code> is passed into <code>Date</code>.</p>
 <h2 id="creating-dates-with-every-possible-type">Creating Dates with every possible type</h2>
 <p>It helps to first examine the data types in JavaScript, and pass each of them to <code>Date</code> to see what happens.</p>
 <p>There are 6 types: - <code>number</code> - <code>string</code> - <code>null</code> - <code>undefined</code> - <code>boolean</code> - <code>object</code> (an <code>array</code> is an <code>object</code>)</p>
@@ -177,26 +186,25 @@
 <pre><code>new Date([0])
 &gt; Sat Jan 01 2000 00:00:00 GMT+0800 (SGT)</code></pre>
 <h2 id="arrays-primitive-value-and-default-value">Arrays, primitive value, and default value</h2>
-<p>So what's going on? A quick Google search turned up this <a href="http://stackoverflow.com/questions/11291206/passing-an-array-to-the-javascript-date-constructor-is-it-standard">StackOverflow result</a>.</p>
+<p>So what’s going on? A quick Google search turned up this <a href="http://stackoverflow.com/questions/11291206/passing-an-array-to-the-javascript-date-constructor-is-it-standard">StackOverflow result</a>.</p>
 <p>The answer mentions something about converting the argument into a primitive value by calling an internal method called <code>[[DefaultValue]]</code>, which converts the array into a string.</p>
 <p>I like how concise the article is, but I also felt that it will be instructive to dig deeper into the spec and also the source code.</p>
 <p>The relevant part of the ES5 spec is section <a href="http://es5.github.io/#x15.9.3.2">15.9.3.2</a>. It describes what to do when a single argument is passed to the Date constructor.</p>
 <blockquote>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Let v be <code>ToPrimitive(value)</code></li>
 </ol>
 </blockquote>
 <p>The first step is to convert the input to a primitive value using <code>ToPrimitive</code>, which behavior is detailed in section <a href="http://es5.github.io/#x9.1">9.1</a> of the same spec.</p>
-<div class="figure">
-<img src="images/es5-9-1-toprimitive-conversions.png" alt="Section 9.1 of ES5 Spec - ToPrimitive Conversions" />
-<p class="caption">Section 9.1 of ES5 Spec - ToPrimitive Conversions</p>
-</div>
+<figure>
+<img src="images/es5-9-1-toprimitive-conversions.png" alt="" /><figcaption>Section 9.1 of ES5 Spec - ToPrimitive Conversions</figcaption>
+</figure>
 <p>Of the 6 types mentioned above, only <code>Object</code> is not a primitive value. So it needs be converted.</p>
-<p>An <code>array</code> in JavaScript is really an <code>object</code>, so this falls to the last case in the table, which is to &quot;Return a default value for the Object&quot; by calling <code>[[DefaultValue]]</code>. This is also detailed in the spec in section <a href="http://es5.github.io/#x8.12.8">8.12.8</a>.</p>
-<p>The description slightly more involved than what we've seen, so in short, the <code>[[DefaultValue]]</code> of an <code>array</code> is the result of calling <code>toString()</code> on the <code>array</code>.</p>
+<p>An <code>array</code> in JavaScript is really an <code>object</code>, so this falls to the last case in the table, which is to “Return a default value for the Object” by calling <code>[[DefaultValue]]</code>. This is also detailed in the spec in section <a href="http://es5.github.io/#x8.12.8">8.12.8</a>.</p>
+<p>The description slightly more involved than what we’ve seen, so in short, the <code>[[DefaultValue]]</code> of an <code>array</code> is the result of calling <code>toString()</code> on the <code>array</code>.</p>
 <pre><code>[0].toString()
 &gt; &quot;0&quot;</code></pre>
-<p>So what really happened was that when we passed <code>[0]</code> to Date, it is first converted to the string <code>&quot;0&quot;</code>, and this falls into case 3 of creating a Date. <code>&quot;0&quot;</code> is successfully parsed into a Date which gives us Jan 1st of 2000.</p>
+<p>So what really happened was that when we passed <code>[0]</code> to Date, it is first converted to the string <code>"0"</code>, and this falls into case 3 of creating a Date. <code>"0"</code> is successfully parsed into a Date which gives us Jan 1st of 2000.</p>
 <p>We can verify that this is the case:</p>
 <pre><code>(new Date([0])).valueOf() === (new Date(&#39;0&#39;)).valueOf()
 &gt; true</code></pre>
@@ -213,7 +221,7 @@ Mon Aug 08 2016 00:00:00 GMT+0800 (SGT)
 (new Date([2016, 8, 8])).valueOf() === (new Date(&#39;2016,8,8&#39;)).valueOf()
 &gt; true</code></pre>
 <h2 id="implementation">Implementation</h2>
-<p>I also wanted to see how the implementation is like so I went around digging. I thought I could find this in <code>V8</code>, but I only found a <a href="https://github.com/v8/v8/blob/master/src/date.cc"><code>date.cc</code></a> that didn't seem to implement the Date constructor.</p>
+<p>I also wanted to see how the implementation is like so I went around digging. I thought I could find this in <code>V8</code>, but I only found a <a href="https://github.com/v8/v8/blob/master/src/date.cc"><code>date.cc</code></a> that didn’t seem to implement the Date constructor.</p>
 <p>Digging a bit more led me to <a href="https://github.com/v8/v8/blob/master/src/builtins/builtins-date.cc#L203"><code>builtins-date.cc</code></a>, which is basically what is called when we write <code>new Date()</code> in JavaScript.</p>
 <p>Here you can see the checks for the number of arguments, as well as calling <code>Object::ToPrimitive</code> on the value, and then parsing it if it is a <code>string</code>.</p>
 <p>Looking around a bit more, I stumbled upon a test file in <code>node</code>, <a href="https://github.com/v8/v8/blob/master/test/webkit/date-constructor.js#L75"><code>date-constructor.js</code></a>, which mentions a <a href="https://bugs.webkit.org/show_bug.cgi?id=26978">WebKit bug</a>, that led me to look into WebKit.</p>
@@ -221,7 +229,7 @@ Mon Aug 08 2016 00:00:00 GMT+0800 (SGT)
 <blockquote>
 <p>Slight aside on modern JavaScript engines: V8 is the JavaScript engine that powers chrome (and node), whereas WebKit uses JavaScriptCore, which is what powers Safari.</p>
 </blockquote>
-<p>And if you're willing to dig deeper, you can figure out how <code>toPrimitive</code> is implemented starting from <a href="https://github.com/v8/v8/blob/f1441384ff3800885e5c6f074656bf8806986ff4/src/builtins/builtins-conversion.cc#L28"><code>builtins-conversion.cc</code></a> in V8 and <a href="https://github.com/WebKit/webkit/blob/b7d2a175887b03a34713bd86e545f3133f616018/Source/JavaScriptCore/runtime/JSObject.cpp#L1962"><code>JSObject.cpp</code></a> in WebKit.</p>
+<p>And if you’re willing to dig deeper, you can figure out how <code>toPrimitive</code> is implemented starting from <a href="https://github.com/v8/v8/blob/f1441384ff3800885e5c6f074656bf8806986ff4/src/builtins/builtins-conversion.cc#L28"><code>builtins-conversion.cc</code></a> in V8 and <a href="https://github.com/WebKit/webkit/blob/b7d2a175887b03a34713bd86e545f3133f616018/Source/JavaScriptCore/runtime/JSObject.cpp#L1962"><code>JSObject.cpp</code></a> in WebKit.</p>
 <p>But for now, my <code>Date</code> with JavaScript is over.</p>
 </section>
 </body>

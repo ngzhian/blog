@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>How we let you be you without knowing you</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,50 +151,23 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
     }
-  </style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
+    }
   </style>
 </head>
 <body>
@@ -146,7 +182,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </blockquote>
 <p><a href="http://getbubblechat.com/">Bubble</a> is an <strong>anonymous chat app</strong>. And we make sure you are as anonymous as you can be while still having a pleasant and functional chat experience.</p>
 <p>This means that when you use Bubble:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>No register, no login. Open the webpage or download the app and you’re in, start chatting!</li>
 <li>No personal information required, we don’t ask for your name, email, age, nothing.</li>
 <li>Names are randomly generated, which can lead to hilarious result.</li>
@@ -157,19 +193,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Bubble worked like this originally (and in fact you were a different person in every room you joined). This was quite confusing for us when we used it. So we decided: identity should to persist across sessions, and in a manner that works on both the web and in the Android application.</p>
 <p>When dealing with persistent user sessions, cookies are the first thing that comes to mind. That’s how most web logins work — you authenticate with a username and password, the server saves a session id in a cookie, and every request you make afterwards, this session id can be checked by the server. There is a problem though. Cookies are not completely supported in our react-native Android app. For some reason, cookies aren’t sent for the initial WebSocket connection request. And theres more. Our framework of choice, socket.io, does not send cookies on reconnect. This means that if we chose cookies as our way of authentication, whenever you disconnect and reconnect, you will be a different person.</p>
 <p>In order to send cookies when making a WebSocket connection, you can specify additional headers using the <code>opts</code> argument when opening the connection:</p>
-<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">Manager</span>.<span class="va">prototype</span>.<span class="at">open</span> <span class="op">=</span> <span class="kw">function</span> (fn<span class="op">,</span> opts) <span class="op">{</span>...<span class="op">}</span></code></pre></div>
-<p><a href="https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L208" class="uri">https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L208</a></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1"></a>Manager<span class="op">.</span><span class="at">prototype</span><span class="op">.</span><span class="at">open</span> <span class="op">=</span> <span class="kw">function</span> (fn<span class="op">,</span> opts) {<span class="op">...</span>}</span></code></pre></div>
+<p><a href="https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L208">https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L208</a></p>
 <p>However, when reconnecting, there is not way to specify it (as can be seen by the lack of an <code>opts</code> argument passed to <code>self.open</code>:</p>
-<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">self</span>.<span class="at">open</span>(<span class="kw">function</span> (err) <span class="op">{</span>...<span class="op">}</span>)</code></pre></div>
-<p><a href="https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L527" class="uri">https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L527</a></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1"></a>self<span class="op">.</span><span class="fu">open</span>(<span class="kw">function</span> (err) {<span class="op">...</span>})</span></code></pre></div>
+<p><a href="https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L527">https://github.com/socketio/socket.io-client/blob/master/lib/manager.js#L527</a></p>
 <p>This is probably a feature because reconnect is handled automatically by socket.io, and is not something called by users. However I feel like reconnect should respect the original <code>opts</code> object passed to the very first <code>self.open</code> call.</p>
 <p>So instead of cookies, we decided to roll our own.</p>
 <p>If you inspect the packets sent by our web client, you can notice that one of the requests look something like this:</p>
 <pre><code>ws://localhost:3000/socket.io/?bubble=6337955e-04f4-4fc3-8526-26a3520731d5&amp;EIO=3&amp;transport=websocket&amp;sid=rDBpnAlgTS-V0g5VAAAA`</code></pre>
-<p>We make the initial WebSocket connection with a query parameter <code>bubble</code>. This is what we call a state. A state is a uuid that is used to uniquely identify a client, and is persisted client side. Internally, the server maintains a mapping of state to bubble user. When a connection is made, the server looks up this mapping to check if this state is known, i.e. an existing bubble user owns this state. If so, that socket connection is associated with the bubble user it maps to.</p>
+<p>We make the initial WebSocket connection with a query parameter <code>bubble</code>. This is what we call a state. A state is a uuid that is used to uniquely identify a client, and is persisted client side. Internally, the server maintains a mapping of state to bubble user. When a connection is made, the server looks up this mapping to check if this state is known, i.e. an existing bubble user owns this state. If so, that socket connection is associated with the bubble user it maps to.</p>
 <p>Think of opening up multiple tabs in a browser. Because state is stored locally (for web browsers its in localstorage), each tab will make the initial connection with the same state, and will thus resolve to the same bubble user.</p>
 <p>This sounds a bit like authentication with just a username, or just a password. It does sound very scary, because an attacker can pretend to be you just by knowing your state. However we weighed the risks the decided that this was something that we accepted because:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>We use a uuid.v4 which is unique enough for us not to worry about accidents/malicious users at this stage</li>
 <li>Everything happens via HTTPS so we are not as vulnerable to URL snooping</li>
 <li>It doesn’t matter too much if your identity got spoofed, everyone is anonymous anyway!</li>

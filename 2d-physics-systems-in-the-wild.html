@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>2D physics systems in the wild</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -105,9 +114,9 @@
 <h3 class="date">2017-03-12 18:01</h3>
 </div>
 <p>For an assignment in school we were tasked to build a simple 2D physics engine for a Bubble-Bobble like game. We were also encouraged to check out other physics engine to see how it works. I looked at <a href="https://github.com/wellcaffeinated/PhysicsJS/">PhysicsJS</a>, <a href="https://developer.apple.com/reference/uikit/uidynamicanimator">UIDynamicAnimator</a>, and <a href="http://box2d.org/">Box2D</a>. This blog post is a clean up and rearrangement of <a href="https://docs.google.com/document/d/1_NFbaDp5kqZgqGW7xJxd7juTEXcyjYtQMf1VR1DBdcs/edit?usp=sharing">notes</a> I took when I went on that exploration.</p>
-<h2 id="whats-in-a-2d-physics-system">What's in a 2D Physics System</h2>
+<h2 id="whats-in-a-2d-physics-system">What’s in a 2D Physics System</h2>
 <p>In general I found that a system will have the following items:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>World</li>
 <li>Body and Shape</li>
 <li>Behavior</li>
@@ -125,7 +134,7 @@
 <p>The user of a physics system might want to <strong>know or react</strong> when events happen in the physics system. For example, the user might want to play a sound when two circles collide. A notification is a way to get information from inside the system to outside the system.</p>
 <h3 id="tickstepintegrator">Tick/Step/Integrator</h3>
 <p>After the bodies and behaviors have been defined, the physics system can be simulated. This is done <strong>stepwise</strong>, by telling all bodies that a certain <strong>delta of time</strong> has passed, and running behaviors over all physics bodies. This is usually done in two steps:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Integrate velocities, which calculates the new velocity of an object. For example, if an object has acceleration, its velocity should increase based on how much time has passed</li>
 <li>Integrate positions, which positions the body. For example, if an object has velocity, then the object will shift to a new position based on the time that has passed</li>
 </ol>
@@ -140,7 +149,7 @@
 <p>An animator is equivalent to a physics world. You add behaviors to the world just as described above. Items must be added to the behaviors, and only items in the same behavior will interact with one another.</p>
 <p>Instead of using notifications (events), the animator uses a delegate for the behavior. A delegate will be informed of events via a method call.</p>
 <h2 id="box2d">Box2D</h2>
-<p>This is probably the most well known, featured, and robust 2D physics system around. I didn't explore the source code because I am not familiar with C++. However I did look around at the manual and learned something about its implementation.</p>
+<p>This is probably the most well known, featured, and robust 2D physics system around. I didn’t explore the source code because I am not familiar with C++. However I did look around at the manual and learned something about its implementation.</p>
 <p>Box2D is much more modular in the data structures it uses. In Box2D, a body has position, velocity, and fixture(s). A fixture has density, friction, and restitution. Fixtures attach shapes to bodies, which can be used independently, and body can have multiple fixtures (called a compound body).</p>
 <h2 id="thoughts">Thoughts</h2>
 <p>I enjoyed this assignment a lot, and also enjoyed reading the source of existing 2D engines. Even though there are well known equations behind behaviors of physical objects in the real world, simulating the real world via discrete time delta presents its own set of problems. For example, if the time delta is too large, and the velocity of two objects are large, objects and <em>pass through</em> one another (the calculated position based on the time delta skips the collision). There are techniques to mitigate this, such as by playing back the route that an object has taken to see if there is an intersection with a route another object has taken.</p>

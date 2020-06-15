@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Learning Haskell through Maybe - Functors</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,50 +151,23 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
     }
-  </style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
+    }
   </style>
 </head>
 <body>
@@ -149,68 +185,68 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>A data of type <code>Maybe</code> can only be made if a <em>type variable</em> is specified. This means that you can make a <code>Maybe Integer</code>, <code>Maybe Char</code>, but a <code>Maybe</code> isn’t a complete type.</p>
 <p>The way to make a data of type <code>Maybe</code> is to use a <em>type constructor</em>. <code>Maybe</code> has two type constructors, <code>Just</code> and <code>Nothing</code>. <code>Just</code> is like <code>Maybe</code>, it can only be made if a type variable is specified. <code>Nothing</code> can be made simply on its own, it is a complete type.</p>
 <p>Let’s try making <code>Maybe</code>s in GHCI:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> best_friends <span class="fu">=</span> <span class="dt">Just</span> <span class="dv">1</span>
-<span class="fu">&gt;</span> best_friends
-<span class="dt">Just</span> <span class="dv">1</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1"></a><span class="op">&gt;</span> <span class="kw">let</span> best_friends <span class="ot">=</span> <span class="dt">Just</span> <span class="dv">1</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="op">&gt;</span> best_friends</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="dt">Just</span> <span class="dv">1</span></span></code></pre></div>
 <p>You have just used the type constructor <code>Just</code>, passed in the <code>Int</code> 1, to make a type of <code>Maybe Int</code>. To verify the type of <code>best_friends</code>:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>t best_friends
-<span class="ot">best_friends ::</span> <span class="dt">Maybe</span> <span class="dt">Integer</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1"></a><span class="op">&gt;</span> <span class="op">:</span>t best_friends</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="ot">best_friends ::</span> <span class="dt">Maybe</span> <span class="dt">Integer</span></span></code></pre></div>
 <p><code>::</code> can be read as <strong>is of type</strong>. How about make a <code>Maybe</code> using <code>Nothing</code>?</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> girlfriend <span class="fu">=</span> <span class="dt">Nothing</span>
-<span class="fu">&gt;</span> girlfriend
-<span class="dt">Nothing</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1"></a><span class="op">&gt;</span> <span class="kw">let</span> girlfriend <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="op">&gt;</span> girlfriend</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="dt">Nothing</span></span></code></pre></div>
 <h2 id="functor">Functor</h2>
 <p>Suppose you have twice as many best friends as I do, how can I find out how many best friends you have?</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> <span class="dv">1</span> <span class="fu">*</span> <span class="dv">2</span> <span class="co">--hard coded value for the number best friends I have</span>
-<span class="fu">&gt;</span> your_best_friends
-<span class="dv">2</span>
-<span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> best_friends <span class="fu">*</span> <span class="dv">2</span> <span class="co">--fails terribly</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1"></a><span class="op">&gt;</span> <span class="kw">let</span> your_best_friends <span class="ot">=</span> <span class="dv">1</span> <span class="op">*</span> <span class="dv">2</span> <span class="co">--hard coded value for the number best friends I have</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="op">&gt;</span> your_best_friends</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="dv">2</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="op">&gt;</span> <span class="kw">let</span> your_best_friends <span class="ot">=</span> best_friends <span class="op">*</span> <span class="dv">2</span> <span class="co">--fails terribly</span></span></code></pre></div>
 <p>You get a crazy error message. It means that you cannot multiply 2 with <code>best_friends</code>, because <code>best_friends</code> is not a type that can be multiplied with 2. Clearly there is something going on here, because <code>best_friends</code> can contain an <code>Integer</code>, and we can definitely multiply <code>Integer</code>s, what we can do is to define a function that helps us do so.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>{
-<span class="fu">|</span> <span class="kw">let</span><span class="ot"> calc_friends ::</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span>
-<span class="fu">|</span>       calc_friends <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
-<span class="fu">|</span>           calc_friends (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (x <span class="fu">*</span> <span class="dv">2</span>)
-<span class="fu">&gt;</span> <span class="fu">:</span>}
-<span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> calc_friends best_friends
-<span class="fu">&gt;</span> your_best_friends
-<span class="dt">Just</span> <span class="dv">2</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1"></a><span class="op">&gt;</span> <span class="op">:</span>{</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="op">|</span> <span class="kw">let</span><span class="ot"> calc_friends ::</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="op">|</span>       calc_friends <span class="dt">Nothing</span> <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="op">|</span>           calc_friends (<span class="dt">Just</span> x) <span class="ot">=</span> <span class="dt">Just</span> (x <span class="op">*</span> <span class="dv">2</span>)</span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="op">&gt;</span> <span class="op">:</span>}</span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="op">&gt;</span> <span class="kw">let</span> your_best_friends <span class="ot">=</span> calc_friends best_friends</span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="op">&gt;</span> your_best_friends</span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="dt">Just</span> <span class="dv">2</span></span></code></pre></div>
 <p>What we did was to define a function that can calculate the number of best friends you have, given the number of best friends I have. By applying this function to <code>best_friends</code>, you get the number of best friends you have, wrapped in a <code>Just</code>. What if I told you that you had twice as many girlfriends as I do?</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> your_girlfriends <span class="fu">=</span> calc_friends girlfriend
-<span class="fu">&gt;</span> your_girlfriends
-<span class="dt">Nothing</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1"></a><span class="op">&gt;</span> <span class="kw">let</span> your_girlfriends <span class="ot">=</span> calc_friends girlfriend</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="op">&gt;</span> your_girlfriends</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="dt">Nothing</span></span></code></pre></div>
 <p>Hahaha.</p>
 <p>Perhaps you grow more popular, and you actually had 3 times more friends than I do. Since we hard coded the value <code>2</code>, we have to make another function with the value <code>3</code>, or we can actually generalize the function as such.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>{
-<span class="fu">|</span> <span class="kw">let</span><span class="ot"> calc_friends ::</span> (<span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span>
-<span class="fu">|</span>     calc_friends _ <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
-<span class="fu">|</span>     calc_friends f (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (f x)
-<span class="fu">&gt;</span> <span class="fu">:</span>}
-<span class="fu">&gt;</span> <span class="kw">let</span> your_best_friends <span class="fu">=</span> calc_friends (<span class="fu">*</span> <span class="dv">3</span>) best_friends
-<span class="fu">&gt;</span> your_best_friends
-<span class="dt">Just</span> <span class="dv">3</span>
-<span class="fu">&gt;</span> <span class="kw">let</span> your_girlfriends <span class="fu">=</span> calc_friends (<span class="fu">*</span> <span class="dv">2</span>) girlfriend
-<span class="fu">&gt;</span> your_girlfriends
-<span class="dt">Nothing</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1"></a><span class="op">&gt;</span> <span class="op">:</span>{</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="op">|</span> <span class="kw">let</span><span class="ot"> calc_friends ::</span> (<span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="op">|</span>     calc_friends _ <span class="dt">Nothing</span> <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="op">|</span>     calc_friends f (<span class="dt">Just</span> x) <span class="ot">=</span> <span class="dt">Just</span> (f x)</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="op">&gt;</span> <span class="op">:</span>}</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="op">&gt;</span> <span class="kw">let</span> your_best_friends <span class="ot">=</span> calc_friends (<span class="op">*</span> <span class="dv">3</span>) best_friends</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="op">&gt;</span> your_best_friends</span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="dt">Just</span> <span class="dv">3</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="op">&gt;</span> <span class="kw">let</span> your_girlfriends <span class="ot">=</span> calc_friends (<span class="op">*</span> <span class="dv">2</span>) girlfriend</span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="op">&gt;</span> your_girlfriends</span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="dt">Nothing</span></span></code></pre></div>
 <p>We define <code>calc_friends</code> as a function that takes in another function, <code>f</code>, and this function <code>f</code> takes in an <code>Integer</code> and returns another <code>Integer</code>. An example of this function would be <code>(* 3)</code>. <code>calc_friends</code> also takes in a <code>Maybe Integer</code>, which it will apply the function <code>f</code> to, and returning a resut of type <code>Maybe Integer</code></p>
 <p>What if instead of number of best friends, an <code>Integer</code>, we wanted to compare height, a <code>Double</code>, and you are 1 metre taller than me, this looks pretty similar to calc_friends, so let’s reuse that:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="kw">let</span> height <span class="fu">=</span> <span class="dt">Just</span> <span class="fl">1.7</span>
-<span class="fu">&gt;</span> <span class="kw">let</span> calc_height <span class="fu">=</span> calc_friends (<span class="fu">+</span> <span class="dv">1</span>)
-<span class="fu">&gt;</span> calc_height height</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1"></a><span class="op">&gt;</span> <span class="kw">let</span> height <span class="ot">=</span> <span class="dt">Just</span> <span class="fl">1.7</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="op">&gt;</span> <span class="kw">let</span> calc_height <span class="ot">=</span> calc_friends (<span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="op">&gt;</span> calc_height height</span></code></pre></div>
 <p>Throws you an error about incompatible types. This is becase we defined <code>calc_height</code> in terms of <code>calc_friends</code>, which only worked with <code>Maybe Integer</code>, but our height was a <code>Maybe Double</code>. So let’s generalize our function using <em>type variables</em>, just like how <code>Maybe</code> is defined.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="fu">:</span>{
-<span class="fu">|</span> <span class="kw">let</span><span class="ot"> calc_stuff ::</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a
-<span class="fu">|</span>     calc_stuff _ <span class="dt">Nothing</span> <span class="fu">=</span> <span class="dt">Nothing</span>
-<span class="fu">|</span>     calc_stuff f (<span class="dt">Just</span> x) <span class="fu">=</span> <span class="dt">Just</span> (f x)
-<span class="fu">&gt;</span> <span class="fu">:</span>}
-<span class="fu">&gt;</span> calc_stuff (<span class="fu">*</span> <span class="dv">3</span>) best_friends
-<span class="dt">Just</span> <span class="dv">9</span>
-<span class="fu">&gt;</span> calc_stuff (<span class="fu">+</span> <span class="dv">1</span>) height
-<span class="dt">Just</span> <span class="fl">2.7</span>
-<span class="fu">&gt;</span> calc_stuff (<span class="fu">*</span> <span class="dv">2</span>) girlfriend
-<span class="dt">Nothing</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1"></a><span class="op">&gt;</span> <span class="op">:</span>{</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="op">|</span> <span class="kw">let</span><span class="ot"> calc_stuff ::</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="op">|</span>     calc_stuff _ <span class="dt">Nothing</span> <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="op">|</span>     calc_stuff f (<span class="dt">Just</span> x) <span class="ot">=</span> <span class="dt">Just</span> (f x)</span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="op">&gt;</span> <span class="op">:</span>}</span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="op">&gt;</span> calc_stuff (<span class="op">*</span> <span class="dv">3</span>) best_friends</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="dt">Just</span> <span class="dv">9</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="op">&gt;</span> calc_stuff (<span class="op">+</span> <span class="dv">1</span>) height</span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="dt">Just</span> <span class="fl">2.7</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="op">&gt;</span> calc_stuff (<span class="op">*</span> <span class="dv">2</span>) girlfriend</span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="dt">Nothing</span></span></code></pre></div>
 <p>The last bit to understanding <code>Functor</code> is a method called <code>fmap</code>, all types that are instances of the <em>typeclass</em> <code>Functor</code> have to implement a method called <code>fmap</code>, which has the signature:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fmap<span class="ot">              ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b 
-<span class="ot">calc_stuff ::</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">fmap</span><span class="ot">              ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b </span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="ot">calc_stuff ::</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a <span class="ot">-&gt;</span> <span class="dt">Maybe</span> a</span></code></pre></div>
 <p>I’m putting them one above the other to let you see how similar they are. <code>fmap</code> is just <code>calc_stuff</code> generalized - generalizing the function that <code>calc_stuff</code> takes in and - generaizing the type <code>Maybe</code> to other types that take in a single type variable</p>
 <p>And the <code>f</code> we see in the <code>fmap</code> is the Functor, a typeclass of which <code>Maybe</code> is an instance of.</p>
 </section>

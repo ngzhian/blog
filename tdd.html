@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>TDD</title>
@@ -22,7 +22,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +36,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +68,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +87,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -129,10 +138,9 @@ $ find test -name &#39;*.js&#39; | xargs wc -l
 <pre><code>npm run test</code></pre>
 <h2 id="tests-as-todo">Tests as TODO</h2>
 <p>The test runner I am using, mocha, allows test to be defined and marked as pending, which shows up differently in your tests results and will not fail your entire test suite:</p>
-<div class="figure">
-<img src="images/tests-as-todo.png" alt="example of pending tests" />
-<p class="caption">example of pending tests</p>
-</div>
+<figure>
+<img src="images/tests-as-todo.png" alt="" /><figcaption>example of pending tests</figcaption>
+</figure>
 <p>This serves as a good reminder of what I need to implement, and conveniently breaks down the <code>join_room</code> feature into small, manageable chunks, that can be implemented one at a time.</p>
 <h2 id="confident-iteration">Confident iteration</h2>
 <p>CS3216 gives you very little time to do your project. You have not much time to think, very little time to execute, and a lot of pressure to build something usable.</p>
@@ -142,13 +150,13 @@ $ find test -name &#39;*.js&#39; | xargs wc -l
 <p>This is especially useful when you separate the front and back end code base. I’m working on the back-end and I have team mates working on the front-end, and our API is unofficially defined in a <a href="https://github.com/CS3216-Bubble/bubble">README</a>. So I write tests that follows the API I specified, and if I update my code so that it doesn’t fit the API, my tests will fail. This reduces the chance of angry team mates :)</p>
 <h2 id="faster-iteration">Faster iteration</h2>
 <p>If I want to test that the room creation and room joining functionality works, I could</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>open up a new tab, creating a room, open another tab and join that room (~20s), or</li>
 <li>run tests (~1s to enter command and ~2s for tests related to room creation and joining room to run).</li>
 </ol>
 <p>Note that this is just for 2 functionality of the app, we have more than 10 different functionalities!</p>
 <p>So this scales up to:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>10 x 20s = 200s</li>
 <li>~1s to enter command + ~10s for the whole test suit = ~11s</li>
 </ol>

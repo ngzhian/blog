@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>What the heck is Google Closure Compiler?</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,50 +151,23 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
     }
-  </style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
+    }
   </style>
 </head>
 <body>
@@ -141,46 +177,46 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">What the heck is Google Closure Compiler?</h1>
 <h3 class="date">2015-04-20 19:00</h3>
 </div>
-<p>It &quot;compiles from JavaScript to better JavaScript&quot;, so why would any one want that?</p>
+<p>It “compiles from JavaScript to better JavaScript”, so why would any one want that?</p>
 <p>According to the <a href="https://github.com/google/closure-compiler">GitHub repo</a>, closure compiler does many amazing things:</p>
 <ul>
 <li>parses your JavaScript,</li>
 <li>analyzes it,</li>
 <li>removes dead code and rewrites</li>
-<li>minimizes what's left</li>
+<li>minimizes what’s left</li>
 <li>checks syntax, variable references, and types,</li>
 <li>and warns about common JavaScript pitfalls</li>
 </ul>
-<p>That's pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.</p>
-<p>Let's follow their instructions and try to run it from the command line.</p>
+<p>That’s pretty complicated. But no fear, this series will explore the Closure Compiler, one feature at a time.</p>
+<p>Let’s follow their instructions and try to run it from the command line.</p>
 <pre><code>$ java -jar build/compiler.jar
 var x = 17 + 25;</code></pre>
 <p>The output we get is:</p>
 <pre><code>var x=42;</code></pre>
 <p>What noticeable differences are there?</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>17 + 25</code> became <code>42</code></li>
 <li>Space between and after <code>=</code> is gone</li>
 </ol>
 <p>So even for this simple one liner, closure compiler has managed to run 2 optimizations.</p>
-<p>Let's examine these optimizations closer, and what better way to do that then jump into the debugger :)</p>
+<p>Let’s examine these optimizations closer, and what better way to do that then jump into the debugger :)</p>
 <h1 id="running-from-the-command-line">Running from the command line</h1>
 <p>We create file called <code>in1.js</code> with the contents <code>var x = 17 + 25</code>, and in our debug configuration specify the program arguments as <code>--js_output_file=out.js in1.js</code>.</p>
-<p>We do this because we don't want to be typing input in the Eclipse console (I don't know how to do that :P)</p>
-<p>The initial part isn't that interesting, we just initiate the <code>CommandLineRunner</code></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    CommandLineRunner runner = <span class="kw">new</span> <span class="fu">CommandLineRunner</span>(args);
-    <span class="kw">if</span> (runner.<span class="fu">shouldRunCompiler</span>()) {
-      runner.<span class="fu">run</span>();
-    }</code></pre></div>
+<p>We do this because we don’t want to be typing input in the Eclipse console (I don’t know how to do that :P)</p>
+<p>The initial part isn’t that interesting, we just initiate the <code>CommandLineRunner</code></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1"></a>    CommandLineRunner runner = <span class="kw">new</span> <span class="fu">CommandLineRunner</span>(args);</span>
+<span id="cb3-2"><a href="#cb3-2"></a>    <span class="kw">if</span> (runner.<span class="fu">shouldRunCompiler</span>()) {</span>
+<span id="cb3-3"><a href="#cb3-3"></a>      runner.<span class="fu">run</span>();</span>
+<span id="cb3-4"><a href="#cb3-4"></a>    }</span></code></pre></div>
 <p><code>@CommandLineRunner.java#L1434-1437</code></p>
-<p>Which delegates work to <code>AbstractCommandLineRunner</code>'s <code>run()</code> method</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="kw">public</span> <span class="dt">final</span> <span class="dt">void</span> <span class="fu">run</span>() {
-    <span class="dt">int</span> result = <span class="dv">0</span>;
-    <span class="dt">int</span> runs = <span class="dv">1</span>;
-    <span class="kw">try</span> {
-      <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; runs &amp;&amp; result == <span class="dv">0</span>; i++) {
-        result = <span class="fu">doRun</span>();
-      }</code></pre></div>
+<p>Which delegates work to <code>AbstractCommandLineRunner</code>’s <code>run()</code> method</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1"></a>  <span class="kw">public</span> <span class="dt">final</span> <span class="dt">void</span> <span class="fu">run</span>() {</span>
+<span id="cb4-2"><a href="#cb4-2"></a>    <span class="dt">int</span> result = <span class="dv">0</span>;</span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="dt">int</span> runs = <span class="dv">1</span>;</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="kw">try</span> {</span>
+<span id="cb4-5"><a href="#cb4-5"></a>      <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; runs &amp;&amp; result == <span class="dv">0</span>; i++) {</span>
+<span id="cb4-6"><a href="#cb4-6"></a>        result = <span class="fu">doRun</span>();</span>
+<span id="cb4-7"><a href="#cb4-7"></a>      }</span></code></pre></div>
 <p><code>@AbstractCommandLineRunner.java#L397-403</code></p>
 <p>Which then hands off to <code>doRun()</code></p>
 <h4 id="warning">Warning</h4>
@@ -188,50 +224,50 @@ var x = 17 + 25;</code></pre>
 <p>I had to go into my debug configuration in eclipse and add the folder where <code>externs.zip</code> was located in so <code>getResourceAsStream</code> could find the file. Basically <code>createExterns</code> copies all the files in <code>externs.zip</code> into a list that will be used later.</p>
 </blockquote>
 <p>The next steps sets up the compiler with the appropriate options</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="kw">protected</span> <span class="dt">int</span> <span class="fu">doRun</span>() <span class="kw">throws</span> FlagUsageException, <span class="bu">IOException</span> {
-    <span class="bu">Compiler</span>.<span class="fu">setLoggingLevel</span>(<span class="bu">Level</span>.<span class="fu">parse</span>(config.<span class="fu">loggingLevel</span>));
-
-    <span class="bu">List</span>&lt;SourceFile&gt; externs = <span class="fu">createExterns</span>();
-
-    compiler = <span class="fu">createCompiler</span>();
-    B options = <span class="fu">createOptions</span>();</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1"></a>  <span class="kw">protected</span> <span class="dt">int</span> <span class="fu">doRun</span>() <span class="kw">throws</span> FlagUsageException, <span class="bu">IOException</span> {</span>
+<span id="cb5-2"><a href="#cb5-2"></a>    <span class="bu">Compiler</span>.<span class="fu">setLoggingLevel</span>(<span class="bu">Level</span>.<span class="fu">parse</span>(config.<span class="fu">loggingLevel</span>));</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="bu">List</span>&lt;SourceFile&gt; externs = <span class="fu">createExterns</span>();</span>
+<span id="cb5-5"><a href="#cb5-5"></a></span>
+<span id="cb5-6"><a href="#cb5-6"></a>    compiler = <span class="fu">createCompiler</span>();</span>
+<span id="cb5-7"><a href="#cb5-7"></a>    B options = <span class="fu">createOptions</span>();</span></code></pre></div>
 <p><code>@AbstractCommandLineRunner.java#L807-813</code></p>
 <p>The part where usually the runner will wait for user input is here:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">      <span class="bu">List</span>&lt;SourceFile&gt; inputs = <span class="fu">createSourceInputs</span>(jsFiles);
-      <span class="kw">if</span> (config.<span class="fu">skipNormalOutputs</span>) {
-        compiler.<span class="fu">init</span>(externs, inputs, options);
-        compiler.<span class="fu">hoistExterns</span>();
-      } <span class="kw">else</span> {
-        result = compiler.<span class="fu">compile</span>(externs, inputs, options);
-      }</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1"></a>      <span class="bu">List</span>&lt;SourceFile&gt; inputs = <span class="fu">createSourceInputs</span>(jsFiles);</span>
+<span id="cb6-2"><a href="#cb6-2"></a>      <span class="kw">if</span> (config.<span class="fu">skipNormalOutputs</span>) {</span>
+<span id="cb6-3"><a href="#cb6-3"></a>        compiler.<span class="fu">init</span>(externs, inputs, options);</span>
+<span id="cb6-4"><a href="#cb6-4"></a>        compiler.<span class="fu">hoistExterns</span>();</span>
+<span id="cb6-5"><a href="#cb6-5"></a>      } <span class="kw">else</span> {</span>
+<span id="cb6-6"><a href="#cb6-6"></a>        result = compiler.<span class="fu">compile</span>(externs, inputs, options);</span>
+<span id="cb6-7"><a href="#cb6-7"></a>      }</span></code></pre></div>
 <p><code>@AbstractCommandLineRunner.java#L847-853</code></p>
 <p>But because we supplied arguments to the parameter, it reads from that file and not <code>stdin</code>.</p>
 <p>There are some set up steps again, and finally we jump into the <code>compile</code> method, the meat of which happens in a separate thread it seems:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="kw">private</span> <span class="bu">Result</span> <span class="fu">compile</span>() {
-    <span class="kw">return</span> <span class="fu">runInCompilerThread</span>(<span class="kw">new</span> <span class="bu">Callable</span>&lt;<span class="bu">Result</span>&gt;() {
-      <span class="at">@Override</span>
-      <span class="kw">public</span> <span class="bu">Result</span> <span class="fu">call</span>() <span class="kw">throws</span> <span class="bu">Exception</span> {
-        <span class="fu">compileInternal</span>();
-        <span class="kw">return</span> <span class="fu">getResult</span>();
-      }
-    });
-  }</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1"></a>  <span class="kw">private</span> <span class="bu">Result</span> <span class="fu">compile</span>() {</span>
+<span id="cb7-2"><a href="#cb7-2"></a>    <span class="kw">return</span> <span class="fu">runInCompilerThread</span>(<span class="kw">new</span> <span class="bu">Callable</span>&lt;<span class="bu">Result</span>&gt;() {</span>
+<span id="cb7-3"><a href="#cb7-3"></a>      <span class="at">@Override</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>      <span class="kw">public</span> <span class="bu">Result</span> <span class="fu">call</span>() <span class="kw">throws</span> <span class="bu">Exception</span> {</span>
+<span id="cb7-5"><a href="#cb7-5"></a>        <span class="fu">compileInternal</span>();</span>
+<span id="cb7-6"><a href="#cb7-6"></a>        <span class="kw">return</span> <span class="fu">getResult</span>();</span>
+<span id="cb7-7"><a href="#cb7-7"></a>      }</span>
+<span id="cb7-8"><a href="#cb7-8"></a>    });</span>
+<span id="cb7-9"><a href="#cb7-9"></a>  }</span></code></pre></div>
 <p><code>@Compiler.java#L652-660</code></p>
-<p>Because it is a separate thread, I had to set a breakpoint inside <code>compileInternal</code> in order to take a look at what's happening.</p>
+<p>Because it is a separate thread, I had to set a breakpoint inside <code>compileInternal</code> in order to take a look at what’s happening.</p>
 <h2 id="inside-the-compiler">Inside the compiler</h2>
-<p>Some very small set up to process compiler options and initialize progress state, but there's a very interesting comment here:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="kw">private</span> <span class="dt">void</span> <span class="fu">compileInternal</span>() {
-    <span class="fu">setProgress</span>(<span class="fl">0.0</span>, <span class="kw">null</span>);
-    CompilerOptionsPreprocessor.<span class="fu">preprocess</span>(options);
-    <span class="fu">parse</span>();
-    <span class="co">// 15 percent of the work is assumed to be for parsing (based on some</span>
-    <span class="co">// minimal analysis on big JS projects, of course this depends on options)</span>
-    <span class="fu">setProgress</span>(<span class="fl">0.15</span>, <span class="st">&quot;parse&quot;</span>);</code></pre></div>
+<p>Some very small set up to process compiler options and initialize progress state, but there’s a very interesting comment here:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1"></a>  <span class="kw">private</span> <span class="dt">void</span> <span class="fu">compileInternal</span>() {</span>
+<span id="cb8-2"><a href="#cb8-2"></a>    <span class="fu">setProgress</span>(<span class="fl">0.</span><span class="dv">0</span>, <span class="kw">null</span>);</span>
+<span id="cb8-3"><a href="#cb8-3"></a>    CompilerOptionsPreprocessor.<span class="fu">preprocess</span>(options);</span>
+<span id="cb8-4"><a href="#cb8-4"></a>    <span class="fu">parse</span>();</span>
+<span id="cb8-5"><a href="#cb8-5"></a>    <span class="co">// 15 percent of the work is assumed to be for parsing (based on some</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>    <span class="co">// minimal analysis on big JS projects, of course this depends on options)</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>    <span class="fu">setProgress</span>(<span class="fl">0.</span><span class="dv">15</span>, <span class="st">&quot;parse&quot;</span>);</span></code></pre></div>
 <p><code>@Compiler.java#L741-747</code></p>
-<p>We're not going to dive into the <code>parse</code> method, that's not what we're after.</p>
+<p>We’re not going to dive into the <code>parse</code> method, that’s not what we’re after.</p>
 <p>From a cursory look into the method, <code>parse</code> parses the inputs and returns an AST. This AST is stored in the <code>jsRoot</code> instance variable</p>
 <p>And we end up in the <code>optimize</code> method! Okay I have a feeling this is where things are going to get exciting.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">        <span class="fu">optimize</span>();</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1"></a>        <span class="fu">optimize</span>();</span></code></pre></div>
 <p><code>@Compiler.java#L764</code></p>
 <p>First it gathers up a list of optimizations that will be performed, e.g.</p>
 <ul>
@@ -240,155 +276,155 @@ var x = 17 + 25;</code></pre>
 </ul>
 <p>A list of all these optimizations can be found in the <code>getOptimizations</code> method of <code>DefaultPassConfig</code>.</p>
 <p>From how the code looks like, each optimization is also called a <code>pass</code>.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">optimize</span>() {
-    <span class="bu">List</span>&lt;PassFactory&gt; optimizations = <span class="fu">getPassConfig</span>().<span class="fu">getOptimizations</span>();
-    <span class="kw">if</span> (optimizations.<span class="fu">isEmpty</span>()) {
-      <span class="kw">return</span>;
-    }</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1"></a>  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">optimize</span>() {</span>
+<span id="cb10-2"><a href="#cb10-2"></a>    <span class="bu">List</span>&lt;PassFactory&gt; optimizations = <span class="fu">getPassConfig</span>().<span class="fu">getOptimizations</span>();</span>
+<span id="cb10-3"><a href="#cb10-3"></a>    <span class="kw">if</span> (optimizations.<span class="fu">isEmpty</span>()) {</span>
+<span id="cb10-4"><a href="#cb10-4"></a>      <span class="kw">return</span>;</span>
+<span id="cb10-5"><a href="#cb10-5"></a>    }</span></code></pre></div>
 <p><code>@Compiler.java#L1951-1955</code></p>
 <p>Observe how <code>optimizations</code> is a <code>List</code> of <code>PassFactory</code> (factory pattern).</p>
 <p>The first pass is the <code>normalize</code> pass. It seems like for each pass there is a set of steps that must be followed, something like:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>startPass</code> is called with the name of the pass</li>
 <li>actually process the pass</li>
 <li><code>endPass</code> is called, probably for cleanup effects</li>
 </ol>
 <p><code>startPass</code> itself has a number of steps as well:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>check the current state of passing</li>
 <li>set <code>currentPassName</code> to signify what pass it is</li>
 <li>set <code>currentTracer</code> to a new <code>Tracer</code></li>
 </ol>
-<p>I haven't dug into what a <code>Tracer</code> does, but from the comments it looks like it figures out how long a particular action took, and thus will be useful when you want to pin point slow areas in the code.</p>
-<p>So let's jump into the work that <code>normalize</code> actually does.</p>
-<p>It's not difficult to see what it does, because most of it is well document in the <code>Normalize</code> class.</p>
-<p>Here's directly quoting the docs:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="co">/**</span>
- <span class="co">*</span> The goal with this pass is to simplify the other passes<span class="co">,</span>
- <span class="co">*</span> by making less complex statements<span class="co">.</span>
- <span class="co">*</span>
- <span class="co">*</span> Starting with statements like<span class="co">:</span>
- <span class="co">*</span>   var a <span class="co">=</span> <span class="co">0,</span> b <span class="co">=</span> foo<span class="co">();</span>
- <span class="co">*</span>
- <span class="co">*</span> Which become<span class="co">:</span>
- <span class="co">*</span>   var a <span class="co">=</span> <span class="co">0;</span>
- <span class="co">*</span>   var b <span class="co">=</span> foo<span class="co">();</span>
- <span class="co">*</span>
- <span class="co">*</span> The key here is only to break down things that help the other passes
- <span class="co">*</span> and can be put back together in a form that is at least as small when
- <span class="co">*</span> all is said and done<span class="co">.</span></code></pre></div>
+<p>I haven’t dug into what a <code>Tracer</code> does, but from the comments it looks like it figures out how long a particular action took, and thus will be useful when you want to pin point slow areas in the code.</p>
+<p>So let’s jump into the work that <code>normalize</code> actually does.</p>
+<p>It’s not difficult to see what it does, because most of it is well document in the <code>Normalize</code> class.</p>
+<p>Here’s directly quoting the docs:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">/**</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a> <span class="co">*</span> The goal with this pass is to simplify the other passes<span class="co">,</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a> <span class="co">*</span> by making less complex statements<span class="co">.</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a> <span class="co">*</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a> <span class="co">*</span> Starting with statements like<span class="co">:</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a> <span class="co">*</span>   var a <span class="co">=</span> <span class="co">0,</span> b <span class="co">=</span> foo<span class="co">();</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a> <span class="co">*</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a> <span class="co">*</span> Which become<span class="co">:</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a> <span class="co">*</span>   var a <span class="co">=</span> <span class="co">0;</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a> <span class="co">*</span>   var b <span class="co">=</span> foo<span class="co">();</span></span>
+<span id="cb11-11"><a href="#cb11-11"></a> <span class="co">*</span></span>
+<span id="cb11-12"><a href="#cb11-12"></a> <span class="co">*</span> The key here is only to break down things that help the other passes</span>
+<span id="cb11-13"><a href="#cb11-13"></a> <span class="co">*</span> and can be put back together in a form that is at least as small when</span>
+<span id="cb11-14"><a href="#cb11-14"></a> <span class="co">*</span> all is said and done<span class="co">.</span></span></code></pre></div>
 <p><code>@Normalize.java#L33-46</code></p>
 <p>If you keep looking down, you see descriptions about the 7 things that this class does.</p>
-<p>After some set up, the <code>process</code> method of <code>Normalize</code> is called, and that's where magic happens!</p>
+<p>After some set up, the <code>process</code> method of <code>Normalize</code> is called, and that’s where magic happens!</p>
 <h2 id="traversingvisiting">Traversing/Visiting</h2>
 <p>The first step is strange to me at first sight:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">new</span> <span class="fu">NodeTraversal</span>(
-        compiler, <span class="kw">new</span> <span class="fu">NormalizeStatements</span>(compiler, assertOnChange))
-        .<span class="fu">traverseRoots</span>(externs, root);</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1"></a>    <span class="kw">new</span> <span class="fu">NodeTraversal</span>(</span>
+<span id="cb12-2"><a href="#cb12-2"></a>        compiler, <span class="kw">new</span> <span class="fu">NormalizeStatements</span>(compiler, assertOnChange))</span>
+<span id="cb12-3"><a href="#cb12-3"></a>        .<span class="fu">traverseRoots</span>(externs, root);</span></code></pre></div>
 <p><code>@Normalize.java#L116-118</code></p>
-<p>It looks like this isn't doing anything. But we we look into what <code>NodeTraversal</code> does, it actually takes in a <code>Callback</code>, and when it traverses the AST (<code>traverseRoots</code>), it calls particular methods of <code>Callback</code> at different points of traversing.</p>
+<p>It looks like this isn’t doing anything. But we we look into what <code>NodeTraversal</code> does, it actually takes in a <code>Callback</code>, and when it traverses the AST (<code>traverseRoots</code>), it calls particular methods of <code>Callback</code> at different points of traversing.</p>
 <p>For example, <code>traverseRoots</code> calls <code>traverseBranch</code></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">      <span class="fu">traverseBranch</span>(externs, scopeRoot);</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1"></a>      <span class="fu">traverseBranch</span>(externs, scopeRoot);</span></code></pre></div>
 <p><code>@NodeTraversal.java#L306</code></p>
 <p>and in <code>traverseBranch</code>, it calls the <code>visit</code> method of the callback</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    callback.<span class="fu">visit</span>(<span class="kw">this</span>, n, parent);</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href="#cb14-1"></a>    callback.<span class="fu">visit</span>(<span class="kw">this</span>, n, parent);</span></code></pre></div>
 <p><code>@NodeTraversal.java#L577</code></p>
 <p>In summary the <code>NodeTraversal</code> goes through the AST and at various points, asks the <code>Callback</code> if it wants to visit a particular node (Visitor pattern).</p>
 <p>Now we can see what <code>NormalizeStatements</code> does.</p>
 <p>There are really only 2 methods of interest here, <code>shouldTraverse</code> and <code>visit</code>.</p>
-<p><code>shouldTraverse</code> is <code>NormalizeStatements</code>'' way of saying if it should descend down one level in the AST.</p>
+<p><code>shouldTraverse</code> is <code>NormalizeStatements</code>’’ way of saying if it should descend down one level in the AST.</p>
 <p><code>visit</code> is what <code>NormalizeStatements</code> will do to modify the AST.</p>
 <p>Looking into <code>shouldTraverse</code>, we see that first, it always returns <code>true</code>, and it does some normalizations inside of this method</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">shouldTraverse</span>(NodeTraversal t, <span class="bu">Node</span> n, <span class="bu">Node</span> parent) {
-      <span class="fu">doStatementNormalizations</span>(n);
-
-      <span class="kw">return</span> <span class="kw">true</span>;
-    }</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1"></a>    <span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">shouldTraverse</span>(NodeTraversal t, <span class="bu">Node</span> n, <span class="bu">Node</span> parent) {</span>
+<span id="cb15-2"><a href="#cb15-2"></a>      <span class="fu">doStatementNormalizations</span>(n);</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a>      <span class="kw">return</span> <span class="kw">true</span>;</span>
+<span id="cb15-5"><a href="#cb15-5"></a>    }</span></code></pre></div>
 <p><code>@Normalize.java#L368-372</code></p>
 <p>If we dive deeper into the code we can see very well written comments why certain normalizations are done in the <code>shouldTraverse</code> method, and why others are done in the <code>visit</code>.</p>
 <p>For example, in <code>doStatementNormalizations</code>, the <code>extractForInitializer</code> method is called, and the comments are as such:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="co">/**</span>
-     <span class="co">*</span> Bring the initializers out of FOR loops<span class="co">. </span> These need to be placed
-     <span class="co">*</span> before any associated LABEL nodes<span class="co">.</span> This needs to be done from the top
-     <span class="co">*</span> level label first so this is called as a pre<span class="co">-</span>order callback <span class="co">(</span>from
-     <span class="co">*</span> shouldTraverse<span class="co">).</span>
-     <span class="co">*</span>
-     <span class="co">*</span> <span class="kw">@param n </span>The node to inspect<span class="co">.</span>
-     <span class="co">*</span> <span class="kw">@param before </span>The node to insert the initializer before<span class="co">.</span>
-     <span class="co">*</span> <span class="kw">@param beforeParent </span>The parent of the node before which the initializer
-     <span class="co">*</span>     will be inserted<span class="co">.</span>
-     <span class="co">*/</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb16-1"><a href="#cb16-1"></a>    <span class="co">/**</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>     <span class="co">*</span> Bring the initializers out of FOR loops<span class="co">. </span> These need to be placed</span>
+<span id="cb16-3"><a href="#cb16-3"></a>     <span class="co">*</span> before any associated LABEL nodes<span class="co">.</span> This needs to be done from the top</span>
+<span id="cb16-4"><a href="#cb16-4"></a>     <span class="co">*</span> level label first so this is called as a pre<span class="co">-</span>order callback <span class="co">(</span>from</span>
+<span id="cb16-5"><a href="#cb16-5"></a>     <span class="co">*</span> shouldTraverse<span class="co">).</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>     <span class="co">*</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a>     <span class="co">*</span> <span class="an">@param n </span>The node to inspect<span class="co">.</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a>     <span class="co">*</span> <span class="an">@param before </span>The node to insert the initializer before<span class="co">.</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a>     <span class="co">*</span> <span class="an">@param beforeParent </span>The parent of the node before which the initializer</span>
+<span id="cb16-10"><a href="#cb16-10"></a>     <span class="co">*</span>     will be inserted<span class="co">.</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a>     <span class="co">*/</span></span></code></pre></div>
 <p><code>@Normalize.java#L561-571</code></p>
-<p>Because it's a AST traversal implemented with callbacks, it wasn't easy to get to the code that was interesting. A lot of is was just descending the AST (in what looks like a depth first manner), before we finally get to the <code>visit</code> part of the code.</p>
+<p>Because it’s a AST traversal implemented with callbacks, it wasn’t easy to get to the code that was interesting. A lot of is was just descending the AST (in what looks like a depth first manner), before we finally get to the <code>visit</code> part of the code.</p>
 <p>Particularly I hit a point where I ended up in this switch case:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">        <span class="kw">case</span> Token.<span class="fu">SETTER_DEF</span>:
-          <span class="kw">if</span> (!compiler.<span class="fu">getLifeCycleStage</span>().<span class="fu">isNormalizedObfuscated</span>()) {
-            <span class="fu">annotateConstantsByConvention</span>(n, parent);
-          }
-          <span class="kw">break</span>;</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb17-1"><a href="#cb17-1"></a>        <span class="kw">case</span> Token.<span class="fu">SETTER_DEF</span>:</span>
+<span id="cb17-2"><a href="#cb17-2"></a>          <span class="kw">if</span> (!compiler.<span class="fu">getLifeCycleStage</span>().<span class="fu">isNormalizedObfuscated</span>()) {</span>
+<span id="cb17-3"><a href="#cb17-3"></a>            <span class="fu">annotateConstantsByConvention</span>(n, parent);</span>
+<span id="cb17-4"><a href="#cb17-4"></a>          }</span>
+<span id="cb17-5"><a href="#cb17-5"></a>          <span class="kw">break</span>;</span></code></pre></div>
 <p><code>@Normalize.java#L399-403</code></p>
-<p>I couldn't understand what <code>Token.SETTER_DEF</code> meant, so I went to the Variables panel in eclipse and looked at what <code>n</code> was (the switch block switched on <code>n.getType()</code>), and saw that n was &quot;x&quot;.</p>
+<p>I couldn’t understand what <code>Token.SETTER_DEF</code> meant, so I went to the Variables panel in eclipse and looked at what <code>n</code> was (the switch block switched on <code>n.getType()</code>), and saw that n was “x”.</p>
 <p>The rest of the <code>process</code> method looks similar, where callbacks are passed into a travesal, with different callbacks doing different things.</p>
 <p>The slight differences are the types of <code>Callback</code>s used.</p>
 <p><code>NormalizeStatements</code> implements the <code>Callback</code> interface at the highest level, and there over 20 classes or abstract classes that implement this interface.</p>
 <p><code>MakeDeclaredNamesUnique</code> implements the ScopedCallback, because when renaming variables, scope has to be considered. E.g. a variable that refers to a variable in the outer scope cannot be renamed to something different.</p>
-<p>Here's something that caused me difficulty in reading this particular method: there are multiple layers of abstraction here, which makes it pretty confusing.</p>
-<ol style="list-style-type: decimal">
-<li>It's not clear how many things <code>process</code> is actually doing.</li>
+<p>Here’s something that caused me difficulty in reading this particular method: there are multiple layers of abstraction here, which makes it pretty confusing.</p>
+<ol type="1">
+<li>It’s not clear how many things <code>process</code> is actually doing.</li>
 <li>The actions are inconsistent. In some places, the construction of a <code>NodeTraversal</code> using <code>new</code> and calling <code>traverseRoots</code> happens on the same line. But in others, the <code>Callback</code> is constructed separately from the <code>NodeTraversal</code>, which are separate from actually calling the <code>traverse</code> method. In other places, these 3 steps are separated into another method.</li>
 </ol>
 <p>Perhaps to clean up this method slightly, we can move each sub-processing step into its own method, like <code>removeDuplicateDeclarations</code></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    <span class="fu">removeDuplicateDeclarations</span>(externs, root);</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb18-1"><a href="#cb18-1"></a>    <span class="fu">removeDuplicateDeclarations</span>(externs, root);</span></code></pre></div>
 <p><code>@Normalize.java#L138</code></p>
 <p>Then <code>process</code> will look like this</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="kw">public</span> <span class="dt">void</span> <span class="fu">process</span>(<span class="bu">Node</span> externs, <span class="bu">Node</span> root) {
-    <span class="fu">normalizeStatements</span>(externs, root);
-    <span class="fu">makeDeclaredNamesUnique</span>(externs, root);
-    <span class="fu">removeDuplicateDeclarations</span>(externs, root);
-    <span class="fu">propagateConstantAnnotationsOverVars</span>(externs, root);
-    <span class="fu">findExposeAnnotations</span>(root)
-}</code></pre></div>
-<p>For our simple piece of code, <code>normalize</code> actually doesn't do anything, so that was a pretty long detour. But I think we will see the patterns in <code>normalize</code> again thorughout the codebase, so it is still useful to examine it.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">process</span>(<span class="bu">Node</span> externs, <span class="bu">Node</span> root) {</span>
+<span id="cb19-2"><a href="#cb19-2"></a>    <span class="fu">normalizeStatements</span>(externs, root);</span>
+<span id="cb19-3"><a href="#cb19-3"></a>    <span class="fu">makeDeclaredNamesUnique</span>(externs, root);</span>
+<span id="cb19-4"><a href="#cb19-4"></a>    <span class="fu">removeDuplicateDeclarations</span>(externs, root);</span>
+<span id="cb19-5"><a href="#cb19-5"></a>    <span class="fu">propagateConstantAnnotationsOverVars</span>(externs, root);</span>
+<span id="cb19-6"><a href="#cb19-6"></a>    <span class="fu">findExposeAnnotations</span>(root)</span>
+<span id="cb19-7"><a href="#cb19-7"></a>}</span></code></pre></div>
+<p>For our simple piece of code, <code>normalize</code> actually doesn’t do anything, so that was a pretty long detour. But I think we will see the patterns in <code>normalize</code> again thorughout the codebase, so it is still useful to examine it.</p>
 <p>For each <code>startPass</code>, there is its dual <code>endPass</code>, which stops the <code>Tracer</code> (so a tracer probably records how long each compiler pass took).</p>
 <h1 id="the-phaseoptimizer">The PhaseOptimizer</h1>
-<p>And we're back in <code>optimize</code>! Here we hit something scary (to me) called the <code>PhaseOptimizer</code>. We throw all the optimizations in to the <code>phaseOptimizer</code> via its <code>consume</code> method, and basically <code>consume</code> organizes these <code>PassFactory</code>-ies into <code>CompilePasses</code>.</p>
+<p>And we’re back in <code>optimize</code>! Here we hit something scary (to me) called the <code>PhaseOptimizer</code>. We throw all the optimizations in to the <code>phaseOptimizer</code> via its <code>consume</code> method, and basically <code>consume</code> organizes these <code>PassFactory</code>-ies into <code>CompilePasses</code>.</p>
 <p>Like its name suggest, <code>PhaseOptimizer</code> does some optimizations. These are (for now) too complicated to get into, but here are relevant portions of the code that describes what happens:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="co">/**</span>
-   <span class="co">*</span> Add the passes generated by the given factories to the compile sequence<span class="co">.</span>
-   <span class="co">*</span> <span class="kw">&lt;p&gt;</span>
-   <span class="co">*</span> Automatically pulls multi<span class="co">-</span>run passes into fixed point loops<span class="co">.</span> If there
-   <span class="co">*</span> are <span class="co">1</span> or more multi<span class="co">-</span>run passes in a row<span class="co">,</span> they will run together in
-   <span class="co">*</span> the same fixed point loop<span class="co">.</span> The passes will run until they are finished
-   <span class="co">*</span> making changes<span class="co">.</span>
-   <span class="co">*</span> <span class="kw">&lt;p&gt;</span>
-   <span class="co">*</span> The PhaseOptimizer is free to tweak the order and frequency of multi<span class="co">-</span>run
-   <span class="co">*</span> passes in a fixed<span class="co">-</span>point loop<span class="co">.</span>
-   <span class="co">*/</span>
-  <span class="dt">void</span> <span class="fu">consume</span>(<span class="bu">List</span>&lt;PassFactory&gt; factories) {</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb20-1"><a href="#cb20-1"></a>  <span class="co">/**</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>   <span class="co">*</span> Add the passes generated by the given factories to the compile sequence<span class="co">.</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a>   <span class="co">*</span> <span class="kw">&lt;p&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4"></a>   <span class="co">*</span> Automatically pulls multi<span class="co">-</span>run passes into fixed point loops<span class="co">.</span> If there</span>
+<span id="cb20-5"><a href="#cb20-5"></a>   <span class="co">*</span> are <span class="co">1</span> or more multi<span class="co">-</span>run passes in a row<span class="co">,</span> they will run together in</span>
+<span id="cb20-6"><a href="#cb20-6"></a>   <span class="co">*</span> the same fixed point loop<span class="co">.</span> The passes will run until they are finished</span>
+<span id="cb20-7"><a href="#cb20-7"></a>   <span class="co">*</span> making changes<span class="co">.</span></span>
+<span id="cb20-8"><a href="#cb20-8"></a>   <span class="co">*</span> <span class="kw">&lt;p&gt;</span></span>
+<span id="cb20-9"><a href="#cb20-9"></a>   <span class="co">*</span> The PhaseOptimizer is free to tweak the order and frequency of multi<span class="co">-</span>run</span>
+<span id="cb20-10"><a href="#cb20-10"></a>   <span class="co">*</span> passes in a fixed<span class="co">-</span>point loop<span class="co">.</span></span>
+<span id="cb20-11"><a href="#cb20-11"></a>   <span class="co">*/</span></span>
+<span id="cb20-12"><a href="#cb20-12"></a>  <span class="dt">void</span> <span class="fu">consume</span>(<span class="bu">List</span>&lt;PassFactory&gt; factories) {</span></code></pre></div>
 <p><code>@PhaseOptimizer.java#L128-139</code></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="co">/**</span>
-   <span class="co">*</span> A compound pass that contains atomic passes and runs them until they reach
-   <span class="co">*</span> a fixed point<span class="co">.</span>
-   <span class="co">*</span> <span class="kw">&lt;p&gt;</span>
-   <span class="co">*</span> Notice that this is a non<span class="co">-</span>static class<span class="co">,</span> because it includes the closure
-   <span class="co">*</span> of PhaseOptimizer<span class="co">.</span>
-   <span class="co">*/</span>
-  <span class="at">@VisibleForTesting</span>
-  <span class="kw">class</span> Loop <span class="kw">implements</span> CompilerPass {</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb21-1"><a href="#cb21-1"></a>  <span class="co">/**</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>   <span class="co">*</span> A compound pass that contains atomic passes and runs them until they reach</span>
+<span id="cb21-3"><a href="#cb21-3"></a>   <span class="co">*</span> a fixed point<span class="co">.</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a>   <span class="co">*</span> <span class="kw">&lt;p&gt;</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>   <span class="co">*</span> Notice that this is a non<span class="co">-</span>static class<span class="co">,</span> because it includes the closure</span>
+<span id="cb21-6"><a href="#cb21-6"></a>   <span class="co">*</span> of PhaseOptimizer<span class="co">.</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a>   <span class="co">*/</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a>  <span class="at">@VisibleForTesting</span></span>
+<span id="cb21-9"><a href="#cb21-9"></a>  <span class="kw">class</span> Loop <span class="kw">implements</span> CompilerPass {</span></code></pre></div>
 <p><code>@PhaseOptimizer.java#L400-408</code></p>
 <p>At the end of <code>consume</code>, what we have is <code>passes</code> which is a list of <code>CompilerPass</code>-es that will be run. We then call the <code>process</code> method of the <code>PhaseOptimizer</code>, which goes through each <code>CompilerPass</code> (in <code>passes</code>) and calls the <code>process</code> method of that <code>CompilerPass</code>.</p>
 <p>This should look pretty familiar because <code>Normalize</code> actually implements <code>CompilerPass</code>, and so we have a clue of what happens in the <code>process</code> method of each <code>CompilerPass</code>.</p>
 <p>I wanted to figure out which exact <code>CompilerPass</code> was causing the change, so I added some if else and print statements to notify me when the nodes were changed by a pass. This is how it roughly looked like</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">      <span class="bu">String</span> old_root_str = root.<span class="fu">toStringTree</span>();
-      pass.<span class="fu">process</span>(externs, root);
-      <span class="bu">String</span> new_root_str = root.<span class="fu">toStringTree</span>();
-      <span class="kw">if</span> (old_root_str.<span class="fu">contentEquals</span>(new_root_str)){
-          <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Same: &quot;</span> + pass);
-      } <span class="kw">else</span> {
-          <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Pass: &quot;</span> + pass + <span class="st">&quot; old: &quot;</span> + old_root_str + <span class="st">&quot; new: &quot;</span> + new_root_str);
-      }</code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb22-1"><a href="#cb22-1"></a>      <span class="bu">String</span> old_root_str = root.<span class="fu">toStringTree</span>();</span>
+<span id="cb22-2"><a href="#cb22-2"></a>      pass.<span class="fu">process</span>(externs, root);</span>
+<span id="cb22-3"><a href="#cb22-3"></a>      <span class="bu">String</span> new_root_str = root.<span class="fu">toStringTree</span>();</span>
+<span id="cb22-4"><a href="#cb22-4"></a>      <span class="kw">if</span> (old_root_str.<span class="fu">contentEquals</span>(new_root_str)){</span>
+<span id="cb22-5"><a href="#cb22-5"></a>          <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Same: &quot;</span> + pass);</span>
+<span id="cb22-6"><a href="#cb22-6"></a>      } <span class="kw">else</span> {</span>
+<span id="cb22-7"><a href="#cb22-7"></a>          <span class="bu">System</span>.<span class="fu">out</span>.<span class="fu">println</span>(<span class="st">&quot;Pass: &quot;</span> + pass + <span class="st">&quot; old: &quot;</span> + old_root_str + <span class="st">&quot; new: &quot;</span> + new_root_str);</span>
+<span id="cb22-8"><a href="#cb22-8"></a>      }</span></code></pre></div>
 <p>What I found strange is that the <code>process</code> method of <code>PhaseOptimizer</code> ran twice. I found out because I had set breakpoints in that method.</p>
-<p>In the first run of <code>process</code>, there was only 1 pass that caused a change: <code>inferConsts</code>, but I couldn't tell what changed based on the <code>toString()</code> output, so this isn't the pass we are interested in.</p>
+<p>In the first run of <code>process</code>, there was only 1 pass that caused a change: <code>inferConsts</code>, but I couldn’t tell what changed based on the <code>toString()</code> output, so this isn’t the pass we are interested in.</p>
 <p>In the second run of <code>process</code>, we get this:</p>
 <pre><code>Same: pass: beforeMainOptimizations
 Pass: com.google.javascript.jscomp.PhaseOptimizer$Loop@dd37992 old: BLOCK [synthetic: 1]
@@ -406,139 +442,139 @@ Pass: com.google.javascript.jscomp.PhaseOptimizer$Loop@dd37992 old: BLOCK [synth
 Same: pass: beforeModuleMotion</code></pre>
 <p>Bingo! Or not?</p>
 <h2 id="multiple-passes">Multiple passes</h2>
-<p>We managed to figure out the pass that caused the optimization, but the name of the pass didn't really help at all.</p>
+<p>We managed to figure out the pass that caused the optimization, but the name of the pass didn’t really help at all.</p>
 <p>But at least we know this pass happens before <code>beforeModuleMotion</code> and after <code>beforeMainOptimizations</code>, and because the list of <code>CompilerPass</code> is traversed in order, we can go into <code>DefaultPassConfig</code> and take a look at what is in between these 2 passes.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    passes.<span class="fu">addAll</span>(<span class="fu">getMainOptimizationLoop</span>());</code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb24-1"><a href="#cb24-1"></a>    passes.<span class="fu">addAll</span>(<span class="fu">getMainOptimizationLoop</span>());</span></code></pre></div>
 <p><code>@DefaultPassConfig.java#L594</code></p>
 <p>This basically adds about 10+ <code>PassFactory</code>-ies to the list via the methods <code>getMainOptimizationLoop</code> and <code>getCodeRemovingPasses</code>.</p>
 <p>By setting more debug breakpoints, I was able to narrow down my options to those found in <code>getCodeRemovingPasses</code>. Now I guess I just have to read what each pass does, or set breakpoints in every pass and observe what happens!</p>
-<p>I think the former isn't a good idea, because the <code>PhaseOptimizer</code> might run each pass multiple times, and I'll just be debugging for a long time.</p>
+<p>I think the former isn’t a good idea, because the <code>PhaseOptimizer</code> might run each pass multiple times, and I’ll just be debugging for a long time.</p>
 <p>Here, I basically looked at each of them, read the comments and figure out what was likely to be the <code>CompilerPass</code> that did some work. My guess is that <code>PeepholeOptimizationsPass</code> did it.</p>
 <p>Digging into the creation of <code>PeepholeOptimizationsPass</code> we see multiple kinds of peephole optimizations</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="co">/**</span> Various peephole optimizations<span class="co">. */</span>
-  <span class="kw">private</span> <span class="dt">final</span> PassFactory peepholeOptimizations =
-      <span class="kw">new</span> <span class="fu">PassFactory</span>(<span class="st">&quot;peepholeOptimizations&quot;</span>, <span class="kw">false</span>) {
-    <span class="at">@Override</span>
-    <span class="kw">protected</span> CompilerPass <span class="fu">create</span>(AbstractCompiler compiler) {
-      <span class="dt">final</span> <span class="dt">boolean</span> late = <span class="kw">false</span>;
-      <span class="kw">return</span> <span class="kw">new</span> <span class="fu">PeepholeOptimizationsPass</span>(compiler,
-            <span class="kw">new</span> <span class="fu">PeepholeMinimizeConditions</span>(late),
-            <span class="kw">new</span> <span class="fu">PeepholeSubstituteAlternateSyntax</span>(late),
-            <span class="kw">new</span> <span class="fu">PeepholeReplaceKnownMethods</span>(late),
-            <span class="kw">new</span> <span class="fu">PeepholeRemoveDeadCode</span>(),
-            <span class="kw">new</span> <span class="fu">PeepholeFoldConstants</span>(late),
-            <span class="kw">new</span> <span class="fu">PeepholeCollectPropertyAssignments</span>());
-    }
-  };</code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb25-1"><a href="#cb25-1"></a>  <span class="co">/**</span> Various peephole optimizations<span class="co">. */</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>  <span class="kw">private</span> <span class="dt">final</span> PassFactory peepholeOptimizations =</span>
+<span id="cb25-3"><a href="#cb25-3"></a>      <span class="kw">new</span> <span class="fu">PassFactory</span>(<span class="st">&quot;peepholeOptimizations&quot;</span>, <span class="kw">false</span>) {</span>
+<span id="cb25-4"><a href="#cb25-4"></a>    <span class="at">@Override</span></span>
+<span id="cb25-5"><a href="#cb25-5"></a>    <span class="kw">protected</span> CompilerPass <span class="fu">create</span>(AbstractCompiler compiler) {</span>
+<span id="cb25-6"><a href="#cb25-6"></a>      <span class="dt">final</span> <span class="dt">boolean</span> late = <span class="kw">false</span>;</span>
+<span id="cb25-7"><a href="#cb25-7"></a>      <span class="kw">return</span> <span class="kw">new</span> <span class="fu">PeepholeOptimizationsPass</span>(compiler,</span>
+<span id="cb25-8"><a href="#cb25-8"></a>            <span class="kw">new</span> <span class="fu">PeepholeMinimizeConditions</span>(late),</span>
+<span id="cb25-9"><a href="#cb25-9"></a>            <span class="kw">new</span> <span class="fu">PeepholeSubstituteAlternateSyntax</span>(late),</span>
+<span id="cb25-10"><a href="#cb25-10"></a>            <span class="kw">new</span> <span class="fu">PeepholeReplaceKnownMethods</span>(late),</span>
+<span id="cb25-11"><a href="#cb25-11"></a>            <span class="kw">new</span> <span class="fu">PeepholeRemoveDeadCode</span>(),</span>
+<span id="cb25-12"><a href="#cb25-12"></a>            <span class="kw">new</span> <span class="fu">PeepholeFoldConstants</span>(late),</span>
+<span id="cb25-13"><a href="#cb25-13"></a>            <span class="kw">new</span> <span class="fu">PeepholeCollectPropertyAssignments</span>());</span>
+<span id="cb25-14"><a href="#cb25-14"></a>    }</span>
+<span id="cb25-15"><a href="#cb25-15"></a>  };</span></code></pre></div>
 <p><code>@DefaultPassConfig.java#L1299-1313</code></p>
-<p>I decided to brute force and figure out which of these are responsible for the AST changes, so I basically just removed these <code>AbstractPeepholeOptimization</code> one by one until the AST didn't change, that way I can figure out which one is responsible.</p>
+<p>I decided to brute force and figure out which of these are responsible for the AST changes, so I basically just removed these <code>AbstractPeepholeOptimization</code> one by one until the AST didn’t change, that way I can figure out which one is responsible.</p>
 <p>Here I stumbled upon a funny little problem that took me a good deal of debugging to solve.</p>
-<p>Since we figure that the pass happens in <code>getMainOptimizationLoop</code>, I tried commenting that part out, but found that the pass still happened! That was really strange. Here's the part I commented out:</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    passes.<span class="fu">add</span>(<span class="fu">createEmptyPass</span>(<span class="st">&quot;beforeModuleMotion&quot;</span>));</code></pre></div>
+<p>Since we figure that the pass happens in <code>getMainOptimizationLoop</code>, I tried commenting that part out, but found that the pass still happened! That was really strange. Here’s the part I commented out:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb26-1"><a href="#cb26-1"></a>    passes.<span class="fu">add</span>(<span class="fu">createEmptyPass</span>(<span class="st">&quot;beforeModuleMotion&quot;</span>));</span></code></pre></div>
 <p><code>@DefaultPassConfig.java#L596</code></p>
 <p>What I ended up doing was to slowly comment out parts of the <code>getOptimizations</code> method, which <code>getMainOptimizationLoop</code> lives in, and see when I can get the the pass to not be processed.</p>
 <p>While going through the file to comment the code I took glances at the code as well and found out that in multiple places <code>PeepholeOptimizationsPass</code> was inserted in to the list of <code>CompilerPass</code>!</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">        passes.<span class="fu">add</span>(peepholeOptimizations);</code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb27-1"><a href="#cb27-1"></a>        passes.<span class="fu">add</span>(peepholeOptimizations);</span></code></pre></div>
 <p><code>@DefaultPassConfig.java#L711</code></p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">      passes.<span class="fu">add</span>(latePeepholeOptimizations);</code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb28-1"><a href="#cb28-1"></a>      passes.<span class="fu">add</span>(latePeepholeOptimizations);</span></code></pre></div>
 <p><code>@DefaultPassConfig.java#L752</code></p>
 <p>To reduce the surface area of search, we will comment out all of these except for 1,</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">        passes.<span class="fu">add</span>(peepholeOptimizations);</code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb29-1"><a href="#cb29-1"></a>        passes.<span class="fu">add</span>(peepholeOptimizations);</span></code></pre></div>
 <p><code>@DefaultPassConfig.java#L711</code></p>
 <p>Now we can proceed to comment out parts of <code>peepholeOptimizations</code> to figure out which exact <code>AbstractPeepholeOptimization</code> is doing the work, which is <code>PeepholeFoldConstants</code>.</p>
 <p>This optimzation is not that simple to understand because it is made up of multiple smaller peephole optimizations.</p>
-<p>Let's start from the top, which is a <code>PeepholeOptimizationsPass</code>. As per normal, this is a <code>CompilerPass</code>, so the <code>process</code> method is where this happen.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">process</span>(<span class="bu">Node</span> externs, <span class="bu">Node</span> root) {
-    compiler.<span class="fu">addChangeHandler</span>(handler);
-    <span class="fu">beginTraversal</span>();
-    NodeTraversal.<span class="fu">traverseChangedFunctions</span>(compiler, <span class="kw">new</span> <span class="fu">FunctionCallback</span>() {
-        <span class="at">@Override</span>
-        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(AbstractCompiler compiler, <span class="bu">Node</span> root) {
-          <span class="kw">if</span> (root.<span class="fu">isFunction</span>()) {
-            root = root.<span class="fu">getLastChild</span>();
-          }
-          <span class="kw">do</span> {
-            handler.<span class="fu">reset</span>();
-            NodeTraversal.<span class="fu">traverse</span>(compiler, root, <span class="kw">new</span> <span class="fu">PeepCallback</span>());
-          } <span class="kw">while</span> (retraverseOnChange &amp;&amp; handler.<span class="fu">hasCodeChanged</span>());
-        }
-      });
-    <span class="fu">endTraversal</span>();
-    compiler.<span class="fu">removeChangeHandler</span>(handler);
-  }</code></pre></div>
+<p>Let’s start from the top, which is a <code>PeepholeOptimizationsPass</code>. As per normal, this is a <code>CompilerPass</code>, so the <code>process</code> method is where this happen.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb30-1"><a href="#cb30-1"></a>  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">process</span>(<span class="bu">Node</span> externs, <span class="bu">Node</span> root) {</span>
+<span id="cb30-2"><a href="#cb30-2"></a>    compiler.<span class="fu">addChangeHandler</span>(handler);</span>
+<span id="cb30-3"><a href="#cb30-3"></a>    <span class="fu">beginTraversal</span>();</span>
+<span id="cb30-4"><a href="#cb30-4"></a>    NodeTraversal.<span class="fu">traverseChangedFunctions</span>(compiler, <span class="kw">new</span> <span class="fu">FunctionCallback</span>() {</span>
+<span id="cb30-5"><a href="#cb30-5"></a>        <span class="at">@Override</span></span>
+<span id="cb30-6"><a href="#cb30-6"></a>        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(AbstractCompiler compiler, <span class="bu">Node</span> root) {</span>
+<span id="cb30-7"><a href="#cb30-7"></a>          <span class="kw">if</span> (root.<span class="fu">isFunction</span>()) {</span>
+<span id="cb30-8"><a href="#cb30-8"></a>            root = root.<span class="fu">getLastChild</span>();</span>
+<span id="cb30-9"><a href="#cb30-9"></a>          }</span>
+<span id="cb30-10"><a href="#cb30-10"></a>          <span class="kw">do</span> {</span>
+<span id="cb30-11"><a href="#cb30-11"></a>            handler.<span class="fu">reset</span>();</span>
+<span id="cb30-12"><a href="#cb30-12"></a>            NodeTraversal.<span class="fu">traverse</span>(compiler, root, <span class="kw">new</span> <span class="fu">PeepCallback</span>());</span>
+<span id="cb30-13"><a href="#cb30-13"></a>          } <span class="kw">while</span> (retraverseOnChange &amp;&amp; handler.<span class="fu">hasCodeChanged</span>());</span>
+<span id="cb30-14"><a href="#cb30-14"></a>        }</span>
+<span id="cb30-15"><a href="#cb30-15"></a>      });</span>
+<span id="cb30-16"><a href="#cb30-16"></a>    <span class="fu">endTraversal</span>();</span>
+<span id="cb30-17"><a href="#cb30-17"></a>    compiler.<span class="fu">removeChangeHandler</span>(handler);</span>
+<span id="cb30-18"><a href="#cb30-18"></a>  }</span></code></pre></div>
 <p><code>@PeepholeOptimizationsPass.java#L55-72</code></p>
 <p>In <code>process</code> we see something different, the usage of <code>NodeTraversal.traverseChangedFunctions</code>.</p>
 <p>This works similarly to the <code>Callbacks</code> we discussed above, except that the traversal only happens when functions are changed. The callback for this traversal is actually called <code>PeepCallback</code>, which runs each <code>AbstractPeepholeOptimization</code> when visiting each node by calling their <code>optimizeSubtree</code> method.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="kw">private</span> <span class="kw">class</span> PeepCallback <span class="kw">extends</span> AbstractShallowCallback {
-    <span class="at">@Override</span>
-    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(NodeTraversal t, <span class="bu">Node</span> n, <span class="bu">Node</span> parent) {
-      <span class="bu">Node</span> currentNode = n, newNode;
-      <span class="dt">boolean</span> codeChanged = <span class="kw">false</span>;
-      <span class="kw">do</span> {
-        codeChanged = <span class="kw">false</span>;
-        <span class="kw">for</span> (AbstractPeepholeOptimization optim : peepholeOptimizations) {
-          newNode = optim.<span class="fu">optimizeSubtree</span>(currentNode);
-          <span class="kw">if</span> (newNode != currentNode) {
-            codeChanged = <span class="kw">true</span>;
-            currentNode = newNode;
-          }
-          <span class="kw">if</span> (currentNode == <span class="kw">null</span>) {
-            <span class="kw">return</span>;
-          }
-        }
-      } <span class="kw">while</span>(codeChanged);
-    }
-  }</code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb31-1"><a href="#cb31-1"></a>  <span class="kw">private</span> <span class="kw">class</span> PeepCallback <span class="kw">extends</span> AbstractShallowCallback {</span>
+<span id="cb31-2"><a href="#cb31-2"></a>    <span class="at">@Override</span></span>
+<span id="cb31-3"><a href="#cb31-3"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">visit</span>(NodeTraversal t, <span class="bu">Node</span> n, <span class="bu">Node</span> parent) {</span>
+<span id="cb31-4"><a href="#cb31-4"></a>      <span class="bu">Node</span> currentNode = n, newNode;</span>
+<span id="cb31-5"><a href="#cb31-5"></a>      <span class="dt">boolean</span> codeChanged = <span class="kw">false</span>;</span>
+<span id="cb31-6"><a href="#cb31-6"></a>      <span class="kw">do</span> {</span>
+<span id="cb31-7"><a href="#cb31-7"></a>        codeChanged = <span class="kw">false</span>;</span>
+<span id="cb31-8"><a href="#cb31-8"></a>        <span class="kw">for</span> (AbstractPeepholeOptimization optim : peepholeOptimizations) {</span>
+<span id="cb31-9"><a href="#cb31-9"></a>          newNode = optim.<span class="fu">optimizeSubtree</span>(currentNode);</span>
+<span id="cb31-10"><a href="#cb31-10"></a>          <span class="kw">if</span> (newNode != currentNode) {</span>
+<span id="cb31-11"><a href="#cb31-11"></a>            codeChanged = <span class="kw">true</span>;</span>
+<span id="cb31-12"><a href="#cb31-12"></a>            currentNode = newNode;</span>
+<span id="cb31-13"><a href="#cb31-13"></a>          }</span>
+<span id="cb31-14"><a href="#cb31-14"></a>          <span class="kw">if</span> (currentNode == <span class="kw">null</span>) {</span>
+<span id="cb31-15"><a href="#cb31-15"></a>            <span class="kw">return</span>;</span>
+<span id="cb31-16"><a href="#cb31-16"></a>          }</span>
+<span id="cb31-17"><a href="#cb31-17"></a>        }</span>
+<span id="cb31-18"><a href="#cb31-18"></a>      } <span class="kw">while</span>(codeChanged);</span>
+<span id="cb31-19"><a href="#cb31-19"></a>    }</span>
+<span id="cb31-20"><a href="#cb31-20"></a>  }</span></code></pre></div>
 <p><code>@PeepholeOptimizationsPass.java#L74-93</code></p>
 <h2 id="finally-we-found-it">Finally, we found it!</h2>
 <p>Now we know where to look to find out what <code>PeepholeFoldConstants</code> does.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">  <span class="bu">Node</span> <span class="fu">optimizeSubtree</span>(<span class="bu">Node</span> subtree) {
-    <span class="kw">switch</span>(subtree.<span class="fu">getType</span>()) {
-      <span class="kw">case</span> Token.<span class="fu">NEW</span>:
-        <span class="kw">return</span> <span class="fu">tryFoldCtorCall</span>(subtree);
-
-      <span class="kw">case</span> Token.<span class="fu">TYPEOF</span>:
-        <span class="kw">return</span> <span class="fu">tryFoldTypeof</span>(subtree);
-
-      <span class="kw">case</span> Token.<span class="fu">NOT</span>:
-      <span class="kw">case</span> Token.<span class="fu">POS</span>:
-      <span class="kw">case</span> Token.<span class="fu">NEG</span>:
-      <span class="kw">case</span> Token.<span class="fu">BITNOT</span>:
-        <span class="fu">tryReduceOperandsForOp</span>(subtree);
-        <span class="kw">return</span> <span class="fu">tryFoldUnaryOperator</span>(subtree);
-
-      <span class="kw">case</span> Token.<span class="fu">VOID</span>:
-        <span class="kw">return</span> <span class="fu">tryReduceVoid</span>(subtree);
-
-      <span class="kw">default</span>:
-        <span class="fu">tryReduceOperandsForOp</span>(subtree);
-        <span class="kw">return</span> <span class="fu">tryFoldBinaryOperator</span>(subtree);
-    }
-  }</code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb32-1"><a href="#cb32-1"></a>  <span class="bu">Node</span> <span class="fu">optimizeSubtree</span>(<span class="bu">Node</span> subtree) {</span>
+<span id="cb32-2"><a href="#cb32-2"></a>    <span class="kw">switch</span>(subtree.<span class="fu">getType</span>()) {</span>
+<span id="cb32-3"><a href="#cb32-3"></a>      <span class="kw">case</span> Token.<span class="fu">NEW</span>:</span>
+<span id="cb32-4"><a href="#cb32-4"></a>        <span class="kw">return</span> <span class="fu">tryFoldCtorCall</span>(subtree);</span>
+<span id="cb32-5"><a href="#cb32-5"></a></span>
+<span id="cb32-6"><a href="#cb32-6"></a>      <span class="kw">case</span> Token.<span class="fu">TYPEOF</span>:</span>
+<span id="cb32-7"><a href="#cb32-7"></a>        <span class="kw">return</span> <span class="fu">tryFoldTypeof</span>(subtree);</span>
+<span id="cb32-8"><a href="#cb32-8"></a></span>
+<span id="cb32-9"><a href="#cb32-9"></a>      <span class="kw">case</span> Token.<span class="fu">NOT</span>:</span>
+<span id="cb32-10"><a href="#cb32-10"></a>      <span class="kw">case</span> Token.<span class="fu">POS</span>:</span>
+<span id="cb32-11"><a href="#cb32-11"></a>      <span class="kw">case</span> Token.<span class="fu">NEG</span>:</span>
+<span id="cb32-12"><a href="#cb32-12"></a>      <span class="kw">case</span> Token.<span class="fu">BITNOT</span>:</span>
+<span id="cb32-13"><a href="#cb32-13"></a>        <span class="fu">tryReduceOperandsForOp</span>(subtree);</span>
+<span id="cb32-14"><a href="#cb32-14"></a>        <span class="kw">return</span> <span class="fu">tryFoldUnaryOperator</span>(subtree);</span>
+<span id="cb32-15"><a href="#cb32-15"></a></span>
+<span id="cb32-16"><a href="#cb32-16"></a>      <span class="kw">case</span> Token.<span class="fu">VOID</span>:</span>
+<span id="cb32-17"><a href="#cb32-17"></a>        <span class="kw">return</span> <span class="fu">tryReduceVoid</span>(subtree);</span>
+<span id="cb32-18"><a href="#cb32-18"></a></span>
+<span id="cb32-19"><a href="#cb32-19"></a>      <span class="kw">default</span>:</span>
+<span id="cb32-20"><a href="#cb32-20"></a>        <span class="fu">tryReduceOperandsForOp</span>(subtree);</span>
+<span id="cb32-21"><a href="#cb32-21"></a>        <span class="kw">return</span> <span class="fu">tryFoldBinaryOperator</span>(subtree);</span>
+<span id="cb32-22"><a href="#cb32-22"></a>    }</span>
+<span id="cb32-23"><a href="#cb32-23"></a>  }</span></code></pre></div>
 <p><code>@PeepholeFoldConstants.java#L78-100</code></p>
 <p>Reading the code we can guess which switch case we will land into, the <code>default</code> case.</p>
-<p>Here we're just going to make a guess which method does the optimization, I'm going to pick <code>tryFoldBinaryOperator</code> because it sounds like it.</p>
+<p>Here we’re just going to make a guess which method does the optimization, I’m going to pick <code>tryFoldBinaryOperator</code> because it sounds like it.</p>
 <p>Jumping in we see a switch statement switching on the type of the subtree, which in our case is an addition. So we dive into the <code>tryFoldAdd</code> method.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">      <span class="kw">case</span> Token.<span class="fu">ADD</span>:
-        <span class="kw">return</span> <span class="fu">tryFoldAdd</span>(subtree, left, right);</code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb33-1"><a href="#cb33-1"></a>      <span class="kw">case</span> Token.<span class="fu">ADD</span>:</span>
+<span id="cb33-2"><a href="#cb33-2"></a>        <span class="kw">return</span> <span class="fu">tryFoldAdd</span>(subtree, left, right);</span></code></pre></div>
 <p><code>@PeepholeFoldConstants.java#L151-152</code></p>
 <p>We encounter some useful comments here so we can jump straight into the <code>else</code> branch.</p>
-<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">    } <span class="kw">else</span> {
-      <span class="co">// Try arithmetic add</span>
-      <span class="bu">Node</span> result = <span class="fu">tryFoldArithmeticOp</span>(node, left, right);
-      <span class="kw">if</span> (result != node) {
-        <span class="kw">return</span> result;
-      }
-      <span class="kw">return</span> <span class="fu">tryFoldLeftChildOp</span>(node, left, right);
-    }</code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb34-1"><a href="#cb34-1"></a>    } <span class="kw">else</span> {</span>
+<span id="cb34-2"><a href="#cb34-2"></a>      <span class="co">// Try arithmetic add</span></span>
+<span id="cb34-3"><a href="#cb34-3"></a>      <span class="bu">Node</span> result = <span class="fu">tryFoldArithmeticOp</span>(node, left, right);</span>
+<span id="cb34-4"><a href="#cb34-4"></a>      <span class="kw">if</span> (result != node) {</span>
+<span id="cb34-5"><a href="#cb34-5"></a>        <span class="kw">return</span> result;</span>
+<span id="cb34-6"><a href="#cb34-6"></a>      }</span>
+<span id="cb34-7"><a href="#cb34-7"></a>      <span class="kw">return</span> <span class="fu">tryFoldLeftChildOp</span>(node, left, right);</span>
+<span id="cb34-8"><a href="#cb34-8"></a>    }</span></code></pre></div>
 <p><code>@PeepholeFoldConstants.java#L849-856</code></p>
 <p>To verify that this is indeed the optimization we care about, we can jump into the method and just result whatever was passed in.</p>
 <p>Success!</p>
 <p>By commenting out the lines in <code>tryFoldArithmeticOp</code> and just return <code>n</code>, we can verify that the optimization does not run!</p>
 <p>We can dig deeper and look into <code>performArithmeticOp</code>, but all we need to know is that it performs the addition, returning a Node. If the addition worked, Node would just be a number, which is the result of the addition (in our case thats 42), and replace <code>n</code> (which was a <code>add</code> subtree), with just a single node!</p>
 <h1 id="recap">Recap</h1>
-<p>After this long post, I think it's worth recapping what happens.</p>
-<ol style="list-style-type: decimal">
+<p>After this long post, I think it’s worth recapping what happens.</p>
+<ol type="1">
 <li>The compiler is set up with options, things like where to get the JS (stdin or a file?)</li>
 <li>JavaScript is parsed into a tree</li>
 <li>Gather up the list of optimizations that will be run</li>
@@ -548,10 +584,10 @@ Same: pass: beforeModuleMotion</code></pre>
 <li>Each <code>CompilerPass</code> will process the AST via callbacks when traversing the tree</li>
 <li>Compiled JavaScript is output (to stdout or file)</li>
 </ol>
-<p>There's way more that goes on, like how the <code>PhaseOptimizer</code> runs the list of optimizations, fixed-point optimizations that can be run multiple times safely, the many different kinds of <code>Callback</code>s.</p>
+<p>There’s way more that goes on, like how the <code>PhaseOptimizer</code> runs the list of optimizations, fixed-point optimizations that can be run multiple times safely, the many different kinds of <code>Callback</code>s.</p>
 <p>But at a high level, this is how things are run.</p>
 <p>Conclusion:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Open source is awesome. Because Google released this source code, we can look into the code to figure out how things work!</li>
 <li>Debuggers are super useful. Because Eclipse, and other IDEs, are such fantastic tools, we can insert breakpoints, jump around code, build and run projects with ease.</li>
 <li>Patterns are useful! In this dive into the code, we have already observed a couple of design patterns, namely the Visitor pattern and the Factory pattern. This has allowed the compiler to stay very flexible. I can imagine adding a new optimization pass by declaring a couple of new classes without touching the core of the compiler</li>
