@@ -31,7 +31,6 @@ $endfor$
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
-        font-size: 20px;
         line-height: 1.6;
         background: #fcfcfc;
         color: #333;
@@ -70,25 +69,9 @@ $endfor$
         margin: auto auto;
     }
 
-    #post-list td {
-        padding: 5px;
-    }
-
-    @media (max-width: 600px) {
-      #post-list tr td:nth-child(1)  {
-        display: none;
-      }
-    }
-
-    #post-list tr td:nth-child(1)  {
-      white-space: nowrap;
-    }
-
-    /* date published on index page */
-    .published, .date {
-        font-weight: normal;
-        font-size: 0.9rem;
-        color: #666;
+    .published {
+        font-size: 0.9em;
+        color: #555;
     }
 
     pre {
@@ -96,7 +79,6 @@ $endfor$
         border-radius: 5px;
         background: #f0f0f0;
         padding: 12px;
-        font-size: 18px;
         line-height: 1.6;
         margin-bottom: 30px;
         overflow-x: auto;
@@ -104,7 +86,7 @@ $endfor$
 
     footer {
         margin: 80px 0 20px 0;
-        font-size: 14px;
+        font-size: 0.9em;
     }
 
     code {
@@ -148,7 +130,7 @@ $for(author)$
 <h2 class="author">$author$</h2>
 $endfor$
 $if(date)$
-<h3 class="date">$date$</h3>
+<p class="published">$date$</p>
 $endif$
 </div>
 $endif$
