@@ -3,7 +3,7 @@ default: all
 .PHONY: deploy pages
 
 %.html: posts/%.mdown
-	pandoc $< --template template/custom -o $*.html
+	pandoc --from markdown --template template/custom -o $*.html $<
 
 srcfiles := $(shell ls posts/*.mdown)
 destfiles := $(patsubst posts/%.mdown,%.html,$(srcfiles))
