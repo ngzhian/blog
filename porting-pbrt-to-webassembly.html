@@ -1,13 +1,77 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Ng Zhi An">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet" type="text/css" preload>
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <title>Porting PBRT to WebAssembly</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
@@ -22,7 +86,7 @@
     }
 
     a {
-        color: #4A4A4A;
+        color: #035AA6;
     }
 
     .entry-content a {
@@ -36,13 +100,12 @@
     }
 
     a:hover {
-        color: #7A7A7A;
+        color: #5C73F2;
     }
 
     /* link to home at the top of each post */
     .home {
-        font-size: 0.8em;
-        color: #888;
+        font-size: 0.9em;
     }
 
     .content {
@@ -69,7 +132,7 @@
     .published, .date {
         font-weight: normal;
         font-size: 0.9rem;
-        color: #aaa;
+        color: #666;
     }
 
     pre {
@@ -88,12 +151,22 @@
         font-size: 14px;
     }
 
-    code{
+    code {
         white-space: pre;
     }
 
     p code {
-        background: #f0f0f0;
+		color: #026873;
+		padding: 2px 4px;
+    }
+
+    a code {
+        color: inherit;
+    }
+
+    /* overwrite Pandoc's syntax highlighted formatting */
+    .sourceCode {
+        overflow: auto;
     }
   </style>
 </head>
@@ -111,7 +184,7 @@
 <li>the version that runs using just nodejs (without postprocessing) is <a href="https://github.com/ngzhian/pbrt-v3/tree/wasm-port-nodejs-fs">wasm-port-nodejs-fs</a></li>
 <li>the version that runs in browser and draws to a canvas is <a href="https://github.com/ngzhian/pbrt-v3/tree/wasm-port-web">wasm-port-web</a></li>
 </ul>
-<p>I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git submodules, extracted as diffs here, and also hacking in the CMakeLists.txt <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>I tried to keep the changes to pbrt as minimal as possible. This requires some hacking in git submodules, extracted as diffs here, and also hacking in the CMakeLists.txt <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <h2 id="clone-and-setup-env">Clone and setup env</h2>
 <p>Set up Emscripten using emsdk:</p>
 <pre><code>git clone https://github.com/emscripten-core/emsdk
@@ -154,19 +227,17 @@ CMakeFiles/eLut.dir/eLut.cpp.o -L/Users/ngzhian/src/emsdk/upstream/emscripten/sy
 stack-size=5242880 --initial-memory=16777216 --no-entry --max-memory=16777216 --global-base=1024&#39;
 failed (1)</code></pre>
 <p>This error tells us that <code>eLut</code> was using <a href="https://emscripten.org/docs/porting/pthreads.html">pthreads</a>, but we did not pass <code>-s USE_PTHREADS=1</code> when compiling and linking.</p>
-<p>The easiest way to fix this is to use <code>CMAKE_CXX_FLAGS</code>. For now we hack it inside of the check that the compiler is Clang, since Emscripten uses Clang. <a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1a7fef9..bba4da2 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -75,6 +75,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
- ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)
-   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)
-   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -Wno-deprecated-register&quot;)
-+  SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -s USE_PTHREADS=1&quot;)
-+  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)
- ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)
-   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</code></pre>
+<p>The easiest way to fix this is to use <code>CMAKE_CXX_FLAGS</code>. For now we hack it inside of the check that the compiler is Clang, since Emscripten uses Clang. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">--- a/CMakeLists.txt</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="dt">+++ b/CMakeLists.txt</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="dt">@@ -75,6 +75,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a> ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)</span>
+<span id="cb5-5"><a href="#cb5-5"></a>   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</span>
+<span id="cb5-6"><a href="#cb5-6"></a>   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -Wno-deprecated-register&quot;)</span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="va">+  SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -s USE_PTHREADS=1&quot;)</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="va">+  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a> ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)</span>
+<span id="cb5-10"><a href="#cb5-10"></a>   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</span></code></pre></div>
 <h2 id="sharedarraybuffer">SharedArrayBuffer</h2>
 <p>The second error we hit is</p>
 <pre><code>...
@@ -174,18 +245,16 @@ requested a shared WebAssembly.Memory but the returned buffer is not a SharedArr
 <p>Emscripten translates <code>pthreads</code> into use of <code>SharedArrayBuffer</code>. <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer"><code>SharedArrayBuffer</code></a> is a shared memory, and for security reasons, is not enabled by default.</p>
 <p>Here, <code>toFloat.cpp</code> is compiled to <code>toFloat.js</code>, and <code>toFloat.js</code> is ran using node in order to generate <code>toFloat.h</code>. <code>toFloat</code> uses pthreads to parallelize the generation of some constant values. So, in order to run it correctly, we need to pass the <code>--experimental-wasm-threads</code> flag to node.</p>
 <p>We know that <code>node</code> is found and decided by <a href="https://github.com/emscripten-core/emscripten/blob/master/cmake/Modules/Platform/Emscripten.cmake#L397"><code>Emscripten.cmake</code></a>, so we can set this variable ourselves. I couldn’t even find this variable in CMake 3.1.0 <a href="https://cmake.org/cmake/help/v3.1/manual/cmake-variables.7.html">docs</a>, so I’m quite surprised it even worked, and this is one reason why this project should upgrade the CMake version.</p>
-<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1a7fef9..b41c368 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -4,6 +4,8 @@
- 
- CMAKE_MINIMUM_REQUIRED ( VERSION 3.1.0 )
- 
-+SET(CMAKE_CROSSCOMPILING_EMULATOR &quot;${CMAKE_SOURCE_DIR}/node-wrapper&quot; CACHE STRING &quot;Path to the emulator for the target system.&quot; FORCE)
-+
- # For sanitizers
- SET (CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_DIR}/cmake&quot; ${CMAKE_MODULE_PATH})</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">--- a/CMakeLists.txt</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="dt">+++ b/CMakeLists.txt</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="dt">@@ -4,6 +4,8 @@</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a> </span>
+<span id="cb7-5"><a href="#cb7-5"></a> CMAKE_MINIMUM_REQUIRED ( VERSION 3.1.0 )</span>
+<span id="cb7-6"><a href="#cb7-6"></a> </span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="va">+SET(CMAKE_CROSSCOMPILING_EMULATOR &quot;${CMAKE_SOURCE_DIR}/node-wrapper&quot; CACHE STRING &quot;Path to the emulator for the target system.&quot; FORCE)</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="va">+</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a> # For sanitizers</span>
+<span id="cb7-10"><a href="#cb7-10"></a> SET (CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_DIR}/cmake&quot; ${CMAKE_MODULE_PATH})</span></code></pre></div>
 <p><code>node-wrapper</code> literally wraps node, passing it the appropriate flag:</p>
 <pre><code>$ cat ../node-wrapper
 #!/bin/bash
@@ -195,56 +264,52 @@ index 1a7fef9..b41c368 100644
 <p>The next error is quite cryptic:</p>
 <pre><code>/bin/sh: ./dwaLookups: No such file or directory</code></pre>
 <p>For this we need to dig into <a href="https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/OpenEXR/IlmImf/CMakeLists.txt#L33">OpenEXR/IlmImf/CMakeLists.txt</a>:</p>
-<pre><code>ADD_CUSTOM_COMMAND (
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
-  DEPENDS dwaLookups
-)</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">ADD_CUSTOM_COMMAND</span> (</span>
+<span id="cb10-2"><a href="#cb10-2"></a>  <span class="ot">OUTPUT</span> <span class="dv">${CMAKE_CURRENT_BINARY_DIR}</span>/dwaLookups.h</span>
+<span id="cb10-3"><a href="#cb10-3"></a>  <span class="ot">COMMAND</span> <span class="dv">${CMAKE_CURRENT_BINARY_DIR}</span>/<span class="dv">${CMAKE_CFG_INTDIR}</span>/dwaLookups &gt; <span class="dv">${CMAKE_CURRENT_BINARY_DIR}</span>/dwaLookups.h</span>
+<span id="cb10-4"><a href="#cb10-4"></a>  <span class="ot">DEPENDS</span> dwaLookups</span>
+<span id="cb10-5"><a href="#cb10-5"></a>)</span></code></pre></div>
 <p>Like <code>toFloat.js</code>, here an executable <code>dwaLookups.js</code> is generated, and ran using <a href="https://cmake.org/cmake/help/v3.17/prop_tgt/CROSSCOMPILING_EMULATOR.html#prop_tgt:CROSSCOMPILING_EMULATOR"><code>CMAKE_CROSSCOMPILING_EMULATOR</code></a>. However, I suspect that the way this custom command was defined broke something. Comparing it to <a href="https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/IlmBase/Half/CMakeLists.txt#L15"><code>toFloat</code></a>:</p>
-<pre><code>ADD_CUSTOM_COMMAND(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
-  COMMAND toFloat ARGS &gt; ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
-  DEPENDS toFloat
-  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  )</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">ADD_CUSTOM_COMMAND</span>(</span>
+<span id="cb11-2"><a href="#cb11-2"></a>  <span class="ot">OUTPUT</span> <span class="dv">${CMAKE_CURRENT_BINARY_DIR}</span>/toFloat.h</span>
+<span id="cb11-3"><a href="#cb11-3"></a>  <span class="ot">COMMAND</span> toFloat <span class="ot">ARGS</span> &gt; <span class="dv">${CMAKE_CURRENT_BINARY_DIR}</span>/toFloat.h</span>
+<span id="cb11-4"><a href="#cb11-4"></a>  <span class="ot">DEPENDS</span> toFloat</span>
+<span id="cb11-5"><a href="#cb11-5"></a>  <span class="ot">WORKING_DIRECTORY</span> <span class="dv">${CMAKE_CURRENT_BINARY_DIR}</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>  )</span></code></pre></div>
 <p>See how it only uses <code>toFloat</code> instead of trying to construct a path? I tried to look at the upstream for a fix, but they don’t even do this way of generating the header files anymore (these header files are precomputed values), they <a href="https://github.com/AcademySoftwareFoundation/openexr/blob/master/OpenEXR/IlmImf/CMakeLists.txt">check it in</a> directly.</p>
 <p>So the fix is to change the <code>CMakeLists.txt</code>, and while we are here, also fix up the potential issue with <code>b44ExpLogTable</code>:</p>
-<pre><code>diff --git a/OpenEXR/IlmImf/CMakeLists.txt b/OpenEXR/IlmImf/CMakeLists.txt
-index 74ab6d5..9a50f53 100644
---- a/OpenEXR/IlmImf/CMakeLists.txt
-+++ b/OpenEXR/IlmImf/CMakeLists.txt
-@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES ( b44ExpLogTable
-
- ADD_CUSTOM_COMMAND (
-   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
--  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/b44ExpLogTable &gt; ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
-+  COMMAND b44ExpLogTable &gt; ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
-   DEPENDS b44ExpLogTable
- )
-
-@@ -32,7 +32,7 @@ TARGET_LINK_LIBRARIES ( dwaLookups
-
- ADD_CUSTOM_COMMAND (
-   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
--  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
-+  COMMAND dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
-   DEPENDS dwaLookups
- )</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">--- a/OpenEXR/IlmImf/CMakeLists.txt</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="dt">+++ b/OpenEXR/IlmImf/CMakeLists.txt</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="dt">@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES ( b44ExpLogTable</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a></span>
+<span id="cb12-5"><a href="#cb12-5"></a> ADD_CUSTOM_COMMAND (</span>
+<span id="cb12-6"><a href="#cb12-6"></a>   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h</span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="st">-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/b44ExpLogTable &gt; ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a><span class="va">+  COMMAND b44ExpLogTable &gt; ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>   DEPENDS b44ExpLogTable</span>
+<span id="cb12-10"><a href="#cb12-10"></a> )</span>
+<span id="cb12-11"><a href="#cb12-11"></a></span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="dt">@@ -32,7 +32,7 @@ TARGET_LINK_LIBRARIES ( dwaLookups</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a></span>
+<span id="cb12-14"><a href="#cb12-14"></a> ADD_CUSTOM_COMMAND (</span>
+<span id="cb12-15"><a href="#cb12-15"></a>   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h</span>
+<span id="cb12-16"><a href="#cb12-16"></a><span class="st">-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h</span></span>
+<span id="cb12-17"><a href="#cb12-17"></a><span class="va">+  COMMAND dwaLookups &gt; ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h</span></span>
+<span id="cb12-18"><a href="#cb12-18"></a>   DEPENDS dwaLookups</span>
+<span id="cb12-19"><a href="#cb12-19"></a> )</span></code></pre></div>
 <p>I much prefer <code>dwaLookups.h</code> to be checked in, I think it’s a static file anyway, and it takes a long time for the generated <code>dwaLookups.js</code> to run. (Maybe a performance issue worth looking into, but probably not given upstream has checked in the header.)</p>
 <p>At this point or later if you rebuild, you see that <code>dwaLookups.h</code> take a really long time to complete. I suspect there is a deadlock somewhere, since generating <code>dwaLookups.h</code> uses pthreads, but the library wasn’t necessary written with Emscripten in mind. The quick fix is to make it single-threaded:</p>
-<pre><code>diff --git a/OpenEXR/IlmImf/dwaLookups.cpp b/OpenEXR/IlmImf/dwaLookups.cpp
-index 19ec831..cac958a 100644
---- a/OpenEXR/IlmImf/dwaLookups.cpp
-+++ b/OpenEXR/IlmImf/dwaLookups.cpp
-@@ -492,7 +492,7 @@ generateLutHeader()
-         }
-     }
-
--    if (IlmThread::supportsThreads()) {
-+    if (false &amp;&amp; IlmThread::supportsThreads()) {
-         std::vector&lt;LutHeaderWorker::Runner*&gt; runners;
-         for (size_t i=0; i&lt;workers.size(); ++i) {
-             runners.push_back( new LutHeaderWorker::Runner(*workers[i], (i==0)) );</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">--- a/OpenEXR/IlmImf/dwaLookups.cpp</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="dt">+++ b/OpenEXR/IlmImf/dwaLookups.cpp</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="dt">@@ -492,7 +492,7 @@ generateLutHeader()</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>         }</span>
+<span id="cb13-5"><a href="#cb13-5"></a>     }</span>
+<span id="cb13-6"><a href="#cb13-6"></a></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="st">-    if (IlmThread::supportsThreads()) {</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="va">+    if (false &amp;&amp; IlmThread::supportsThreads()) {</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a>         std::vector&lt;LutHeaderWorker::Runner*&gt; runners;</span>
+<span id="cb13-10"><a href="#cb13-10"></a>         for (size_t i=0; i&lt;workers.size(); ++i) {</span>
+<span id="cb13-11"><a href="#cb13-11"></a>             runners.push_back( new LutHeaderWorker::Runner(*workers[i], (i==0)) );</span></code></pre></div>
 <p>It should now complete (but still takes a while).</p>
 <h2 id="glog">glog</h2>
 <p>The next error we have is:</p>
@@ -255,8 +320,8 @@ index 19ec831..cac958a 100644
 # define safe_write(fd, s, len)  syscall(SYS_write, fd, s, len)</code></pre>
 <p>Emscripten defines some syscalls, but not <a href="https://github.com/emscripten-core/emscripten/issues/6708">all</a>.</p>
 <p>I don’t understand what this code is doing, so the fix is to set <code>HAVE_SYSCALL_H</code> and <code>HAVE_SYS_SYSCALL_H</code> to false.</p>
-<pre><code>SET(HAVE_SYSCALL_H 0 CACHE INTERNAL &quot;Hack for glog&quot; FORCE)
-SET(HAVE_SYS_SYSCALL_H 0 CACHE INTERNAL &quot;Hack for glog&quot; FORCE)</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">SET</span>(HAVE_SYSCALL_H 0 <span class="ot">CACHE</span> <span class="ot">INTERNAL</span> <span class="st">&quot;Hack for glog&quot;</span> <span class="ot">FORCE</span>)</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="kw">SET</span>(HAVE_SYS_SYSCALL_H 0 <span class="ot">CACHE</span> <span class="ot">INTERNAL</span> <span class="st">&quot;Hack for glog&quot;</span> <span class="ot">FORCE</span>)</span></code></pre></div>
 <h2 id="undefined-symbols">undefined symbols</h2>
 <p>The next error is has to do with undefined symbol, <code>popen</code>:</p>
 <pre><code>error: undefined symbol: popen (referenced by top-level compiled C/C++ code)
@@ -266,7 +331,7 @@ warning: _popen may need to be added to EXPORTED_FUNCTIONS if it arrives from a 
 Error: Aborting compilation due to previous errors
 em++: error: &#39;/Users/ngzhian/src/emsdk/node/12.9.1_64bit/bin/node /Users/ngzhian/src/emsdk/upstream/emscripten/src/compiler.js /var/folders/1n/02brqmc95d51bdrmzz8hhmrc0000gn/T/tmpvw86fm__.txt&#39; failed (1)</code></pre>
 <p>It tells us that we can disable this error, so let’s try it with:</p>
-<pre><code>SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">SET</span>(<span class="dv">CMAKE_EXE_LINKER_FLAGS</span> <span class="st">&quot;</span><span class="dv">${CMAKE_EXE_LINKER_FLAGS}</span><span class="st"> -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;</span>)</span></code></pre></div>
 <h2 id="inline-data-files">Inline data files</h2>
 <p>With all these changes, the compilation succeeds. We can try running <code>pbrt.js</code> with node, but nothing really happens, because we need to pass it an input file.</p>
 <pre><code>$ node --experimental-wasm-threads pbrt.js &lt; ../scenes/killeroo-simple.pbrt
@@ -282,7 +347,7 @@ em++: error: &#39;/Users/ngzhian/src/emsdk/node/12.9.1_64bit/bin/node /Users/ngz
 <h2 id="oom">OOM</h2>
 <p>After this, we get OOM messages. It helpfully suggests us to rebuild with <code>-s ASSERTIONS=1</code>.</p>
 <p>In general, building with this flag is useful, it emits warnings and suggests fixes. In this case, I know what the problem is: the program uses malloc to allocate memory for the large amounts of data structures required for rendering, and at some point we run out of memory. When running on the web, you don’t have access to all of the memory the machine has, there is a cap of 2 or 4 Gb. Emscripten sets the limit to even lower, 256 Wasm pages (64KB) or 16 Mb, so programs hit OOM even earlier. We can compile with the ability to dynamically ask for more memory, or we can compile with a higher initial memory. We do the latter here:</p>
-<pre><code>SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">SET</span>(<span class="dv">CMAKE_EXE_LINKER_FLAGS</span> <span class="st">&quot;</span><span class="dv">${CMAKE_EXE_LINKER_FLAGS}</span><span class="st"> -s INITIAL_MEMORY=134217728&quot;</span>)</span></code></pre></div>
 <p>Then after this, it should run fine, with</p>
 <pre><code>$ node --experimental-wasm-threads pbrt.js &lt; ../scenes/killeroo-simple.pbrt</code></pre>
 <h2 id="infinite-loop">Infinite loop?</h2>
@@ -319,76 +384,71 @@ MB), arena allocated 6.00 MB</code></pre>
 <h3 id="utf-8-output">UTF-8 output</h3>
 <p>However, if we open <code>test.pbm</code>, we see something nonsensical, just a bunch of noise. It is obviously not what we want.</p>
 <p>The problem here is, whenever we print/write something to stdout, Emscripten converts it into UTF-8, since that’s what JavaScript understands. So the buffer passed to <code>fwrite</code> is treated as a UTF-8 encoded bytes, checked for valid encoding, and written out. However, our bytes are arbitrary floats, so we end up with nonsense.</p>
-<p>I don’t have a great way to fix this, so what we will do is post-process the output. Instead of writing bytes, we write ASCII values of the bytes, then have a postprocessing step outside of Emscripten that converts them back into actual bytes.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<p>I don’t have a great way to fix this, so what we will do is post-process the output. Instead of writing bytes, we write ASCII values of the bytes, then have a postprocessing step outside of Emscripten that converts them back into actual bytes.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 <p>The change to write the hex values to stdout is:</p>
-<pre><code>$ git diff -- src/core/imageio.cpp
-diff --git a/src/core/imageio.cpp b/src/core/imageio.cpp
-index 28f5c99..33bc0bb 100644
---- a/src/core/imageio.cpp
-+++ b/src/core/imageio.cpp
-@@ -439,7 +439,7 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,
-     FILE *fp;
-     float scale;
-
--    fp = fopen(filename.c_str(), &quot;wb&quot;);
-+    fp = fopen(&quot;/dev/stdout&quot;, &quot;wb&quot;);
-     if (!fp) {
-         Error(&quot;Unable to open output PFM file \&quot;%s\&quot;&quot;, filename.c_str());
-         return false;
-@@ -465,11 +465,12 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,
-     for (int y = height - 1; y &gt;= 0; y--) {
-         // in case Float is &#39;double&#39;, copy into a staging buffer that&#39;s
-         // definitely a 32-bit float...
--        for (int x = 0; x &lt; 3 * width; ++x)
-+        for (int x = 0; x &lt; 3 * width; ++x) {
-             scanline[x] = rgb[y * width * 3 + x];
--        if (fwrite(&amp;scanline[0], sizeof(float), width * 3, fp) &lt;
--            (size_t)(width * 3))
--            goto fail;
-+            int i;
-+            memcpy(&amp;i, &amp;scanline[x], sizeof(float));
-+            fprintf(fp, &quot;%.8x&quot;, i);
-+        }
-     }
-
-     fclose(fp);</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb25-1"><a href="#cb25-1"></a><span class="kw">--- a/src/core/imageio.cpp</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a><span class="dt">+++ b/src/core/imageio.cpp</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="dt">@@ -439,7 +439,7 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,</span></span>
+<span id="cb25-4"><a href="#cb25-4"></a>     FILE *fp;</span>
+<span id="cb25-5"><a href="#cb25-5"></a>     float scale;</span>
+<span id="cb25-6"><a href="#cb25-6"></a></span>
+<span id="cb25-7"><a href="#cb25-7"></a><span class="st">-    fp = fopen(filename.c_str(), &quot;wb&quot;);</span></span>
+<span id="cb25-8"><a href="#cb25-8"></a><span class="va">+    fp = fopen(&quot;/dev/stdout&quot;, &quot;wb&quot;);</span></span>
+<span id="cb25-9"><a href="#cb25-9"></a>     if (!fp) {</span>
+<span id="cb25-10"><a href="#cb25-10"></a>         Error(&quot;Unable to open output PFM file \&quot;%s\&quot;&quot;, filename.c_str());</span>
+<span id="cb25-11"><a href="#cb25-11"></a>         return false;</span>
+<span id="cb25-12"><a href="#cb25-12"></a><span class="dt">@@ -465,11 +465,12 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,</span></span>
+<span id="cb25-13"><a href="#cb25-13"></a>     for (int y = height - 1; y &gt;= 0; y--) {</span>
+<span id="cb25-14"><a href="#cb25-14"></a>         // in case Float is &#39;double&#39;, copy into a staging buffer that&#39;s</span>
+<span id="cb25-15"><a href="#cb25-15"></a>         // definitely a 32-bit float...</span>
+<span id="cb25-16"><a href="#cb25-16"></a><span class="st">-        for (int x = 0; x &lt; 3 * width; ++x)</span></span>
+<span id="cb25-17"><a href="#cb25-17"></a><span class="va">+        for (int x = 0; x &lt; 3 * width; ++x) {</span></span>
+<span id="cb25-18"><a href="#cb25-18"></a>             scanline[x] = rgb[y * width * 3 + x];</span>
+<span id="cb25-19"><a href="#cb25-19"></a><span class="st">-        if (fwrite(&amp;scanline[0], sizeof(float), width * 3, fp) &lt;</span></span>
+<span id="cb25-20"><a href="#cb25-20"></a><span class="st">-            (size_t)(width * 3))</span></span>
+<span id="cb25-21"><a href="#cb25-21"></a><span class="st">-            goto fail;</span></span>
+<span id="cb25-22"><a href="#cb25-22"></a><span class="va">+            int i;</span></span>
+<span id="cb25-23"><a href="#cb25-23"></a><span class="va">+            memcpy(&amp;i, &amp;scanline[x], sizeof(float));</span></span>
+<span id="cb25-24"><a href="#cb25-24"></a><span class="va">+            fprintf(fp, &quot;%.8x&quot;, i);</span></span>
+<span id="cb25-25"><a href="#cb25-25"></a><span class="va">+        }</span></span>
+<span id="cb25-26"><a href="#cb25-26"></a>     }</span>
+<span id="cb25-27"><a href="#cb25-27"></a></span>
+<span id="cb25-28"><a href="#cb25-28"></a>     fclose(fp);</span></code></pre></div>
 <p>The <code>%.8x</code> is important, it ensures that we always write 8 chars. If we have a float whose whose top 4 bits are 0, we will end up only writing 7 characters. This was a bug that I encountered.</p>
 <h3 id="post-processing">Post-processing</h3>
 <p>The post-processing is a little Python script to read in the floats written out in their hex form, and then write out the actual bytes.</p>
-<pre><code># postprocess.py
-with open(&#39;test.pfm&#39;) as f:
-    with open(&#39;out.pfm&#39;, &#39;wb&#39;) as o:
-        # read headers
-        for i in range(3):
-            o.write(bytearray(f.readline(), encoding=&#39;utf-8&#39;))
-        # last byte is new line, don&#39;t need it
-        data = f.readline()[:-1]
-        # read 8 characters at a time, they form a single float
-        for i in range(0, len(data), 8):
-            fp = data[i:i+8];
-            # write out in little endian
-            ints = [int(fp[i*2:i*2+2], 16) for i in range(3,-1,-1)]
-            o.write(bytearray(ints))</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># postprocess.py</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;test.pfm&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb26-3"><a href="#cb26-3"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;out.pfm&#39;</span>, <span class="st">&#39;wb&#39;</span>) <span class="im">as</span> o:</span>
+<span id="cb26-4"><a href="#cb26-4"></a>        <span class="co"># read headers</span></span>
+<span id="cb26-5"><a href="#cb26-5"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+<span id="cb26-6"><a href="#cb26-6"></a>            o.write(<span class="bu">bytearray</span>(f.readline(), encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>))</span>
+<span id="cb26-7"><a href="#cb26-7"></a>        <span class="co"># last byte is new line, don&#39;t need it</span></span>
+<span id="cb26-8"><a href="#cb26-8"></a>        data <span class="op">=</span> f.readline()[:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb26-9"><a href="#cb26-9"></a>        <span class="co"># read 8 characters at a time, they form a single float</span></span>
+<span id="cb26-10"><a href="#cb26-10"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(data), <span class="dv">8</span>):</span>
+<span id="cb26-11"><a href="#cb26-11"></a>            fp <span class="op">=</span> data[i:i<span class="op">+</span><span class="dv">8</span>]<span class="op">;</span></span>
+<span id="cb26-12"><a href="#cb26-12"></a>            <span class="co"># write out in little endian</span></span>
+<span id="cb26-13"><a href="#cb26-13"></a>            ints <span class="op">=</span> [<span class="bu">int</span>(fp[i<span class="op">*</span><span class="dv">2</span>:i<span class="op">*</span><span class="dv">2</span><span class="op">+</span><span class="dv">2</span>], <span class="dv">16</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>,<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>)]</span>
+<span id="cb26-14"><a href="#cb26-14"></a>            o.write(<span class="bu">bytearray</span>(ints))</span></code></pre></div>
 <p>Now, to put these two steps together:</p>
 <pre><code>../node-wrapper pbrt.js --quiet &lt; ../scenes/killeroo-simple.pbrt &gt; test.pbm
 python3 ../postprocess.py</code></pre>
 <p>With that, we get <code>out.pfm</code> that is a valid file! And it looks very similar to the one generate from the native version of pbrt. If you dump the hex and diff them, you see that they differ slightly, I attribute that to floating points, maybe there is some precision error that happened during the conversion.</p>
 <h2 id="nodefs">NODEFS</h2>
-<p>To use NODEFS, we need to pass <code>-s NODERAWFS=1</code> to Emscripten<a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a></p>
-<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 8650ce0..a575ea4 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -84,6 +84,7 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)
-   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)
-   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)
-   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)
-+  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s NODERAWFS=1&quot;)
- ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)
-   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</code></pre>
+<p>To use NODEFS, we need to pass <code>-s NODERAWFS=1</code> to Emscripten<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb28-1"><a href="#cb28-1"></a><span class="kw">--- a/CMakeLists.txt</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="dt">+++ b/CMakeLists.txt</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="dt">@@ -84,6 +84,7 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)</span></span>
+<span id="cb28-4"><a href="#cb28-4"></a>   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)</span>
+<span id="cb28-5"><a href="#cb28-5"></a>   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)</span>
+<span id="cb28-6"><a href="#cb28-6"></a>   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)</span>
+<span id="cb28-7"><a href="#cb28-7"></a><span class="va">+  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s NODERAWFS=1&quot;)</span></span>
+<span id="cb28-8"><a href="#cb28-8"></a> ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)</span>
+<span id="cb28-9"><a href="#cb28-9"></a>   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</span></code></pre></div>
 <p>And to run it:</p>
 <pre><code>../node-wrapper pbrt.js --quiet &lt; ../scenes/killeroo-simple.pbrt</code></pre>
-<p>After a few moments, you should see killeroo-simple.exr<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>.</p>
+<p>After a few moments, you should see killeroo-simple.exr<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
 <h2 id="running-in-a-browser">Running in a browser</h2>
 <p>So far what we have achieved is to able to run pbrt as a command line tool, which is its original use case. However, part of porting to WebAssembly is to enable it to run on the Web (browser). So let’s tackle that now.</p>
 <h3 id="compiling-to-html">Compiling to HTML</h3>
@@ -399,17 +459,15 @@ index 8650ce0..a575ea4 100644
   @CMakeFiles/pbrt_exe.dir/linklibs.rsp</code></pre>
 <p>I got this command from this file that CMake generated: CMakeFiles/pbrt_exe.dir/link.txt.</p>
 <p>The first thing we need to do is remove <code>NODERAWFS</code> from our CMakeLists.txt, since we will no no longer be running in node environment:</p>
-<pre><code>diff --git a/CMakeLists.txt b/CMakeLists.txt
-index a575ea4..8650ce0 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -84,7 +84,6 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)
-   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)
-   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)
-   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)
--  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s NODERAWFS=1&quot;)
- ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)
-   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb31-1"><a href="#cb31-1"></a><span class="kw">--- a/CMakeLists.txt</span></span>
+<span id="cb31-2"><a href="#cb31-2"></a><span class="dt">+++ b/CMakeLists.txt</span></span>
+<span id="cb31-3"><a href="#cb31-3"></a><span class="dt">@@ -84,7 +84,6 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Clang&quot;)</span></span>
+<span id="cb31-4"><a href="#cb31-4"></a>   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s USE_PTHREADS=1&quot;)</span>
+<span id="cb31-5"><a href="#cb31-5"></a>   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0&quot;)</span>
+<span id="cb31-6"><a href="#cb31-6"></a>   SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728&quot;)</span>
+<span id="cb31-7"><a href="#cb31-7"></a><span class="st">-  SET(CMAKE_EXE_LINKER_FLAGS &quot;${CMAKE_EXE_LINKER_FLAGS} -s NODERAWFS=1&quot;)</span></span>
+<span id="cb31-8"><a href="#cb31-8"></a> ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL &quot;Intel&quot;)</span>
+<span id="cb31-9"><a href="#cb31-9"></a>   SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS} -std=c++11&quot;)</span></code></pre></div>
 <h3 id="blocking-on-main-thread">Blocking on main thread</h3>
 <p>After we build, we should get a pbrt.html file. We cannot simply open this in the browser, Wasm files <a href="https://developer.mozilla.org/en-US/docs/WebAssembly/C_to_wasm#Running_your_example">need to be served via a web server</a>. So, spin up a simple server:</p>
 <pre><code>python -m SimpleHTTPServer</code></pre>
@@ -426,7 +484,7 @@ index a575ea4..8650ce0 100644
 <p>Opening pbrt.html, now we see an input prompt. When not given any arguments, pbrt defaults to reading from stdin, and Emscripten will compile that to reading from a page’s input prompt. I guess we <em>could</em> copy and paste the entire killeroo-simple.pbrt file into the prompt, but let’s do this in a more convenient way.</p>
 <h3 id="passing-arguments">Passing arguments</h3>
 <p>When we had the js file, running via node was simple. Arguments passed to node was forwarded to the underlying script. With a HTML file, it’s not as straightforward. Luckily for us, Emscripten provides the <a href="https://emscripten.org/docs/api_reference/module.html#Module.arguments">Module</a> object.</p>
-<p>Opening up pbrt.html<a href="#fn6" class="footnote-ref" id="fnref6"><sup>6</sup></a>, we can see <code>var Module = { ... }</code>. Now, we can directly edit this file to add a <code>arguments</code> property, but every time we run <code>em++</code>, our changes will be lost. Emscripten has a way for us to systematically add properties to Module via the <a href="https://emscripten.org/docs/tools_reference/emcc.html#emcc-pre-js"><code>--pre-js</code></a>:</p>
+<p>Opening up pbrt.html<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>, we can see <code>var Module = { ... }</code>. Now, we can directly edit this file to add a <code>arguments</code> property, but every time we run <code>em++</code>, our changes will be lost. Emscripten has a way for us to systematically add properties to Module via the <a href="https://emscripten.org/docs/tools_reference/emcc.html#emcc-pre-js"><code>--pre-js</code></a>:</p>
 <pre><code>$ cat pre.js
 Module[&#39;arguments&#39;] = [&#39;scenes/killeroo-simple.pbrt&#39;];
 
@@ -461,35 +519,33 @@ Module[&#39;arguments&#39;] = [&#39;--outfile&#39;, outputFile, &#39;scenes/kill
 <p>We could use <a href="https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html#interacting-with-code-call-javascript-from-native"><code>EM_ASM</code></a> to directly “paint” to the canvas, but if we try accessing <code>Module.canvas</code> directly, we will very quickly see that it is undefined. Since our <code>main()</code> is now on a worker thread, worker threads don’t have access to the DOM, and so <code>Module.canvas</code> is inaccessible!</p>
 <p>There is a workaround for this. Looking around settings.js, we see <a href="https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1527"><code>OFFSCREENCANVAS_SUPPORT</code></a>, this allows us to transfer the canvas to a worker thread. I initially tried this, but found that the I couldn’t access the FS properly from the worker thread with this. scenes/killeroo-simple.pbrt was not found, and neither was output.pfm.</p>
 <p>Another way of doing this is with the <code>MAIN_THREAD_EM_ASM</code> macro, this runs a snippet of JS on the main thread:</p>
-<pre><code>diff --git a/src/core/imageio.cpp b/src/core/imageio.cpp
-index 28f5c99..adb6b8c 100644
---- a/src/core/imageio.cpp
-+++ b/src/core/imageio.cpp
-@@ -40,6 +40,10 @@
- #include &lt;ImfRgba.h&gt;
- #include &lt;ImfRgbaFile.h&gt;
-
-+#if __EMSCRIPTEN__
-+#include &quot;emscripten.h&quot;
-+#endif  // __EMSCRIPTEN__
-+
- namespace pbrt {
-
- // ImageIO Local Declarations
-@@ -473,6 +477,13 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,
-     }
-
-     fclose(fp);
-+
-+#if __EMSCRIPTEN__
-+    MAIN_THREAD_EM_ASM({
-+        drawPFMToCanvas($0, $1);
-+    }, width, height);
-+#endif //  __EMSCRIPTEN__
-+
-     return true;
-
- fail:</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb40-1"><a href="#cb40-1"></a><span class="kw">--- a/src/core/imageio.cpp</span></span>
+<span id="cb40-2"><a href="#cb40-2"></a><span class="dt">+++ b/src/core/imageio.cpp</span></span>
+<span id="cb40-3"><a href="#cb40-3"></a><span class="dt">@@ -40,6 +40,10 @@</span></span>
+<span id="cb40-4"><a href="#cb40-4"></a> #include &lt;ImfRgba.h&gt;</span>
+<span id="cb40-5"><a href="#cb40-5"></a> #include &lt;ImfRgbaFile.h&gt;</span>
+<span id="cb40-6"><a href="#cb40-6"></a></span>
+<span id="cb40-7"><a href="#cb40-7"></a><span class="va">+#if __EMSCRIPTEN__</span></span>
+<span id="cb40-8"><a href="#cb40-8"></a><span class="va">+#include &quot;emscripten.h&quot;</span></span>
+<span id="cb40-9"><a href="#cb40-9"></a><span class="va">+#endif  // __EMSCRIPTEN__</span></span>
+<span id="cb40-10"><a href="#cb40-10"></a><span class="va">+</span></span>
+<span id="cb40-11"><a href="#cb40-11"></a> namespace pbrt {</span>
+<span id="cb40-12"><a href="#cb40-12"></a></span>
+<span id="cb40-13"><a href="#cb40-13"></a> // ImageIO Local Declarations</span>
+<span id="cb40-14"><a href="#cb40-14"></a><span class="dt">@@ -473,6 +477,13 @@ static bool WriteImagePFM(const std::string &amp;filename, const Float *rgb,</span></span>
+<span id="cb40-15"><a href="#cb40-15"></a>     }</span>
+<span id="cb40-16"><a href="#cb40-16"></a></span>
+<span id="cb40-17"><a href="#cb40-17"></a>     fclose(fp);</span>
+<span id="cb40-18"><a href="#cb40-18"></a><span class="va">+</span></span>
+<span id="cb40-19"><a href="#cb40-19"></a><span class="va">+#if __EMSCRIPTEN__</span></span>
+<span id="cb40-20"><a href="#cb40-20"></a><span class="va">+    MAIN_THREAD_EM_ASM({</span></span>
+<span id="cb40-21"><a href="#cb40-21"></a><span class="va">+        drawPFMToCanvas($0, $1);</span></span>
+<span id="cb40-22"><a href="#cb40-22"></a><span class="va">+    }, width, height);</span></span>
+<span id="cb40-23"><a href="#cb40-23"></a><span class="va">+#endif //  __EMSCRIPTEN__</span></span>
+<span id="cb40-24"><a href="#cb40-24"></a><span class="va">+</span></span>
+<span id="cb40-25"><a href="#cb40-25"></a>     return true;</span>
+<span id="cb40-26"><a href="#cb40-26"></a></span>
+<span id="cb40-27"><a href="#cb40-27"></a> fail:</span></code></pre></div>
 <p>After writing to output.pfm, and <code>fclose</code> is called to completely flush all the bytes, we will call a JS function (defined later by us), passing it the width and height of our image. This will make our canvas flexible to different sizes.</p>
 <p>What remains is to define <code>drawPFMToCanvas</code>. What this function will do is:</p>
 <ol type="1">
@@ -499,41 +555,41 @@ index 28f5c99..adb6b8c 100644
 <li>Copy pixel data into canvas</li>
 </ol>
 <p>There are many ways to write this, I went with this:</p>
-<pre><code>function drawPFMToCanvas(width, height) {
-  Module.canvas.width = width;
-  Module.canvas.height = height;
-  var ctx = Module.canvas.getContext(&#39;2d&#39;);
-  var imageData = ctx.createImageData(width, height);
-
-  var contents = FS.readFile(outputFile);
-  // netpbm format (https://en.wikipedia.org/wiki/Netpbm#32-bit_extensions)
-  // PF\n
-  // width height\n
-  // endian\n
-  // 32-bit floats...
-  // Skip 3 new lines.
-  const nl = 10;  // Uint8 representing new line (ASCII).
-  const lastNewLine = contents.indexOf(nl, contents.indexOf(nl, contents.indexOf(nl, 0) + 1) + 1);
-  const data = contents.slice(lastNewLine+1);
-
-  // Each pixel is made up of 3 (RGB) 32-bit floats.
-  if (data.byteLength != width * height * 3 * 4) {
-    throw &#39;Mismatch in size&#39;;
-  }
-
-  // Uses platform endianness, to be more robust, we should check the endianness encoded in the pfm file.
-  const floats = new Float32Array(data.buffer);
-  for (let y = 0; y &lt; height; y++) {
-    for (let x = 0; x &lt; width; x++) {
-      // r g b
-      imageData.data[(height-y-1) * width * 4 + (x * 4 + 0)] = floats[y * width * 3 + (x * 3 + 0)] * 255;
-      imageData.data[(height-y-1) * width * 4 + (x * 4 + 1)] = floats[y * width * 3 + (x * 3 + 1)] * 255;
-      imageData.data[(height-y-1) * width * 4 + (x * 4 + 2)] = floats[y * width * 3 + (x * 3 + 2)] * 255;
-      imageData.data[(height-y-1) * width * 4 + (x * 4 + 3)] = 255;  // Full alpha.
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
-}</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb41-1"><a href="#cb41-1"></a><span class="kw">function</span> <span class="fu">drawPFMToCanvas</span>(width<span class="op">,</span> height) {</span>
+<span id="cb41-2"><a href="#cb41-2"></a>  Module<span class="op">.</span><span class="at">canvas</span><span class="op">.</span><span class="at">width</span> <span class="op">=</span> width<span class="op">;</span></span>
+<span id="cb41-3"><a href="#cb41-3"></a>  Module<span class="op">.</span><span class="at">canvas</span><span class="op">.</span><span class="at">height</span> <span class="op">=</span> height<span class="op">;</span></span>
+<span id="cb41-4"><a href="#cb41-4"></a>  <span class="kw">var</span> ctx <span class="op">=</span> Module<span class="op">.</span><span class="at">canvas</span><span class="op">.</span><span class="fu">getContext</span>(<span class="st">&#39;2d&#39;</span>)<span class="op">;</span></span>
+<span id="cb41-5"><a href="#cb41-5"></a>  <span class="kw">var</span> imageData <span class="op">=</span> ctx<span class="op">.</span><span class="fu">createImageData</span>(width<span class="op">,</span> height)<span class="op">;</span></span>
+<span id="cb41-6"><a href="#cb41-6"></a></span>
+<span id="cb41-7"><a href="#cb41-7"></a>  <span class="kw">var</span> contents <span class="op">=</span> FS<span class="op">.</span><span class="fu">readFile</span>(outputFile)<span class="op">;</span></span>
+<span id="cb41-8"><a href="#cb41-8"></a>  <span class="co">// netpbm format (https://en.wikipedia.org/wiki/Netpbm#32-bit_extensions)</span></span>
+<span id="cb41-9"><a href="#cb41-9"></a>  <span class="co">// PF\n</span></span>
+<span id="cb41-10"><a href="#cb41-10"></a>  <span class="co">// width height\n</span></span>
+<span id="cb41-11"><a href="#cb41-11"></a>  <span class="co">// endian\n</span></span>
+<span id="cb41-12"><a href="#cb41-12"></a>  <span class="co">// 32-bit floats...</span></span>
+<span id="cb41-13"><a href="#cb41-13"></a>  <span class="co">// Skip 3 new lines.</span></span>
+<span id="cb41-14"><a href="#cb41-14"></a>  <span class="kw">const</span> nl <span class="op">=</span> <span class="dv">10</span><span class="op">;</span>  <span class="co">// Uint8 representing new line (ASCII).</span></span>
+<span id="cb41-15"><a href="#cb41-15"></a>  <span class="kw">const</span> lastNewLine <span class="op">=</span> contents<span class="op">.</span><span class="fu">indexOf</span>(nl<span class="op">,</span> contents<span class="op">.</span><span class="fu">indexOf</span>(nl<span class="op">,</span> contents<span class="op">.</span><span class="fu">indexOf</span>(nl<span class="op">,</span> <span class="dv">0</span>) <span class="op">+</span> <span class="dv">1</span>) <span class="op">+</span> <span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb41-16"><a href="#cb41-16"></a>  <span class="kw">const</span> data <span class="op">=</span> contents<span class="op">.</span><span class="fu">slice</span>(lastNewLine<span class="op">+</span><span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb41-17"><a href="#cb41-17"></a></span>
+<span id="cb41-18"><a href="#cb41-18"></a>  <span class="co">// Each pixel is made up of 3 (RGB) 32-bit floats.</span></span>
+<span id="cb41-19"><a href="#cb41-19"></a>  <span class="cf">if</span> (data<span class="op">.</span><span class="at">byteLength</span> <span class="op">!=</span> width <span class="op">*</span> height <span class="op">*</span> <span class="dv">3</span> <span class="op">*</span> <span class="dv">4</span>) {</span>
+<span id="cb41-20"><a href="#cb41-20"></a>    <span class="cf">throw</span> <span class="st">&#39;Mismatch in size&#39;</span><span class="op">;</span></span>
+<span id="cb41-21"><a href="#cb41-21"></a>  }</span>
+<span id="cb41-22"><a href="#cb41-22"></a></span>
+<span id="cb41-23"><a href="#cb41-23"></a>  <span class="co">// Uses platform endianness, to be more robust, we should check the endianness encoded in the pfm file.</span></span>
+<span id="cb41-24"><a href="#cb41-24"></a>  <span class="kw">const</span> floats <span class="op">=</span> <span class="kw">new</span> <span class="bu">Float32Array</span>(data<span class="op">.</span><span class="at">buffer</span>)<span class="op">;</span></span>
+<span id="cb41-25"><a href="#cb41-25"></a>  <span class="cf">for</span> (<span class="kw">let</span> y <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> y <span class="op">&lt;</span> height<span class="op">;</span> y<span class="op">++</span>) {</span>
+<span id="cb41-26"><a href="#cb41-26"></a>    <span class="cf">for</span> (<span class="kw">let</span> x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> x <span class="op">&lt;</span> width<span class="op">;</span> x<span class="op">++</span>) {</span>
+<span id="cb41-27"><a href="#cb41-27"></a>      <span class="co">// r g b</span></span>
+<span id="cb41-28"><a href="#cb41-28"></a>      imageData<span class="op">.</span><span class="at">data</span>[(height<span class="op">-</span>y<span class="dv">-1</span>) <span class="op">*</span> width <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> (x <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> <span class="dv">0</span>)] <span class="op">=</span> floats[y <span class="op">*</span> width <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> (x <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> <span class="dv">0</span>)] <span class="op">*</span> <span class="dv">255</span><span class="op">;</span></span>
+<span id="cb41-29"><a href="#cb41-29"></a>      imageData<span class="op">.</span><span class="at">data</span>[(height<span class="op">-</span>y<span class="dv">-1</span>) <span class="op">*</span> width <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> (x <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> <span class="dv">1</span>)] <span class="op">=</span> floats[y <span class="op">*</span> width <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> (x <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> <span class="dv">1</span>)] <span class="op">*</span> <span class="dv">255</span><span class="op">;</span></span>
+<span id="cb41-30"><a href="#cb41-30"></a>      imageData<span class="op">.</span><span class="at">data</span>[(height<span class="op">-</span>y<span class="dv">-1</span>) <span class="op">*</span> width <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> (x <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> <span class="dv">2</span>)] <span class="op">=</span> floats[y <span class="op">*</span> width <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> (x <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> <span class="dv">2</span>)] <span class="op">*</span> <span class="dv">255</span><span class="op">;</span></span>
+<span id="cb41-31"><a href="#cb41-31"></a>      imageData<span class="op">.</span><span class="at">data</span>[(height<span class="op">-</span>y<span class="dv">-1</span>) <span class="op">*</span> width <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> (x <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> <span class="dv">3</span>)] <span class="op">=</span> <span class="dv">255</span><span class="op">;</span>  <span class="co">// Full alpha.</span></span>
+<span id="cb41-32"><a href="#cb41-32"></a>    }</span>
+<span id="cb41-33"><a href="#cb41-33"></a>  }</span>
+<span id="cb41-34"><a href="#cb41-34"></a>  ctx<span class="op">.</span><span class="fu">putImageData</span>(imageData<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb41-35"><a href="#cb41-35"></a>}</span></code></pre></div>
 <p>There are a couple of canvas specific logic in this code, if you are interested in what’s happening, I encourage you to look at <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">MDN’s documentation on Canvas</a>. The important bits are:</p>
 <ul>
 <li>Netpbm format starts with 3 lines of header, ‘’ delimited, followed by 32-bit floats, describing the image in RGB format, so there will be (width * height * 3) 32-bit floats in total.</li>
@@ -553,26 +609,26 @@ Hence the <code>height-y-1</code> logic. The <code>A</code> channel should alway
   -s PROXY_TO_PTHREAD \
   --pre-js pre.js \
   --preload-file ../scenes</code></pre>
-<p>Opening the file, we should see some output in the console, and eventually<a href="#fn7" class="footnote-ref" id="fnref7"><sup>7</sup></a> the canvas will be updated with our rendered image:</p>
+<p>Opening the file, we should see some output in the console, and eventually<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> the canvas will be updated with our rendered image:</p>
 <figure>
-<img src="pbrt-wasm-result.png" alt="Image rendered onto canvas, using WebAssembly port of pbrt" /><figcaption>Image rendered onto canvas, using WebAssembly port of pbrt</figcaption>
+<img src="pbrt-wasm-result.png" alt="" /><figcaption>Image rendered onto canvas, using WebAssembly port of pbrt</figcaption>
 </figure>
 <h2 id="concluding-thoughts">Concluding thoughts</h2>
 <p>This was a relatively fun exercise in porting a good sized project to WebAssembly. I hope this step by step exercise gives you an idea of what sort of issues you might encounter while porting, and also tips on how to look at the error messages and figure out how to fix things.</p>
 <p>Emscripten is a big project and contains many useful flags to help you port. Turning them (<code>ASSERTIONS</code>) on during the porting process can probably save you some time. The website contains a lot of useful information, and also test cases in the Emscripten codebase shows how APIs can be used. Those will serve as good examples for porting.</p>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Ideally the submodule versions should be upgraded, but I’m not familiar with the changes the authors made (the submodules are all forked versions of the upstream). Also the CMake version is quite old, so I’ll be doing some hacks that won’t be necessary or look very different if CMake version used was upgraded].<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>If a newer Cmake version was used, we can use <a href="https://cmake.org/cmake/help/v3.17/command/target_compile_options.html"><code>target_compile_options</code></a>.<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>Actually if we had turned <code>ASSERTIONS</code> on, we would have seen:</p>
+<li id="fn1" role="doc-endnote"><p>Ideally the submodule versions should be upgraded, but I’m not familiar with the changes the authors made (the submodules are all forked versions of the upstream). Also the CMake version is quite old, so I’ll be doing some hacks that won’t be necessary or look very different if CMake version used was upgraded].<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>If a newer Cmake version was used, we can use <a href="https://cmake.org/cmake/help/v3.17/command/target_compile_options.html"><code>target_compile_options</code></a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>Actually if we had turned <code>ASSERTIONS</code> on, we would have seen:</p>
 <pre><code>Invalid UTF-8 leading byte 0x-79 encountered when deserializing a UTF-8 string on the asm.js/wasm
 heap to a JS string!</code></pre>
-<p>and this is an indication that what we are trying might not work.<a href="#fnref3" class="footnote-back">↩</a></p></li>
-<li id="fn4"><p>I looked this up in Emscripten’s <a href="https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L837">settings.js</a>. This is the file where all arguments to <code>-s</code> is set, so you can find <code>USE_PTHREADS</code>, <code>ASSERTIONS</code> here too.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>If you can’t open exr files, you can overwrite the output file format by specifying <code>--outfile output.pfm</code>.<a href="#fnref5" class="footnote-back">↩</a></p></li>
-<li id="fn6"><p>The pbrt.html file is minified if we are compiling with <code>-O3</code>, all whitespaces and newlines are stripped, making it really hard to read. If you want to take a closer look, either pass it to a HTML formatter, or compile with <code>-O1</code>.<a href="#fnref6" class="footnote-back">↩</a></p></li>
-<li id="fn7"><p>To speed up the rendering, so you can see output faster to determine if something is wrong, you can change the resolution of the output image. Edit killeroo-simple.pbrt, look for the line with <code>integer xresolution</code>, change the values <code>700</code> to something like <code>50</code>. Then rendering should only take a couple of seconds.<a href="#fnref7" class="footnote-back">↩</a></p></li>
+<p>and this is an indication that what we are trying might not work.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>I looked this up in Emscripten’s <a href="https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L837">settings.js</a>. This is the file where all arguments to <code>-s</code> is set, so you can find <code>USE_PTHREADS</code>, <code>ASSERTIONS</code> here too.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5" role="doc-endnote"><p>If you can’t open exr files, you can overwrite the output file format by specifying <code>--outfile output.pfm</code>.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6" role="doc-endnote"><p>The pbrt.html file is minified if we are compiling with <code>-O3</code>, all whitespaces and newlines are stripped, making it really hard to read. If you want to take a closer look, either pass it to a HTML formatter, or compile with <code>-O1</code>.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7" role="doc-endnote"><p>To speed up the rendering, so you can see output faster to determine if something is wrong, you can change the resolution of the output image. Edit killeroo-simple.pbrt, look for the line with <code>integer xresolution</code>, change the values <code>700</code> to something like <code>50</code>. Then rendering should only take a couple of seconds.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 </section>

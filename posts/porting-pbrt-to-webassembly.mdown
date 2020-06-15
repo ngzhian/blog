@@ -95,9 +95,7 @@ The easiest way to fix this is to use `CMAKE_CXX_FLAGS`. For now we hack it insi
 the compiler is Clang, since Emscripten uses Clang. ^[If a newer Cmake version was used, we can use
 [`target_compile_options`][].]
 
-```
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1a7fef9..bba4da2 100644
+```diff
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -75,6 +75,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
@@ -133,9 +131,7 @@ ourselves. I couldn't even find this variable in CMake 3.1.0
 even worked, and this is one reason why this project should upgrade the CMake version.
 
 
-```
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1a7fef9..b41c368 100644
+```diff
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -4,6 +4,8 @@
@@ -168,7 +164,7 @@ The next error is quite cryptic:
 For this we need to dig into
 [OpenEXR/IlmImf/CMakeLists.txt](https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/OpenEXR/IlmImf/CMakeLists.txt#L33):
 
-```
+```cmake
 ADD_CUSTOM_COMMAND (
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
   COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups > ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
@@ -181,7 +177,7 @@ using [`CMAKE_CROSSCOMPILING_EMULATOR`][].  However, I suspect that the way this
 defined broke something. Comparing it to
 [`toFloat`](https://github.com/wjakob/openexr/blob/84793a726d77ad6cb9a510011c3907df809c32a4/IlmBase/Half/CMakeLists.txt#L15):
 
-```
+```cmake
 ADD_CUSTOM_COMMAND(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
   COMMAND toFloat ARGS > ${CMAKE_CURRENT_BINARY_DIR}/toFloat.h
@@ -199,27 +195,27 @@ directly.
 So the fix is to change the `CMakeLists.txt`, and while we are here, also fix up the potential issue
 with `b44ExpLogTable`:
 
-    diff --git a/OpenEXR/IlmImf/CMakeLists.txt b/OpenEXR/IlmImf/CMakeLists.txt
-    index 74ab6d5..9a50f53 100644
-    --- a/OpenEXR/IlmImf/CMakeLists.txt
-    +++ b/OpenEXR/IlmImf/CMakeLists.txt
-    @@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES ( b44ExpLogTable
+```diff
+--- a/OpenEXR/IlmImf/CMakeLists.txt
++++ b/OpenEXR/IlmImf/CMakeLists.txt
+@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES ( b44ExpLogTable
 
-     ADD_CUSTOM_COMMAND (
-       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
-    -  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/b44ExpLogTable > ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
-    +  COMMAND b44ExpLogTable > ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
-       DEPENDS b44ExpLogTable
-     )
+ ADD_CUSTOM_COMMAND (
+   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
+-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/b44ExpLogTable > ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
++  COMMAND b44ExpLogTable > ${CMAKE_CURRENT_BINARY_DIR}/b44ExpLogTable.h
+   DEPENDS b44ExpLogTable
+ )
 
-    @@ -32,7 +32,7 @@ TARGET_LINK_LIBRARIES ( dwaLookups
+@@ -32,7 +32,7 @@ TARGET_LINK_LIBRARIES ( dwaLookups
 
-     ADD_CUSTOM_COMMAND (
-       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
-    -  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups > ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
-    +  COMMAND dwaLookups > ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
-       DEPENDS dwaLookups
-     )
+ ADD_CUSTOM_COMMAND (
+   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+-  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/dwaLookups > ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
++  COMMAND dwaLookups > ${CMAKE_CURRENT_BINARY_DIR}/dwaLookups.h
+   DEPENDS dwaLookups
+ )
+```
 
 I much prefer `dwaLookups.h` to be checked in, I think it's a static file anyway, and it takes a
 long time for the generated `dwaLookups.js` to run. (Maybe a performance issue worth looking into,
@@ -230,9 +226,7 @@ complete. I suspect there is a deadlock somewhere, since generating `dwaLookups.
 but the library wasn't necessary written with Emscripten in mind. The quick fix is to make it
 single-threaded:
 
-```
-diff --git a/OpenEXR/IlmImf/dwaLookups.cpp b/OpenEXR/IlmImf/dwaLookups.cpp
-index 19ec831..cac958a 100644
+```diff
 --- a/OpenEXR/IlmImf/dwaLookups.cpp
 +++ b/OpenEXR/IlmImf/dwaLookups.cpp
 @@ -492,7 +492,7 @@ generateLutHeader()
@@ -264,7 +258,7 @@ Emscripten defines some syscalls, but not [all](https://github.com/emscripten-co
 
 I don't understand what this code is doing, so the fix is to set `HAVE_SYSCALL_H` and `HAVE_SYS_SYSCALL_H` to false.
 
-```
+```cmake
 SET(HAVE_SYSCALL_H 0 CACHE INTERNAL "Hack for glog" FORCE)
 SET(HAVE_SYS_SYSCALL_H 0 CACHE INTERNAL "Hack for glog" FORCE)
 ```
@@ -282,7 +276,9 @@ The next error is has to do with undefined symbol, `popen`:
 
 It tells us that we can disable this error, so let's try it with:
 
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0")
+```cmake
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=0")
+```
 
 ## Inline data files
 
@@ -316,7 +312,9 @@ sets the limit to even lower, 256 Wasm pages (64KB) or 16 Mb, so programs hit OO
 can compile with the ability to dynamically ask for more memory, or we can compile with a higher
 initial memory. We do the latter here:
 
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728")
+```cmake
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s INITIAL_MEMORY=134217728")
+```
 
 Then after this, it should run fine, with
 
@@ -415,10 +413,7 @@ Emscripten that converts them back into actual bytes.[^1]
 
 The change to write the hex values to stdout is:
 
-```
-$ git diff -- src/core/imageio.cpp
-diff --git a/src/core/imageio.cpp b/src/core/imageio.cpp
-index 28f5c99..33bc0bb 100644
+```diff
 --- a/src/core/imageio.cpp
 +++ b/src/core/imageio.cpp
 @@ -439,7 +439,7 @@ static bool WriteImagePFM(const std::string &filename, const Float *rgb,
@@ -456,7 +451,7 @@ The `%.8x` is important, it ensures that we always write 8 chars. If we have a f
 The post-processing is a little Python script to read in the floats written out in their hex form,
 and then write out the actual bytes.
 
-```
+```python
 # postprocess.py
 with open('test.pfm') as f:
     with open('out.pfm', 'wb') as o:
@@ -494,9 +489,7 @@ To use NODEFS, we need to pass `-s NODERAWFS=1` to Emscripten[^noderawfs]
   This is the file where all arguments to `-s` is set, so you can find `USE_PTHREADS`, `ASSERTIONS`
   here too.
 
-```
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 8650ce0..a575ea4 100644
+```diff
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -84,6 +84,7 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -547,9 +540,7 @@ I got this command from this file that CMake generated: CMakeFiles/pbrt_exe.dir/
 The first thing we need to do is remove `NODERAWFS` from our CMakeLists.txt, since we will no no
 longer be running in node environment:
 
-```
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index a575ea4..8650ce0 100644
+```diff
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -84,7 +84,6 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -692,9 +683,7 @@ not found, and neither was output.pfm.
 Another way of doing this is with the `MAIN_THREAD_EM_ASM` macro, this runs a snippet of JS on the
 main thread:
 
-```
-diff --git a/src/core/imageio.cpp b/src/core/imageio.cpp
-index 28f5c99..adb6b8c 100644
+```diff
 --- a/src/core/imageio.cpp
 +++ b/src/core/imageio.cpp
 @@ -40,6 +40,10 @@
@@ -737,7 +726,7 @@ What remains is to define `drawPFMToCanvas`. What this function will do is:
 
 There are many ways to write this, I went with this:
 
-```
+```javascript
 function drawPFMToCanvas(width, height) {
   Module.canvas.width = width;
   Module.canvas.height = height;
