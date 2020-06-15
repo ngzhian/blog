@@ -75,7 +75,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
-        font-size: 20px;
         line-height: 1.6;
         background: #fcfcfc;
         color: #333;
@@ -114,25 +113,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         margin: auto auto;
     }
 
-    #post-list td {
-        padding: 5px;
-    }
-
-    @media (max-width: 600px) {
-      #post-list tr td:nth-child(1)  {
-        display: none;
-      }
-    }
-
-    #post-list tr td:nth-child(1)  {
-      white-space: nowrap;
-    }
-
-    /* date published on index page */
-    .published, .date {
-        font-weight: normal;
-        font-size: 0.9rem;
-        color: #666;
+    .published {
+        font-size: 0.9em;
+        color: #555;
     }
 
     pre {
@@ -140,7 +123,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         border-radius: 5px;
         background: #f0f0f0;
         padding: 12px;
-        font-size: 18px;
         line-height: 1.6;
         margin-bottom: 30px;
         overflow-x: auto;
@@ -148,7 +130,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
     footer {
         margin: 80px 0 20px 0;
-        font-size: 14px;
+        font-size: 0.9em;
     }
 
     code {
@@ -175,7 +157,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="home" href="./index.html">Home</a>
 <div id="header">
 <h1 class="title">Zippers</h1>
-<h3 class="date">2017-04-29 14:00</h3>
+<p class="published">2017-04-29 14:00</p>
 </div>
 <p>A zipper is a technique for implementing data structures (such as lists and trees) with some idea of a <em>focus</em> on one particular element, at the same time allowing for fast, functional (immutable) updates of a <em>specific point</em> in the structure.</p>
 <p>Let’s try building a list in the style of a zipper.</p>

@@ -75,7 +75,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
-        font-size: 20px;
         line-height: 1.6;
         background: #fcfcfc;
         color: #333;
@@ -114,25 +113,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         margin: auto auto;
     }
 
-    #post-list td {
-        padding: 5px;
-    }
-
-    @media (max-width: 600px) {
-      #post-list tr td:nth-child(1)  {
-        display: none;
-      }
-    }
-
-    #post-list tr td:nth-child(1)  {
-      white-space: nowrap;
-    }
-
-    /* date published on index page */
-    .published, .date {
-        font-weight: normal;
-        font-size: 0.9rem;
-        color: #666;
+    .published {
+        font-size: 0.9em;
+        color: #555;
     }
 
     pre {
@@ -140,7 +123,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         border-radius: 5px;
         background: #f0f0f0;
         padding: 12px;
-        font-size: 18px;
         line-height: 1.6;
         margin-bottom: 30px;
         overflow-x: auto;
@@ -148,7 +130,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
     footer {
         margin: 80px 0 20px 0;
-        font-size: 14px;
+        font-size: 0.9em;
     }
 
     code {
@@ -175,7 +157,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="home" href="./index.html">Home</a>
 <div id="header">
 <h1 class="title">Porting PBRT to WebAssembly</h1>
-<h3 class="date">2020-06-13 13:00</h3>
+<p class="published">2020-06-13 13:00</p>
 </div>
 <h1 id="porting-to-webassembly">Porting to WebAssembly</h1>
 <p>This is a log of steps to port <a href="https://github.com/mmp/pbrt-v3">pbrt</a> to Wasm. The final results are on <a href="https://github.com/ngzhian/pbrt-v3">my fork of the pbrt project</a>:</p>

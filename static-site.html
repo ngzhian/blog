@@ -12,7 +12,6 @@
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
-        font-size: 20px;
         line-height: 1.6;
         background: #fcfcfc;
         color: #333;
@@ -51,25 +50,9 @@
         margin: auto auto;
     }
 
-    #post-list td {
-        padding: 5px;
-    }
-
-    @media (max-width: 600px) {
-      #post-list tr td:nth-child(1)  {
-        display: none;
-      }
-    }
-
-    #post-list tr td:nth-child(1)  {
-      white-space: nowrap;
-    }
-
-    /* date published on index page */
-    .published, .date {
-        font-weight: normal;
-        font-size: 0.9rem;
-        color: #666;
+    .published {
+        font-size: 0.9em;
+        color: #555;
     }
 
     pre {
@@ -77,7 +60,6 @@
         border-radius: 5px;
         background: #f0f0f0;
         padding: 12px;
-        font-size: 18px;
         line-height: 1.6;
         margin-bottom: 30px;
         overflow-x: auto;
@@ -85,7 +67,7 @@
 
     footer {
         margin: 80px 0 20px 0;
-        font-size: 14px;
+        font-size: 0.9em;
     }
 
     code {
@@ -112,7 +94,7 @@
 <a class="home" href="./index.html">Home</a>
 <div id="header">
 <h1 class="title">The magic of static</h1>
-<h3 class="date">2016-04-24</h3>
+<p class="published">2016-04-24</p>
 </div>
 <p>How do static site generators work? That’s the question I had when I began building my own <a href="https://github.com/ngzhian/ocs">static site generator</a> for learning purposes.</p>
 <p>With over 100 static site generatores listed on <a href="https://www.staticgen.com/">staticgen.com</a>, there must be something interesting going on there.</p>

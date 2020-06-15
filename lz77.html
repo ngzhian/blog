@@ -11,7 +11,6 @@
   <style type="text/css">
     body {
         font-family: 'Pt Sans', 'Open Sans', sans-serif;
-        font-size: 20px;
         line-height: 1.6;
         background: #fcfcfc;
         color: #333;
@@ -50,25 +49,9 @@
         margin: auto auto;
     }
 
-    #post-list td {
-        padding: 5px;
-    }
-
-    @media (max-width: 600px) {
-      #post-list tr td:nth-child(1)  {
-        display: none;
-      }
-    }
-
-    #post-list tr td:nth-child(1)  {
-      white-space: nowrap;
-    }
-
-    /* date published on index page */
-    .published, .date {
-        font-weight: normal;
-        font-size: 0.9rem;
-        color: #666;
+    .published {
+        font-size: 0.9em;
+        color: #555;
     }
 
     pre {
@@ -76,7 +59,6 @@
         border-radius: 5px;
         background: #f0f0f0;
         padding: 12px;
-        font-size: 18px;
         line-height: 1.6;
         margin-bottom: 30px;
         overflow-x: auto;
@@ -84,7 +66,7 @@
 
     footer {
         margin: 80px 0 20px 0;
-        font-size: 14px;
+        font-size: 0.9em;
     }
 
     code {
@@ -111,7 +93,7 @@
 <a class="home" href="./index.html">Home</a>
 <div id="header">
 <h1 class="title">LZ77</h1>
-<h3 class="date">2018-06-26 21:00</h3>
+<p class="published">2018-06-26 21:00</p>
 </div>
 <p>LZ77 is a compression algorithm by Abramham Lampel and Jacob Ziv published in a paper in 1977 (<a href="http://www.nemenmanlab.org/~ilya/images/e/e9/Ziv-lempel-77.pdf">pdf</a>). It is the basis of many algorithms used in places like PNG and ZIP. I thought it would be interesting to see how it works.</p>
 <p>The paper is only 6 pages long, and packed with mathematics I don’t fully understand. This will be about the compression and decompression algorithms described in the paper, without much mention of the mathematics and analysis.</p>
