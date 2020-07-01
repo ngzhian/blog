@@ -1,0 +1,97 @@
+---
+title: A history of Clojure
+date: 2020-06-30 21:30
+...
+
+# A history of Clojure
+
+This [paper](https://dl.acm.org/doi/abs/10.1145/3386321) was published as part of HOPL. These are some pull quotes from the paper I found interesting, and some thoughts after reading.
+
+## On the beginnings of Clojure
+
+> "I started working on Clojure in 2005, during a sabbatical I funded out of retirement savings.
+> The purpose of the sabbatical was to give myself the opportunity to work on whatever I found
+> interesting, without regard to outcome, commercial viability or the opinions of others." - 71:2
+
+It will be interesting to compare this with the context in which other languages were created. Many languages I am familiar with have been corporate backed:
+
+- JavaScript by Brendan Eich at Netscape
+- C++ by Bjarne Stroustrup at AT&T
+- Go at Google
+- Java at Sun Microsystems
+- Swift at Apple
+
+There are a couple which started while in research labs:
+
+- Python by Guido van Rossum at Centrum Wiskunde & Informatica
+
+Some began as, "hobby":
+
+- Ruby by Yukihiro Matsumoto
+
+Having the courage to try and create a language all on your own for those goals is unique and admirable.
+
+## Realization
+
+Rich has this anecdote to share:
+
+> "I attended the Lightweight Languages Workshop at MIT in 2002 and 2003 (so the bug had alighted).
+> After one of the conferences there was pizza, and I sat with two programming language researchers
+> (whose organizations I will not mention and names I do not recall). They were speaking with
+> derision about how one of their colleagues had gotten involved with databases. “I don’t think I’ve
+> ever written a program that used a database” said one, “Neither have I!” said the other, and they
+> chuckled with great self-satisfaction. I was aghast, having never written a commercial program
+> that did not involve a database." - 71:4
+
+Clojure was designed to solve Rich's problems at his work, which he calls information systems programming. And part of it was dealing with messy real world data.
+
+This anecdote highlights how the field of software is extremely broad - two persons could both work on software, but use completely different stacks, and be unaware of the situation in another person's work.
+
+In some ways, this can be frustrating, because one can be encountering a problem, which has already been solved in another field, but the solution has not had a chance to spread, or it has but has not caught on.
+
+But in the same vein, it is also exciting, because a solution discovered in a particular field can potentially be useful in many places!
+
+## Clojure is a new Lisp
+
+> "When you take the broadest notion of Lisp, programming in and with fundamental
+> data structures, Clojure is both clearly a Lisp and seeking to extend the Lisp idea. In being built on
+> abstractions and strongly focusing on functional programming, it is a novel Lisp." - 71:11
+
+I think this section provides insights for someone unfamiliar with Lisp (like myself). Rich describes how Clojure sticks to Lisp's principles, but extends it to solve problems he faced.
+
+## Host
+
+The entire section 3.5, "Clojure and the Host" talks about why Rich chose to target the JVM. He talks about how Clojure works with and around the hosted environment. He also makes really compelling reasons why someone writing a new language might want to consider targeting a hosted runtime like the JVM or CLR.
+
+My takeaway is: when creating a new language, consider how it will be adopted by new users. If they have to abandon their existing language and go fully onboard your new language, it's unlikely many people will do that, or can afford to. A bit part of Clojure's adoption was that it could be done in small steps, because it was "just" another Java library.
+
+## Onto the Web
+
+This section talks about the birth of ClojureScript, and is mainly interesting to me because I work on WebAssembly.
+
+> "Reader conditionals allowed mostly-portable code
+> to conditionally include some host-specific code, with compile-time detection of target host and
+> inclusion. This and other features of the release substantially improved the ability of library
+> developers to simultaneously target Clojure and ClojureScript from a single codebase." - 71:33
+
+## Highlights
+
+Section 4, Evolution, takes about the big changes in Clojure, year by year:
+
+- 2010 defprotocol, reify deftype/defrecord
+- 2011 clojurescript
+- 2012 edn
+- 2013 core.async
+- 2015 transducer
+- 2016 clojure.spec
+
+It is shocking how productive he is! These are all really important features, core to why Clojure is used by many people. How did he get so many great ideas?
+
+## Why you should use Clojure
+
+> "I think Clojure distills important principles acquired from programming information systems in
+> the large, especially those around achieving loose coupling via data-driven interfaces. This fosters
+> a unique library ecosystem with a high degree of compatibility and composability, much higher
+> than I’ve seen with library approaches that require the coordination of code-driven constructs." 71:42
+
+If you find that you are building systems that fit this description, and facing issues with compatibility and composability, give Clojure a try.
