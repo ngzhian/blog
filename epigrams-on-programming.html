@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <title>Epigrams on Programming - Alan J. Perlis</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Epigrams on Programming - Alan J. Perlis</h1>
+<p class="published">2020-07-02 12:33</p>
+</div>
+<p>In <a href="https://blog.ngzhian.com/a-history-of-clojure.html">A history of Clojure</a>, Rickey cites Perlis’ <a href="https://www.gwern.net/docs/cs/1982-perlis.pdf">Epigrams on Programming</a> a number of times, specifically epigram 9:</p>
+<blockquote>
+<p>It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures.</p>
+</blockquote>
+<p>I have not read this paper before, so I thought it would be interesting to dive in.</p>
+<p>First off:</p>
+<blockquote>
+<p>Epigram: a pithy saying or remark expressing an idea in a clever and amusing way.</p>
+</blockquote>
+<p>Many of the epigrams are too clever for me to understand, and a lot of them are certainly amusing. I will highlight a few below, some that I have experienced, and some that I don’t fully understand and attempt to make sense of.</p>
+<h2 id="one-mans-constant-is-another-mans-variable.">1. One man’s constant is another man’s variable.</h2>
+<p>This isn’t meant to be taken in the obvious manner, and perhaps refers to a person’s understanding of values/state in a program. It makes me think of <a href="https://www.hyrumslaw.com/">Hyrum’s Law</a>, in the sense that what you meant (constancy) is not how others use it (variability).</p>
+<h2 id="functions-delay-binding-data-structures-induce-binding.-moral-structure-data-late-in-the-programming-process.">2. Functions delay binding: data structures induce binding. Moral: Structure data late in the programming process.</h2>
+<p>Reminds me of a Fred Brooks <a href="https://en.wikiquote.org/wiki/Fred_Brooks#The_Mythical_Man-Month:_Essays_on_Software_Engineering_(1975,_1995)">quote</a>:</p>
+<blockquote>
+<p>Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won’t usually need your flowcharts; they’ll be obvious.</p>
+</blockquote>
+<p>There is a bit of symmetry here.</p>
+<p>When designing, you want to start with functions, because functions leave space for growth. And good design leaves room for ambiguity and change. Later in the process, as you figure out more of what you are trying to build (through an iterative process, experiments, etc), you want more structure, hence data.</p>
+<p>And conversely, when presented with tables (data structures), the logic becomes obvious, because there is less ambiguity. But with a flowchart (functions and program flows can be visualized with a <a href="https://en.wikipedia.org/wiki/Control-flow_graph">control-flow graph</a>), there is more room for interpretation.</p>
+<p>I guess these two quotes are two ways of saying the same thing, one from the implementer point of view, and one from the reader point of view.</p>
+<h2 id="every-program-is-a-part-of-some-other-program-and-rarely-fits.">4. Every program is a part of some other program and rarely fits.</h2>
+<p>This is really interesting after reading <a href="https://dl.acm.org/doi/abs/10.1145/3386321">A history of Clojure</a>, because this is the <a href="https://blog.ngzhian.com/a-history-of-clojure.html#why-you-should-use-clojure">motivation behind Clojure</a> - building information systems using compatible, composable components.</p>
+<h2 id="if-a-program-manipulates-a-large-amount-of-data-it-does-so-in-a-small-number-of-ways.">5. If a program manipulates a large amount of data, it does so in a small number of ways.</h2>
+<p><a href="https://en.wikipedia.org/wiki/Pareto_principle">Pareto principle</a>, aka 80/20 rule. This pops up in a lot of places, such as features used, performance bottleneck, market distribution, etc.</p>
+<h2 id="symmetry-is-a-complexity-reducing-concept-co-routines-include-sub-routines-seek-it-everywhere.">6. Symmetry is a complexity reducing concept (co-routines include sub-routines); seek it everywhere.</h2>
+<p>The <a href="https://en.wikipedia.org/wiki/Coroutine#Comparison_with_subroutines">Wikipedia article on coroutines</a> expands on this relation of symmetry:</p>
+<blockquote>
+<p>The difference between calling another coroutine by means of “yielding” to it and simply calling another routine (which then, also, would return to the original point), is that the relationship between two coroutines which yield to each other is not that of caller-callee, but instead symmetric.</p>
+</blockquote>
+<p>The coroutines referred to here are “symmetric coroutines”. Another kind of coroutines are “asymmetric coroutines”, which preserves a caller-callee relationship, in that when the callee yields, it is always to the caller. But execution of the asymmetric coroutine can still be suspended.</p>
+<p>In <a href="https://www.cs.tufts.edu/~nr/cs257/archive/roberto-ierusalimschy/revisiting-coroutines.pdf">Revisiting Coroutines</a>, and in it the authors described symmetric and asymmetric coroutines, and argued in favor of asymmetric coroutines (emphasis mine):</p>
+<blockquote>
+<p>Although equivalent in terms of expressiveness, symmetric and asymmetric coroutines are not equivalent with respect to ease of use. <strong>Handling and understanding the control flow of a program that employs even a moderate number of symmetric coroutines transferring control among themselves may require considerable effort from a programmer.</strong> On the other hand, since asymmetric coroutines always transfer control back to their invokers, <strong>control sequencing is much simpler to manage and understand.</strong> The composable behavior of asymmetric coroutines also provides support for concise implementations of several useful control behaviors, including generators, goal-oriented programming, and multitasking environments, …</p>
+</blockquote>
+<p>So perhaps full symmetry might reduce complexity in terms of the concepts to consider, but increase complexity when trying to understand something.</p>
+<h2 id="it-is-easier-to-write-an-incorrect-program-than-understand-a-correct-one.">7. It is easier to write an incorrect program than understand a correct one.</h2>
+<p>I face this day-to-day :). I strive to write code that is easy to understand, beyond just being correct<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. I practice this by reviewing my own code after uploading, before requesting a review from my coworkers. This not only helps me to catch simple mistakes, such as typos (which can cause a round of back-and-forth), it also allows me to the chance to split up my change if it is too large or contains unrelated concepts. In my patches, I try to minimize reviewer effort, rather than time to merge the change, and I find that the former usually leads to the latter.</p>
+<h2 id="a-programming-language-is-low-level-when-its-programs-require-attention-to-the-irrelevant.">8. A programming language is low level when its programs require attention to the irrelevant.</h2>
+<p>Together with <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">leaky abstractions</a>, this means that high level languages do not exist :).</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Related: <a href="https://wiki.c2.com/?MakeItWorkMakeItRightMakeItFast#:~:text=%22Make%20it%20work%2C%20make%20it,to%20DesignForPerformance%20ahead%20of%20time.">Make It Work Make It Right Make It Fast</a>. But “Make It Work, Make It Right, Make It Easy To Understand, Make It Fast” doesn’t have the same ring to it.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</section>
+</body>
+</html>

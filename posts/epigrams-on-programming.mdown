@@ -1,0 +1,85 @@
+---
+title: Epigrams on Programming - Alan J. Perlis
+date: 2020-07-02 12:33
+...
+
+In [A history of Clojure](https://blog.ngzhian.com/a-history-of-clojure.html), Rickey cites Perlis' [Epigrams on Programming][] a number of times, specifically epigram 9:
+
+> It is better to have 100 functions operate on one data structure than
+10 functions on 10 data structures.
+
+I have not read this paper before, so I thought it would be interesting to dive in.
+
+First off:
+
+> Epigram: a pithy saying or remark expressing an idea in a clever and amusing way.
+
+Many of the epigrams are too clever for me to understand, and a lot of them are certainly amusing. I will highlight a few below, some that I have experienced, and some that I don't fully understand and attempt to make sense of.
+
+## 1. One man's constant is another man's variable.
+
+This isn't meant to be taken in the obvious manner, and perhaps refers to a person's understanding of values/state in a program. It makes me think of [Hyrum's Law][], in the sense that what you meant (constancy) is not how others use it (variability).
+
+## 2. Functions delay binding: data structures induce binding. Moral: Structure data late in the programming process.
+
+Reminds me of a Fred Brooks [quote](https://en.wikiquote.org/wiki/Fred_Brooks#The_Mythical_Man-Month:_Essays_on_Software_Engineering_(1975,_1995)):
+
+> Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won’t usually need your flowcharts; they’ll be obvious.
+
+There is a bit of symmetry here.
+
+When designing, you want to start with functions, because functions leave space for growth. And good design leaves room for ambiguity and change. Later in the process, as you figure out more of what you are trying to build (through an iterative process, experiments, etc), you want more structure, hence data.
+
+And conversely, when presented with tables (data structures), the logic becomes obvious, because there is less ambiguity. But with a flowchart (functions and program flows can be visualized with a [control-flow graph]), there is more room for interpretation.
+
+I guess these two quotes are two ways of saying the same thing, one from the implementer point of view, and one from the reader point of view.
+
+## 4. Every program is a part of some other program and rarely fits.
+
+This is really interesting after reading [A history of Clojure][], because this is the [motivation behind Clojure](https://blog.ngzhian.com/a-history-of-clojure.html#why-you-should-use-clojure) - building information systems using compatible, composable components.
+
+## 5. If a program manipulates a large amount of data, it does so in a small number of ways.
+
+[Pareto principle][], aka 80/20 rule. This pops up in a lot of places, such as features used, performance bottleneck, market distribution, etc.
+
+## 6. Symmetry is a complexity reducing concept (co-routines include sub-routines); seek it everywhere.
+
+The [Wikipedia article on coroutines](https://en.wikipedia.org/wiki/Coroutine#Comparison_with_subroutines) expands on this relation of symmetry:
+
+> The difference between calling another coroutine by means of "yielding" to it and simply calling another routine (which then, also, would return to the original point), is that the relationship between two coroutines which yield to each other is not that of caller-callee, but instead symmetric.
+
+The coroutines referred to here are "symmetric coroutines". Another kind of coroutines are "asymmetric coroutines", which preserves a caller-callee relationship, in that when the callee yields, it is always to the caller. But execution of the asymmetric coroutine can still be suspended.
+
+In [Revisiting Coroutines][], and in it the authors described symmetric and asymmetric coroutines, and argued in favor of asymmetric coroutines (emphasis mine):
+
+> Although equivalent in terms of expressiveness, symmetric and asymmetric
+coroutines are not equivalent with respect to ease of use. **Handling and understanding the control flow of a program that employs even a moderate number
+of symmetric coroutines transferring control among themselves may require
+considerable effort from a programmer.** On the other hand, since asymmetric
+coroutines always transfer control back to their invokers, **control sequencing is
+much simpler to manage and understand.** The composable behavior of asymmetric coroutines also provides support for concise implementations of several
+useful control behaviors, including generators, goal-oriented programming, and
+multitasking environments, ...
+
+So perhaps full symmetry might reduce complexity in terms of the concepts to consider, but increase complexity when trying to understand something.
+
+## 7. It is easier to write an incorrect program than understand a correct one.
+
+I face this day-to-day :). I strive to write code that is easy to understand, beyond just being correct[^correct]. I practice this by reviewing my own code after uploading, before requesting a review from my coworkers. This not only helps me to catch simple mistakes, such as typos (which can cause a round of back-and-forth), it also allows me to the chance to split up my change if it is too large or contains unrelated concepts. In my patches, I try to minimize reviewer effort, rather than time to merge the change, and I find that the former usually leads to the latter.
+
+
+## 8. A programming language is low level when its programs require attention to the irrelevant.
+
+Together with [leaky abstractions][], this means that high level languages do not exist :).
+
+
+
+[Epigrams On Programming]: https://www.gwern.net/docs/cs/1982-perlis.pdf
+[Hyrum's Law]: https://www.hyrumslaw.com/
+[control-flow graph]: https://en.wikipedia.org/wiki/Control-flow_graph
+[Pareto principle]: https://en.wikipedia.org/wiki/Pareto_principle
+[Revisiting Coroutines]: https://www.cs.tufts.edu/~nr/cs257/archive/roberto-ierusalimschy/revisiting-coroutines.pdf
+[leaky abstractions]: https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/
+[A history of Clojure]: https://dl.acm.org/doi/abs/10.1145/3386321
+
+[^correct]: Related: [Make It Work Make It Right Make It Fast](https://wiki.c2.com/?MakeItWorkMakeItRightMakeItFast#:~:text=%22Make%20it%20work%2C%20make%20it,to%20DesignForPerformance%20ahead%20of%20time.). But "Make It Work, Make It Right, Make It Easy To Understand, Make It Fast" doesn't have the same ring to it.
