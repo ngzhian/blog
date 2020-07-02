@@ -1,6 +1,6 @@
 default: all
 
-.PHONY: deploy pages minify-css
+.PHONY: deploy pages minify-css watch
 
 # https://cssminifier.com/curl
 minify-css:
@@ -25,3 +25,16 @@ deploy:
 	git rebase master
 	git push origin HEAD
 	git checkout master
+
+watch:
+	fswatch -or template/ posts/ | xargs -o -n 1 -I {} make
+
+# heredoc doesn't work in Makefiles
+posts/%.mdown:
+	@touch posts/$*.mdown
+	@echo '---' >> posts/$*.mdown
+	@echo 'title:' >> posts/$*.mdown
+	@echo 'date:' >> posts/$*.mdown
+	@echo '...' >> posts/$*.mdown
+
+%.mdown: posts/$*.mdown
