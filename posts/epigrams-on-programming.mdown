@@ -72,7 +72,33 @@ I face this day-to-day :). I strive to write code that is easy to understand, be
 
 Together with [leaky abstractions][], this means that high level languages do not exist :).
 
+## 9. It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures.
 
+This is the epigram that Hickey cited (and tweaked) when discussing his decision to focus on the key abstraction in Clojure, `seq`, and then later, when discussing transducers.
+
+I'm not sure I agree with this idea. If you can break down your data structures into contained units, it becomes easier to understand. But perhaps at the expense of composability, because of the *piping* you would have to do in order to make these 10 data structures work together. If you only had one structure, you would have nothing to pipe.
+
+This could also be a preference that depends on your familiarity with the system. When you are new to a system, having smaller data structures can help you keep things in your head and navigate the space. As you become more familiar and need to interact with more components, you prefer things to be lumped together, so that working with all of them is easy.
+
+## 10. Get into a rut early: Do the same processes the same way.
+
+> Accumulate idioms. Standardize. The only difference(!) between Shakespeare and you was the size of his idiom list - not the size of his vocabulary.
+
+I really like this epigram. I think the key point is that there should be one obvious way to do something. This is quite a broad statement, so let's look at something specific: Makefiles.
+
+Many projects describe how to build themselves using Makefiles. To build `make build`, to test `make test`. These common processes should be encapsulated, and be simple to do[^makefiles].
+
+Another example I can think of is `package.json` used by Node projects. Many of these have convenient scripts such that when you run `npm build` it runs a particular build script (regardless of what your build system is), and `npm test` will run a test script (doesn't matter what test runner you use).
+
+## 11. If you have a procedure with 10 parameters, you probably missed some.
+
+I chuckled. Working on [V8][], I am no stranger to functions that take many parameters (I would say the most I've seen is 8, I can probably find more if I look harder). This is a good reminder for myself, the next time I encounter such a case, I should probably take a step back and see how I can apply the [Boy Scout Rule][].
+
+## 23. To understand a program you must become both the machine and the program.
+
+This reminds me of the story of how [Albert Einstein visualized himself running alongside a light beam](https://www.nationalgeographic.com/news/2017/05/einstein-relativity-thought-experiment-train-lightning-genius/). And how renowned rock climber Adam Ondra considers [visualization a crucial part of climbing](https://www.youtube.com/watch?v=3WO6rcosZ-o).
+
+It also highlights the importance of good tooling to understanding how the machine is running your code, which will help with visualization.
 
 [Epigrams On Programming]: https://www.gwern.net/docs/cs/1982-perlis.pdf
 [Hyrum's Law]: https://www.hyrumslaw.com/
@@ -81,5 +107,8 @@ Together with [leaky abstractions][], this means that high level languages do no
 [Revisiting Coroutines]: https://www.cs.tufts.edu/~nr/cs257/archive/roberto-ierusalimschy/revisiting-coroutines.pdf
 [leaky abstractions]: https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/
 [A history of Clojure]: https://dl.acm.org/doi/abs/10.1145/3386321
+[V8]: https://v8.dev/
+[Boy Scout Rule]: https://www.oreilly.com/library/view/97-things-every/9780596809515/ch08.html
 
 [^correct]: Related: [Make It Work Make It Right Make It Fast](https://wiki.c2.com/?MakeItWorkMakeItRightMakeItFast#:~:text=%22Make%20it%20work%2C%20make%20it,to%20DesignForPerformance%20ahead%20of%20time.). But "Make It Work, Make It Right, Make It Easy To Understand, Make It Fast" doesn't have the same ring to it.
+[^makefiles]: The contents of those Makefiles will be a different topic, at least the commands exposed are relatively clean.

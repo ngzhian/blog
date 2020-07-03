@@ -56,10 +56,27 @@
 <p>I face this day-to-day :). I strive to write code that is easy to understand, beyond just being correct<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. I practice this by reviewing my own code after uploading, before requesting a review from my coworkers. This not only helps me to catch simple mistakes, such as typos (which can cause a round of back-and-forth), it also allows me to the chance to split up my change if it is too large or contains unrelated concepts. In my patches, I try to minimize reviewer effort, rather than time to merge the change, and I find that the former usually leads to the latter.</p>
 <h2 id="a-programming-language-is-low-level-when-its-programs-require-attention-to-the-irrelevant.">8. A programming language is low level when its programs require attention to the irrelevant.</h2>
 <p>Together with <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">leaky abstractions</a>, this means that high level languages do not exist :).</p>
+<h2 id="it-is-better-to-have-100-functions-operate-on-one-data-structure-than-10-functions-on-10-data-structures.">9. It is better to have 100 functions operate on one data structure than 10 functions on 10 data structures.</h2>
+<p>This is the epigram that Hickey cited (and tweaked) when discussing his decision to focus on the key abstraction in Clojure, <code>seq</code>, and then later, when discussing transducers.</p>
+<p>I’m not sure I agree with this idea. If you can break down your data structures into contained units, it becomes easier to understand. But perhaps at the expense of composability, because of the <em>piping</em> you would have to do in order to make these 10 data structures work together. If you only had one structure, you would have nothing to pipe.</p>
+<p>This could also be a preference that depends on your familiarity with the system. When you are new to a system, having smaller data structures can help you keep things in your head and navigate the space. As you become more familiar and need to interact with more components, you prefer things to be lumped together, so that working with all of them is easy.</p>
+<h2 id="get-into-a-rut-early-do-the-same-processes-the-same-way.">10. Get into a rut early: Do the same processes the same way.</h2>
+<blockquote>
+<p>Accumulate idioms. Standardize. The only difference(!) between Shakespeare and you was the size of his idiom list - not the size of his vocabulary.</p>
+</blockquote>
+<p>I really like this epigram. I think the key point is that there should be one obvious way to do something. This is quite a broad statement, so let’s look at something specific: Makefiles.</p>
+<p>Many projects describe how to build themselves using Makefiles. To build <code>make build</code>, to test <code>make test</code>. These common processes should be encapsulated, and be simple to do<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<p>Another example I can think of is <code>package.json</code> used by Node projects. Many of these have convenient scripts such that when you run <code>npm build</code> it runs a particular build script (regardless of what your build system is), and <code>npm test</code> will run a test script (doesn’t matter what test runner you use).</p>
+<h2 id="if-you-have-a-procedure-with-10-parameters-you-probably-missed-some.">11. If you have a procedure with 10 parameters, you probably missed some.</h2>
+<p>I chuckled. Working on <a href="https://v8.dev/">V8</a>, I am no stranger to functions that take many parameters (I would say the most I’ve seen is 8, I can probably find more if I look harder). This is a good reminder for myself, the next time I encounter such a case, I should probably take a step back and see how I can apply the <a href="https://www.oreilly.com/library/view/97-things-every/9780596809515/ch08.html">Boy Scout Rule</a>.</p>
+<h2 id="to-understand-a-program-you-must-become-both-the-machine-and-the-program.">23. To understand a program you must become both the machine and the program.</h2>
+<p>This reminds me of the story of how <a href="https://www.nationalgeographic.com/news/2017/05/einstein-relativity-thought-experiment-train-lightning-genius/">Albert Einstein visualized himself running alongside a light beam</a>. And how renowned rock climber Adam Ondra considers <a href="https://www.youtube.com/watch?v=3WO6rcosZ-o">visualization a crucial part of climbing</a>.</p>
+<p>It also highlights the importance of good tooling to understanding how the machine is running your code, which will help with visualization.</p>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
 <li id="fn1" role="doc-endnote"><p>Related: <a href="https://wiki.c2.com/?MakeItWorkMakeItRightMakeItFast#:~:text=%22Make%20it%20work%2C%20make%20it,to%20DesignForPerformance%20ahead%20of%20time.">Make It Work Make It Right Make It Fast</a>. But “Make It Work, Make It Right, Make It Easy To Understand, Make It Fast” doesn’t have the same ring to it.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>The contents of those Makefiles will be a different topic, at least the commands exposed are relatively clean.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 </section>
