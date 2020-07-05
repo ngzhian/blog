@@ -1,0 +1,237 @@
+---
+title: C++ templates
+date: 2020-07-05 15:12
+...
+
+## What are templates?
+
+Templates look like this:
+
+```cpp
+template<typename T>
+T neg(T x) {
+  return (x >= 0) ? x : -x;
+}
+```
+
+Templates are, as the name suggests, templates for creating something:
+
+1. function,
+1. class, or
+1. variable.
+
+They help you write more generic code, without repeating yourself.
+
+## Why do you want them?
+
+Imagine implementing a negation function
+
+```cpp
+double neg(double x) {
+  return -x;
+}
+
+int neg(int x) {
+  return -x;
+}
+```
+
+You can have function overloading, but you will have to implement the bodies of all the functions.
+
+Templates allow you to write the body of the function in a single place (once), and only when a template is used, the compiler will instantiate the template.
+
+
+Thus, in this example:
+
+```cpp
+template<typename T>
+T neg(T x) {
+  return -x;
+}
+```
+
+A function `neg` for a specific type `T` will only be created for each `T` that is used in the program. I.e. if somewhere we call `neg(int)`, only that will be created, `neg(double)` will not be created.
+
+## Using a function template
+
+You specify the type for which the template will be instantiated with inside of angle brackets `<>`:
+
+```cpp
+int main() {
+  printf("%d\n", neg<int>(-1));
+}
+```
+
+In some cases the [compiler can deduce](#template-argument-deduction) the type of `T` inside a `neg<T>`, based on the function parameter.
+
+## Class template
+
+The syntax looks similar, for a node in a binary tree[^1]:
+
+```cpp
+template <typename T>
+struct Node {
+  T data;
+  Node<T> *left;
+  Node<T> *right;
+};
+```
+
+[^1]: We can omit `<T>` in the declaration of `left` and `right`, the compiler can deduce the template argument, which is necessarily `<T>` since we are inside of a template:
+```cpp
+template <typename T>
+struct Node {
+  T data;
+  Node *left;
+  Node *right;
+};
+```
+More on template argument deduction later.
+
+## Variable templates (C++14)
+
+Again the syntax looks quite similar:
+
+```cpp
+template<typename T>
+const bool size = sizeof(T);
+```
+
+In a [test file in V8](https://github.com/v8/v8/blob/master/test/cctest/wasm/test-run-wasm-simd.cc#L334-L341), we make use of variable templates to set different values for float and double.
+
+## Alias templates
+
+Like `typedef`, we can use the keyword `using` to create an alias template, these are templates for creating new aliases:
+
+```cpp
+// compile with C++17 using '-std=c++17' in Clang.
+using node_int = Node<int>
+template<typename T> using node = Node<T>
+
+int main() {
+  static_assert(is_same_v<node_int, Node<int>>);
+  static_assert(is_same_v<node<double>, Node<double>);
+}
+```
+
+## Debugging template types
+
+Templates are well known to be hard to debug, and stack traces involving templates are [multiple pages long](https://codegolf.stackexchange.com/a/10470).
+
+There are some tips to debug the instantiated type of a template function.
+
+```cpp
+template<typename T>
+T neg(T x) {
+  puts(__PRETTY_FUNCTION__);
+  return -x;
+}
+```
+
+This prints a pretty-printed function name, that includes the template type information. [^2]
+
+[^2]: This looks to be a [GCC specific extension](https://stackoverflow.com/questions/4384765/whats-the-difference-between-pretty-function-function-func#:~:text=__PRETTY_FUNCTION__%20is%20a,the%20signature%20of%20the%20function.), I don't see this listed on Clang's [Language Extensions](https://clang.llvm.org/docs/LanguageExtensions.html#builtin-macros) page.
+
+## Template argument deduction
+
+High level look at how template argument deduction works:
+
+- function parameters *can* (or not) contribute to deduction of template parameter
+- deductions are carried out in parallel
+- all deductions are matched up
+- conflicts are compile errors
+- parameter that contributes to deduction must match argument type exactly - **no implicit conversions**
+- if you specialize explicitly, there is no need for deduction, so no need for argument to match exactly, so implicit conversions can kick in
+
+The details can be found in this cppreference.com article on [Template argument deduction][]
+
+[Template argument deduction]: https://en.cppreference.com/w/cpp/language/template_argument_deduction
+
+Some examples:
+
+```cpp
+template<typename To, typename From> To convert(From f);
+ 
+void g(double d) 
+{
+    int i = convert<int>(d);    // calls convert<int, double>(double)
+    char c = convert<char>(d);  // calls convert<char, double>(double)
+    int(*ptr)(float) = convert; // instantiates convert<int, float>(float)
+}
+```
+
+For the first call:
+
+- parameter `d` is a `double`
+- argument `f` is of type `From`, so `From` is `double
+- `convert` is explicitly instantiated with `int`, so `To` is `int`
+- the call is `convert<int, double>(double)`
+
+Similar, the for the second call:
+
+- `To` is explicitly specialized to `char`
+- `d` is a `double`
+- the call is `convert<char, double>(double)`
+
+For the last call, we want a function that
+
+- takes a `float` argument
+- returns an `int`
+- these are matched up with `From` and `To` respectively
+- giving us `convert<int, float>(float)`
+
+Here is an example that shows a conflict due to no implicit conversions:
+
+```cpp
+template<typename T>
+void g(T x, T y);
+
+int main() {
+  g(1, 1u);
+}
+// note: candidate template ignored: deduced conflicting types for parameter 'T' ('int' vs. 'unsigned int')
+```
+
+- the compiler uses the first argument `1`, to deduce that `T` is `int`,
+- the compiler uses the second argument `1u`, to deduce that `T` is `unsigned int`,
+- comparing these two, `T` has to be both `int` and `unsigned int`, which is a conflict
+- there is no implicity conversions, like at function calls or arithmetic operations
+
+Once a template argument is explicitly specialized, there is no need to deduce it at all.
+
+## Template specialization
+
+This is used when you want to have different bodies for a template when it is instantiated with a particular type:
+
+```cpp
+template<typename T>
+int size() { return sizeof(T); }
+
+template<>
+int size<void>() { return 1; }
+```
+
+Here, we defined a specialization for when `T` is `void`, and do something different.
+
+When a specialization is defined for all template arguments, it is a *full specialization*.
+
+
+
+## References
+
+- [CppCon 2016: Arthur O'Dwyer "Template Normal Programming (part 1 of 2)"](https://www.youtube.com/watch?v=vohGJjGxtJQ)
+
+<!-- - 16:01 `__PRETTY_FUNCTION__` -->
+<!--   - `__FUNCTION__` expands to name of function (as a string) -->
+<!--   - `__PRETTY_FUNCTION__` pretty name, includes templates -->
+<!-- - -->
+
+<!-- something interesting with rvalue refs -->
+<!-- reference collapsing. -->
+
+
+<!-- full specialization -->
+<!-- template<> ... -->
+
+<!-- partial template specialization -->
+  
