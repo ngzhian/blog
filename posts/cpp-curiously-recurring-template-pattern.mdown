@@ -1,0 +1,108 @@
+---
+title: Curiously Recurring Template Pattern (CRTP)
+date: 2020-07-05 16:00
+...
+
+In which a subclass derives from a class template instantiated using itself (subclass) as the template argument.
+
+```cpp
+// Base template, `Base`:
+template <typename T>  // T will be a derived class.
+class Base {};
+
+// Derived class instantiates T using `Derived` itself:
+class Derived : public Base<Derived> {};
+```
+
+Note how `Derived` refers to itself before it is fully defined (brings to mind recursion).
+
+CRTP can be useful for static polymorphism. But before that, let's look at general (or dynamic) polymorphism in C++:
+
+```cpp
+class Animal {
+public:
+  virtual std::string sound() = 0;
+  void hello() { std::cout << sound() << "\n"; }
+};
+
+class Dog : public Animal {
+  std::string sound() override { return "woof"; }
+};
+
+class Cat : public Animal {
+  std::string sound() override { return "meow"; }
+};
+
+int main() {
+  Dog d;
+  d.hello();
+
+  Cat c;
+  c.hello();
+}
+```
+
+Define a base class `Animal`, and two subclasses `Dog` and `Cat` which overrides the implementation of `sound`.
+
+This is known as *dynamic dispatch*. At runtime, the implementation of the member function `sound` is looked up via the *vtable* for the object (Dog or Cat in our example). This dynamic lookup comes with a performance cost, since the lookup happens at runtime.
+
+CRTP allows us to move this dynamic polymorphism to compile time:
+
+```cpp
+template <typename T>
+class Clock {
+  public:
+    void hello() {  // hello is declared here, but not instantiated
+      std::cout << static_cast<T*>(this)->sound() << "\n";
+    }
+};
+
+class Tick : public Clock<Tick> {
+public:
+  std::string sound() { return "tick"; }
+};
+
+class Tock : public Clock<Tock> {
+public:
+  std::string sound() { return "tock"; }
+};
+
+int main() {
+  Tick tick;  // hello is instantiated here, T is known, sound() is defined.
+  tick.hello();
+
+  Tock tock;
+  tock.hello();
+}
+```
+
+Instead of a base class we have a class template `Clock`[^1]. The body of `hello` is not instantiated when `Clock` is defined, but rather only when the template is used (recall that templates cost nothing, until used). So, the body of `hello` can cast `this` to the derived class (template argument)`T`, and call member functions of the derived class.
+
+Now, the call to `sound` is done at compile time (there is no more virtual member function).
+
+The [Wikipedia page](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) for CRTP lists many more interesting examples and uses.
+
+## Object counter
+
+The object counter class gives us some guidelines for when to use CRTP:
+
+- you want code sharing between classes
+- but need to keep base classes unique because, e.g. you want static member variables to be separate
+
+Using dynamic polymorphism, if you had used:
+
+```cpp
+struct counter { ... };
+class X : counter {};
+class Y : counter {};
+```
+
+The static member variable will be shared for X and Y.
+
+But since each template class is unique, the static member variables will not be shared.
+
+## Printer
+
+Each time you call a base class member function, the current class in the chain of method invocations becomes the base class - we *forget* who we are. CRTP can help us to remember the derived class.
+
+[^1]: The terminology is important (and confusing) here. A class template is a template for creating class. A template class is a class created from a template. In this example, `Clock` is a class template. And `Clock<X>` will be a template class.

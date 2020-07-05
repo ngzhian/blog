@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <title>Curiously Recurring Template Pattern (CRTP)</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Curiously Recurring Template Pattern (CRTP)</h1>
+<p class="published">2020-07-05 16:00</p>
+</div>
+<p>In which a subclass derives from a class template instantiated using itself (subclass) as the template argument.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">// Base template, `Base`:</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;  <span class="co">// T will be a derived class.</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">class</span> Base {};</span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">// Derived class instantiates T using `Derived` itself:</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">class</span> Derived : <span class="kw">public</span> Base&lt;Derived&gt; {};</span></code></pre></div>
+<p>Note how <code>Derived</code> refers to itself before it is fully defined (brings to mind recursion).</p>
+<p>CRTP can be useful for static polymorphism. But before that, let’s look at general (or dynamic) polymorphism in C++:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">class</span> Animal {</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">public</span>:</span>
+<span id="cb2-3"><a href="#cb2-3"></a>  <span class="kw">virtual</span> <span class="bu">std::</span>string sound() = <span class="dv">0</span>;</span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="dt">void</span> hello() { <span class="bu">std::</span>cout &lt;&lt; sound() &lt;&lt; <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>; }</span>
+<span id="cb2-5"><a href="#cb2-5"></a>};</span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">class</span> Dog : <span class="kw">public</span> Animal {</span>
+<span id="cb2-8"><a href="#cb2-8"></a>  <span class="bu">std::</span>string sound() <span class="kw">override</span> { <span class="cf">return</span> <span class="st">&quot;woof&quot;</span>; }</span>
+<span id="cb2-9"><a href="#cb2-9"></a>};</span>
+<span id="cb2-10"><a href="#cb2-10"></a></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="kw">class</span> Cat : <span class="kw">public</span> Animal {</span>
+<span id="cb2-12"><a href="#cb2-12"></a>  <span class="bu">std::</span>string sound() <span class="kw">override</span> { <span class="cf">return</span> <span class="st">&quot;meow&quot;</span>; }</span>
+<span id="cb2-13"><a href="#cb2-13"></a>};</span>
+<span id="cb2-14"><a href="#cb2-14"></a></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="dt">int</span> main() {</span>
+<span id="cb2-16"><a href="#cb2-16"></a>  Dog d;</span>
+<span id="cb2-17"><a href="#cb2-17"></a>  d.hello();</span>
+<span id="cb2-18"><a href="#cb2-18"></a></span>
+<span id="cb2-19"><a href="#cb2-19"></a>  Cat c;</span>
+<span id="cb2-20"><a href="#cb2-20"></a>  c.hello();</span>
+<span id="cb2-21"><a href="#cb2-21"></a>}</span></code></pre></div>
+<p>Define a base class <code>Animal</code>, and two subclasses <code>Dog</code> and <code>Cat</code> which overrides the implementation of <code>sound</code>.</p>
+<p>This is known as <em>dynamic dispatch</em>. At runtime, the implementation of the member function <code>sound</code> is looked up via the <em>vtable</em> for the object (Dog or Cat in our example). This dynamic lookup comes with a performance cost, since the lookup happens at runtime.</p>
+<p>CRTP allows us to move this dynamic polymorphism to compile time:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">class</span> Clock {</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="kw">public</span>:</span>
+<span id="cb3-4"><a href="#cb3-4"></a>    <span class="dt">void</span> hello() {  <span class="co">// hello is declared here, but not instantiated</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>      <span class="bu">std::</span>cout &lt;&lt; <span class="kw">static_cast</span>&lt;T*&gt;(<span class="kw">this</span>)-&gt;sound() &lt;&lt; <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>;</span>
+<span id="cb3-6"><a href="#cb3-6"></a>    }</span>
+<span id="cb3-7"><a href="#cb3-7"></a>};</span>
+<span id="cb3-8"><a href="#cb3-8"></a></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="kw">class</span> Tick : <span class="kw">public</span> Clock&lt;Tick&gt; {</span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="kw">public</span>:</span>
+<span id="cb3-11"><a href="#cb3-11"></a>  <span class="bu">std::</span>string sound() { <span class="cf">return</span> <span class="st">&quot;tick&quot;</span>; }</span>
+<span id="cb3-12"><a href="#cb3-12"></a>};</span>
+<span id="cb3-13"><a href="#cb3-13"></a></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="kw">class</span> Tock : <span class="kw">public</span> Clock&lt;Tock&gt; {</span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="kw">public</span>:</span>
+<span id="cb3-16"><a href="#cb3-16"></a>  <span class="bu">std::</span>string sound() { <span class="cf">return</span> <span class="st">&quot;tock&quot;</span>; }</span>
+<span id="cb3-17"><a href="#cb3-17"></a>};</span>
+<span id="cb3-18"><a href="#cb3-18"></a></span>
+<span id="cb3-19"><a href="#cb3-19"></a><span class="dt">int</span> main() {</span>
+<span id="cb3-20"><a href="#cb3-20"></a>  Tick tick;  <span class="co">// hello is instantiated here, T is known, sound() is defined.</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a>  tick.hello();</span>
+<span id="cb3-22"><a href="#cb3-22"></a></span>
+<span id="cb3-23"><a href="#cb3-23"></a>  Tock tock;</span>
+<span id="cb3-24"><a href="#cb3-24"></a>  tock.hello();</span>
+<span id="cb3-25"><a href="#cb3-25"></a>}</span></code></pre></div>
+<p>Instead of a base class we have a class template <code>Clock</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. The body of <code>hello</code> is not instantiated when <code>Clock</code> is defined, but rather only when the template is used (recall that templates cost nothing, until used). So, the body of <code>hello</code> can cast <code>this</code> to the derived class (template argument)<code>T</code>, and call member functions of the derived class.</p>
+<p>Now, the call to <code>sound</code> is done at compile time (there is no more virtual member function).</p>
+<p>The <a href="https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern">Wikipedia page</a> for CRTP lists many more interesting examples and uses.</p>
+<h2 id="object-counter">Object counter</h2>
+<p>The object counter class gives us some guidelines for when to use CRTP:</p>
+<ul>
+<li>you want code sharing between classes</li>
+<li>but need to keep base classes unique because, e.g. you want static member variables to be separate</li>
+</ul>
+<p>Using dynamic polymorphism, if you had used:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">struct</span> counter { ... };</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">class</span> X : counter {};</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="kw">class</span> Y : counter {};</span></code></pre></div>
+<p>The static member variable will be shared for X and Y.</p>
+<p>But since each template class is unique, the static member variables will not be shared.</p>
+<h2 id="printer">Printer</h2>
+<p>Each time you call a base class member function, the current class in the chain of method invocations becomes the base class - we <em>forget</em> who we are. CRTP can help us to remember the derived class.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>The terminology is important (and confusing) here. A class template is a template for creating class. A template class is a class created from a template. In this example, <code>Clock</code> is a class template. And <code>Clock&lt;X&gt;</code> will be a template class.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</section>
+</body>
+</html>
