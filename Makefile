@@ -34,7 +34,7 @@ posts/%.mdown:
 	@touch posts/$*.mdown
 	@echo '---' >> posts/$*.mdown
 	@echo 'title:' >> posts/$*.mdown
-	@echo 'date:' >> posts/$*.mdown
+	echo "date: $$(date '+%Y-%m-%d')" >> posts/$*.mdown
 	@echo '...' >> posts/$*.mdown
 
 %.mdown: posts/$*.mdown
