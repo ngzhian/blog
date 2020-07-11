@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <title>C++ constexpr</title>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">C++ constexpr</h1>
+<p class="published">2020-07-11 12:30</p>
+</div>
+<p><code>constexpr</code> is a keyword (called a <em>specifier</em>) you can put in front of functions and variables to indicate that its value <em>can</em> be evaluated at compile time.</p>
+<h2 id="motivations">Motivations</h2>
+<p>You have some data that is static (unchanging), and is known at compile time. The paper uses a jump table, and it could really be any sort of table which requires a bit of calculation upfront.</p>
+<blockquote>
+<p>compilers now are pretty good at constant expressions, I have a bit of trouble figuring out how to get them to generate code</p>
+</blockquote>
+<p>Although compilers are good, there is no language guarantee that those computations are done at compile time.</p>
+<p>The solution is some notion of <em>constant expression</em> or <em>static expression</em>, which are usually restricted to builtin types (e.g. only integers), a list of builtin operators (no functions), and builtin constants.</p>
+<p><code>constexpr</code> is a more general solution to describe a broader class of expression that can be compile-time evaluated.</p>
+<p>The two key ideas are:</p>
+<ul>
+<li><em>literal types</em>, a “sufficiently simple” type that the compiler knows the layout of</li>
+<li><em>constexpr functions</em>, a “sufficiently simple” function such that it evaluates to a constant expression when called with constant arguments</li>
+</ul>
+<blockquote>
+<p>Note that <em>constant</em> in this paper is not the same as <code>const</code> keyword in C++, which means unchanging, but not necessary compile-time constant. We use constant here to refer to this new <code>constexpr</code> class of expressions.</p>
+</blockquote>
+<h2 id="constant-expressions">Constant Expressions</h2>
+<p>C++ already has the idea of constant expressions since the beginning. For example, array bounds need to be a constant. This means that a value needs to be known at compile time.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1"></a><span class="at">const</span> <span class="dt">int</span> size = <span class="dv">8</span> * <span class="dv">8</span>;</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="dt">int</span> buffer[size] = { <span class="dv">0</span> };</span></code></pre></div>
+<p>A constant expression is:</p>
+<ul>
+<li>a literal</li>
+<li>relational expression which sub-expressions are constant expressions</li>
+<li>arithmetic expression of type int whose sub-expressions are constant expressions</li>
+<li>conditional expression of type int whose sub-expressions are constant expressions</li>
+<li>global variables defined with <code>const</code> and initialized with constant expressions</li>
+</ul>
+<p>However, calls to a user-defined function with a constant expression argument is not considered a constant expression.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1"></a><span class="dt">int</span> square(<span class="dt">int</span> x) { <span class="cf">return</span> x * x };</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="dt">int</span> buffer[square(<span class="dv">8</span>)] = { <span class="dv">0</span> };  <span class="co">// error</span></span></code></pre></div>
+<h2 id="constexpr-expressions">Constexpr expressions</h2>
+<p>The first generalization is to make it such that a call to a “sufficiently simple” function with constant expression is a constant expression.</p>
+<p>A <em>constexpr function</em> is a function which:</p>
+<ul>
+<li>return types and parameter types are literal types</li>
+<li>body is a compound statement of the form <code>{ return expr; }</code> where <code>expr</code> is a constant expression. <code>expr</code> is called a <em>potential constant expression</em>.</li>
+</ul>
+<p>Now, the notion of constant expression is extended:</p>
+<ul>
+<li>a literal</li>
+<li>a name denoting global variable of scalar type defined with <code>const</code> and initialized with a constant expression</li>
+<li>relational expression which sub-expressions are constant expressions</li>
+<li>arithmetic expression of type int whose sub-expressions are constant expressions</li>
+<li>conditional expression of type int whose sub-expressions are constant expressions</li>
+<li>call to a constexpr function with constant expression arguments</li>
+</ul>
+<p>For simplicity and ease of implementation, constexpr function definition needs to be preceded by <code>constexpr</code> keyword. The compiler will verify, at definition time, that the function is eligible to be constexpr expression.</p>
+<p>Calling a constexpr function with non-constant arguments is fine, it will then be evaluated at run time (not compile time). This is allowed to prevent doubling the number of functions (one for run time and one for compile time).</p>
+<h2 id="literal-types">Literal types</h2>
+<p>Limiting constexpr functions to only literal types is limiting. To allow user defined types to participate in constexpr, the notion of a <em>literal type</em> is extended to include a class with all data members of literal types, and a constexpr constructor.</p>
+<p>A <em>constexpr constructor</em> is like a constexpr function which</p>
+<ul>
+<li>initializes the data members in the member-initializer part,</li>
+<li>the initializations involve only potential constant expressions, and</li>
+<li>has an empty body.</li>
+</ul>
+<p>We can also extend the notion of constexpr functions to member functions. Member functions have a hidden <em>this</em> pointer, which points to the current object on which the member function is invoked. If an object of literal type is created with constant expression arguments, all the offsets of the fields are known at compile time. So, a field member selection can be done at compile time.</p>
+<blockquote>
+<p>Our aim is not to support arbitrary object creation and object manipulation at compile-time, but to provide simple support for objects and operations for which the distinction between run-time and compile-time evaluation matters.</p>
+</blockquote>
+<h2 id="recursion">Recursion</h2>
+<p>Allowing recursive constexpr function means that the compiler can enter an infinite loop. The type system is also not decidable anymore.</p>
+<p>Some ways of allowing recursion while preventing infinite loops is to restrict recursive definition such that termination is decided by the syntactic structure of the function <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. This would however add more complexity to C++ syntax.</p>
+<p>C++ already has recursion at compile time, e.g. in templates. There are existing techniques to deal with infinite loops, a stack check. A compiler will reject a program if it exceeds some preconfigured limits on recursive calls. For example defining a template-based implementation of factorial, it will be rejected by the compiler <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<h2 id="phases">Phases</h2>
+<p>C++ has distinct phases, compile time, link time, run time. Address of global variables are not known until link time. This limits the kind of static initialization that can be performed and used by the compiler before link time.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1"></a><span class="at">const</span> <span class="dt">int</span> n = <span class="dv">42</span>;</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="dt">int</span> array[n] = {}; <span class="co">// n is constant</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="at">const</span> <span class="dt">int</span> p = (<span class="dt">int</span>)&amp;n;</span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="dt">int</span> ary[p] = {}; <span class="co">// error: p is not constant</span></span></code></pre></div>
+<h2 id="reference-parameters">Reference parameters</h2>
+<p>Reference parameters are conventionally implemented as pointers to objects, making their evaluation at compile time tricky, it will in general require a full interpreter.</p>
+<p>C++ has two modes of parameter-passing, call-by-value or call-by-reference. Recall that the address of an object is not known until link time or run time.</p>
+<p>In the context of a constexpr function, we only need to know the value of the reference parameters. So a function is <em>constexpr</em> if:</p>
+<ul>
+<li>it is defined with <code>constexpr</code> keyword</li>
+<li>has a literal return type</li>
+<li>each parameter is of a literal type, or reference to a literal type</li>
+<li>body is of the form <code>{ return expr; }</code>, where <code>expr</code> is a potential constant expression.</li>
+</ul>
+<p>Some reasons for defining constexpr functions with reference parameters are:</p>
+<ul>
+<li>no generic way to select the parameter-passing mode</li>
+<li>preserve as much type information as possible, such as an array decaying to address of first object when passed by value, and loses the array length information</li>
+</ul>
+<h2 id="references">References</h2>
+<p><a href="https://en.cppreference.com/w/cpp/language/constexpr">“constexpr specifier (since C++11) - cppreference.com”</a></p>
+<p><a href="https://www.stroustrup.com/sac10-constexpr.pdf">Dos Reis, Gabriel, and Bjarne Stroustrup. “General constant expressions for system programming languages.” Proceedings of the 2010 ACM Symposium on Applied Computing. 2010.</a></p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>In languages like Coq, this is usually determined by a <em>shrinking</em> argument to the recursive call.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>GCC gave up at <code>Fact&lt;13&gt;</code>, clang was okay with <code>Fact&lt;20&gt;</code>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</section>
+</body>
+</html>

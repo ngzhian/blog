@@ -1,0 +1,135 @@
+---
+title: C++ constexpr
+date: 2020-07-11 12:30
+...
+
+`constexpr` is a keyword (called a *specifier*) you can put in front of functions and variables to indicate that its value *can* be evaluated at compile time.
+
+## Motivations
+
+You have some data that is static (unchanging), and is known at compile time. The paper uses a jump table, and it could really be any sort of table which requires a bit of calculation upfront.
+
+> compilers now are pretty good at constant expressions, I have a bit of trouble figuring out how to get them to generate code
+
+Although compilers are good, there is no language guarantee that those computations are done at compile time.
+
+The solution is some notion of *constant expression* or *static expression*, which are usually restricted to builtin types (e.g. only integers), a list of builtin operators (no functions), and builtin constants.
+
+`constexpr` is a more general solution to describe a broader class of expression that can be compile-time evaluated.
+
+The two key ideas are:
+
+- *literal types*, a "sufficiently simple" type that the compiler knows the layout of
+- *constexpr functions*, a "sufficiently simple" function such that it evaluates to a constant expression when called with constant arguments
+
+> Note that *constant* in this paper is not the same as `const` keyword in C++, which means unchanging, but not necessary compile-time constant. We use constant here to refer to this new `constexpr` class of expressions.
+
+## Constant Expressions
+
+C++ already has the idea of constant expressions since the beginning. For example, array bounds need to be a constant. This means that a value needs to be known at compile time.
+
+```cpp
+const int size = 8 * 8;
+int buffer[size] = { 0 };
+```
+A constant expression is:
+
+- a literal
+- relational expression which sub-expressions are constant expressions
+- arithmetic expression of type int whose sub-expressions are constant expressions
+- conditional expression of type int whose sub-expressions are constant expressions
+- global variables defined with `const` and initialized with constant expressions
+
+However, calls to a user-defined function with a constant expression argument is not considered a constant expression.
+
+```cpp
+int square(int x) { return x * x };
+int buffer[square(8)] = { 0 };  // error
+```
+
+## Constexpr expressions
+
+The first generalization is to make it such that a call to a "sufficiently simple" function with constant expression is a constant expression.
+
+A *constexpr function* is a function which:
+
+- return types and parameter types are literal types
+- body is a compound statement of the form `{ return expr; }` where `expr` is a constant expression. `expr` is called a *potential constant expression*.
+
+Now, the notion of constant expression is extended:
+
+- a literal
+- a name denoting global variable of scalar type defined with `const` and initialized with a constant expression
+- relational expression which sub-expressions are constant expressions
+- arithmetic expression of type int whose sub-expressions are constant expressions
+- conditional expression of type int whose sub-expressions are constant expressions
+- call to a constexpr function with constant expression arguments
+
+For simplicity and ease of implementation, constexpr function definition needs to be preceded by `constexpr` keyword. The compiler will verify, at definition time, that the function is eligible to be constexpr expression.
+
+Calling a constexpr function with non-constant arguments is fine, it will then be evaluated at run time (not compile time). This is allowed to prevent doubling the number of functions (one for run time and one for compile time).
+
+## Literal types
+
+Limiting constexpr functions to only literal types is limiting. To allow user defined types to participate in constexpr, the notion of a *literal type* is extended to include a class with all data members of literal types, and a constexpr constructor.
+
+A *constexpr constructor* is like a constexpr function which
+
+- initializes the data members in the member-initializer part,
+- the initializations involve only potential constant expressions, and
+- has an empty body.
+
+We can also extend the notion of constexpr functions to member functions. Member functions have a hidden *this* pointer, which points to the current object on which the member function is invoked. If an object of literal type is created with constant expression arguments, all the offsets of the fields are known at compile time. So, a field member selection can be done at compile time.
+
+> Our aim is not to support arbitrary object
+creation and object manipulation at compile-time, but to provide
+simple support for objects and operations for which the distinction
+between run-time and compile-time evaluation matters.
+
+## Recursion
+
+Allowing recursive constexpr function means that the compiler can enter an infinite loop. The type system is also not decidable anymore.
+
+Some ways of allowing recursion while preventing infinite loops is to restrict recursive definition such that termination is decided by the syntactic structure of the function [^1]. This would however add more complexity to C++ syntax.
+
+C++ already has recursion at compile time, e.g. in templates. There are existing techniques to deal with infinite loops, a stack check. A compiler will reject a program if it exceeds some preconfigured limits on recursive calls. For example defining a template-based implementation of factorial, it will be rejected by the compiler [^2].
+
+[^1]: In languages like Coq, this is usually determined by a *shrinking* argument to the recursive call.
+
+[^2]: GCC gave up at `Fact<13>`, clang was okay with `Fact<20>`.
+
+## Phases
+
+C++ has distinct phases, compile time, link time, run time. Address of global variables are not known until link time. This limits the kind of static initialization that can be performed and used by the compiler before link time.
+
+```cpp
+const int n = 42;
+int array[n] = {}; // n is constant
+const int p = (int)&n;
+int ary[p] = {}; // error: p is not constant
+```
+
+## Reference parameters
+
+Reference parameters are conventionally implemented as pointers to objects, making their evaluation at compile time tricky, it will in general require a full interpreter.
+
+C++ has two modes of parameter-passing, call-by-value or call-by-reference. Recall that the address of an object is not known until link time or run time.
+
+In the context of a constexpr function, we only need to know the value of the reference parameters. So a function is *constexpr* if:
+
+- it is defined with `constexpr` keyword
+- has a literal return type
+- each parameter is of a literal type, or reference to a literal type
+- body is of the form `{ return expr; }`, where `expr` is a potential constant expression.
+
+Some reasons for defining constexpr functions with reference parameters are:
+
+- no generic way to select the parameter-passing mode
+- preserve as much type information as possible, such as an array decaying to address of first object when passed by value, and loses the array length information
+
+
+## References
+
+["constexpr specifier (since C++11) - cppreference.com"](https://en.cppreference.com/w/cpp/language/constexpr)
+
+[Dos Reis, Gabriel, and Bjarne Stroustrup. "General constant expressions for system programming languages." Proceedings of the 2010 ACM Symposium on Applied Computing. 2010.](https://www.stroustrup.com/sac10-constexpr.pdf)
