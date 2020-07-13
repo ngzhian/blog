@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"$if(lang)$ lang="$lang$" xml:lang="$lang$"$endif$$if(dir)$ dir="$dir$"$endif$ lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+$for(author-meta)$
+  <meta name="author" content="$author-meta$" />
+$endfor$
+$if(date-meta)$
+  <meta name="date" content="$date-meta$" />
+$endif$
+$if(keywords)$
+  <meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$" />
+$endif$
+  <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
+$if(quotes)$
+  <style type="text/css">q { quotes: "“" "”" "‘" "’"; }</style>
+$endif$
+$if(highlighting-css)$
+  <style type="text/css">
+$highlighting-css$
+  </style>
+$endif$
+$for(css)$
+  <link rel="stylesheet" href="$css$" type="text/css" />
+$endfor$
+  <link rel="stylesheet" href="../styles.css" type="text/css" />
+$if(math)$
+  $math$
+$endif$
+$for(header-includes)$
+  $header-includes$
+$endfor$
+</head>
+<body>
+<section class="content">
+$for(include-before)$
+$include-before$
+$endfor$
+<a class="home" href="./index.html">Home</a>
+$if(title)$
+<div id="$idprefix$header">
+<h1 class="title">$title$</h1>
+$if(subtitle)$
+<h1 class="subtitle">$subtitle$</h1>
+$endif$
+$for(author)$
+<h2 class="author">$author$</h2>
+$endfor$
+$if(date)$
+<p class="published">$date$</p>
+$endif$
+</div>
+$endif$
+$if(toc)$
+<div id="$idprefix$TOC">
+$toc$
+</div>
+$endif$
+$body$
+$for(include-after)$
+$include-after$
+$endfor$
+</section>
+</body>
+<script>
+  var intervalId;
+  // Ping every 5s to keep this WS connection alive.
+  // Otherwise the browser will terminate this connection.
+  function keepalive(s) {
+    intervalId = setInterval(function() {
+      s.send("keepalive");
+    }, 5000);
+  }
+  var s = new WebSocket("ws://localhost:9001");
+  s.onopen = function(even) {
+    console.log("WebSocket connection open.");
+    keepalive(s);
+  };
+  s.onclose = function(even) {
+    console.log("WebSocket connection closed.");
+    clearInterval(intervalId);
+  };
+  s.onerror = function(event) {
+    console.error("WebSocket error observed:", event);
+    clearInterval(intervalId);
+  };
+  s.onmessage = function(event) {
+    if (event.data === "refresh") {
+      location.reload();
+    }
+  };
+</script>
+</html>
