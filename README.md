@@ -1,0 +1,1 @@
+This repository hosts content for my blog, both markdown files and the generated HTML. The static files are then served via [GitHub Pages](https://pages.github.com/) (thanks GitHub!), with HTTPS via [Cloudflare](http://cloudflare.com/) (thanks Cloudflare!). To view my blog, head to [https://blog.ngzhian.com/](https://blog.ngzhian.com/).
