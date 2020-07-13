@@ -21,7 +21,6 @@ all: pages
 # Github used to only support publishing from gh-pages branch.
 # That has changed, go into settings to switch the source branch to master.
 deploy:
-	git checkout master
 	git push origin HEAD
 
 # Create a new post with the Yaml metadata filled in.
