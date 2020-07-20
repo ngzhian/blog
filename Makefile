@@ -54,9 +54,13 @@ hotreload: hotreload.cpp
 # Using a script so that I can set a trap on script exit
 # and cleanly shut down hotreload server.
 dev-watch: hotreload
-	./dev-watch.sh
+	@./dev-watch.sh
 
 # This is the old way to watch for changes and automatically rebuild,
 # without hotreload. Use dev-watch instead.
 deprecated-watch:
-	fswatch -or template/ posts/ | xargs -o -n 1 -I {} make
+	@fswatch -or template/ posts/ | xargs -o -n 1 -I {} make
+
+# From https://github.com/chambln/pandoc-rss/blob/master/pandoc-rss.
+rss.xml: template/pre.xml template/post.xml template/item.xml
+	@gen-rss.sh

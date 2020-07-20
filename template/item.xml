@@ -1,0 +1,6 @@
+    <item>
+      <title>$title$</title>
+      <link>$link$</link>
+      <pubDate>$date$</pubDate>
+      <guid isPermaLink="true">$guid$</guid>
+    </item>
