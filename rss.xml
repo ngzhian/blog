@@ -11,984 +11,473 @@
       blog
     </description>
     <item>
-      <title>
-        IEEE 754 summary
-      </title>
-      <link>
-        https://blog.ngzhian.com/ieee754-summary.html
-      </link>
-      <pubDate>
-        23 May 2020 12:30:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/ieee754-summary.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Vim keys
-      </title>
-      <link>
-        https://blog.ngzhian.com/vim-keys.html
-      </link>
-      <pubDate>
-        16 May 2020 21:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/vim-keys.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        64x2 integer multiplication
-      </title>
-      <link>
-        https://blog.ngzhian.com/i64x2mul.html
-      </link>
-      <pubDate>
-        09 Mar 2020 18:13:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/i64x2mul.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        WebAssembly SIMD and endianness
-      </title>
-      <link>
-        https://blog.ngzhian.com/webassembly-simd-endian.html
-      </link>
-      <pubDate>
-        11 Sep 2019 21:13:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/webassembly-simd-endian.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        For loops in bash and memory usage
-      </title>
-      <link>
-        https://blog.ngzhian.com/for-loop-bash.html
-      </link>
-      <pubDate>
-        04 Sep 2019 21:56:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/for-loop-bash.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Guy Steele - It's Time for a New Old Language
-      </title>
-      <link>
-        https://blog.ngzhian.com/guy-steele-its-time-for-a-new-old-language.html
-      </link>
-      <pubDate>
-        28 Sep 2018 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/guy-steele-its-time-for-a-new-old-language.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        LZ77
-      </title>
-      <link>
-        https://blog.ngzhian.com/lz77.html
-      </link>
-      <pubDate>
-        26 Jun 2018 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/lz77.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Get Off the Tightrope - Tom Stuart
-      </title>
-      <link>
-        https://blog.ngzhian.com/get-off-the-tightrope.html
-      </link>
-      <pubDate>
-        09 Dec 2017 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/get-off-the-tightrope.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Storage strategies for collections in dynamically typed languages - Bolz, Diekmann, Tratt
-      </title>
-      <link>
-        https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html
-      </link>
-      <pubDate>
-        05 Nov 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Android startup tour - zygote
-      </title>
-      <link>
-        https://blog.ngzhian.com/android-startup-tour-zygote.html
-      </link>
-      <pubDate>
-        24 Sep 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/android-startup-tour-zygote.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Android startup tour - init
-      </title>
-      <link>
-        https://blog.ngzhian.com/android-startup-tour-init.html
-      </link>
-      <pubDate>
-        20 Sep 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/android-startup-tour-init.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        A Pretty But Not Greedy Printer by Jean-Philippe Bernardy
-      </title>
-      <link>
-        https://blog.ngzhian.com/a-pretty-but-not-greedy-printer.html
-      </link>
-      <pubDate>
-        09 Sep 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/a-pretty-but-not-greedy-printer.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        University reflections
-      </title>
-      <link>
-        https://blog.ngzhian.com/uni-reflections.html
-      </link>
-      <pubDate>
-        26 Jun 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/uni-reflections.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        G-machine
-      </title>
-      <link>
-        https://blog.ngzhian.com/g-machine.html
-      </link>
-      <pubDate>
-        17 Jun 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/g-machine.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        SKI combinators - Lambda to SKI
-      </title>
-      <link>
-        https://blog.ngzhian.com/ski2.html
-      </link>
-      <pubDate>
-        27 May 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/ski2.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        SKI combinators - AST and Evaluating
-      </title>
-      <link>
-        https://blog.ngzhian.com/ski.html
-      </link>
-      <pubDate>
-        12 May 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/ski.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Category theory
-      </title>
-      <link>
-        https://blog.ngzhian.com/category-theory.html
-      </link>
-      <pubDate>
-        05 May 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/category-theory.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Algebraic structures
-      </title>
-      <link>
-        https://blog.ngzhian.com/algebraic-structures.html
-      </link>
-      <pubDate>
-        03 May 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/algebraic-structures.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Zippers
-      </title>
-      <link>
-        https://blog.ngzhian.com/zippers.html
-      </link>
-      <pubDate>
-        29 Apr 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/zippers.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Some type about Sum types (and more)
-      </title>
-      <link>
-        https://blog.ngzhian.com/some-type-about-sum-type-and-more.html
-      </link>
-      <pubDate>
-        22 Mar 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/some-type-about-sum-type-and-more.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Bookmarks for a programming language enthusiast
-      </title>
-      <link>
-        https://blog.ngzhian.com/bookmarks-for-a-programming-language-enthusiast.html
-      </link>
-      <pubDate>
-        21 Mar 2017 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/bookmarks-for-a-programming-language-enthusiast.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        2D physics systems in the wild
-      </title>
-      <link>
-        https://blog.ngzhian.com/2d-physics-systems-in-the-wild.html
-      </link>
-      <pubDate>
-        12 Mar 2017 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/2d-physics-systems-in-the-wild.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        The Next 700 Programming Languages by P. J. Landin
-      </title>
-      <link>
-        https://blog.ngzhian.com/the-next-700-programming-languages-p-j-landin.html
-      </link>
-      <pubDate>
-        11 Mar 2017 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/the-next-700-programming-languages-p-j-landin.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Dates with JavaScript
-      </title>
-      <link>
-        https://blog.ngzhian.com/dates-with-javascript.html
-      </link>
-      <pubDate>
-        03 Jan 2017 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/dates-with-javascript.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        An Axiomatic Basis for Computer Programming by C. A. R. Hoare
-      </title>
-      <link>
-        https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html
-      </link>
-      <pubDate>
-        04 Dec 2016 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        How we let you be you without knowing you
-      </title>
-      <link>
-        https://blog.ngzhian.com/how-we-let-you-be-you.html
-      </link>
-      <pubDate>
-        16 Nov 2016 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/how-we-let-you-be-you.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Chrome offline network emulation and WebSocket
-      </title>
-      <link>
-        https://blog.ngzhian.com/chrome-offline-network-emulation-websocket.html
-      </link>
-      <pubDate>
-        15 Nov 2016 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/chrome-offline-network-emulation-websocket.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        How we deploy
-      </title>
-      <link>
-        https://blog.ngzhian.com/how-we-deploy.html
-      </link>
-      <pubDate>
-        12 Nov 2016 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/how-we-deploy.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        TDD
-      </title>
-      <link>
-        https://blog.ngzhian.com/tdd.html
-      </link>
-      <pubDate>
-        28 Oct 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/tdd.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Environment
-      </title>
-      <link>
-        https://blog.ngzhian.com/environment.html
-      </link>
-      <pubDate>
-        23 Oct 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/environment.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Iterative Development
-      </title>
-      <link>
-        https://blog.ngzhian.com/iterative-development.html
-      </link>
-      <pubDate>
-        18 Oct 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/iterative-development.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        My experience interning at 3 companies
-      </title>
-      <link>
-        https://blog.ngzhian.com/three-internships.html
-      </link>
-      <pubDate>
-        18 Sep 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/three-internships.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Framework v.s. Library
-      </title>
-      <link>
-        https://blog.ngzhian.com/framework-vs-library.html
-      </link>
-      <pubDate>
-        27 Aug 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/framework-vs-library.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Road to React
-      </title>
-      <link>
-        https://blog.ngzhian.com/road-to-react.html
-      </link>
-      <pubDate>
-        27 Aug 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/road-to-react.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Resume tips
-      </title>
-      <link>
-        https://blog.ngzhian.com/resume-tips.html
-      </link>
-      <pubDate>
-        04 May 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/resume-tips.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Error messages from opam when installing packages
-      </title>
-      <link>
-        https://blog.ngzhian.com/ocaml-opam-errors.html
-      </link>
-      <pubDate>
-        03 May 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/ocaml-opam-errors.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Installing OCaml from source on Ubuntu
-      </title>
-      <link>
-        https://blog.ngzhian.com/install-ocaml.html
-      </link>
-      <pubDate>
-        02 May 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/install-ocaml.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        The magic of static
-      </title>
-      <link>
-        https://blog.ngzhian.com/static-site.html
-      </link>
-      <pubDate>
-        24 Apr 2016 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/static-site.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Haskell's powerful pattern matching
-      </title>
-      <link>
-        https://blog.ngzhian.com/haskell-pattern-matching.html
-      </link>
-      <pubDate>
-        11 Sep 2015 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/haskell-pattern-matching.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Lexing COOL - Coursera Compilers Course Assignment 1
-      </title>
-      <link>
-        https://blog.ngzhian.com/coursera-compilers-1.html
-      </link>
-      <pubDate>
-        25 May 2015 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/coursera-compilers-1.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        ffmpeg to make gifs
-      </title>
-      <link>
-        https://blog.ngzhian.com/ffmpeg.html
-      </link>
-      <pubDate>
-        17 May 2015 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/ffmpeg.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Common problems I faced with Vagrant and VirtualBox
-      </title>
-      <link>
-        https://blog.ngzhian.com/vagrant-virtualbox-dev-tips.html
-      </link>
-      <pubDate>
-        08 May 2015 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/vagrant-virtualbox-dev-tips.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        What are Peephole Optimizations?
-      </title>
-      <link>
-        https://blog.ngzhian.com/peephole-1.html
-      </link>
-      <pubDate>
-        28 Apr 2015 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/peephole-1.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Set up Vim for JavaScript development
-      </title>
-      <link>
-        https://blog.ngzhian.com/vim-javascript-development.html
-      </link>
-      <pubDate>
-        24 Apr 2015 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/vim-javascript-development.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        What the heck is Google Closure Compiler?
-      </title>
-      <link>
-        https://blog.ngzhian.com/closure-compiler-1.html
-      </link>
-      <pubDate>
-        20 Apr 2015 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/closure-compiler-1.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        So I set up a Jenkins CI server today
-      </title>
-      <link>
-        https://blog.ngzhian.com/jenkins-setup.html
-      </link>
-      <pubDate>
-        18 Jan 2015 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/jenkins-setup.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        NOC New York Financials
-      </title>
-      <link>
-        https://blog.ngzhian.com/noc-financials.html
-      </link>
-      <pubDate>
-        09 Jan 2015 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/noc-financials.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        NOC New York Module Credits mapping for SoC
-      </title>
-      <link>
-        https://blog.ngzhian.com/noc-soc-mc-mapping.html
-      </link>
-      <pubDate>
-        02 Jan 2015 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/noc-soc-mc-mapping.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Suggest - My Hack for TimeIncHack2014
-      </title>
-      <link>
-        https://blog.ngzhian.com/time-inc-hack-2014.html
-      </link>
-      <pubDate>
-        20 Nov 2014 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/time-inc-hack-2014.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        I will never be able to log in to Flickr again
-      </title>
-      <link>
-        https://blog.ngzhian.com/yahoo-flickr.html
-      </link>
-      <pubDate>
-        24 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/yahoo-flickr.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        MBeanScanner a utility class to generate sample configuration file for JMXetric
-      </title>
-      <link>
-        https://blog.ngzhian.com/mbeanscanner.html
-      </link>
-      <pubDate>
-        19 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/mbeanscanner.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Default value of ATTLIST, attributes of an XML Element, XML Doctype
-      </title>
-      <link>
-        https://blog.ngzhian.com/attlist-attributes-of-xml-element.html
-      </link>
-      <pubDate>
-        10 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/attlist-attributes-of-xml-element.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Exploring Apache Karaf MBeans using JConsole
-      </title>
-      <link>
-        https://blog.ngzhian.com/explore-apache-karaf-mbeans-using-jconsole.html
-      </link>
-      <pubDate>
-        10 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/explore-apache-karaf-mbeans-using-jconsole.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Using JConsole to look at MBeans
-      </title>
-      <link>
-        https://blog.ngzhian.com/using-jconsole-to-monitor-mbeans.html
-      </link>
-      <pubDate>
-        08 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/using-jconsole-to-monitor-mbeans.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        GSOC 2014, jmxetric
-      </title>
-      <link>
-        https://blog.ngzhian.com/gsoc-jmxetric.html
-      </link>
-      <pubDate>
-        07 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/gsoc-jmxetric.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        JMX and MBeans
-      </title>
-      <link>
-        https://blog.ngzhian.com/jmx-mbeans.html
-      </link>
-      <pubDate>
-        07 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/jmx-mbeans.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Debian Jessie, Screen resolution, and VirtualBox Guest Additions
-      </title>
-      <link>
-        https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html
-      </link>
-      <pubDate>
-        04 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Rock Paper Scissors in Haskell
-      </title>
-      <link>
-        https://blog.ngzhian.com/rps-haskell.html
-      </link>
-      <pubDate>
-        01 May 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/rps-haskell.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        How Java sorts Objects
-      </title>
-      <link>
-        https://blog.ngzhian.com/how-java-sorts-objects.html
-      </link>
-      <pubDate>
-        28 Apr 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/how-java-sorts-objects.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)
-      </title>
-      <link>
-        https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html
-      </link>
-      <pubDate>
-        28 Apr 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Setting up a killer development environment for CS2103T
-      </title>
-      <link>
-        https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html
-      </link>
-      <pubDate>
-        27 Apr 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Don't waste their time!
-      </title>
-      <link>
-        https://blog.ngzhian.com/dont-waste-users-time.html
-      </link>
-      <pubDate>
-        26 Apr 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/dont-waste-users-time.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Configuring XMonad
-      </title>
-      <link>
-        https://blog.ngzhian.com/configuring-xmonad.html
-      </link>
-      <pubDate>
-        25 Apr 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/configuring-xmonad.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Planes, Airports, and Monads - Adventures in Haskell
-      </title>
-      <link>
-        https://blog.ngzhian.com/planes-airports-and-monads.html
-      </link>
-      <pubDate>
-        20 Apr 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/planes-airports-and-monads.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Learning Haskell through Maybe - Functors
-      </title>
-      <link>
-        https://blog.ngzhian.com/learn-haskell-through-maybe-functors.html
-      </link>
-      <pubDate>
-        18 Apr 2014 07:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/learn-haskell-through-maybe-functors.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        CS2101 - Should news agency ask Google to pay up?
-      </title>
-      <link>
-        https://blog.ngzhian.com/should-news-agencies-ask-google-to-pay.html
-      </link>
-      <pubDate>
-        04 Mar 2013 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/should-news-agencies-ask-google-to-pay.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Notes on &quot;Thinking Forth&quot;
-      </title>
-      <link>
-        https://blog.ngzhian.com/notes-on-thinking-forth.html
-      </link>
-      <pubDate>
-        03 Mar 2013 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/notes-on-thinking-forth.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Thanksgiving 2013
-      </title>
-      <link>
-        https://blog.ngzhian.com/thanksgiving.html
-      </link>
-      <pubDate>
-        02 Mar 2013 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/thanksgiving.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        Hack&amp;Roll 2013
-      </title>
-      <link>
-        https://blog.ngzhian.com/hacknroll2013.html
-      </link>
-      <pubDate>
-        03 Feb 2013 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/hacknroll2013.html
-      </guid>
-    </item>
-    <item>
-      <title>
-        What I learned about fonts on Linux
-      </title>
-      <link>
-        https://blog.ngzhian.com/what-i-learned-about-fonts.html
-      </link>
-      <pubDate>
-        11 Jan 2013 08:00:00 +0000
-      </pubDate>
-      <guid isPermaLink="true">
-        https://blog.ngzhian.com/what-i-learned-about-fonts.html
-      </guid>
+      <title>Creating a simple live reload server for my blog</title>
+      <link>https://blog.ngzhian.com/simple-live-reload.html</link>
+      <pubDate>2020-07-12</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/simple-live-reload.html</guid>
     </item>
+    <item>
+      <title>C++ constexpr</title>
+      <link>https://blog.ngzhian.com/cpp-constexpr.html</link>
+      <pubDate>2020-07-11 12:30</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/cpp-constexpr.html</guid>
+    </item>
+    <item>
+      <title>Coming up an epigram</title>
+      <link>https://blog.ngzhian.com/epigram-fast.html</link>
+      <pubDate>2020-07-06 21:50</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/epigram-fast.html</guid>
+    </item>
+    <item>
+      <title>Curiously Recurring Template Pattern (CRTP)</title>
+      <link>https://blog.ngzhian.com/cpp-curiously-recurring-template-pattern.html</link>
+      <pubDate>2020-07-05 16:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/cpp-curiously-recurring-template-pattern.html</guid>
+    </item>
+    <item>
+      <title>C++ templates</title>
+      <link>https://blog.ngzhian.com/cpp-templates.html</link>
+      <pubDate>2020-07-05 15:12</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/cpp-templates.html</guid>
+    </item>
+    <item>
+      <title>Epigrams on Programming - Alan J. Perlis</title>
+      <link>https://blog.ngzhian.com/epigrams-on-programming.html</link>
+      <pubDate>2020-07-02 12:33</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/epigrams-on-programming.html</guid>
+    </item>
+    <item>
+      <title>A history of Clojure</title>
+      <link>https://blog.ngzhian.com/a-history-of-clojure.html</link>
+      <pubDate>2020-06-30 21:30</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/a-history-of-clojure.html</guid>
+    </item>
+    <item>
+      <title>Porting PBRT to WebAssembly</title>
+      <link>https://blog.ngzhian.com/porting-pbrt-to-webassembly.html</link>
+      <pubDate>2020-06-13 13:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/porting-pbrt-to-webassembly.html</guid>
+    </item>
+    <item>
+      <title>IEEE 754 summary</title>
+      <link>https://blog.ngzhian.com/ieee754.html</link>
+      <pubDate>2020-05-23 12:30</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/ieee754.html</guid>
+    </item>
+    <item>
+      <title>Vim keys</title>
+      <link>https://blog.ngzhian.com/vim-keys.html</link>
+      <pubDate>2020-05-16 21:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/vim-keys.html</guid>
+    </item>
+    <item>
+      <title>64x2 integer multiplication</title>
+      <link>https://blog.ngzhian.com/i64x2mul.html</link>
+      <pubDate>2020-03-09 18:13</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/i64x2mul.html</guid>
+    </item>
+    <item>
+      <title>WebAssembly SIMD and endianness</title>
+      <link>https://blog.ngzhian.com/webassembly-simd-endian.html</link>
+      <pubDate>2019-09-11 22:13</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/webassembly-simd-endian.html</guid>
+    </item>
+    <item>
+      <title>For loops in bash and memory usage</title>
+      <link>https://blog.ngzhian.com/for-loop-bash.html</link>
+      <pubDate>2019-09-04 21:56</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/for-loop-bash.html</guid>
+    </item>
+    <item>
+      <title>Guy Steele - It’s Time for a New Old Language</title>
+      <link>https://blog.ngzhian.com/guy-steele-its-time-for-a-new-old-language.html</link>
+      <pubDate>2018-09-28 21:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/guy-steele-its-time-for-a-new-old-language.html</guid>
+    </item>
+    <item>
+      <title>LZ77</title>
+      <link>https://blog.ngzhian.com/lz77.html</link>
+      <pubDate>2018-06-26 21:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/lz77.html</guid>
+    </item>
+    <item>
+      <title>Get Off the Tightrope - Tom Stuart</title>
+      <link>https://blog.ngzhian.com/get-off-the-tightrope.html</link>
+      <pubDate>2017-12-09 16:10</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/get-off-the-tightrope.html</guid>
+    </item>
+    <item>
+      <title>Storage strategies for collections in dynamically typed languages - Bolz, Diekmann, Tratt</title>
+      <link>https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html</link>
+      <pubDate>2017-11-05 18:50</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html</guid>
+    </item>
+    <item>
+      <title>Android startup tour - zygote</title>
+      <link>https://blog.ngzhian.com/android-startup-tour-zygote.html</link>
+      <pubDate>2017-09-24 11:30</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/android-startup-tour-zygote.html</guid>
+    </item>
+    <item>
+      <title>Android startup tour - init</title>
+      <link>https://blog.ngzhian.com/android-startup-tour-init.html</link>
+      <pubDate>2017-09-20 22:20</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/android-startup-tour-init.html</guid>
+    </item>
+    <item>
+      <title>A Pretty But Not Greedy Printer by Jean-Philippe Bernardy</title>
+      <link>https://blog.ngzhian.com/a-pretty-but-not-greedy-printer.html</link>
+      <pubDate>2017-09-09 21:40</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/a-pretty-but-not-greedy-printer.html</guid>
+    </item>
+    <item>
+      <title>University reflections</title>
+      <link>https://blog.ngzhian.com/uni-reflections.html</link>
+      <pubDate>2017-06-26 19:49</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/uni-reflections.html</guid>
+    </item>
+    <item>
+      <title>G-machine</title>
+      <link>https://blog.ngzhian.com/g-machine.html</link>
+      <pubDate>2017-06-17 22:02</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/g-machine.html</guid>
+    </item>
+    <item>
+      <title>SKI combinators - Lambda to SKI</title>
+      <link>https://blog.ngzhian.com/ski2.html</link>
+      <pubDate>2017-05-27 18:25</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/ski2.html</guid>
+    </item>
+    <item>
+      <title>SKI combinators - AST and Evaluating</title>
+      <link>https://blog.ngzhian.com/ski.html</link>
+      <pubDate>2017-05-12 16:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/ski.html</guid>
+    </item>
+    <item>
+      <title>Category theory</title>
+      <link>https://blog.ngzhian.com/category-theory.html</link>
+      <pubDate>2017-05-05 19:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/category-theory.html</guid>
+    </item>
+    <item>
+      <title>Algebraic structures</title>
+      <link>https://blog.ngzhian.com/algebraic-structures.html</link>
+      <pubDate>2017-05-03 16:06</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/algebraic-structures.html</guid>
+    </item>
+    <item>
+      <title>Zippers</title>
+      <link>https://blog.ngzhian.com/zippers.html</link>
+      <pubDate>2017-04-29 14:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/zippers.html</guid>
+    </item>
+    <item>
+      <title>Some type about Sum types (and more)</title>
+      <link>https://blog.ngzhian.com/some-type-about-sum-type-and-more.html</link>
+      <pubDate>2017-03-22 19:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/some-type-about-sum-type-and-more.html</guid>
+    </item>
+    <item>
+      <title>Bookmarks for a programming language enthusiast</title>
+      <link>https://blog.ngzhian.com/bookmarks-for-a-programming-language-enthusiast.html</link>
+      <pubDate>2017-03-21 10:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/bookmarks-for-a-programming-language-enthusiast.html</guid>
+    </item>
+    <item>
+      <title>2D physics systems in the wild</title>
+      <link>https://blog.ngzhian.com/2d-physics-systems-in-the-wild.html</link>
+      <pubDate>2017-03-12 18:01</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/2d-physics-systems-in-the-wild.html</guid>
+    </item>
+    <item>
+      <title>The Next 700 Programming Languages by P. J. Landin</title>
+      <link>https://blog.ngzhian.com/the-next-700-programming-languages-p-j-landin.html</link>
+      <pubDate>2017-03-11 15:12</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/the-next-700-programming-languages-p-j-landin.html</guid>
+    </item>
+    <item>
+      <title>Dates with JavaScript</title>
+      <link>https://blog.ngzhian.com/dates-with-javascript.html</link>
+      <pubDate>2017-01-03 13:35</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/dates-with-javascript.html</guid>
+    </item>
+    <item>
+      <title>An Axiomatic Basis for Computer Programming by C. A. R. Hoare</title>
+      <link>https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html</link>
+      <pubDate>2016-12-04 21:45</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html</guid>
+    </item>
+    <item>
+      <title>How we let you be you without knowing you</title>
+      <link>https://blog.ngzhian.com/how-we-let-you-be-you.html</link>
+      <pubDate>2016-11-16 00:30</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/how-we-let-you-be-you.html</guid>
+    </item>
+    <item>
+      <title>Chrome offline network emulation and WebSocket</title>
+      <link>https://blog.ngzhian.com/chrome-offline-network-emulation-websocket.html</link>
+      <pubDate>2016-11-15 23:54</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/chrome-offline-network-emulation-websocket.html</guid>
+    </item>
+    <item>
+      <title>How we deploy</title>
+      <link>https://blog.ngzhian.com/how-we-deploy.html</link>
+      <pubDate>2016-11-12 09:37</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/how-we-deploy.html</guid>
+    </item>
+    <item>
+      <title>TDD</title>
+      <link>https://blog.ngzhian.com/tdd.html</link>
+      <pubDate>2016-10-28 22:54</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/tdd.html</guid>
+    </item>
+    <item>
+      <title>Environment</title>
+      <link>https://blog.ngzhian.com/environment.html</link>
+      <pubDate>2016-10-23 22:32</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/environment.html</guid>
+    </item>
+    <item>
+      <title>Iterative Development</title>
+      <link>https://blog.ngzhian.com/iterative-development.html</link>
+      <pubDate>2016-10-18 21:54</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/iterative-development.html</guid>
+    </item>
+    <item>
+      <title>My experience interning at 3 companies</title>
+      <link>https://blog.ngzhian.com/three-internships.html</link>
+      <pubDate>2016-09-18 21:41</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/three-internships.html</guid>
+    </item>
+    <item>
+      <title>Road to React</title>
+      <link>https://blog.ngzhian.com/road-to-react.html</link>
+      <pubDate>2016-08-27 12:24</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/road-to-react.html</guid>
+    </item>
+    <item>
+      <title>Framework v.s. Library</title>
+      <link>https://blog.ngzhian.com/framework-vs-library.html</link>
+      <pubDate>2016-08-27 11:58</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/framework-vs-library.html</guid>
+    </item>
+    <item>
+      <title>Resume tips</title>
+      <link>https://blog.ngzhian.com/resume-tips.html</link>
+      <pubDate>2016-05-04 13:35</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/resume-tips.html</guid>
+    </item>
+    <item>
+      <title>Error messages from opam when installing packages</title>
+      <link>https://blog.ngzhian.com/ocaml-opam-errors.html</link>
+      <pubDate>2016-05-03 12:24</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/ocaml-opam-errors.html</guid>
+    </item>
+    <item>
+      <title>Installing OCaml from source on Ubuntu</title>
+      <link>https://blog.ngzhian.com/install-ocaml.html</link>
+      <pubDate>2016-05-02 22:32</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/install-ocaml.html</guid>
+    </item>
+    <item>
+      <title>The magic of static</title>
+      <link>https://blog.ngzhian.com/static-site.html</link>
+      <pubDate>2016-04-24</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/static-site.html</guid>
+    </item>
+    <item>
+      <title>Haskell’s powerful pattern matching</title>
+      <link>https://blog.ngzhian.com/haskell-pattern-matching.html</link>
+      <pubDate>2015-09-11 14:05</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/haskell-pattern-matching.html</guid>
+    </item>
+    <item>
+      <title>Lexing COOL - Coursera Compilers Course Assignment 1</title>
+      <link>https://blog.ngzhian.com/coursera-compilers-1.html</link>
+      <pubDate>2015-05-25 14:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/coursera-compilers-1.html</guid>
+    </item>
+    <item>
+      <title>ffmpeg to make gifs</title>
+      <link>https://blog.ngzhian.com/ffmpeg.html</link>
+      <pubDate>2015-05-17 09:30</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/ffmpeg.html</guid>
+    </item>
+    <item>
+      <title>Common problems I faced with Vagrant and VirtualBox</title>
+      <link>https://blog.ngzhian.com/vagrant-virtualbox-dev-tips.html</link>
+      <pubDate>2015-05-08 19:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/vagrant-virtualbox-dev-tips.html</guid>
+    </item>
+    <item>
+      <title>What are Peephole Optimizations?</title>
+      <link>https://blog.ngzhian.com/peephole-1.html</link>
+      <pubDate>2015-04-28 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/peephole-1.html</guid>
+    </item>
+    <item>
+      <title>Set up Vim for JavaScript development</title>
+      <link>https://blog.ngzhian.com/vim-javascript-development.html</link>
+      <pubDate>2015-04-24 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/vim-javascript-development.html</guid>
+    </item>
+    <item>
+      <title>What the heck is Google Closure Compiler?</title>
+      <link>https://blog.ngzhian.com/closure-compiler-1.html</link>
+      <pubDate>2015-04-20 19:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/closure-compiler-1.html</guid>
+    </item>
+    <item>
+      <title>So I set up a Jenkins CI server today</title>
+      <link>https://blog.ngzhian.com/jenkins-setup.html</link>
+      <pubDate>2015-01-18 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/jenkins-setup.html</guid>
+    </item>
+    <item>
+      <title>NOC New York Financials</title>
+      <link>https://blog.ngzhian.com/noc-financials.html</link>
+      <pubDate>2015-01-09 19:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/noc-financials.html</guid>
+    </item>
+    <item>
+      <title>NOC New York Module Credits mapping for SoC</title>
+      <link>https://blog.ngzhian.com/noc-soc-mc-mapping.html</link>
+      <pubDate>2015-01-02 16:30</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/noc-soc-mc-mapping.html</guid>
+    </item>
+    <item>
+      <title>Suggest - My Hack for TimeIncHack2014</title>
+      <link>https://blog.ngzhian.com/time-inc-hack-2014.html</link>
+      <pubDate>2014-11-20 08:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/time-inc-hack-2014.html</guid>
+    </item>
+    <item>
+      <title>I will never be able to log in to Flickr again</title>
+      <link>https://blog.ngzhian.com/yahoo-flickr.html</link>
+      <pubDate>2014-05-24 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/yahoo-flickr.html</guid>
+    </item>
+    <item>
+      <title>MBeanScanner a utility class to generate sample configuration file for JMXetric</title>
+      <link>https://blog.ngzhian.com/mbeanscanner.html</link>
+      <pubDate>2014-05-19 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/mbeanscanner.html</guid>
+    </item>
+    <item>
+      <title>Exploring Apache Karaf MBeans using JConsole</title>
+      <link>https://blog.ngzhian.com/explore-apache-karaf-mbeans-using-jconsole.html</link>
+      <pubDate>2014-05-10 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/explore-apache-karaf-mbeans-using-jconsole.html</guid>
+    </item>
+    <item>
+      <title>Default value of ATTLIST, attributes of an XML Element, XML Doctype</title>
+      <link>https://blog.ngzhian.com/attlist-attributes-of-xml-element.html</link>
+      <pubDate>2014-05-10 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/attlist-attributes-of-xml-element.html</guid>
+    </item>
+    <item>
+      <title>Using JConsole to look at MBeans</title>
+      <link>https://blog.ngzhian.com/using-jconsole-to-monitor-mbeans.html</link>
+      <pubDate>2014-05-08 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/using-jconsole-to-monitor-mbeans.html</guid>
+    </item>
+    <item>
+      <title>JMX and MBeans</title>
+      <link>https://blog.ngzhian.com/jmx-mbeans.html</link>
+      <pubDate>2014-05-07 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/jmx-mbeans.html</guid>
+    </item>
+    <item>
+      <title>GSOC 2014, jmxetric</title>
+      <link>https://blog.ngzhian.com/gsoc-jmxetric.html</link>
+      <pubDate>2014-05-07 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/gsoc-jmxetric.html</guid>
+    </item>
+    <item>
+      <title>Debian Jessie, Screen resolution, and VirtualBox Guest Additions</title>
+      <link>https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html</link>
+      <pubDate>2014-05-04 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html</guid>
+    </item>
+    <item>
+      <title>Rock Paper Scissors in Haskell</title>
+      <link>https://blog.ngzhian.com/rps-haskell.html</link>
+      <pubDate>2014-05-01 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/rps-haskell.html</guid>
+    </item>
+    <item>
+      <title>Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</title>
+      <link>https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html</link>
+      <pubDate>2014-04-28 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html</guid>
+    </item>
+    <item>
+      <title>How Java sorts Objects</title>
+      <link>https://blog.ngzhian.com/how-java-sorts-objects.html</link>
+      <pubDate>2014-04-28 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/how-java-sorts-objects.html</guid>
+    </item>
+    <item>
+      <title>Setting up a killer development environment for CS2103T</title>
+      <link>https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html</link>
+      <pubDate>2014-04-27 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html</guid>
+    </item>
+    <item>
+      <title>Don’t waste their time!</title>
+      <link>https://blog.ngzhian.com/dont-waste-users-time.html</link>
+      <pubDate>2014-04-26 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/dont-waste-users-time.html</guid>
+    </item>
+    <item>
+      <title>Configuring XMonad</title>
+      <link>https://blog.ngzhian.com/configuring-xmonad.html</link>
+      <pubDate>2014-04-25 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/configuring-xmonad.html</guid>
+    </item>
+    <item>
+      <title>Planes, Airports, and Monads - Adventures in Haskell</title>
+      <link>https://blog.ngzhian.com/planes-airports-and-monads.html</link>
+      <pubDate>2014-04-20 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/planes-airports-and-monads.html</guid>
+    </item>
+    <item>
+      <title>Learning Haskell through Maybe - Functors</title>
+      <link>https://blog.ngzhian.com/learn-haskell-through-maybe-functors.html</link>
+      <pubDate>2014-04-18 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/learn-haskell-through-maybe-functors.html</guid>
+    </item>
+    <item>
+      <title>CS2101 - Should news agency ask Google to pay up?</title>
+      <link>https://blog.ngzhian.com/should-news-agencies-ask-google-to-pay.html</link>
+      <pubDate>2013-03-04 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/should-news-agencies-ask-google-to-pay.html</guid>
+    </item>
+    <item>
+      <title>Notes on “Thinking Forth”</title>
+      <link>https://blog.ngzhian.com/notes-on-thinking-forth.html</link>
+      <pubDate>2013-03-03 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/notes-on-thinking-forth.html</guid>
+    </item>
+    <item>
+      <title>Thanksgiving 2013</title>
+      <link>https://blog.ngzhian.com/thanksgiving.html</link>
+      <pubDate>2013-03-02 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/thanksgiving.html</guid>
+    </item>
+    <item>
+      <title>Hack&amp;Roll 2013</title>
+      <link>https://blog.ngzhian.com/hacknroll2013.html</link>
+      <pubDate>2013-02-03 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/hacknroll2013.html</guid>
+    </item>
+    <item>
+      <title>What I learned about fonts on Linux</title>
+      <link>https://blog.ngzhian.com/what-i-learned-about-fonts.html</link>
+      <pubDate>2013-01-11 18:00</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/what-i-learned-about-fonts.html</guid>
+    </item>
+
   </channel>
 </rss>
