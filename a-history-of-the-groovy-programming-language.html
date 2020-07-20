@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="2020-07-19" />
+  <title>A History of the Groovy Programming Language</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">A History of the Groovy Programming Language</h1>
+<p class="published">2020-07-19</p>
+</div>
+<p>This <a href="https://dl.acm.org/doi/pdf/10.1145/3386326">paper</a> was published as part of HOPL. I have written about other papers from HOPL as well:</p>
+<ul>
+<li><a href="a-history-of-clojure.html">A history of Clojure</a></li>
+</ul>
+<h2 id="groovy-in-a-a-few-paragraphs">Groovy in a a few paragraphs</h2>
+<p>Key characteristics of Groovy, good for writing scripts, terse.</p>
+<p>Highlights of Groovy (see Listing 2 in paper):</p>
+<ul>
+<li>regex match <code>=~</code> like bash (also Perl), and is sugar for Java’s <code>Matcher</code>.</li>
+<li><code>def</code> is the keyword to name things</li>
+<li>destructuring/multi-assignment (now present in many languages, Python, JS etc)</li>
+</ul>
+<p>From Fig 1 in paper:</p>
+<ul>
+<li><span class="citation" data-cites="Grab">@Grab</span> annotation, automatically download dependency and add to classpath <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
+<li>operator overloading</li>
+<li>custom transformation script for output to GroovyConsole</li>
+</ul>
+<blockquote>
+<p>Arguably, every program is trying to solve a problem in a particular domain; i.e. every program is a DSL. We aren’t advocating writing such output and compiler customization scripts for every program. But perhaps thinking carefully about our nouns and verbs, and pondering whether to grow our language just a little to meet the problem at hand, might perhaps be a useful technique in striving for clear maintainable code. - 76:8</p>
+</blockquote>
+<p>Declarative way to define immutable classes using AST transforms.</p>
+<p>In 2004, Groovy was submitted as a Java Specification Request (JSR). Developers behind Groovy worked to prepare for this, trying to finish the deliverables required for JSR approval. This included Groovy Language Specification (GLS), a complete compatibility test suite.</p>
+<h2 id="operator-overloading">Operator overloading</h2>
+<p>Does not support arbitrary custom operators - concerns that the language would be too Perl or APL-like. Fixed set of operators that can be overridden (C++), simple ASCII-based operators plus a few.</p>
+<p>Unicode operators rejected to keep barriers to language low. Unicode characters allowed in method, field, local variable names. (JavaScript)</p>
+<p>Haskell allows for custom operators, did it lead to proliferation of ASCII art operators that makes code hard to read and use? I’ve heard about how <a href="https://hackage.haskell.org/package/lens">Lens</a> exposes some pretty tricky to learn operators, but am not familiar with it at all.</p>
+<p>Q: What modern languages support Unicode operators? If you were creating a new language today, is it a good idea to support this? Capability to misuse does not mean it will be misused. Maybe we can trust the community to exercise good judgement and keep readability in mind.</p>
+<p>Operator overloading syntax works a bit different from C++, each symbol maps to a named method, <code>+</code> is <code>a.plus</code>. C++ uses the <code>operator+</code> member function.</p>
+<p>Compound operators cannot be separately overridden, if <code>+</code> is overridden, <code>+=</code> will automatically use it.</p>
+<h2 id="command-chains">Command chains</h2>
+<p>Chain method calls without brackets and dots, <code>a b c d</code> is parsed as <code>a(b).c(d)</code>, useful for expressions with an even number of terms, with special conventions for comma separated or named arguments. Last method/argument pair can be a single property access term, to allow for odd number of terms.</p>
+<p>This makes for a more natural language style, and simple DSL creation, e.g.:</p>
+<pre><code>move forward at 3.km/h -&gt; move(forward).at(3.getKm().div(h))</code></pre>
+<p>This is the one of the biggest cause of ambiguities in the language grammar, and adds complexity to the parser.</p>
+<p>Command chains make calls more English-like, and readable in that sense. But if we take the meaning of “readable” to be “understand what the machine does”, it might not be. I would have to run a tiny parser in my head to figure out if I am calling the functions in the way I expect.</p>
+<p>Perhaps this is unavoidable as you try to make a language <em>close</em> to English, since English is very ambiguous. Perhaps limiting the programming language to a strict subset of English (adjective-subject-verb-object) can be a nice middle ground. Or it could drop into the uncanny valley of languages.</p>
+<h2 id="builders">Builders</h2>
+<p>Intercept calls to missing methods on the builder class, then use the name of the missing method to build XML structures.</p>
+<pre><code>builder.root {
+   firstLevel
+}</code></pre>
+<p><code>root</code> and <code>firstLevel</code> are not methods defined on <code>builder</code>, instead the calls are intercepted, and nodes with those names are emitted instead.</p>
+<p>Contrast this to:</p>
+<pre><code>builder.node(&quot;root&quot;) {
+    node(&quot;firstLevel&quot;)
+}</code></pre>
+<p>Where <code>node</code> is a method defined on <code>builder</code>, and the names of the XML nodes are retrieved from the arguments, rather than intercepted via the call to missing methods.</p>
+<h2 id="elvis-operator">Elvis operator</h2>
+<p>I’ve seen this operator around, and finally know which langauge pioneered its use: <code>x ?:y</code> is shorthand for <code>x ? x : y</code>.</p>
+<h2 id="bracket-free-named-parameter-calls">Bracket-free named parameter calls</h2>
+<p><code>copy from: srcDir, to: destDir</code> is <code>copy(from: srcDir, to:destDir)</code>, note that the comma is required, otherwise it will be a syntax error, parsed as <code>copy(from: srcDir).to:destDir</code>. This reminds me a lot of labelled arguments (in various languages, OCaml, Swift).</p>
+<p>I’m not sure if I like the Groovy style (with whitespace) compared to the parentheses one, which is more common. One thing for sure, these keyword/labelled arguments are extremely useful for making code more readable. In fact, Swift has support for both argument label (used when calling the function) and parameter name (used within the function), which is really useful for <a href="https://docs.swift.org/swift-book/LanguageGuide/Functions.html#:~:text=The%20argument%20label%20is%20used,name%20as%20their%20argument%20label.">writing more readable code</a></p>
+<h2 id="mixing-with-java">Mixing with Java</h2>
+<blockquote>
+<p>Groovy recognised Java classes on the classpath and produced standard class files that could be made available to Java, also via the classpath. Hence Groovy and Java could be used together in hybrid projects but with some limitations.</p>
+</blockquote>
+<p>Similar to Clojure, being able to play nice with Java ecosystem is important.</p>
+<h2 id="method-names">Method names</h2>
+<p>In Listing 16, we see a method defined with the name <code>def "maximum of #a and #b is #c"</code>. Method names can be arbitrary strings.</p>
+<p>Do method calls then look like <code>"a method name"()</code>? Does it work with the brackets-free call, <code>"a method name" arg</code>?</p>
+<h2 id="ast-transforms">AST transforms</h2>
+<p>Groovy’s compiler is a multi-phase pipeline, each phase is made up of numerous internal transformations. AST transforms provides standard hooks for user-written transformations.</p>
+<p>Annotations can be added to class properties to trigger a local AST transformation (like <code>@Property</code>).</p>
+<p>This declarative approach is nice, but limited. Annotations can only be placed at certain places. Also the interaction of two transforms that modify AST can lead to unexpected results.</p>
+<p>AST transforms requires knowledge of the AST that Groovy uses. With macros, you write Groovy code, and it is transformed into AST and inserted. Macros can also use to pattern match Groovy code, instead of matching by AST structure.</p>
+<h2 id="feature-interaction">Feature interaction</h2>
+<p>Suppose a <code>@Trace</code> annotation logs every method call by injecting a print statement at the start of every method. And a <code>@ToString</code> annotation that injects a <code>toString()</code> method into a class. If we add both annotations to a class, should the <code>toString()</code> method call be traced? It depends on which annotation is applied first.</p>
+<p>Order of AST transforms not guaranteed by the compiler, but usually in order of appearance in source.</p>
+<p>Some frameworks add a notation of priority to annotations. Transforms can communicate with one another using node metadata as well. Making transforms idempotent, and running to fixpoint might be a way to fix things, but needs to keep in mind divergence and compile speed.</p>
+<p>This reminds me of a <a href="https://youtu.be/kc9HwsxE1OY?t=225">talk on Julia’s multiple dispatch</a>, which makes it really easy for packages to work well together. One example was a package to track numerical errors, and a package to plot graphs. Combining both of them was seamless due to multiple dispatch, and allowed for plotting graphs with error bars.</p>
+<h2 id="static-typing">Static typing</h2>
+<p>Groovy started out as a dynamic-only counterpart of Java. Groovy uses liked Groovy’s succinct syntax, but wanted better checking of errors.</p>
+<p>Also pressure from languages like Kotlin, even Java itself, and use of Groovy in places where type checking will be valued.</p>
+<p>Users preferred not to change how they wrote their code, even with static typing.</p>
+<p>Some users were more interested in the possibility of performance improvements, rather than the error checking benefits. Without dynamic behavior, the bytecode can be a direct method call instead of going through Groovy’s runtime.</p>
+<p>Gradual typing was discarded because it wasn’t backwards compatible with existing Groovy code. Groovy had the concept of optional typing, which indicated that the type would be checked at runtime, rather than duck typing.</p>
+<p>Compiler modes to turn on type checking was also rejected because it was too coarse grained. It also made it non-obvious whether a particular snippet of code was static or dynamic. Furthermore, a compiler mode cannot support mixing static and dynamic code within a class.</p>
+<p>The mode could be applied per method via annotations, and on a class as a shorthand for all methods. This will also allow a method level annotation to override the class level one.</p>
+<p>When in static typing mode, should it only do type checks, or perform optimizations for better code generation. Bytecode generation was done in a separate part of the compiler, so that would need to change if the latter was chosen.</p>
+<p>Eventually, two annotations:</p>
+<ul>
+<li><code>@TypeChecked</code> to enable type checking only</li>
+<li><code>@CompileStatic</code> for static type check and generate optimized bytecode (call methods directly without using Groovy runtime)</li>
+</ul>
+<p>Type inference required so that static typing can be allowed without changing the way users write Groovy.</p>
+<p>Flow sensitive typing (or <em>flow typing</em>) to track type changes to a name. A variable can change it’s type, but each use of the variable is type-safe.</p>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>More common now, see Go and Deno.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</section>
+</body>
+</html>

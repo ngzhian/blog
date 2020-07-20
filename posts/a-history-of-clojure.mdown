@@ -3,9 +3,9 @@ title: A history of Clojure
 date: 2020-06-30 21:30
 ...
 
-# A history of Clojure
+This [paper](https://dl.acm.org/doi/abs/10.1145/3386321) was published as part of HOPL. These are some pull quotes from the paper I found interesting, and some thoughts after reading. I have also written about other papers from HOPL:
 
-This [paper](https://dl.acm.org/doi/abs/10.1145/3386321) was published as part of HOPL. These are some pull quotes from the paper I found interesting, and some thoughts after reading.
+- [A History of the Groovy Programming Language](a-history-of-the-groovy-programming-language.html)
 
 ## On the beginnings of Clojure
 
