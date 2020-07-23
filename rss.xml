@@ -11,6 +11,18 @@
       blog
     </description>
     <item>
+      <title>Changing live reload server from WebSockets to Server-Sent Events</title>
+      <link>https://blog.ngzhian.com/changing-live-reload-server-from-websockets-to-server-sent-events.html</link>
+      <pubDate>2020-07-22</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/changing-live-reload-server-from-websockets-to-server-sent-events.html</guid>
+    </item>
+    <item>
+      <title>A History of the Groovy Programming Language</title>
+      <link>https://blog.ngzhian.com/a-history-of-the-groovy-programming-language.html</link>
+      <pubDate>2020-07-19</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/a-history-of-the-groovy-programming-language.html</guid>
+    </item>
+    <item>
       <title>Creating a simple live reload server for my blog</title>
       <link>https://blog.ngzhian.com/simple-live-reload.html</link>
       <pubDate>2020-07-12</pubDate>
