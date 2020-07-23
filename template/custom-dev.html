@@ -67,31 +67,24 @@ $endfor$
 </section>
 </body>
 <script>
-  var intervalId;
-  // Ping every 5s to keep this WS connection alive.
-  // Otherwise the browser will terminate this connection.
-  function keepalive(s) {
-    intervalId = setInterval(function() {
-      s.send("keepalive");
-    }, 5000);
-  }
-  var s = new WebSocket("ws://localhost:9001");
-  s.onopen = function(even) {
-    console.log("WebSocket connection open.");
-    keepalive(s);
-  };
-  s.onclose = function(even) {
-    console.log("WebSocket connection closed.");
-    clearInterval(intervalId);
-  };
-  s.onerror = function(event) {
-    console.error("WebSocket error observed:", event);
-    clearInterval(intervalId);
-  };
-  s.onmessage = function(event) {
-    if (event.data === "refresh") {
+  var source = new EventSource('http://localhost:9001/eventsource');
+
+  source.addEventListener('message', function(e) {
+    if (e.data === 'reload') {
       location.reload();
     }
-  };
+  }, false);
+
+  source.addEventListener('open', function(e) {
+    // Connection was opened.
+  }, false);
+
+  source.addEventListener('error', function(e) {
+    console.log(e);
+    console.log('close');
+    if (e.readyState == EventSource.CLOSED) {
+      // Connection was closed.
+    }
+  }, false);
 </script>
 </html>
