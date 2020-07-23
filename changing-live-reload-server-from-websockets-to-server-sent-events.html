@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="2020-07-22" />
+  <title>Changing live reload server from WebSockets to Server-Sent Events</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Changing live reload server from WebSockets to Server-Sent Events</h1>
+<p class="published">2020-07-22</p>
+</div>
+<p>In my <a href="simple-live-reload.html">previous post</a>, I walked through setting up a live reload server for this blog, so that I can make edits to my posts (written in Markdown), and see the browser automatically refresh with the changes. The core technology powering it is <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">WebSockets</a>.</p>
+<p>While reading up more about how various other live reload stack worked, I chanced upon <a href="https://en.wikipedia.org/wiki/Server-sent_events">Server-Sent Events</a>, which has been around since 2013 and is supported in all modern browsers. The <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html">specification</a> is easy enough to read, and there are <a href="https://www.html5rocks.com/en/tutorials/eventsource/basics/">plenty</a> good articles describing how to use it.</p>
+<p>There are also some <a href="https://apifriends.com/api-streaming/server-sent-events/">articles</a> talking about the differences between WebSockets and Server-Sent Events. So I will summarize some of that here.</p>
+<p>The traditional (think version 1) HTTP protocol is based on <em>requests</em> and <em>responses</em>: the browser (aka User Agent) sends a request (GET, POST, etc), and receives a response from the web server. Requests and responses contain <em>headers</em>, which describe things like MIME type of content, length, security attributes. The protocol is straightforward - the server can only communicate with the browser in a response, which must be initiated via a request from the browser.</p>
+<p>Server-Sent Events and WebSockets are technologies to lift that limitation, to allow the server to communicate with the browser without being tied to a browser-initiated request (after the initial one to establish a connection).</p>
+<p>So why the need for two different technologies? The core difference is that WebSocket is bidirectional, while Server-Sent Events are unidirectional. On a single connection, a WebSocket allows two-way communication between the browser and the server. This makes it really useful for chatty applications, think of gaming or messaging. On a single connection, Server-Sent Events only allow the server to talk to the browser. But the browser can still communicate with the browser - using the traditional request-response cycle! Of course, this request-response cycle has costs, so if you expect a lot of two-way communication, WebSockets are the right solution. In our live reload server, there web page sits there, waits for the server to notify it to reload itself. So Server-Sent Events is the perfect tool.</p>
+<p>Changing to Server-Sent Events made my server implementation (using <a href="https://github.com/uNetworking/uWebSockets">uWebSockets</a>) a bit <a href="https://github.com/ngzhian/blog/commit/e76e9643653ecb657ebbcca2973c96e5b6c7cc37#diff-b388e57e18c6815f3bdd3a6412184385">simpler</a> as I could remove all WebSocket related code. There are a couple of HTTP headers that I had to add in order for the browser to recognize this response as a Server-Sent event. The client code is also <a href="https://github.com/ngzhian/blog/commit/e76e9643653ecb657ebbcca2973c96e5b6c7cc37#diff-f97398ef174621550b8bd9ce11234a54">simpler</a> - Server-Sent Events comes with <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#reestablish-the-connection">reconnection built in</a>, so there’s no need for that keepalive/heartbeat connection every 5s that I had to do using WebSockets.</p>
+</section>
+</body>
+</html>

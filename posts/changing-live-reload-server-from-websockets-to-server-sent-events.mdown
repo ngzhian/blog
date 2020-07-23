@@ -1,0 +1,24 @@
+---
+title: Changing live reload server from WebSockets to Server-Sent Events
+date: 2020-07-22
+...
+
+In my [previous post](simple-live-reload.html), I walked through setting up a live reload server for this blog, so that I can make edits to my posts (written in Markdown), and see the browser automatically refresh with the changes. The core technology powering it is [WebSockets][].
+
+While reading up more about how various other live reload stack worked, I chanced upon [Server-Sent Events][], which has been around since 2013 and is supported in all modern browsers. The [specification][] is easy enough to read, and there are [plenty](https://www.html5rocks.com/en/tutorials/eventsource/basics/) good articles describing how to use it.
+
+There are also some [articles](https://apifriends.com/api-streaming/server-sent-events/) talking about the differences between WebSockets and Server-Sent Events. So I will summarize some of that here.
+
+The traditional (think version 1) HTTP protocol is based on *requests* and *responses*: the browser (aka User Agent) sends a request (GET, POST, etc), and receives a response from the web server. Requests and responses contain *headers*, which describe things like MIME type of content, length, security attributes. The protocol is straightforward - the server can only communicate with the browser in a response, which must be initiated via a request from the browser.
+
+Server-Sent Events and WebSockets are technologies to lift that limitation, to allow the server to communicate with the browser without being tied to a browser-initiated request (after the initial one to establish a connection).
+
+So why the need for two different technologies? The core difference is that WebSocket is bidirectional, while Server-Sent Events are unidirectional. On a single connection, a WebSocket allows two-way communication between the browser and the server. This makes it really useful for chatty applications, think of gaming or messaging. On a single connection, Server-Sent Events only allow the server to talk to the browser. But the browser can still communicate with the browser - using the traditional request-response cycle! Of course, this request-response cycle has costs, so if you expect a lot of two-way communication, WebSockets are the right solution. In our live reload server, there web page sits there, waits for the server to notify it to reload itself. So Server-Sent Events is the perfect tool.
+
+Changing to Server-Sent Events made my server implementation (using [uWebSockets][]) a bit [simpler](https://github.com/ngzhian/blog/commit/e76e9643653ecb657ebbcca2973c96e5b6c7cc37#diff-b388e57e18c6815f3bdd3a6412184385) as I could remove all WebSocket related code. There are a couple of HTTP headers that I had to add in order for the browser to recognize this response as a Server-Sent event. The client code is also [simpler](https://github.com/ngzhian/blog/commit/e76e9643653ecb657ebbcca2973c96e5b6c7cc37#diff-f97398ef174621550b8bd9ce11234a54) - Server-Sent Events comes with [reconnection built in], so there's no need for that keepalive/heartbeat connection every 5s that I had to do using WebSockets.
+
+[WebSockets]: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+[uWebSockets]: https://github.com/uNetworking/uWebSockets
+[Server-sent events]: https://en.wikipedia.org/wiki/Server-sent_events
+[specification]: https://html.spec.whatwg.org/multipage/server-sent-events.html
+[reconnection built in]: https://html.spec.whatwg.org/multipage/server-sent-events.html#reestablish-the-connection
