@@ -15,8 +15,8 @@ srcfiles := $(shell ls posts/*.mdown)
 destfiles := $(patsubst posts/%.mdown,%.html,$(srcfiles))
 pages: $(destfiles)
 
-all: pages
-	./gen-index.sh
+all: pages rss.xml
+	@./gen-index.sh
 
 # Github used to only support publishing from gh-pages branch.
 # That has changed, go into settings to switch the source branch to master.
@@ -63,4 +63,4 @@ deprecated-watch:
 
 # From https://github.com/chambln/pandoc-rss/blob/master/pandoc-rss.
 rss.xml: template/pre.xml template/post.xml template/item.xml
-	@gen-rss.sh
+	@./gen-rss.sh
