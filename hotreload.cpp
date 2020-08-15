@@ -10,7 +10,6 @@ int main() {
     uWS::App()
         .get("/",
              [ &global_res](auto *res, auto *req) {
-               std::cout << "here\n";
                if (global_res != nullptr) {
                  global_res->write("data: reload\n\n");
                } else {
