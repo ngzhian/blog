@@ -1,0 +1,33 @@
+---
+title: iTerm2 with tmux integration
+date: 2020-08-15 12:35
+...
+
+I recently tried out [iTerm2][] (mostly for it's `<Cmd-click>` integration for URLs, but it has a ton of other features). It comes with [tmux integration][]. This means that tmux panes become iTerm2 panes, and tmux windows become iTerm2 tabs. This integration even works for running tmux onto a host that I ssh to! I tried this workflow out for a couple of weeks, and eventually decided to switch back (to using a single iTerm2 window, ssh, and start tmux on my ssh destination).
+
+[iTerm2]: https://www.iterm2.com/index.html
+[tmux integration]: https://www.iterm2.com/documentation-tmux-integration.html
+
+## Highlights
+
+Seamless integration with iTerm2 tabs and panes means using mouse to easily drag and rearrange stuff. With plain tmux, you can enable [tmux mouse support] and this lets you drag to resize panes, but you can't do that to reorder windows, you'll need to use a [command](https://man.openbsd.org/tmux#move-window) for that.
+
+[tmux mouse support]: https://man.openbsd.org/tmux#mouse
+
+iTerm2 [mouseless copy](https://www.iterm2.com/features.html), where you hit Tab while searching for a term, and the search term expands, then you can copy the term easily. Right now to do this in Tmux I hit `prefix+[`, then `?` to search upwards, then visually highlight my selection to copy. I can probably come up with key chord to condense `prefix+[` and `?` to a single chord, but iTerm2 is still easier.
+
+Using `<Cmd+[number]>` to switch between tabs. The tab strip in iTerm2 has tab numbers so it's easy to hop to. With tmux you need `<prefix+[number]>`, and since `<prefix>` is usually two keys `<Ctrl-a>`, it's effectively 3 keys. I wanted this in tmux natively, but found that it didn't have a way to recognize the `Cmd` key. The best I could come up with was to use the `Meta` key.
+
+## Lowlights
+
+I use [vim-tmux-navigator] for easy navigation between tmux panes and vim splits, this means that `<Ctrl-j>` (by default it's `<Ctrl-w><j>`) will jump down the vim split below the active split, or the tmux pane below the active pane. This makes moving around really easy. For my workflow, I have a tmux split with vim above, and shell below (for running builds and tests). With iTerm2, this workflow doesn't work anymore, I have to use `<Cmd-[>` to switch between tmux panes. I initially thought that this would help with repetitive strains, since now I have to use a different key, `Cmd`, instead of relying on `Ctrl` for all my actions, but the context switch actually forced me to be more aware if I was working in a vim split or tmux pane.
+
+[vim-tmux-navigator]: https://github.com/christoomey/vim-tmux-navigator
+
+When I start my day I attach to the existing session that is running on the server. With multiple tmux windows open, I find that iTerm2 takes some time to spawn all the tabs - I can see each tab being started one at a time. Whereas when I was using plain tmux, the attachment is almost instant.
+
+My development environment is pretty sparse, there is not much eye candy around, but I do have a tmux status bar that is customized with colors that matches a Vim status bar scheme I like. With iTerm2, I lose the tmux status bar, and the nice colors I have set up.
+
+## Wrap-up
+
+iTerm2 is a fantastic product, it has a ton of features that you might not even know you need, I am a really new user and have not discovered all the ways that it can help my workflow yet. This post summarizes my experience using its tmux integration and compares it to my existing workflow. I encourage you to give it a try and see if you like it.

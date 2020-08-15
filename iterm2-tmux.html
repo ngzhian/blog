@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <title>iTerm2 with tmux integration</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">iTerm2 with tmux integration</h1>
+<p class="published">2020-08-15 12:35</p>
+</div>
+<p>I recently tried out <a href="https://www.iterm2.com/index.html">iTerm2</a> (mostly for it’s <code>&lt;Cmd-click&gt;</code> integration for URLs, but it has a ton of other features). It comes with <a href="https://www.iterm2.com/documentation-tmux-integration.html">tmux integration</a>. This means that tmux panes become iTerm2 panes, and tmux windows become iTerm2 tabs. This integration even works for running tmux onto a host that I ssh to! I tried this workflow out for a couple of weeks, and eventually decided to switch back (to using a single iTerm2 window, ssh, and start tmux on my ssh destination).</p>
+<h2 id="highlights">Highlights</h2>
+<p>Seamless integration with iTerm2 tabs and panes means using mouse to easily drag and rearrange stuff. With plain tmux, you can enable <a href="https://man.openbsd.org/tmux#mouse">tmux mouse support</a> and this lets you drag to resize panes, but you can’t do that to reorder windows, you’ll need to use a <a href="https://man.openbsd.org/tmux#move-window">command</a> for that.</p>
+<p>iTerm2 <a href="https://www.iterm2.com/features.html">mouseless copy</a>, where you hit Tab while searching for a term, and the search term expands, then you can copy the term easily. Right now to do this in Tmux I hit <code>prefix+[</code>, then <code>?</code> to search upwards, then visually highlight my selection to copy. I can probably come up with key chord to condense <code>prefix+[</code> and <code>?</code> to a single chord, but iTerm2 is still easier.</p>
+<p>Using <code>&lt;Cmd+[number]&gt;</code> to switch between tabs. The tab strip in iTerm2 has tab numbers so it’s easy to hop to. With tmux you need <code>&lt;prefix+[number]&gt;</code>, and since <code>&lt;prefix&gt;</code> is usually two keys <code>&lt;Ctrl-a&gt;</code>, it’s effectively 3 keys. I wanted this in tmux natively, but found that it didn’t have a way to recognize the <code>Cmd</code> key. The best I could come up with was to use the <code>Meta</code> key.</p>
+<h2 id="lowlights">Lowlights</h2>
+<p>I use <a href="https://github.com/christoomey/vim-tmux-navigator">vim-tmux-navigator</a> for easy navigation between tmux panes and vim splits, this means that <code>&lt;Ctrl-j&gt;</code> (by default it’s <code>&lt;Ctrl-w&gt;&lt;j&gt;</code>) will jump down the vim split below the active split, or the tmux pane below the active pane. This makes moving around really easy. For my workflow, I have a tmux split with vim above, and shell below (for running builds and tests). With iTerm2, this workflow doesn’t work anymore, I have to use <code>&lt;Cmd-[&gt;</code> to switch between tmux panes. I initially thought that this would help with repetitive strains, since now I have to use a different key, <code>Cmd</code>, instead of relying on <code>Ctrl</code> for all my actions, but the context switch actually forced me to be more aware if I was working in a vim split or tmux pane.</p>
+<p>When I start my day I attach to the existing session that is running on the server. With multiple tmux windows open, I find that iTerm2 takes some time to spawn all the tabs - I can see each tab being started one at a time. Whereas when I was using plain tmux, the attachment is almost instant.</p>
+<p>My development environment is pretty sparse, there is not much eye candy around, but I do have a tmux status bar that is customized with colors that matches a Vim status bar scheme I like. With iTerm2, I lose the tmux status bar, and the nice colors I have set up.</p>
+<h2 id="wrap-up">Wrap-up</h2>
+<p>iTerm2 is a fantastic product, it has a ton of features that you might not even know you need, I am a really new user and have not discovered all the ways that it can help my workflow yet. This post summarizes my experience using its tmux integration and compares it to my existing workflow. I encourage you to give it a try and see if you like it.</p>
+</section>
+</body>
+</html>
