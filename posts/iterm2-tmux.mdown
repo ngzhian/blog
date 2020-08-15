@@ -3,7 +3,7 @@ title: iTerm2 with tmux integration
 date: 2020-08-15 12:35
 ...
 
-I recently tried out [iTerm2][] (mostly for it's `<Cmd-click>` integration for URLs, but it has a ton of other features). It comes with [tmux integration][]. This means that tmux panes become iTerm2 panes, and tmux windows become iTerm2 tabs. This integration even works for running tmux onto a host that I ssh to! I tried this workflow out for a couple of weeks, and eventually decided to switch back (to using a single iTerm2 window, ssh, and start tmux on my ssh destination).
+I recently tried out [iTerm2][] (mostly for its `<Cmd-click>` integration for URLs, but it has a ton of other features). It comes with [tmux integration][]. This means that tmux panes become iTerm2 panes, and tmux windows become iTerm2 tabs. This integration even works for running tmux onto a host that I ssh to! I tried this workflow out for a couple of weeks, and eventually decided to switch back (to using a single iTerm2 window, ssh, and start tmux on my ssh destination).
 
 [iTerm2]: https://www.iterm2.com/index.html
 [tmux integration]: https://www.iterm2.com/documentation-tmux-integration.html
