@@ -1,6 +1,6 @@
 default: all
 
-.PHONY: deploy pages minify-css watch
+.PHONY: deploy pages minify-css watch dev-watch
 
 # https://cssminifier.com/curl
 minify-css:
@@ -46,20 +46,10 @@ dev-pages: $(devdestfiles)
 dev/%.html: posts/%.mdown
 	pandoc --from markdown --template template/custom-dev -o dev/$*.html $<
 
-# Build hotreload server.
-# Yucky absolute paths, but it works on my machine.
-hotreload: hotreload.cpp
-	@clang++ hotreload.cpp -I ../uWebSockets/src -I ../uWebSockets/uSockets/src -lpthread -std=c++17 -flto -O3 ../uWebSockets/uSockets/*.o -lz -o $@
-
 # Using a script so that I can set a trap on script exit
 # and cleanly shut down hotreload server.
-dev-watch: hotreload
+dev-watch: hotreload.py dev-watch.sh
 	@./dev-watch.sh
-
-# This is the old way to watch for changes and automatically rebuild,
-# without hotreload. Use dev-watch instead.
-deprecated-watch:
-	@fswatch -or template/ posts/ | xargs -o -n 1 -I {} make
 
 # From https://github.com/chambln/pandoc-rss/blob/master/pandoc-rss.
 rss.xml: template/pre.xml template/post.xml template/item.xml
