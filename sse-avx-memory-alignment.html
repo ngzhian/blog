@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="2020-10-29" />
+  <title>Memory alignment requirements for SSE and AVX instructions</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Memory alignment requirements for SSE and AVX instructions</h1>
+<p class="published">2020-10-29</p>
+</div>
+<p>The short:</p>
+<ul>
+<li>SSE instructions require aligned memory operands, except for instructions that say unaligned</li>
+<li>AVX instructions do not require aligned memory operands, except for instructions that say aligned</li>
+</ul>
+<p>Read on for more.</p>
+<h2 id="memory-and-alignment">Memory and alignment</h2>
+<p>SIMD instructions on x86 systems can take memory operands. However, whenever memory is accessed, we have to consider alignment.</p>
+<p>The <strong>natural alignment</strong> is the size of the memory access - accessing 8 bytes requires the access to be aligned to 8 bytes boundary. Proper alignment ensures that the access will not cross cache lines, leading to performance reduction.</p>
+<p>Imagine a 8-byte cache line. Loading 8 bytes on any 8-byte aligned address loads a full cache line. However, if the address is only 4-byte aligned, you will require loading 2 cache lines, effectively halving the speed. This is especially a problem on older processors.</p>
+<h2 id="simd-sse-avx">SIMD, SSE, AVX</h2>
+<p>For SIMD instructions on x86, this usually means 128-bit, 256-bit, or 512-bit alignment. For simplicity we only discuss 128-bit SIMD, available since SSE.</p>
+<p>Take a look at an instruction like <a href="https://www.felixcloutier.com/x86/addps">addps</a>. <code>addps</code> is the SSSE3 version, and <code>vaddps</code> is the AVX (or VEX-encoded version). Both instruction can take a <code>m128</code> source operand, meaning that 128 bits will be loaded from memory. And as we have discussed, this address should be 128-bit aligned.</p>
+<p>The key different in memory alignment requirements between SSE and AVX instructions is that for SSE, you get a segfault; and for AVX, it works, with a potential performance hit (due to cache lines).</p>
+<p>This means that when using any SSE instructions (referred to as 128-bit Legacy SSE instruction), all memory operands <em>must</em> be aligned. When using the AVX version (referred to as VEX.128), which also works on 128-bit operands, unaligned memory operands are supported, no segfaults.</p>
+<p>There are other instructions that explicitly require alignment, or does not require alignment - these instructions usually have “aligned” or “unaligned” in their names. For example <a href="https://www.felixcloutier.com/x86/movaps">movaps</a> requires aligned memory operands, both SSE and AVX versions, whereas <a href="https://www.felixcloutier.com/x86/movups">movups</a> does not require any alignment at all.</p>
+<p>So, which instruction to use? When in doubt, use movups. It handles all cases, aligned and unaligned. Of course, there is the issue of potential performance drop.</p>
+</section>
+</body>
+</html>
