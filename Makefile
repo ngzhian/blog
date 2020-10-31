@@ -48,7 +48,7 @@ dev/%.html: posts/%.mdown
 
 # Using a script so that I can set a trap on script exit
 # and cleanly shut down hotreload server.
-dev-watch: hotreload.py dev-watch.sh
+dev-watch: hotreload.py dev-watch.sh dev-pages
 	@./dev-watch.sh
 
 # From https://github.com/chambln/pandoc-rss/blob/master/pandoc-rss.
