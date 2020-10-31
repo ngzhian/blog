@@ -1,0 +1,130 @@
+---
+title: Template template parameter and function templates
+date: 2020-10-31
+...
+
+In [C++ templates](cpp-templates.html), we discussed various kinds of templates, how to use them, and deduction. This post will discuss a particular kind of template parameters - template template parameter.
+
+The example we looked at was:
+
+```cpp
+template<typename T>
+T neg(T x) {
+    return (x >= 0) ? x : -x;
+}
+```
+
+`T` in this example is a [type template parameter](https://en.cppreference.com/w/cpp/language/template_parameters#Type_template_parameter). In order to use this function template, you have to instantiate the template, providing a *type* for T:
+
+```
+neg<int>(1);  // -1
+```
+
+Another example of a template is:
+
+```cpp
+template<int x>
+T add1(T x) {
+    return x + 1;
+}
+```
+
+`x` is a [non-type template parameter](https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter), it is fixed to `int`, and to use this template you have to provide an `int`, not a type:
+
+```cpp
+add1<3>(1)  // 4
+```
+
+The last kind is a [template template parameter](https://en.cppreference.com/w/cpp/language/template_parameters#Non-type_template_parameter), this is a template parameter which is a template.
+
+To instantiate this template, you need to provide a template for `C`.
+
+We might first want to try and write function template that takes a template template parameter:
+
+```cpp
+template<template<class> class C>
+int f(bool x) {
+  if (x) {
+    return C<int>();
+  } else {
+    return C<float>();
+  }
+}
+```
+
+And to instantiate it, we pass a function template:
+
+```cpp
+template <typename T>
+int a() {}
+
+int main() {
+  f<a>(true);
+}
+```
+
+But this will not work
+
+```
+b.cpp:15:3: error: no matching function for call to 'f'
+  f<a>(true);
+  ^~~~
+b.cpp:2:5: note: candidate template ignored: invalid explicitly-specified argument for template parameter 'C'
+int f(bool x) {
+    ^
+1 error generated.
+```
+
+It seems like you cannot match a function template with a template template parameter.
+
+However, you can wrap the function template into a class template, and make the class a function object:
+
+```cpp
+template <typename T>
+struct b {
+int operator()() { return 0; }
+};
+
+template<template<class> class C>
+int f(bool x) {
+  if (x) {
+    return C<int>()();
+  } else {
+    return C<float>()();
+  }
+}
+```
+
+Here we create a helper struct `b`, and implement whatever `a` was doing inside the overloaded function call operator. And since we now have a function object, using it is different, we need to first instantiate `C` with a type, construct the object, then call it, leading to an awkward double parentheses.
+
+I have not figured out where this restriction is stated, any pointers will be appreciated.
+
+I encountered this use case for a template template parameter while refactoring some code in an ARM simulator. Imagine an add instruction that works on SIMD registers, it can be a i18x16, i16x8, i32x4, i64x2 addition. We have a generic addition that is templatized, and we specialized it for various fixed-width integer types.
+
+```cpp
+template <typename T>
+T Add(T, T) { /* elided */ }
+
+HandleSimdAdd(Instruction instr) {
+  SimdShape shape = instr->shape;
+  if (shape == kI8X16) {
+    int8_t src1[16] = instr->GetRegisterValueAsArray(1);
+    int8_t src2[16] = instr->GetRegisterValueAsArray(2);
+    int8_t dst[16];
+    for (int i = 0; i < 16; i++) {
+      dst[i] = Add<int8_t>(src1[i], src2[i]);
+    }
+  } else if (shape == kI16x8) {
+    int16_t src1[16] = instr->GetRegisterValueAsArray(1);
+    int16_t src2[16] = instr->GetRegisterValueAsArray(2);
+    int16_t dst[16];
+    for (int i = 0; i < 16; i++) {
+      dst[i] = Add<int16_t>(src1[i], src2[i]);
+    }
+  } else if (shape == kI32X4) {
+  } else {
+  }
+}
+```
+
+There is a bunch of repetition, so I would like to extract this out, maybe as a `Binop` function, which will take any function and applies it to the two source registers. However, `Binop` will need to take as a parameter `Add`, which is a function template. So it needs a template template parameter. But as we've seen above, it wouldn't match, as `Add` is a function template. I looks like to do that we would need to convert `Add` into a class template function object. (Or we can refactor this code slightly differently.)
