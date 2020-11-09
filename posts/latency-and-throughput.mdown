@@ -1,0 +1,22 @@
+---
+title: Latency and throughput
+date: 2020-11-09
+...
+
+These two terms, *latency* and *throughput*, come up a lot when reading about instructions.
+
+In this [article](https://software.intel.com/content/www/us/en/develop/articles/measuring-instruction-latency-and-throughput.html), latency is defined as the "number of processor clocks it takes for an instruction to have its data available for use by another instruction", and throughput is the "number of processor clocks it takes for an instruction to execute or perform its calculations".
+
+Initially, these two definitions read almost identical to me.
+
+Imagine trying to make a pizza, it takes 15 for preparing the ingredients, and 15 mins in the oven. So the latency is 30 mins, and the throughput is also 30 mins. So why use two words to mean the same thing?
+
+The situation changes when you now have two chefs.
+
+Each pizza still requires 30 mins, but you can pipeline this process.
+
+The first chef will prepare the pizza (15 mins), then for the next 15 mins will prepare the second pizza, while this is happening, the second chef watches the first pizza in the oven. Once the first pizza is done, the second pizza goes in the oven. Imagine this going on for a while, you will get a pizza ready to eat every 15 mins (even though each pizza still takes the same 30 mins).
+
+In concrete terms, let's look at the [ADD](https://uops.info/html-instr/ADD_AL_I8.html#ICL) instruction, the latency is 1, it takes one cycle to add two registers, and the throughput is 0.25, so every 0.25 cycle, a new add instruction can be started (but it still takes 1 full cycle for the result to be ready).
+
+This is possible because modern processors have deep pipeline, and also have multiple execution ports that can handle the same instruction.
