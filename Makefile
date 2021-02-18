@@ -52,5 +52,5 @@ dev-watch: hotreload.py dev-watch.sh dev-pages
 	@./dev-watch.sh
 
 # From https://github.com/chambln/pandoc-rss/blob/master/pandoc-rss.
-rss.xml: template/pre.xml template/post.xml template/item.xml
+rss.xml: template/pre.xml template/post.xml template/item.xml pages
 	@./gen-rss.sh

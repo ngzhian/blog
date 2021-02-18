@@ -11,6 +11,42 @@
       blog
     </description>
     <item>
+      <title>PushPush is NP-hard in 2D</title>
+      <link>https://blog.ngzhian.com/pushpush-is-np-hard-in-2d.html</link>
+      <pubDate>2021-02-11</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/pushpush-is-np-hard-in-2d.html</guid>
+    </item>
+    <item>
+      <title>Abstractions and caller requirements</title>
+      <link>https://blog.ngzhian.com/abstraction-prevent-callers.html</link>
+      <pubDate>2020-12-18</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/abstraction-prevent-callers.html</guid>
+    </item>
+    <item>
+      <title>Latency and throughput</title>
+      <link>https://blog.ngzhian.com/latency-and-throughput.html</link>
+      <pubDate>2020-11-09</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/latency-and-throughput.html</guid>
+    </item>
+    <item>
+      <title>Template template parameter and function templates</title>
+      <link>https://blog.ngzhian.com/template-template-parameter-function-template.html</link>
+      <pubDate>2020-10-31</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/template-template-parameter-function-template.html</guid>
+    </item>
+    <item>
+      <title>Memory alignment requirements for SSE and AVX instructions</title>
+      <link>https://blog.ngzhian.com/sse-avx-memory-alignment.html</link>
+      <pubDate>2020-10-29</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/sse-avx-memory-alignment.html</guid>
+    </item>
+    <item>
+      <title>iTerm2 with tmux integration</title>
+      <link>https://blog.ngzhian.com/iterm2-tmux.html</link>
+      <pubDate>2020-08-15 12:35</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/iterm2-tmux.html</guid>
+    </item>
+    <item>
       <title>Changing live reload server from WebSockets to Server-Sent Events</title>
       <link>https://blog.ngzhian.com/changing-live-reload-server-from-websockets-to-server-sent-events.html</link>
       <pubDate>2020-07-22</pubDate>
