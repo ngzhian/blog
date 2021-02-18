@@ -8,7 +8,7 @@ minify-css:
 
 # build ready-to-deploy pages
 %.html: posts/%.mdown
-	pandoc --from markdown --template template/custom -o $*.html $<
+	pandoc --from markdown+tex_math_dollars --template template/custom -o $*.html $<
 
 # for each *.mdown in posts/, generate a similarly named *.html.
 srcfiles := $(shell ls posts/*.mdown)
@@ -44,7 +44,7 @@ dev-pages: $(devdestfiles)
 # Build a single dev html page.
 # Note that the template used is "template/custom-dev"
 dev/%.html: posts/%.mdown
-	pandoc --from markdown --template template/custom-dev -o dev/$*.html $<
+	pandoc --from markdown+tex_math_dollars --template template/custom-dev -o dev/$*.html $<
 
 # Using a script so that I can set a trap on script exit
 # and cleanly shut down hotreload server.
