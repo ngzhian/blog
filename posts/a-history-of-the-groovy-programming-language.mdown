@@ -3,6 +3,9 @@ title: A History of the Groovy Programming Language
 date: 2020-07-19
 ...
 
+> This is a series of posts where I jot down my learnings from computer science papers I've read.
+Previously, [Epigrams on Programming ](./epigrams-on-programming.html).
+
 This [paper](https://dl.acm.org/doi/pdf/10.1145/3386326) was published as part of HOPL. I have written about other papers from HOPL as well:
 
 - [A history of Clojure](a-history-of-clojure.html)

@@ -3,6 +3,9 @@ title: Epigrams on Programming - Alan J. Perlis
 date: 2020-07-02 12:33
 ...
 
+> This is a series of posts where I jot down my learnings from computer science papers I've read.
+Previously, [A history of Clojure](./a-history-of-clojure.html).
+
 In [A history of Clojure](https://blog.ngzhian.com/a-history-of-clojure.html), Rickey cites Perlis' [Epigrams on Programming][] a number of times, specifically epigram 9:
 
 > It is better to have 100 functions operate on one data structure than

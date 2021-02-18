@@ -3,6 +3,9 @@ title: LZ77
 date: 2018-06-26 21:00
 ...
 
+> This is a series of posts where I jot down my learnings from computer science papers I've read.
+Previously, [Storage strategies for collections in dynamically typed languages](./storage-strategies-for-collections-in-dynamically-typed-languages.html).
+
 LZ77 is a compression algorithm by Abramham Lampel and Jacob Ziv published in a paper in 1977 ([pdf](http://www.nemenmanlab.org/~ilya/images/e/e9/Ziv-lempel-77.pdf)).
 It is the basis of many algorithms used in places like PNG and ZIP. I thought it would be interesting to see how it works.
 
