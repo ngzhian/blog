@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="2021-02-11" />
+  <title>PushPush is NP-hard in 2D</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">PushPush is NP-hard in 2D</h1>
+<p class="published">2021-02-11</p>
+</div>
+<blockquote>
+<p>This is a series of posts where I jot down my learnings from computer science papers I’ve read. Previously, <a href="./a-history-of-the-groovy-programming-language.html">A History of the Groovy Programming Language</a>.</p>
+</blockquote>
+<p>This <a href="https://arxiv.org/abs/cs/0001019">paper</a> builds on an <a href="https://arxiv.org/abs/cs/9911013">earlier result</a> which showed that PushPush is NP-hard in 3D, but showing that is is equally hard in 2D.</p>
+<h2 id="pushpush">PushPush</h2>
+<p>In this game, an agent needs to get from a starting position to a goal. The map is filled with blocks. The agent can push one block at a time, and each block will slide until it hits another block (or a boundary of the map).</p>
+<p>With A as the agent, and o as a block, G as the goal.</p>
+<pre><code>A   o  ooo
+oooo   oooo
+oooo   oooo
+oooo G oooo</code></pre>
+<p>In this case the Agent needs to push a block right to open up the path to the Goal.</p>
+<h2 id="reduction-from-sat">Reduction from SAT</h2>
+<p>The high level proof is the standard reduction from SAT - construct a map that “represents” a formula, and prove in both direction:</p>
+<ul>
+<li>if the simulated boolean expression is satisfiable, there is a path the agent can take from the start to the goal</li>
+<li>if there is a path the agent can take from the start to the goal, the simulated boolean expression is satisfiable</li>
+</ul>
+<h2 id="representing-sat-formulas">Representing SAT formulas</h2>
+<p>A boolean formula written in conjunctive normal form , is made up of variables (<em>x</em>, <em>y</em>, <em>z</em>, etc.), conjunctions (<em>x</em> or <em>y</em>) which is called a clause, and a disjunction of these clauses, like <span class="math inline">(<em>x</em><sub>1</sub> ∨ <em>x</em><sub>2</sub>) ∧ ( <em>x</em><sub>1</sub>∨ <em>x</em><sub>3</sub>)</span>. Such formulas can be represented in a map using a handful of gadgets.</p>
+<h3 id="corridor">Corridor</h3>
+<p>A 2x2 cluster of blocks is unmovable by an agent:</p>
+<pre><code>A
+  oo
+  oo</code></pre>
+<p>There is simply no space for any block to move anywhere.</p>
+<p>We can use such clusters to construct “corridors” to guide the Agent:</p>
+<pre><code>A  oooooo
+oo oooooo
+oo
+ooooooooo
+ooooooooo
+oooo oooo
+oooo oooo
+oooo oooo</code></pre>
+<p>This forces the agent along a single path, to the right.</p>
+<p>If we only use corridors of width 1, we can simplify the drawing by using lines for the corridors. The diagram above will be:</p>
+<pre><code>A-+
+  |
+  +-----
+
+  |
+  |
+  |</code></pre>
+<p>We will also use o to represent a movable block:</p>
+<pre><code>A---o-
+    |
+    |
+    G</code></pre>
+<p>Alternatively we may use a capital letter to label a movable block:</p>
+<pre><code>A---B-
+    |
+    |
+    G</code></pre>
+<h3 id="one-way-gadget">One-Way Gadget</h3>
+<pre><code>| x
+|
++--o--
+   |
+   | y</code></pre>
+<p>Lemma 1: A one-way gadget permits movement from x to y, but not y to x. (After travelling from x to y, the agent can subsequently return from y to x.)</p>
+<h3 id="fork-gadget">Fork Gadget</h3>
+<p>A Fork Gadget presents the Agent with a binary choice:</p>
+<pre><code>       | x
+       |
+     +-+
+     | |
+  ---o-+
+  |  +------+
+y |         | z</code></pre>
+<p>Lemma 2: The Agent can pass from x to y or x to z, but taking one path seals off the other.</p>
+<p>To go from x to y, the block has to be pushed down, and the path to z is blocked:</p>
+<pre><code>      x
+      |
+    --|
+    | |
+ ---|--
+ |  o------|
+ y         z</code></pre>
+<p>To go from x to z, the block as to be pushed left, and the path to y is blocked:</p>
+<pre><code>      x
+      |
+    --|
+    | |
+ o--+--
+ |  |------|
+ y         z</code></pre>
+<p>Similar to the one-way gadget, the Agent may reverse its path.</p>
+<h3 id="d-crossover-gadget">3D Crossover Gadget</h3>
+<p>In 3D, crossovers are trivial, since you can build a corridor above an existing one.</p>
+<pre><code>   |
+---@---
+   |</code></pre>
+<p>To represent a 3D crossing, we will use @: traversing vertically or horizontally is permitted, but those corridors are not connected at all.</p>
+<h2 id="constructing-the-formulas">Constructing the formulas</h2>
+<p>We can use the above gadgets to construct our formulas.</p>
+<h3 id="variable-setting-component">Variable-Setting component</h3>
+<p>The Agent will travel through a series of variable-setting components, each of which has a (T)rue path and a (F)alse path, indicating the value of that variable.</p>
+<p>These components have corridors going to the right (called <em>wires</em>), and the two paths merges via One-Way gadgets.</p>
+<p>The crossovers (@) indicate that the wires exiting F are not connected to the vertical T path at all.</p>
+<pre><code>        a
+        |
+     +--+
+F    |  |
+  o--+--+
+  |  |        T
+  |  +------+
+  |         +-------
+  +---------@-----
+  |         +----
+  +---------@---
+  |         |
+  +-o--+--o-+
+       |
+       b</code></pre>
+<p>Lemma 3: The Agent may travel from a to b only by choosing T or F, but not both. When a path is chosen, the Agent can travel down any wires attached to that path, but not any of the wires attached to the other path.</p>
+<h3 id="clause-component">Clause Component</h3>
+<p>This represents a clause in the formula, a disjunction of the variables.</p>
+<pre><code>   x
+     |
+     o---+
+a    |   |
+---o-+   |
+b    |   |
+---o-+   |
+c    |   |
+---o-+   |
+     |   |
+   +-+---+
+   |
+   y</code></pre>
+<p>Lemma 4: The Agent may only pass from x to y if at least one block is pushed into it along an attached wire (a, b, or c above).</p>
+<p>This is essentially a lock with three keys - the blocks on wires a, b, and c. At least one key must be inserted into the lock in order for the Agent to go from x to y.</p>
+<h2 id="complete-sat-reduction">Complete SAT reduction</h2>
+<pre><code>
+        s
+        |
+     +--+
+F    |  |                                     +--------+
+  +--o--+                                     o----+   |
+  |  |        T                          a    |    |   |
+  |  +------+                                 |    |   |
+  |   x1    +-------------------------------o-+    |   |
+  |         +-------------------+             | c1 |   |
+  +---------@--------------     |    +------o-+    |   |
+  |         |             |     |    |        |    |   |
+  +---------@-------+     |     |    |        |    |   |
+  |         |       |     |     |    |       +-----+   |
+  +-o-----o-+       |     |     |    |       |         |
+       \            |     |     |    |       o---+     |
+     +--+           |     |     |    |       |   |     |
+F    |  |           |     |     +----@-----o-+c2 |     |
+  +--o--+           |     |          |x1+~x2 |   |     |
+  |  |        T     |     |          |    +o-+   |     |
+  |  |------+       |     |          |    |  |   |     |
+  |   x2    +-------@-----@----------+    |  |   |     |
+  |         |       |     |               | ++---+     |
+  +---------@-------@-----@---------------+ o          |
+  |         +--+    |     +--------------o--+---+      |
+  +-o--+--o-+  |    |            ~x1+x3     |   |      |
+       |       +----@--------------------o--+   |      |
+        \           |           ~x1+x2+x3   | c3|      |
+      +--+          |           |--------o--+   |      |
+ F    |  |          |           |           |   |      |
+   +--o--+          |           |          ++---+      |
+   |  |        T    |           |          |           |
+   |  +------+      |           |          o---+       |
+   |         |------@------------          |   |       |
+   |         |      |--------------------o-+   |       |
+   |         |                  ~x1+~x3    |c4 |       |
+   +---------@---------------------------o-+   |       |
+   |         |                             |   |       |
+   +-o--+--o-+                             |   |       |
+        |                                  |   |       |
+        |                                +-+---+       |
+        |                            t   |             |
+        +----------------------------------------------+</code></pre>
+<p>The above figure shows a construction for a formula containing 4 clauses <span class="math inline"><em>c</em><sub>1</sub> ∨ <em>c</em><sub>2</sub> ∨ <em>c</em><sub>3</sub> ∨ <em>c</em><sub>4</sub></span>. Two versions of the clauses are shown:</p>
+<ol type="1">
+<li><span class="math inline">(<em>x</em>1 ∨ <em>x</em>2) ∧ (<em>x</em>1∨ <em>x</em>2) ∧ ( <em>x</em>1 ∨ <em>x</em>3) ∧ ( <em>x</em>1∨ <em>x</em>3)</span></li>
+<li><span class="math inline">(<em>x</em>1 ∨ <em>x</em>2) ∧ (<em>x</em>1∨ <em>x</em>2) ∧ ( <em>x</em>1 ∨ <em>x</em>2 ∨ <em>x</em>3) ∧ ( <em>x</em>1∨ <em>x</em>3)</span></li>
+</ol>
+<p>The only difference betwen these two formulas are in C3. Formula 1 is not satisfiable, formula 2 is satisfiable.</p>
+<p>The general idea is:</p>
+<ul>
+<li>Each variable has the True or False gadget</li>
+<li>Each clause in the formula has a clause gadget</li>
+<li>Clause components have a wire to either the True or False path of each variable it contains</li>
+</ul>
+<p>Proof: If the simulated is SAT formula is satisfable, there is a path from s to t, as can be verified in the above figure. To proof the other direction, we use a proof by contradiction. Given the path from s to t, suppose the expression is unsatisfiable, then the robot can only reach t by “shortcutting” the design. The design of the variable components ensure only one of the True or False path can be taken. The crossovers ensure no “leakage”. The only possible way to get around this is if the robot could travel from a clause component back to a variable that sets the opposite value. But each variable clause has a block to prevent such actions.</p>
+<h2 id="d-crossovers">2D Crossovers</h2>
+<p>This is the part of the table that adds on to the 3D proof. In 3D, crossovers were easy to construct. In 2D, it requires some clever mechanics.</p>
+<p>There are two types of crossovers needed:</p>
+<ol type="1">
+<li>FT-crossovers: horizontal wire from an False-wire in a variable unit crosses the vertial T wire of the same variable unit</li>
+<li>VC-crossovers: horizontal wire from some variable unit to a clause unit corsses a vertical wire from another variable unit to some claause unit.</li>
+</ol>
+<p>FT-crossovers are traversed in one direction or the other, but never both, becuase once the Agent chooses True or False, it can never get to the other wire. So, FT-crossover is a more limited crossover.</p>
+<p>This FT-crossover is also known as a XOR crossover:</p>
+<h3 id="xor-crossover">XOR crossover</h3>
+<pre><code>           T |
+             +--+
+F               |
+|            +--o
+|            |  |
++----+  +----+--+--+
+|    |  |    |     |       |
+|    +--o----+     +---o---|  Cj
+|            |             |
+             | x</code></pre>
+<p>Going from F to Cj is fine, as is going from T to x, but you cannot do both. After traversing, the same path can be traversed again multiple times in the same direction.</p>
+<h3 id="vc-crossover">VC crossover</h3>
+<p>The VC crossovers need to be traversed in either direction (horizontal or vertical). It only needs to be traversed once in each of the four directions:</p>
+<ol type="1">
+<li>from a variable component xi to deposit a key into the clause component</li>
+<li>returning back to xi</li>
+<li>later from xk where k != i to some Cl</li>
+<li>returning back to xk</li>
+</ol>
+<p>This crossover is rather complex and can be built up using simpler components.</p>
+<h4 id="locking-door-unit">Locking Door Unit</h4>
+<p>This is a corridor with a locked door: once traversed, the passage is forever unpasssable:</p>
+<pre><code>      + x
+      |
+   +--+
+   |
++--+              +--+
+|  |              |  |
++--A--------------+--B
+|  |                 |
++--+                 |
+   |                 |
+   |                 |
++--+                 |
+|  |               b |
++--C--------+--------+----+----D----
+            |             |    |
+            +-------------+    |
+                               | y</code></pre>
+<p>The only possible way from x to y is to push A up, then B down, which serves as a stopper when pushing C right, and finally push D right.</p>
+<h4 id="double-lock-unit">Double Lock Unit</h4>
+<p>This behaves like a Locking Door Unit, but requires an external key to operate:</p>
+<pre><code>         +
+         |
+         A
+         |
+  +------+--------+
+         |
+         +----------------+
+         |                |
+         |              +-+-+
+         |              |LDU|
+         |              +-+-+
+         |                |
+ +----+--+-----+-----C----B
+ |    |        |          |
+ |    +--------+          |
+ |                        |
+ |                        |
+ +------o-------------+---+---+---o-+
+                      |       |   |
+                      +-------+   |
+                                  |
+                                  +</code></pre>
+<p>A is the key and needs to be pushed down to stop C from going all the way left. B needs to be pushed down to stop D from going all the way right. Finally, due to the LDU, there is no way back to x.</p>
+<h4 id="unidirectional-crossover-gadget">Unidirectional Crossover Gadget</h4>
+<p>With the LDU and DLU, we can build a Unidirection Crossover Gadget:</p>
+<pre><code>                y1
+              +-----+
+              | LDU |
+              +--+--+
+                 |
+                 o
+   +-----+       |      +-----+
+x1 | LDU +---o----------+ DLU |  x2
+   +-----+       |      +-----+
+                 |
+                 |
+              +--+--+
+              | DLU |
+              +-----+
+                y2</code></pre>
+<p>This gadget can be traversed from x1 to x2, but not from x2 to x1, and from y1 to y2, but not y2 to y1.</p>
+<p>Once a path is traversed, it becomes impassable from either direction, but the other path is still traversable.</p>
+<h3 id="bidirectional-crossover-gadget">Bidirectional Crossover Gadget</h3>
+<p>Finally, we can construct our VC-crossover:</p>
+<pre><code>                       y1
+                       |
+               +---------------+
+               |               |
+               |               |
+            +--+--+         +--+--+
+        +---+ UCD +---------+ UCD +---+
+        |   +--+--+         +--+--+   |
+x1      |      |               |      |    x2
++-------+      |               |      +-----+
+        |      |               |      |
+        |   +--+--+         +--+--+   |
+        +---+ UCD +---------+ UCD +---+
+            +--+--+         +--+--+
+               |               |
+               |               |
+               +---------------+
+                       |
+                       y2</code></pre>
+<p>This gadget can be traversed as many as four times in any order or x1-x2, x2-x1, y1-y2, y2-y1.</p>
+<h3 id="d-construction">2D Construction</h3>
+<p>With all these gadgets in place, we can replace all FT-crossovers with a XOR Crossover Gadget, and all VC-crossover with a Bidirectional Crossover Gadget.</p>
+</section>
+</body>
+</html>
