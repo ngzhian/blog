@@ -1,0 +1,64 @@
+---
+title: Abstractions and caller requirements
+date: 2020-12-18
+...
+
+When writing a long, complicated piece of code, it is ideal to add comment to pieces of the logic, some will say that every commented snippet should be extracted into a function. There is a tension between extracting into smaller functions, and keep ensuring that those extracted functions only get called with the correct prerequisite.
+
+For example:
+
+```
+if (match(a)) {
+  if (deepermatch(a)) {
+    // optimized code
+  } else {
+    // less optimized code
+  }
+}
+```
+
+`deepermatch` allows us to write a more optimized implementation, provided that `a` meets certain requirements. However, the condition is that `match(a)` needs to be true already.
+
+In order words, calling `deepermatch(a)` outside the scope of a `match(a)` will lead to incorrect results.
+
+One way to disallow this is to use private members inside a class.
+
+```
+class A {
+  public match();
+  private deepermatch()
+}
+```
+
+This exposes only `match`, so no caller can use `deepermatch`. But with this, there is an inversion of control. The caller can no longer easily write a more optimized code when `deepermatch` is true. It needs to somehow supply the logic to `A`.
+
+Another way is of course, commenting your code:
+
+```
+match()
+// Only call this if `match` is true.
+deepermatch()
+```
+
+This is however, fragile.
+
+We could also, in the definition of `deepermatch`, call `match`.
+
+```
+deepermatch() {
+  if !match() return
+}
+```
+
+The drawback here is that `match` will be called twice, and if it is expensive, we just wasted some time.
+
+We could hide it behind some flag:
+
+```
+deepermatch() {
+  debug_check
+  match()
+}
+```
+
+That way we take the performance hit only on debug builds, and still get some protection.

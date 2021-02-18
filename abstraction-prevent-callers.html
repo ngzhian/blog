@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="2020-12-18" />
+  <title>Abstractions and caller requirements</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">Abstractions and caller requirements</h1>
+<p class="published">2020-12-18</p>
+</div>
+<p>When writing a long, complicated piece of code, it is ideal to add comment to pieces of the logic, some will say that every commented snippet should be extracted into a function. There is a tension between extracting into smaller functions, and keep ensuring that those extracted functions only get called with the correct prerequisite.</p>
+<p>For example:</p>
+<pre><code>if (match(a)) {
+  if (deepermatch(a)) {
+    // optimized code
+  } else {
+    // less optimized code
+  }
+}</code></pre>
+<p><code>deepermatch</code> allows us to write a more optimized implementation, provided that <code>a</code> meets certain requirements. However, the condition is that <code>match(a)</code> needs to be true already.</p>
+<p>In order words, calling <code>deepermatch(a)</code> outside the scope of a <code>match(a)</code> will lead to incorrect results.</p>
+<p>One way to disallow this is to use private members inside a class.</p>
+<pre><code>class A {
+  public match();
+  private deepermatch()
+}</code></pre>
+<p>This exposes only <code>match</code>, so no caller can use <code>deepermatch</code>. But with this, there is an inversion of control. The caller can no longer easily write a more optimized code when <code>deepermatch</code> is true. It needs to somehow supply the logic to <code>A</code>.</p>
+<p>Another way is of course, commenting your code:</p>
+<pre><code>match()
+// Only call this if `match` is true.
+deepermatch()</code></pre>
+<p>This is however, fragile.</p>
+<p>We could also, in the definition of <code>deepermatch</code>, call <code>match</code>.</p>
+<pre><code>deepermatch() {
+  if !match() return
+}</code></pre>
+<p>The drawback here is that <code>match</code> will be called twice, and if it is expensive, we just wasted some time.</p>
+<p>We could hide it behind some flag:</p>
+<pre><code>deepermatch() {
+  debug_check
+  match()
+}</code></pre>
+<p>That way we take the performance hit only on debug builds, and still get some protection.</p>
+</section>
+</body>
+</html>
