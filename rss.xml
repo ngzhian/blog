@@ -11,6 +11,12 @@
       blog
     </description>
     <item>
+      <title>awk - state machine matching and printing</title>
+      <link>https://blog.ngzhian.com/awk.html</link>
+      <pubDate>2021-09-25 20:20</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/awk.html</guid>
+    </item>
+    <item>
       <title>PushPush is NP-hard in 2D</title>
       <link>https://blog.ngzhian.com/pushpush-is-np-hard-in-2d.html</link>
       <pubDate>2021-02-11</pubDate>

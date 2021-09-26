@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <title>awk - state machine matching and printing</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">awk - state machine matching and printing</h1>
+<p class="published">2021-09-25 20:20</p>
+</div>
+<p>awk is useful for filtering text and printing specific columns. I use it frequently when analysing and presenting benchmark data.</p>
+<p>One of the common tasks is to only print output delimited by certain lines. Imagine that compiling a project emits some warnings:</p>
+<pre><code>compiling a.cc
+compiling b.cc
+b.cc: warning on line 10
+int b;
+    ^
+compiling c.cc</code></pre>
+<p>Here, every compiled file emits a single line, and warnings will also be emitted, together with some context around where the warning is.</p>
+<p>Suppose we want to keep only the warnings, one simple way is to print all lines that don’t begin with “compiling”. That will work, but we might accidentally print non-warning messages too.</p>
+<p>Let’s look at the pattern of warnings, it always starts with a “warning on”, and it ends before the next “compiling” message. We can encode this into a state machine inside of an awk script, like so:</p>
+<pre><code>awk &#39;/compiling/ { in_warning = 0 } /: warning/ { in_warning = 1 } in_warning { print }&#39;</code></pre>
+<p>This is a simple 2-state machine, we are either inside a warning or not. The start state is not in warning. The way to enter the in_warning state is when we encounter a line matching “: warning”. And we exit this state as soon as we see a line matching “compiling”.</p>
+<p>This is a simple idea, and can be extended to multiple states to perform different actions (accumulate data), or nested states.</p>
+<p>When crafting similar awk scripts, I tend to make the mistake of putting the matching cases first, like so:</p>
+<pre><code>awk &#39;/: warning/ { in_warning = 1 } in_warning { print } /compiling/ { in_warning = 0 }&#39;</code></pre>
+<p>This works, but is buggy. It will print the “compiling” line after matching a warning.</p>
+<p>This is because awk runs the entire script for each line of input text, in order of defined statements. So, if in_warning is set, because we were just processing a warning, and the current line is a “compiling” line, awk will run the second statement, <code>print</code>, before it matches “compiling” and resets warning.</p>
+<p>The general rule is then: all the state-changing statements should come first, and the effectful (print or summations), should be at the end.</p>
+</section>
+</body>
+</html>
