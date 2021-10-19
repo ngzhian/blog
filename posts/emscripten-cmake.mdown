@@ -31,12 +31,23 @@ WebAssembly/JavaScript can compile just fine:
 - [things](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L38-L53)
   like `set(WIN32)`, `set(APPLE)`, and `set(UNIX 1)`, because a lot of times
   Emscripten can emulate this well enough
-- [find](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L60) where the Emscripten compiler actually is, Emscripten relies on other
-  tools like LLVM and Binaryen, which will be found adjacent to where
-  Emscripten is
-- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L89-L116) the compiler to be `emcc`, that way whenever a C/C++ file is compiled,
-  `emcc` is used, rather than `clang` or `gcc`
-- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L181) various C/C++ compile features
-- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L281-L301) various size of data structures
-- [helper functions](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L355-L377) to link JS libraries into the output JS file (pre/post/link)
-- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L409) node.js to be the executable for the output JS file
+- [find](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L60)
+  where the Emscripten compiler actually is, Emscripten relies on other tools
+  like LLVM and Binaryen, which will be found adjacent to where Emscripten is
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L89-L116)
+  the compiler to be `emcc`, that way whenever a C/C++ file is compiled, `emcc`
+  is used, rather than `clang` or `gcc`
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L181)
+  various C/C++ compile features
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L281-L301)
+  various size of data structures
+- [helper
+  functions](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L355-L377)
+  to link JS libraries into the output JS file (pre/post/link)
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L409)
+  node.js to be the executable for the output JS file
+
+With all these setup, when we eventually ask CMake to build the project,
+individual C/C++ files are compiled using `emcc`, which generates intermediate
+Wasm files, and then those files are linked again by `emcc`, to generate
+`.wasm` and `.js` files.

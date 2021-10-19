@@ -30,6 +30,7 @@
 <li><a href="https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L355-L377">helper functions</a> to link JS libraries into the output JS file (pre/post/link)</li>
 <li><a href="https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L409">sets</a> node.js to be the executable for the output JS file</li>
 </ul>
+<p>With all these setup, when we eventually ask CMake to build the project, individual C/C++ files are compiled using <code>emcc</code>, which generates intermediate Wasm files, and then those files are linked again by <code>emcc</code>, to generate <code>.wasm</code> and <code>.js</code> files.</p>
 </section>
 </body>
 </html>
