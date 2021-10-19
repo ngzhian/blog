@@ -1,0 +1,42 @@
+---
+title: Emscripten CMake integration - under the hood
+date: 2021-10-18 21:52
+...
+
+Take any existing CMake-based C/C++ project, and chances are that you will be
+able to use Emscripten, and call `emcmake cmake`, and end up with a JS file
+that you can run in the browser.
+
+This seems a bit magical, so let's peek under the hood.
+
+The
+[`emcmake`](https://github.com/emscripten-core/emscripten/blob/main/emcmake)
+shell script is a wrapper for a python script
+[`emcmake.py`](https://github.com/emscripten-core/emscripten/blob/main/emcmake.py).
+This is a small script, and the main thing it does is to call `cmake` with the
+flag `-DCMAKE_TOOLCHAIN_FILE=<path/to/Emscripten.cmake>`.
+[`Emscripten.cmake`](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake)
+is where a lot of the magic happens.
+
+The
+[`CMAKE_TOOLCHAIN_FILE`](https://cmake.org/cmake/help/latest/variable/CMAKE_TOOLCHAIN_FILE.html)
+variable specifies a path to a "toolchain" file, which is a collection of
+compilers and utilties to be used by CMake to build the project. Emscripten
+behaves as a cross compiler in this case.
+
+`Emscripten.cmake` does a lot of stuff, at a high level, it sets a bunch of
+variables so that existing C/C++ projects that are not aware of
+WebAssembly/JavaScript can compile just fine:
+
+- [things](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L38-L53)
+  like `set(WIN32)`, `set(APPLE)`, and `set(UNIX 1)`, because a lot of times
+  Emscripten can emulate this well enough
+- [find](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L60) where the Emscripten compiler actually is, Emscripten relies on other
+  tools like LLVM and Binaryen, which will be found adjacent to where
+  Emscripten is
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L89-L116) the compiler to be `emcc`, that way whenever a C/C++ file is compiled,
+  `emcc` is used, rather than `clang` or `gcc`
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L181) various C/C++ compile features
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L281-L301) various size of data structures
+- [helper functions](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L355-L377) to link JS libraries into the output JS file (pre/post/link)
+- [sets](https://github.com/emscripten-core/emscripten/blob/main/cmake/Modules/Platform/Emscripten.cmake#L409) node.js to be the executable for the output JS file

@@ -11,6 +11,12 @@
       blog
     </description>
     <item>
+      <title>Emscripten CMake integration - under the hood</title>
+      <link>https://blog.ngzhian.com/emscripten-cmake.html</link>
+      <pubDate>2021-10-18 21:52</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/emscripten-cmake.html</guid>
+    </item>
+    <item>
       <title>awk - state machine matching and printing</title>
       <link>https://blog.ngzhian.com/awk.html</link>
       <pubDate>2021-09-25 20:20</pubDate>
