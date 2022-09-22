@@ -11,13 +11,6 @@ Scissors](https://github.com/ngzhian/rcp-haskell) game in Haskell, it was
 made as an exercise in learning Haskell, especially the syntax, data
 constructors, and IO.
 
-<div class="figure">
-
-![How the game looks like now](../images/rcp-haskell.png)
-How the game looks like now
-
-</div>
-
 Program Design
 --------------
 
