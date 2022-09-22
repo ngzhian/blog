@@ -7,7 +7,7 @@ Rock Paper Scissors in Haskell
 ==============================
 
 This is a simple [Rock Paper
-Scissors](www.github.com/ngzhian/rcp-haskell) game in Haskell, it was
+Scissors](https://github.com/ngzhian/rcp-haskell) game in Haskell, it was
 made as an exercise in learning Haskell, especially the syntax, data
 constructors, and IO.
 
