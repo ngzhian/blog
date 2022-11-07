@@ -11,6 +11,12 @@
       blog
     </description>
     <item>
+      <title>EfficientNet</title>
+      <link>https://blog.ngzhian.com/efficientnet.html</link>
+      <pubDate>2022-11-06 20:35</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/efficientnet.html</guid>
+    </item>
+    <item>
       <title>Emscripten CMake integration - under the hood</title>
       <link>https://blog.ngzhian.com/emscripten-cmake.html</link>
       <pubDate>2021-10-18 21:52</pubDate>

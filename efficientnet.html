@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Ng Zhi An">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" type="text/css">
+  <meta name="generator" content="pandoc" />
+  <title>EfficientNet</title>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+<section class="content">
+<a class="home" href="./index.html">Home</a>
+<div id="header">
+<h1 class="title">EfficientNet</h1>
+<p class="published">2022-11-06 20:35</p>
+</div>
+<p>Convolutional Neural Networks (ConvNets) can be made more accurate by increasing:</p>
+<ol type="1">
+<li>depth</li>
+<li>width</li>
+<li>resolution</li>
+</ol>
+<p>Scaling up any of these dimensions requires more processing power (FLOPS).</p>
+<p>This paper suggests that these dimensions are interdependent, and scaling all of them in a balanced manner will lead to better accuracy while using less resources. The paper suggests a way to perform such scaling, known as a compound coefficient. The paper then uses neural architecture search to design a baseline model, then scale it up using compound coefficient to obtain a family of networks known as EfficientNet.</p>
+<p>Scaling each of the dimensions is a way to gain accuracy, but scaling too much leads to difficulties in training. The accuracy gains also diminishes quickly (for the amount of resources required).</p>
+<p>Experiments in this paper shows that scaling just width without changing depth or resolution leads to accuracy saturating quickly. With a deeper network and higher resolution, the width scaling results in higher accuracy with the same cost.</p>
+<p>The compound coefficient uniformly scales depth, width, and resolution. It can be thought of as how much resources can be dedicated to scale the model.</p>
+<p>EfficientNet family of models (B0 to B7) was found by:</p>
+<ul>
+<li>set the compound coefficient to 1, and do a grid search for depth, width, and resolution scale to use (1.2, 1.1, 1.15 respectively)</li>
+<li>fix depth, width, and resolution scale, then scale up the compound coefficient</li>
+</ul>
+</section>
+</body>
+</html>

@@ -1,0 +1,25 @@
+---
+title: EfficientNet
+date: 2022-11-06 20:35
+...
+
+Convolutional Neural Networks (ConvNets) can be made more accurate by increasing:
+
+1. depth
+2. width
+3. resolution
+
+Scaling up any of these dimensions requires more processing power (FLOPS).
+
+This paper suggests that these dimensions are interdependent, and scaling all of them in a balanced manner will lead to better accuracy while using less resources. The paper suggests a way to perform such scaling, known as a compound coefficient. The paper then uses neural architecture search to design a baseline model, then scale it up using compound coefficient to obtain a family of networks known as EfficientNet.
+
+Scaling each of the dimensions is a way to gain accuracy, but scaling too much leads to difficulties in training. The accuracy gains also diminishes quickly (for the amount of resources required).
+
+Experiments in this paper shows that scaling just width without changing depth or resolution leads to accuracy saturating quickly. With a deeper network and higher resolution, the width scaling results in higher accuracy with the same cost.
+
+The compound coefficient uniformly scales depth, width, and resolution. It can be thought of as how much resources can be dedicated to scale the model.
+
+EfficientNet family of models (B0 to B7) was found by:
+
+- set the compound coefficient to 1, and do a grid search for depth, width, and resolution scale to use (1.2, 1.1, 1.15 respectively)
+- fix depth, width, and resolution scale, then scale up the compound coefficient
