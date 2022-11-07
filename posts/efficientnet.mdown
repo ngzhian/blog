@@ -3,6 +3,8 @@ title: EfficientNet
 date: 2022-11-06 20:35
 ...
 
+[Paper](https://arxiv.org/abs/1905.11946v5)
+
 Convolutional Neural Networks (ConvNets) can be made more accurate by increasing:
 
 1. depth
