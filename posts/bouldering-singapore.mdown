@@ -59,7 +59,7 @@ For each gym, I list:
 - difficulty: intermediate, advanced
 - highlights: Moon board 2024
 - facilities: multiple steep sections, hang board
-- route-setting: modern, dynamic
+- route-setting: comp-style, dynamic
 - grading: 1 to 12 (12 is V8)
 - crowd: medium
 
@@ -68,7 +68,7 @@ For each gym, I list:
 - difficulty: intermediate, advanced
 - highlights: large gym
 - facilities: multiple steep sections
-- route-setting: modern, dynamic
+- route-setting: comp-style, dynamic
 - grading: 1 to 12 (12 is V8)
 - crowd: medium
 
@@ -86,9 +86,27 @@ For each gym, I list:
 - difficulty: intermediate, advanced
 - highlights: probably the largest air-conditioned bouldering gym
 - facilities: kilter board, training area, steep cave, varied wall features
-- route-setting: varied, mostly modern style, routes are spread out
+- route-setting: varied, mostly comp-style, routes are spread out
 - grading: colors, white to black + wild-card (black is V8)
 - crowd: medium
+
+## [Fit Bloc Science Park](https://maps.app.goo.gl/EULArBtQwUPz3fkb7)
+
+- difficulty: intermediate, advanced
+- highlights: big overhang cave, large gym, varied walls
+- facilities: well equipped fitness section, hang boards, campus boards, spray wall, Moon board
+- route-setting: comp-style
+- grading: 1 to 9 (9 is V8)
+- crowd: medium
+
+## [Fit Bloc Depot Road](https://maps.app.goo.gl/EdQGaw8ag1rWDPrk7)
+
+- difficulty: beginner, intermediate
+- highlights: dense sets in a small space
+- facilities: Moon board
+- route-setting:
+- grading: 1 to 9 (9 is V8)
+- crowd: low
 
 ## [Ground Up](https://maps.app.goo.gl/UJWXQLLnkJeRsoMh7)
 
