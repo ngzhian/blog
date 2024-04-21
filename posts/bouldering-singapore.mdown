@@ -1,0 +1,162 @@
+---
+title: Bouldering gyms in Singapore
+date: 2024-04-21 13:14
+...
+
+Overview of Rock Climbing gyms in Singapore, with a focus on bouldering.
+
+For each gym, I list:
+
+- level of difficulty,
+- highlight special facilities,
+- notable route-setting features,
+- crowd (based on weekday evenings and weekends, which is the period I usually
+  visit).
+- grading
+
+> Rant on grading: almost every gym has its own system of grading. It's usually
+> numeric (easy to remember) but does not map in anyway to established systems
+> like V or Font.
+
+[Short list of gyms by experience level][by experience level].
+
+[Bonus section][visiting] at the end for visitors from out of Singapore.
+
+[Can you trust my opinions?][disclaimer].
+
+# By Gyms
+
+## [BFF Climb Bendemeer](https://maps.app.goo.gl/tLZCwKWwiUtTvZCD9)
+
+- difficulty: beginner, intermediate, advanced
+- highlights: large gym (something for every level), auto-belay top rope system,
+- facilities: beginner area, small training area (hang board, campus boards), 2
+  Moon boards (2016 and 2024 kit)
+- route-setting: diverse and varied, slab wall, small overhang feature
+- grading: 1 to 15 (15 is V8)
+- crowd: high
+
+## [Boruda](https://maps.app.goo.gl/EnAUNcv7SxXPVBt17)
+
+- difficulty: intermediate, advanced
+- highlights: spray wall (hard)
+- facilities: ping pong table, small training area, hang boards, campus board
+- route-setting: technical, tricky feet, beta-intensive
+- grading: 9-kyu to 2-dan (JP system)
+- crowd: high
+
+## [Lighthouse](https://maps.app.goo.gl/X42H1xYvcQA17ZSD6)
+
+- difficulty: advanced
+- highlights: spray wall, kilter board, Moon board, tension board
+- facilities: campus rungs, hang boards, large training area (free weights)
+- route-setting: powerful, technical, beta-intensive
+- grading: 1 to 9 (Mah Jong tiles) (roughly equals to V)
+- crowd: low
+
+## [Boulder Planet Taiseng](https://maps.app.goo.gl/gsBirpNcnH4ywLsFA)
+
+- difficulty: intermediate, advanced
+- highlights: Moon board 2024
+- facilities: multiple steep sections, hang board
+- route-setting: modern, dynamic
+- grading: 1 to 12 (12 is V8)
+- crowd: medium
+
+## [Boulder Planet Sembawang](https://maps.app.goo.gl/qFbvDzffPpM3XGRj7)
+
+- difficulty: intermediate, advanced
+- highlights: large gym
+- facilities: multiple steep sections
+- route-setting: modern, dynamic
+- grading: 1 to 12 (12 is V8)
+- crowd: medium
+
+## [Boulder+ Aperia Mall](https://maps.app.goo.gl/Jb8hFHZjXEvHXH5W9)
+
+- difficulty: intermediate, advanced
+- highlights: large
+- facilities: spray wall, endurance wall, training area
+- route-setting: powerful
+- grading: colors, white to black + wild-card (black is V8)
+- crowd: high
+
+## [Boulder+ Chevrons](https://maps.app.goo.gl/5yRcUsMEUC3zbJCv5)
+
+- difficulty: intermediate, advanced
+- highlights: probably the largest air-conditioned bouldering gym
+- facilities: kilter board, training area, steep cave, varied wall features
+- route-setting: varied, mostly modern style, routes are spread out
+- grading: colors, white to black + wild-card (black is V8)
+- crowd: medium
+
+## [Ground Up](https://maps.app.goo.gl/UJWXQLLnkJeRsoMh7)
+
+Disclaimer: only been here once. Notes below are only for bouldering sections
+of this gym.
+
+- difficulty: beginner, intermediate
+- highlights: well maintained pads that are hard
+- facilities: hang boards, kilter board, training area
+- route-setting: bad feet, technical
+- grading: V scale (only gym I've been to in Singapore that does this)
+- crowd: low
+
+## [Climba](https://maps.app.goo.gl/3rsxQAQ3AdJh3qJ98)
+
+Disclaimer: only been here once, Sat afternoon.
+
+- difficulty: beginner
+- highlights:
+- facilities: grasshopper board, training area
+- route-setting: varied
+- grading: colors (blue, yellow, red) (red is V7)
+- crowd: high
+
+# By experience level
+
+- Beginner: BFF Bendemeer, Climba, Boulder Movement (not listed above as I
+  haven't been there for a long time)
+- Intermediate: Boruda, BFF Bendemeer, Boulder+, Boulder Planet
+- Advanced: Lighthouse, Boulder+, Boulder Planet
+
+# Visiting
+
+If you are visiting Singapore and want to climb, you are probably an advanced
+or humble intermediate climber. As such, you will enjoy any gyms marked
+advanced above.
+
+Lighthouse has the most comprehensive training area and system boards. For
+serious training, go there. The route-setting is complex and hard as well.
+
+BFF Bendemeer gets a good crowd of people with all sorts of levels (though you
+will find the stronger climbers huddling at the Moon boards). If you are in for
+small talk I find this to be a chatty community.
+
+Boulder+ Chevrons and Boulder Planet Sembawang are the most spacious with
+scattered routes. They have more modern route-setting, so if you like jumpy
+jump, pick one of those. Boulder+ Chevrons has the highest wall, However, these
+gyms are a bit far from the city central, so their other branches (Boulder+
+Aperia Mall and Boulder Planet Tai Seng) can give you a similar experience.
+
+## Disclaimer
+
+I offer my take on mapping each gym's grade to V scale. For comparison, I've
+been climbing since 2020, my max grade at Dogpatch Boulders (San Francisco) is
+V10 (2 routes, double digit sessions on each). My max grade outdoors is V7 ([Go
+Granny Ho][gogrannyho], Grandma Peabody Boulder, Bishop, CA) (I don't go out
+very often).
+
+My max grades at each gym is:
+
+- BFF: 14
+- Boulder+: Black
+- Boruda: 1D
+- Boulder Planer: 11
+- Ground Up: V8
+- Climba: Red
+- Lighthouse: 7
+
+[gogrannyho]: https://www.youtube.com/watch?v=fWkcQNCs1I8 "Andy Liu on Go Granny Ho, this is not me."
+
+Reach out if you would like to see more gyms on this list.
