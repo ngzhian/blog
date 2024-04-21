@@ -32,7 +32,7 @@ there’s probably a way to select which which session you want to run, or
 you can edit your `~/.xsession` file. You can probably get more
 information [here](xmonad.org/documentation.html).
 
-Configuring XMonad {#configuring-xmonad}
+Configuring XMonad
 ------------------
 
 This is the really fun part. I’ve tried finding *good* configurations I

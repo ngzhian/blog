@@ -5,7 +5,7 @@ date: 2017-05-27 18:25
 
 In a [previous post](./ski.html),
 we looked at what SKI combinators are, and how to encode and interpret them.
-We also mentioned that these 3 combinators form a Turing-complete language,
+We also mentioned that these 3 combinators form a Turing-complete language[^1],
 because every lambda calculus term can be translated into an SKI combinator term.
 
 > Source code is available [here](https://github.com/ngzhian/ski)

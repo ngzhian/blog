@@ -11,6 +11,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -84,82 +85,82 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>This is a simple <a href="https://github.com/ngzhian/rcp-haskell">Rock Paper Scissors</a> game in Haskell, it was made as an exercise in learning Haskell, especially the syntax, data constructors, and IO.</p>
 <h2 id="program-design">Program Design</h2>
 <p>This is a very simple program. The parts of the code that has to do with the logic is actually very short and simple, because RPS has very simple rules:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">-- Player or AI can make any of these moves each turn</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">data</span> <span class="dt">Move</span> <span class="ot">=</span> <span class="dt">Rock</span> <span class="op">|</span> <span class="dt">Paper</span> <span class="op">|</span> <span class="dt">Scissors</span> <span class="kw">deriving</span> (<span class="dt">Show</span>)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">-- Player is the current person playing, and AI is our intelligent program!</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">data</span> <span class="dt">Winner</span> <span class="ot">=</span> <span class="dt">Player</span> <span class="op">|</span> <span class="dt">AI</span> <span class="op">|</span> <span class="dt">Draw</span> <span class="kw">deriving</span> (<span class="dt">Show</span>)</span>
-<span id="cb1-6"><a href="#cb1-6"></a></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">-- use a throwaway function getWinner&#39; because</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">-- we want to be clear that `user&#39; is the first parameter</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="ot">getWinner ::</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Winner</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a>getWinner user ai <span class="ot">=</span> getWinner&#39; user ai</span>
-<span id="cb1-11"><a href="#cb1-11"></a>  <span class="kw">where</span> getWinner&#39; <span class="dt">Rock</span> <span class="dt">Paper</span>     <span class="ot">=</span> <span class="dt">AI</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a>        getWinner&#39; <span class="dt">Rock</span> <span class="dt">Scissors</span>  <span class="ot">=</span> <span class="dt">Player</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a>        getWinner&#39; <span class="dt">Paper</span> <span class="dt">Scissors</span> <span class="ot">=</span> <span class="dt">AI</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a>        getWinner&#39; <span class="dt">Paper</span> <span class="dt">Rock</span>     <span class="ot">=</span> <span class="dt">Player</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a>        getWinner&#39; <span class="dt">Scissors</span> <span class="dt">Rock</span>  <span class="ot">=</span> <span class="dt">AI</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a>        getWinner&#39; <span class="dt">Scissors</span> <span class="dt">Paper</span> <span class="ot">=</span> <span class="dt">Player</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a>        getWinner&#39; _        _     <span class="ot">=</span> <span class="dt">Draw</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="co">-- a heuristics</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a><span class="ot">makeAIMove ::</span> <span class="dt">Move</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a>makeAIMove <span class="ot">=</span> <span class="dt">Paper</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Player or AI can make any of these moves each turn</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Move</span> <span class="ot">=</span> <span class="dt">Rock</span> <span class="op">|</span> <span class="dt">Paper</span> <span class="op">|</span> <span class="dt">Scissors</span> <span class="kw">deriving</span> (<span class="dt">Show</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- Player is the current person playing, and AI is our intelligent program!</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Winner</span> <span class="ot">=</span> <span class="dt">Player</span> <span class="op">|</span> <span class="dt">AI</span> <span class="op">|</span> <span class="dt">Draw</span> <span class="kw">deriving</span> (<span class="dt">Show</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- use a throwaway function getWinner&#39; because</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- we want to be clear that `user&#39; is the first parameter</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ot">getWinner ::</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Move</span> <span class="ot">-&gt;</span> <span class="dt">Winner</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>getWinner user ai <span class="ot">=</span> getWinner&#39; user ai</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span> getWinner&#39; <span class="dt">Rock</span> <span class="dt">Paper</span>     <span class="ot">=</span> <span class="dt">AI</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        getWinner&#39; <span class="dt">Rock</span> <span class="dt">Scissors</span>  <span class="ot">=</span> <span class="dt">Player</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        getWinner&#39; <span class="dt">Paper</span> <span class="dt">Scissors</span> <span class="ot">=</span> <span class="dt">AI</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        getWinner&#39; <span class="dt">Paper</span> <span class="dt">Rock</span>     <span class="ot">=</span> <span class="dt">Player</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        getWinner&#39; <span class="dt">Scissors</span> <span class="dt">Rock</span>  <span class="ot">=</span> <span class="dt">AI</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        getWinner&#39; <span class="dt">Scissors</span> <span class="dt">Paper</span> <span class="ot">=</span> <span class="dt">Player</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        getWinner&#39; _        _     <span class="ot">=</span> <span class="dt">Draw</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">-- a heuristics</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ot">makeAIMove ::</span> <span class="dt">Move</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>makeAIMove <span class="ot">=</span> <span class="dt">Paper</span></span></code></pre></div>
 <p>I think the <code>getWinner</code> method is quite ugly, but I haven’t thought of a good way to write it. Maybe I can differentiate the <code>Move</code> to <code>UserMove</code> or <code>AIMove</code>, something along those lines, so I can make use of the type checker to ensure what that the arguments are fed correctly.</p>
 <p>The AI is currently really <em>smart</em>, reason is that I’m not concerned with learning about random numbers now, I just want this to be an exercise in writing Haskell, doing IO and some other stuff.</p>
 <h2 id="interaction-with-user">Interaction with User</h2>
 <p>This is a text-based game, so there are quite a few instances where the program prints a line, and gets another line of input from the user, which resulted in me writing this helper:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1"></a><span class="ot">getResponse ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a>getResponse s <span class="ot">=</span> <span class="fu">putStrLn</span> s <span class="op">&gt;&gt;</span> <span class="fu">getLine</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getResponse ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">String</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>getResponse s <span class="ot">=</span> <span class="fu">putStrLn</span> s <span class="op">&gt;&gt;</span> <span class="fu">getLine</span></span></code></pre></div>
 <p>The <code>&gt;&gt;</code> operator basically discards whatever output <code>putStrLn s</code> gives. This is required because <code>getLine</code> does not take any arguments.</p>
 <p>Initially I wanted to define all the interaction strings else where, thereby removing <em>magic constants</em>, and also stick to the DRY principle:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1"></a><span class="ot">welcomeMessage ::</span> <span class="dt">String</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a>welcomeMessage <span class="ot">=</span> <span class="st">&quot;Lets play Rock Paper Scissors&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">welcomeMessage ::</span> <span class="dt">String</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>welcomeMessage <span class="ot">=</span> <span class="st">&quot;Lets play Rock Paper Scissors&quot;</span></span></code></pre></div>
 <p>But I found this to be too verbose and distracting. I decided that instead of doing this, I should refactor it such that a string is only used at a single place. I made good progress with that, and the only String that is repeated is the prompt/insructions.</p>
 <h2 id="handling-invalid-input">Handling invalid input</h2>
 <p>I handled invalid input using <code>Either</code> and recursion. <code>Either</code> allows me to determine if the user’s input was valid or not, and this check is done by <code>convertToMove</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">-- handle invalid cases</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="ot">convertToMove ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">String</span> <span class="dt">Move</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a>convertToMove input <span class="ot">=</span> convert <span class="op">$</span> <span class="fu">map</span> <span class="fu">toLower</span> input</span>
-<span id="cb4-4"><a href="#cb4-4"></a>  <span class="kw">where</span> convert <span class="st">&quot;r&quot;</span> <span class="ot">=</span> <span class="dt">Right</span> <span class="dt">Rock</span></span>
-<span id="cb4-5"><a href="#cb4-5"></a>        convert <span class="st">&quot;s&quot;</span> <span class="ot">=</span> <span class="dt">Right</span> <span class="dt">Scissors</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a>        convert <span class="st">&quot;p&quot;</span> <span class="ot">=</span> <span class="dt">Right</span> <span class="dt">Paper</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a>        convert _   <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;I don&#39;t know that move!&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- handle invalid cases</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ot">convertToMove ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">String</span> <span class="dt">Move</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>convertToMove input <span class="ot">=</span> convert <span class="op">$</span> <span class="fu">map</span> <span class="fu">toLower</span> input</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span> convert <span class="st">&quot;r&quot;</span> <span class="ot">=</span> <span class="dt">Right</span> <span class="dt">Rock</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        convert <span class="st">&quot;s&quot;</span> <span class="ot">=</span> <span class="dt">Right</span> <span class="dt">Scissors</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        convert <span class="st">&quot;p&quot;</span> <span class="ot">=</span> <span class="dt">Right</span> <span class="dt">Paper</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        convert _   <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;I don&#39;t know that move!&quot;</span></span></code></pre></div>
 <p>The above function is called by another function, <code>getValidMove</code>, whos job is to get a valid move from the user. By pattern matching against the value of <code>convertToMove</code>, it can either display the error message when it is a <code>Left</code>, and recursively call itself, or it will return the <code>Move</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1"></a><span class="ot">getValidMove ::</span> <span class="dt">IO</span> <span class="dt">Move</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>getValidMove <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a>  userMove <span class="ot">&lt;-</span> convertToMove <span class="op">&lt;$&gt;</span> getResponse <span class="st">&quot;What&#39;s your move?&quot;</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a>  <span class="kw">case</span> userMove <span class="kw">of</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a>    <span class="dt">Left</span> msg <span class="ot">-&gt;</span> <span class="kw">do</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>      <span class="fu">putStrLn</span> msg</span>
-<span id="cb5-7"><a href="#cb5-7"></a>      <span class="fu">putStrLn</span> <span class="st">&quot;R for rock, P for paper, S for scissors.&quot;</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>      getValidMove</span>
-<span id="cb5-9"><a href="#cb5-9"></a>    <span class="dt">Right</span> m  <span class="ot">-&gt;</span> <span class="fu">return</span> m</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getValidMove ::</span> <span class="dt">IO</span> <span class="dt">Move</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>getValidMove <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  userMove <span class="ot">&lt;-</span> convertToMove <span class="op">&lt;$&gt;</span> getResponse <span class="st">&quot;What&#39;s your move?&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> userMove <span class="kw">of</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Left</span> msg <span class="ot">-&gt;</span> <span class="kw">do</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">putStrLn</span> msg</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">putStrLn</span> <span class="st">&quot;R for rock, P for paper, S for scissors.&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      getValidMove</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Right</span> m  <span class="ot">-&gt;</span> <span class="fu">return</span> m</span></code></pre></div>
 <p>This is called from within the <code>game</code> function. <code>game</code> runs a single round of RPS, which is marked by an outcome, or a <code>Winner</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1"></a><span class="ot">game ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb6-2"><a href="#cb6-2"></a>game <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a>  userMove <span class="ot">&lt;-</span> getValidMove</span>
-<span id="cb6-4"><a href="#cb6-4"></a>  play userMove makeAIMove</span>
-<span id="cb6-5"><a href="#cb6-5"></a>  choice <span class="ot">&lt;-</span> getResponse <span class="st">&quot;Continue? Y/N&quot;</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>  continue choice</span>
-<span id="cb6-7"><a href="#cb6-7"></a>    <span class="kw">where</span> play m ai <span class="ot">=</span> <span class="fu">putStrLn</span> <span class="op">$</span> announceWinner <span class="op">$</span> getWinner m ai</span>
-<span id="cb6-8"><a href="#cb6-8"></a>          continue <span class="st">&quot;y&quot;</span> <span class="ot">=</span> game</span>
-<span id="cb6-9"><a href="#cb6-9"></a>          continue _ <span class="ot">=</span> <span class="kw">do</span> <span class="fu">putStrLn</span> <span class="st">&quot;Thanks for playing!&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">game ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>game <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  userMove <span class="ot">&lt;-</span> getValidMove</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  play userMove makeAIMove</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  choice <span class="ot">&lt;-</span> getResponse <span class="st">&quot;Continue? Y/N&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  continue choice</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">where</span> play m ai <span class="ot">=</span> <span class="fu">putStrLn</span> <span class="op">$</span> announceWinner <span class="op">$</span> getWinner m ai</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>          continue <span class="st">&quot;y&quot;</span> <span class="ot">=</span> game</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>          continue _ <span class="ot">=</span> <span class="kw">do</span> <span class="fu">putStrLn</span> <span class="st">&quot;Thanks for playing!&quot;</span></span></code></pre></div>
 <p><code>announceWinner</code>’s role is to give the correct String output given an outcome of a game. This is to showcase how creative I can be with messages :P</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">-- Gives the correct anouncement String for different outcomes of the game</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="ot">announceWinner ::</span> <span class="dt">Winner</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
-<span id="cb7-3"><a href="#cb7-3"></a>announceWinner <span class="dt">AI</span>     <span class="ot">=</span> <span class="st">&quot;The AI won :)&quot;</span></span>
-<span id="cb7-4"><a href="#cb7-4"></a>announceWinner <span class="dt">Draw</span>   <span class="ot">=</span> <span class="st">&quot;It was a draw!&quot;</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a>announceWinner <span class="dt">Player</span> <span class="ot">=</span> <span class="st">&quot;Yay you won!&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Gives the correct anouncement String for different outcomes of the game</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ot">announceWinner ::</span> <span class="dt">Winner</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>announceWinner <span class="dt">AI</span>     <span class="ot">=</span> <span class="st">&quot;The AI won :)&quot;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>announceWinner <span class="dt">Draw</span>   <span class="ot">=</span> <span class="st">&quot;It was a draw!&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>announceWinner <span class="dt">Player</span> <span class="ot">=</span> <span class="st">&quot;Yay you won!&quot;</span></span></code></pre></div>
 <p>As explained above, <code>getValidMove</code> will always give a <code>IO Move</code>, so the value of <code>userMove</code> is always a <code>Move</code>. This delegation of retrieving and validating the user’s input for a move simplifies this function. I should adopt this way of building and composing functions more.</p>
 <p>The entire program runs in the <code>main</code> function:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb8-2"><a href="#cb8-2"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a>  <span class="co">-- Message to user when the user first runs this program</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a>  <span class="fu">putStrLn</span> <span class="st">&quot;Lets play Rock Paper Scissors&quot;</span></span>
-<span id="cb8-5"><a href="#cb8-5"></a>  <span class="co">-- Instructions on ohw to play this game</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a>  <span class="fu">putStrLn</span> <span class="st">&quot;R for rock, P for paper, S for scissors.&quot;</span></span>
-<span id="cb8-7"><a href="#cb8-7"></a>  game</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Message to user when the user first runs this program</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">putStrLn</span> <span class="st">&quot;Lets play Rock Paper Scissors&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Instructions on ohw to play this game</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">putStrLn</span> <span class="st">&quot;R for rock, P for paper, S for scissors.&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  game</span></code></pre></div>
 <p>This function is extremely simple, it just prints a welcome message and instructions for new players.</p>
 <p>So that’s it, my first haskell program from scratch! Pretty happy with it now, next idea I will try is probably another simple game, like tic tac toe or some.</p>
 </section>
