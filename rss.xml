@@ -11,6 +11,12 @@
       blog
     </description>
     <item>
+      <title>Bouldering gyms in Singapore</title>
+      <link>https://blog.ngzhian.com/bouldering-singapore.html</link>
+      <pubDate>2024-04-21 13:14</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/bouldering-singapore.html</guid>
+    </item>
+    <item>
       <title>EfficientNet</title>
       <link>https://blog.ngzhian.com/efficientnet.html</link>
       <pubDate>2022-11-06 20:35</pubDate>
@@ -53,7 +59,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/template-template-parameter-function-template.html</guid>
     </item>
     <item>
-      <title>Memory alignment requirements for SSE and AVX instructions</title>
+      <title>Memory alignment requirements for SSE and AVX
+instructions</title>
       <link>https://blog.ngzhian.com/sse-avx-memory-alignment.html</link>
       <pubDate>2020-10-29</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/sse-avx-memory-alignment.html</guid>
@@ -65,7 +72,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/iterm2-tmux.html</guid>
     </item>
     <item>
-      <title>Changing live reload server from WebSockets to Server-Sent Events</title>
+      <title>Changing live reload server from WebSockets to Server-Sent
+Events</title>
       <link>https://blog.ngzhian.com/changing-live-reload-server-from-websockets-to-server-sent-events.html</link>
       <pubDate>2020-07-22</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/changing-live-reload-server-from-websockets-to-server-sent-events.html</guid>
@@ -173,7 +181,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/get-off-the-tightrope.html</guid>
     </item>
     <item>
-      <title>Storage strategies for collections in dynamically typed languages - Bolz, Diekmann, Tratt</title>
+      <title>Storage strategies for collections in dynamically typed
+languages - Bolz, Diekmann, Tratt</title>
       <link>https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html</link>
       <pubDate>2017-11-05 18:50</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/storage-strategies-for-collections-in-dynamically-typed-languages.html</guid>
@@ -191,7 +200,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/android-startup-tour-init.html</guid>
     </item>
     <item>
-      <title>A Pretty But Not Greedy Printer by Jean-Philippe Bernardy</title>
+      <title>A Pretty But Not Greedy Printer by Jean-Philippe
+Bernardy</title>
       <link>https://blog.ngzhian.com/a-pretty-but-not-greedy-printer.html</link>
       <pubDate>2017-09-09 21:40</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/a-pretty-but-not-greedy-printer.html</guid>
@@ -269,7 +279,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/dates-with-javascript.html</guid>
     </item>
     <item>
-      <title>An Axiomatic Basis for Computer Programming by C. A. R. Hoare</title>
+      <title>An Axiomatic Basis for Computer Programming by C. A. R.
+Hoare</title>
       <link>https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html</link>
       <pubDate>2016-12-04 21:45</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/paper-axiomatic-basis-for-computer-programming.html</guid>
@@ -359,7 +370,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/haskell-pattern-matching.html</guid>
     </item>
     <item>
-      <title>Lexing COOL - Coursera Compilers Course Assignment 1</title>
+      <title>Lexing COOL - Coursera Compilers Course Assignment
+1</title>
       <link>https://blog.ngzhian.com/coursera-compilers-1.html</link>
       <pubDate>2015-05-25 14:00</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/coursera-compilers-1.html</guid>
@@ -425,7 +437,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/yahoo-flickr.html</guid>
     </item>
     <item>
-      <title>MBeanScanner a utility class to generate sample configuration file for JMXetric</title>
+      <title>MBeanScanner a utility class to generate sample
+configuration file for JMXetric</title>
       <link>https://blog.ngzhian.com/mbeanscanner.html</link>
       <pubDate>2014-05-19 18:00</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/mbeanscanner.html</guid>
@@ -437,7 +450,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/explore-apache-karaf-mbeans-using-jconsole.html</guid>
     </item>
     <item>
-      <title>Default value of ATTLIST, attributes of an XML Element, XML Doctype</title>
+      <title>Default value of ATTLIST, attributes of an XML Element, XML
+Doctype</title>
       <link>https://blog.ngzhian.com/attlist-attributes-of-xml-element.html</link>
       <pubDate>2014-05-10 18:00</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/attlist-attributes-of-xml-element.html</guid>
@@ -461,7 +475,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/gsoc-jmxetric.html</guid>
     </item>
     <item>
-      <title>Debian Jessie, Screen resolution, and VirtualBox Guest Additions</title>
+      <title>Debian Jessie, Screen resolution, and VirtualBox Guest
+Additions</title>
       <link>https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html</link>
       <pubDate>2014-05-04 18:00</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/debian-jessie-virtualbox-screen-resolution.html</guid>
@@ -473,7 +488,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/rps-haskell.html</guid>
     </item>
     <item>
-      <title>Scissors Paper Stone and their ordering (Or is it Rock Paper Scissors?)</title>
+      <title>Scissors Paper Stone and their ordering (Or is it Rock
+Paper Scissors?)</title>
       <link>https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html</link>
       <pubDate>2014-04-28 18:00</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/scissors-paper-stone-and-ordering.html</guid>
@@ -485,7 +501,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/how-java-sorts-objects.html</guid>
     </item>
     <item>
-      <title>Setting up a killer development environment for CS2103T</title>
+      <title>Setting up a killer development environment for
+CS2103T</title>
       <link>https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html</link>
       <pubDate>2014-04-27 18:00</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/how-to-build-a-killer-cs2103t-development-environment.html</guid>
@@ -503,7 +520,8 @@
       <guid isPermaLink="true">https://blog.ngzhian.com/configuring-xmonad.html</guid>
     </item>
     <item>
-      <title>Planes, Airports, and Monads - Adventures in Haskell</title>
+      <title>Planes, Airports, and Monads - Adventures in
+Haskell</title>
       <link>https://blog.ngzhian.com/planes-airports-and-monads.html</link>
       <pubDate>2014-04-20 18:00</pubDate>
       <guid isPermaLink="true">https://blog.ngzhian.com/planes-airports-and-monads.html</guid>
