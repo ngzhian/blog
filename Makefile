@@ -1,6 +1,6 @@
 default: all
 
-.PHONY: deploy pages minify-css watch dev-watch
+.PHONY: deploy pages minify-css watch dev-watch dev-index
 
 # https://cssminifier.com/curl
 minify-css:
@@ -46,9 +46,13 @@ dev-pages: $(devdestfiles)
 dev/%.html: posts/%.mdown
 	pandoc --from markdown+tex_math_dollars --template template/custom-dev -o dev/$*.html $<
 
+dev-index:
+	@./gen-index.sh
+	@cp index.html dev/index.html
+
 # Using a script so that I can set a trap on script exit
 # and cleanly shut down hotreload server.
-dev-watch: hotreload.py dev-watch.sh dev-pages
+dev-watch: hotreload.py dev-watch.sh dev-pages dev-index
 	@./dev-watch.sh
 
 # From https://github.com/chambln/pandoc-rss/blob/master/pandoc-rss.
