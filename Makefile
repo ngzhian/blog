@@ -39,7 +39,8 @@ posts/%.mdown:
 # want to ever ship those, so put it in dev/.
 # And ignore dev/ in .gitignore.
 devdestfiles := $(patsubst posts/%.mdown,dev/%.html,$(srcfiles))
-dev-pages: $(devdestfiles)
+devimages := $(patsubst images/%,dev/images/%,$(srcfiles))
+dev-pages: $(devdestfiles) $(devimages)
 
 # Build a single dev html page.
 # Note that the template used is "template/custom-dev"
