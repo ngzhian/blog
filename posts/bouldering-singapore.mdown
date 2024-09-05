@@ -1,9 +1,35 @@
 ---
 title: Bouldering gyms in Singapore
 date: 2024-04-21 13:14
+updated: 2024-09-05 21:35
 ...
 
 Overview of Rock Climbing gyms in Singapore, with a focus on bouldering.
+
+# Grade table
+
+> Almost every gym has its own system of grading. This is
+> my take on comparing grades across gyms.
+
+| Font (V) |  BFF  | Boruda | Lighthouse | Boulder Planet | Boulder+ | Fit Bloc | Ground Up | Climba |
+| :------: | :---: | :----: | :--------: | :------------: | :------: | :------: | :-------: | :----: |
+|   V1     | 1/2   |  6Q    |     1      |     1          |  white   |    1     |    V1     |  blue  |
+|   V2     | 3/4   |  5Q    |     2      |     2/3        |  yellow  |    2     |    V2     |  blue  |
+|   V3     | 5/6   |  4Q    |     3      |     4/5        |  red     |    3     |    V3     | yellow |
+|   V4     | 7/8   |  3Q    |     4      |     6/7        |  blue    |    4     |    V4     | yellow |
+|   V5     | 9/10  |  2Q    |     5      |     8/9        |  purple  |    5     |    V5     | yellow |
+|   V6     | 11/12 |  1Q    |     6      |      10        |  green   |    6     |    V6     |  red   |
+|   V7     | 13/14 |  1Q    |     7      |      11        |  pink    |    7     |    V7     |  red   |
+|   V8     | 15    |  1D    |     8      |      12        |  black   |    8     |    V8     |        |
+|   V9     |       |  2D    |     9      |                |          |          |           |        |
+
+[Short list of gyms by experience level][by experience level].
+
+[Bonus section][visiting] at the end for visitors from out of Singapore.
+
+[Can you trust my opinions?][disclaimer].
+
+# By Gyms
 
 For each gym, I list:
 
@@ -13,18 +39,6 @@ For each gym, I list:
 - crowd (based on weekday evenings and weekends, which is the period I usually
   visit).
 - grading
-
-> Rant on grading: almost every gym has its own system of grading. It's usually
-> numeric (easy to remember) but does not map in anyway to established systems
-> like V or Font.
-
-[Short list of gyms by experience level][by experience level].
-
-[Bonus section][visiting] at the end for visitors from out of Singapore.
-
-[Can you trust my opinions?][disclaimer].
-
-# By Gyms
 
 ## [BFF Climb Bendemeer](https://maps.app.goo.gl/tLZCwKWwiUtTvZCD9)
 
@@ -167,13 +181,13 @@ very often).
 
 My max grades at each gym is:
 
-- BFF: 14
+- BFF: 15
 - Boulder+: Black
 - Boruda: 1D
 - Boulder Planer: 11
 - Ground Up: V8
 - Climba: Red
-- Lighthouse: 7
+- Lighthouse: 8
 
 [gogrannyho]: https://www.youtube.com/watch?v=fWkcQNCs1I8 "Andy Liu on Go Granny Ho, this is not me."
 

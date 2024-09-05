@@ -53,6 +53,7 @@ dev-index:
 
 # Using a script so that I can set a trap on script exit
 # and cleanly shut down hotreload server.
+# visit localhost:8080 for blog
 dev-watch: hotreload.py dev-watch.sh dev-pages dev-index
 	@./dev-watch.sh
 
