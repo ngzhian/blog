@@ -17,9 +17,9 @@ Overview of Rock Climbing gyms in Singapore, with a focus on bouldering.
 |   V2     | 3/4   |  5Q    |     2      |     2/3        |  yellow  |    2     |    V2     |  blue  |
 |   V3     | 5/6   |  4Q    |     3      |     4/5        |  red     |    3     |    V3     | yellow |
 |   V4     | 7/8   |  3Q    |     4      |     6/7        |  blue    |    4     |    V4     | yellow |
-|   V5     | 9/10  |  2Q    |     5      |     8/9        |  purple  |    5     |    V5     | yellow |
+|   V5     | 9/10  |  2Q    |     5      |     8/9        |  purple  |    5     |    V5     |  red   |
 |   V6     | 11/12 |  1Q    |     6      |      10        |  green   |    6     |    V6     |  red   |
-|   V7     | 13/14 |  1Q    |     7      |      11        |  pink    |    7     |    V7     |  red   |
+|   V7     | 13/14 |  1Q    |     7      |      11        |  pink    |    7     |    V7     |        |
 |   V8     | 15    |  1D    |     8      |      12        |  black   |    8     |    V8     |        |
 |   V9     |       |  2D    |     9      |                |          |          |           |        |
 
