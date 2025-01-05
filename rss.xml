@@ -11,6 +11,12 @@
       blog
     </description>
     <item>
+      <title>2024</title>
+      <link>https://blog.ngzhian.com/2024.html</link>
+      <pubDate>2025-01-05</pubDate>
+      <guid isPermaLink="true">https://blog.ngzhian.com/2024.html</guid>
+    </item>
+    <item>
       <title>BitNet Scaling 1-bit Transformers for Large Language
 Models</title>
       <link>https://blog.ngzhian.com/one-bit-llm.html</link>
