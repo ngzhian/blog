@@ -13,10 +13,10 @@ Overview of Rock Climbing gyms in Singapore, with a focus on bouldering.
 
 | Font (V) |  BFF  | Boruda | Lighthouse | Boulder Planet | Boulder+ | Fit Bloc | Ground Up | Climba |
 | :------: | :---: | :----: | :--------: | :------------: | :------: | :------: | :-------: | :----: |
-|   V1     | 1/2   |  7Q    |     1      |     1          |  white   |    1     |    V1     |  blue  |
-|   V2     | 3/4   |  6Q    |     2      |     2/3        |  yellow  |    2     |    V2     |  blue  |
-|   V3     | 5/6   |  5Q    |     3      |     4/5        |  red     |    3     |    V3     | yellow |
-|   V4     | 7/8   |  4Q    |     4      |     6/7        |  blue    |    4     |    V4     | yellow |
+|   V1     | 1/2   |  7Q    |     1      |      4         |  white   |    1     |    V1     |  blue  |
+|   V2     | 3/4   |  6Q    |     2      |      5         |  yellow  |    2     |    V2     |  blue  |
+|   V3     | 5/6   |  5Q    |     3      |      6         |  red     |    3     |    V3     | yellow |
+|   V4     | 7/8   |  4Q    |     4      |      7         |  blue    |    4     |    V4     | yellow |
 |   V5     | 9/10  |  3Q    |     5      |      8         |  purple  |    5     |    V5     |  red   |
 |   V6     | 11/12 |  2Q    |     6      |      9         |  green   |    6     |    V6     |  red   |
 |   V7     | 13/14 |  1Q    |     7      |      10        |  pink    |    7     |    V7     |        |
