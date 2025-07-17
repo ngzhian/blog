@@ -1,7 +1,7 @@
 ---
 title: Bouldering gyms in Singapore
 date: 2024-04-21 13:14
-updated: 2024-11-16 10:40
+updated: 2025-07-17 21:05
 ...
 
 Overview of Rock Climbing gyms in Singapore, with a focus on bouldering.
@@ -9,7 +9,8 @@ Overview of Rock Climbing gyms in Singapore, with a focus on bouldering.
 # Grade table
 
 > Almost every gym has its own system of grading. This is
-> my take on comparing grades across gyms.
+> my take on comparing grades across gyms. Got feedback?
+> File an [issue](https://github.com/ngzhian/blog/issues/).
 
 | Font (V) |  BFF  | Boruda | Lighthouse | Boulder Planet | Boulder+ | Fit Bloc | Ground Up | Climba |
 | :------: | :---: | :----: | :--------: | :------------: | :------: | :------: | :-------: | :----: |
