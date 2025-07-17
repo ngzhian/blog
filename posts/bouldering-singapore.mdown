@@ -10,7 +10,7 @@ Overview of Rock Climbing gyms in Singapore, with a focus on bouldering.
 
 > Almost every gym has its own system of grading. This is
 > my take on comparing grades across gyms. Got feedback?
-> File an [issue](https://github.com/ngzhian/blog/issues/).
+> [File an issue](https://github.com/ngzhian/blog/issues/).
 
 | Font (V) |  BFF  | Boruda | Lighthouse | Boulder Planet | Boulder+ | Fit Bloc | Ground Up | Climba |
 | :------: | :---: | :----: | :--------: | :------------: | :------: | :------: | :-------: | :----: |
